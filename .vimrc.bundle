@@ -31,6 +31,7 @@ if isdirectory(s:neobundle_root)
 	NeoBundle 'Shougo/unite.vim'
 	NeoBundle 'b4b4r07/mru.vim'
 	NeoBundle 'thinca/vim-splash'
+	NeoBundle 'tpope/vim-surround'
 	NeoBundle 'osyo-manga/vim-anzu'
 	NeoBundle 'nanotech/jellybeans.vim'
 	NeoBundle has('lua') ? 'Shougo/neocomplete' : 'Shougo/neocomplcache'

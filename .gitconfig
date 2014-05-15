@@ -1,0 +1,15 @@
+[user]
+	name = b4b4r07
+	email = b4b4r07@gmail.com
+[core]
+	pager = less -q -R
+	excludesfile = ~/.gitignore
+[color]
+	ui = auto
+
+[alias]
+	st = status
+[help]
+	autocorrect = 1
+[push]
+	default = simple

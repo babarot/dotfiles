@@ -1,0 +1,53 @@
+# Bash - Bourne-Again Shell
+#
+# @(#) string.func ver.0.1.0 2013.07.22
+#
+# Usage:
+#   . ~/.bash.d/lib/string.func
+#   function "$1"
+#
+# Description:
+#   A libraryrary is a collection of implementations of behavior,
+#   written in terms of a language, that has a well-defined
+#   interface by which the behavior is invoked.
+#   In particular by this program, dealing with handling of
+#   character string.
+#
+###########################################################################
+
+function strcmp() {
+	# abc == abc (return  0)
+	# abc =< def (return -1)
+	# def >= abc (return  1)
+	if [ $# -ne 2 ]; then
+		echo "Usage: strcmp string1 string2" 1>&2
+		exit 1
+	fi
+	if [ "$1" = "$2" ]; then
+		#return 0
+		echo "0"
+	else
+		local _TMP=`{ echo "$1"; echo "$2"; } | sort -n | sed -n '1p'`
+
+		if [ "$_TMP" = "$1" ]; then
+			#return -1
+			echo "-1"
+		else
+			#return 1
+			echo "1"
+		fi
+	fi
+}
+
+function strlen() {
+	local length=`echo "$1" | wc -c | sed -e 's/ *//'`
+	echo `expr $length - 1`
+}
+
+function Atoa() {
+	echo $* | tr '[A-Z]' '[a-z]'
+}
+
+function atoA() {
+	echo $* | tr '[a-z]' '[A-Z]'
+}

@@ -1,0 +1,40 @@
+# Bash - Bourne-Again Shell
+#
+# @(#) numeric.func ver.0.1.0 2013.07.22
+#
+# Usage:
+#   . ~/.bash.d/lib/numeric.func
+#   function "$1"
+#
+# Description:
+#   A library is a collection of implementations of behavior,
+#   written in terms of a language, that has a well-defined
+#   interface by which the behavior is invoked.
+#   In particular by this program, dealing with handling of
+#   numeric.
+#
+###########################################################################
+
+function is_num() {
+	expr "$1" \* 1 >/dev/null 2>&1
+	if [ $? -ge 2 ]; then
+		return 1
+	else
+		return 0
+	fi
+}
+
+function is_num2() {
+	[ "$1" -eq 0 ] 2>/dev/null
+	if [ $? -ge 2 ]; then
+		# $1 is a NOT a valid integer.
+		return 1
+	else
+		# $1 is a valid integer.
+		return 0
+	fi
+}
+
+function square() {
+	echo `expr $1 \* $1`
+}

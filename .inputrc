@@ -1,0 +1,20 @@
+# Carry out tilde expansion by a tab
+set expand-tilde on
+
+# Ignore the small and capital letter
+set completion-ignore-case on
+
+# Auto scroll
+set horizontal-scroll-mode off
+
+# Power up Japanses Input Method
+set meta-flag on
+set input-meta on
+set output-meta on
+set convert-meta off
+
+## Vi Mode
+#set editing-mode vi
+#"\C-p": history-search-backward
+#"\C-n": history-search-forward
+#"\C-j": vi-movement-mode

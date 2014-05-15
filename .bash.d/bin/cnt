@@ -1,0 +1,25 @@
+#!/bin/sh
+
+if  [ "$1" = "-h" ]; then
+	echo 1>&2 "usage: cnt [-h|-a] [<path>]"
+	echo 1>&2 "       -a    display all files include dotfiles"
+	echo 1>&2 "       -h    display this help and exit"
+	exit 1
+fi
+
+file=$( ls -l "$@" | grep -c -- "^-" )
+dir=$( ls -l "$@" | grep -c "^d" )
+link=$( ls -l "$@" | grep -c "^l" )
+all=$( ls -1 "$@" | wc -l )
+
+if [ "$1" = "-a" ]; then
+	shift 1
+	file=$( ls -lA "$@" | grep -c -- "^-" )
+	dir=$( ls -lA "$@" | grep -c "^d" )
+	link=$( ls -lA "$@" | grep -c "^l" )
+	all=$( ls -1A "$@" | wc -l )
+fi
+
+printf "\t%d\t%d\t%d\t%d\n" $file $dir $link $all
+
+exit 0

@@ -1,0 +1,373 @@
+"              o8o                                       
+"              `"'                                       
+" oooo    ooo oooo  ooo. .oo.  .oo.   oooo d8b  .ooooo.  
+"  `88.  .8'  `888  `888P"Y88bP"Y88b  `888""8P d88' `"Y8 
+"   `88..8'    888   888   888   888   888     888       
+"    `888'     888   888   888   888   888     888   .o8 
+"     `8'     o888o o888o o888o o888o d888b    `Y8bod8P' 
+"                                                        
+"                                                        
+"                                                        
+"            oooo                          o8o              
+"            `888                          `"'              
+" oo.ooooo.   888  oooo  oooo   .oooooooo oooo  ooo. .oo.   
+"  888' `88b  888  `888  `888  888' `88b  `888  `888P"Y88b  
+"  888   888  888   888   888  888   888   888   888   888  
+"  888   888  888   888   888  `88bod8P'   888   888   888  
+"  888bod8P' o888o  `V88V"V8P' `8oooooo.  o888o o888o o888o 
+"  888                         d"     YD                    
+" o888o                        "Y88888P'                    
+"                                                           
+
+let s:noplugin = 0
+
+if g:is_windows
+	let s:bundle_root = expand('$HOME/AppData/Roaming/vim/bundle')
+else
+	let s:bundle_root = expand('~/.vim/bundle')
+endif
+
+let s:neobundle_root = s:bundle_root . '/neobundle.vim'
+
+if isdirectory(s:neobundle_root)
+	" Add NeoBundle to runtimepath and initialize
+	if has('vim_starting')
+		execute "set runtimepath+=" . s:neobundle_root
+	endif
+	call neobundle#rc(s:bundle_root)
+
+	NeoBundle "Shougo/vimproc", {
+				\ "build": {
+				\   "windows"   : "make -f make_mingw32.mak",
+				\   "cygwin"    : "make -f make_cygwin.mak",
+				\   "mac"       : "make -f make_mac.mak",
+				\   "unix"      : "make -f make_unix.mak",
+				\ }}
+
+	" Manage NeoBundle by oneself
+	NeoBundleFetch 'Shougo/neobundle.vim'
+
+	""NeoBundle 'altercation/vim-colors-solarized', { "base" : $HOME . "/.vim/colors" }
+
+	NeoBundle "Shougo/unite.vim"
+	NeoBundle "Shougo/neocomplcache.vim"
+	""NeoBundle "Shougo/vimfiler"
+
+	""NeoBundle 'Shougo/vimshell.vim'
+	""NeoBundle 'Shougo/vimshell'
+	NeoBundle 'sjl/gundo.vim'
+	NeoBundle 'tpope/vim-markdown'
+	""NeoBundle "thinca/vim-quickrun"
+	"NeoBundle "mattn/mkdpreview-vim"
+	"NeoBundle "vim-scripts/copypath.vim"
+	""NeoBundle "tyru/restart.vim"
+	""NeoBundle "Lokaltog/vim-easymotion"
+
+	" unite:source
+	NeoBundle 'ujihisa/unite-colorscheme'
+	NeoBundle 'ujihisa/unite-font'
+	NeoBundle 'Shougo/unite-outline'
+	NeoBundle 'basyura/unite-converter-file-directory'
+	NeoBundle 'basyura/unite-matcher-file-name'
+	NeoBundle 'tacroe/unite-mark'
+	NeoBundle 'thinca/vim-unite-history'
+	NeoBundle 'osyo-manga/unite-qfixhowm'
+	""NeoBundle 'Shougo/unite-outline'
+	""NeoBundle 'ujihisa/unite-colorscheme'
+	""NeoBundle 'ujihisa/unite-font'
+
+	" Text arround (coding)
+	NeoBundle 'tpope/vim-surround'
+	NeoBundle 'vim-scripts/YankRing.vim'
+	""NeoBundle 'vim-scripts/matchit.zip'
+
+	" Editing
+	""NeoBundle 'thinca/vim-portal'
+	NeoBundle 'vim-scripts/sudo.vim'
+	""NeoBundle 'thinca/vim-template'
+	""NeoBundle 'vim-scripts/taglist.vim'
+	""NeoBundle 'Shougo/neosnippet'
+	""NeoBundle 'Shougo/neosnippet.vim'
+	""NeoBundle 'scrooloose/nerdcommenter'
+	""NeoBundle 'garbas/vim-snipmate'
+
+	" Memo
+	""NeoBundle 'glidenote/memolist.vim'
+	""NeoBundle 'fuenor/qfixhowm'
+	""NeoBundle "dannyob/quickfixstatus"
+
+	" Interface
+	NeoBundle 'vim-scripts/mru.vim'
+	NeoBundle 'osyo-manga/vim-anzu'
+	""NeoBundle 'scrooloose/nerdtree'
+	NeoBundle 'scrooloose/syntastic'
+	""NeoBundle 'troydm/easybuffer.vim'
+	""NeoBundle 'nathanaelkane/vim-indent-guides'
+	""NeoBundle 'altercation/vim-colors-solarized'
+	""NeoBundle 'Lokaltog/vim-easymotion'
+	NeoBundle 'nanotech/jellybeans.vim'
+
+	" Utils
+	NeoBundle 'tyru/open-browser.vim'
+	NeoBundle 'rhysd/clever-f.vim'
+	NeoBundle 'thinca/vim-splash'
+	""NeoBundle 'kannokanno/previm'
+	""NeoBundle 'fuenor/im_control.vim'
+	""NeoBundle 'mattn/benchvimrc-vim'
+	""NeoBundle 'plasticboy/vim-markdown'
+	""NeoBundle 'grauwoelfchen/hello-vim'
+	""NeoBundle 'kien/ctrlp.vim'
+
+	if has("gui_running")
+		NeoBundle 'bling/vim-bufferline'
+		NeoBundle 'bling/vim-airline'
+		" Air-line.vim
+		let g:airline_section_c = '%{bufferline#refresh_status()}' . bufferline#get_status_string()
+	endif
+
+	" Check and download the plugin that is not installed
+	NeoBundleCheck
+else
+	""let s:noplugin = 1
+	command! NeoBundleInit call s:neobundle_init()
+		function! s:neobundle_init()
+			call mkdir(s:bundle_root, 'p')
+			execute 'cd' s:bundle_root
+			call system('git clone git://github.com/Shougo/neobundle.vim')
+			execute 'set runtimepath+=' . s:bundle_root . '/neobundle.vim'
+			call neobundle#rc(s:bundle_root)
+			NeoBundle 'Shougo/unite.vim'
+			NeoBundle 'Shougo/vimproc', { 'build': { 'unix': 'make -f make_unix.mak', }, }
+			NeoBundleInstall
+	  	endfunction
+endif
+
+filetype plugin indent on
+
+if !has('gui_running')
+	let g:loaded_airline = 0
+endif
+
+"STATUSLINE"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+if !has("gui_running")
+	NeoBundle 'vim-scripts/buftabs'
+endif
+
+function! g:Date()
+	return strftime("%Y/%m/%d %H:%M")
+endfunction
+
+highlight StatusLine ctermfg=black ctermbg=white cterm=none
+highlight Visual term=reverse cterm=reverse ctermfg=darkyellow ctermbg=black
+set statusline=%{buftabs}%=%m\ %y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}\ %4l/%4L,%3c\ %3p%%\ (%{g:Date()})
+
+let w:buftabs_enabled         = 0
+let g:buftabs_only_basename   = 1
+let g:buftabs_in_statusline   = 1
+let g:buftabs_marker_start    = "["
+let g:buftabs_marker_end      = "]"
+let g:buftabs_separator       = "#"
+let g:buftabs_marker_modified = "+"
+let g:buftabs_active_highlight_group = "Visual"
+let w:original_statusline = matchstr(&statusline, "%=.*")
+
+if &diff
+	finish
+endif
+
+function! Buftabs_enable()
+	let w:buftabs_enabled = 1
+endfunction
+
+let s:Pecho=''
+function! s:Pecho(msg)
+	if &ut!=1|let s:hold_ut=&ut|let &ut=1|en
+	let s:Pecho=a:msg
+	aug Pecho
+		au CursorHold * if s:Pecho!=''|echo s:Pecho
+					\|let s:Pecho=''|let &ut=s:hold_ut|en
+				\|aug Pecho|exe 'au!'|aug END|aug! Pecho
+	aug END
+endf
+
+function! Buftabs_show(deleted_buf)
+	let l:i = 1
+	let s:list = ''
+	let l:start = 0
+	let l:end = 0
+	if ! exists("w:from") 
+		let w:from = 0
+	endif
+
+	if ! exists("w:buftabs_enabled")
+endfunction
+
+"STATUSLINE">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+if isdirectory(s:neobundle_root)
+	nnoremap <silent><Space>m :Unite menu:shortcut -direction=botright -toggle<CR>
+	nnoremap <silent><Space>M :Unite menu:shortcut2 -direction=botright -toggle<CR>
+	nnoremap <silent><Space>b :EasyBufferToggle<CR>
+	nnoremap <silent><Space>h :Unite buffer -direction=botright -toggle<CR>
+	nnoremap <silent><Space>j :Unite file_mru -direction=botright -toggle<CR>
+	nnoremap <silent><Space>k :YRShow<CR>
+	nnoremap <silent><Space>l :Unite file -direction=botright -toggle<CR>
+	nnoremap <silent><Space>o :Unite outline -direction=botright -toggle<CR>
+	nnoremap <silent><Space>n :cd<CR>:enew<CR>
+	nnoremap <silent><Space>f :VimFiler -split -simple -winwidth=35 -toggle -quit<CR>
+
+	" openbrowser-open
+	nmap gW <Plug>(openbrowser-open)
+	vmap <Leader>s <Plug>(openbrowser-smart-search)
+	nmap <Leader>w <Plug>(openbrowser-open)
+
+	" Splash-vim
+	if !has('gui_running')
+		let g:loaded_splash = 0 " (on=1 / off=0)
+	endif
+	
+	" MRU
+	let MRU_Use_Alt_useopen = 1 " Open MRU by line number
+	let MRU_Window_Height   = 20
+	let MRU_Max_Entries     = 100
+	let MRU_Use_CursorLine  = 1
+	
+	" Neocomplcache {
+	" For CUI of pop-up menu color
+	highlight Pmenu      ctermbg=lightcyan ctermfg=black
+	highlight PmenuSel   ctermbg=blue      ctermfg=black
+	highlight PmenuSbari ctermbg=darkgray
+	highlight PmenuThumb ctermbg=lightgray
+	
+	
+	set completeopt=menuone                             "Setting about complement window
+	let g:neocomplcache_enable_at_startup = 1           "Enable to startup NeoComplCache
+	let g:neocomplcache_enable_smart_case = 1           "Ignore capital and small
+	let g:neocomplcache_enable_underbar_completion = 1  "Enable to complement include underbar
+	let g:neocomplcache_max_list = 20                   "The number of displayed candidates at pop-up menu
+	let g:neocomplcache_min_syntax_length = 3           "The smallest strings when cashing syntax
+
+	"Determine candidates selected now
+	inoremap <expr><C-y> neocomplcache#close_popup()
+	
+	" Cancel complement that was carried out last time
+	inoremap <expr><C-g> neocomplcache#undo_completion()
+	
+	" Complement common parts among complement candidates
+	inoremap <expr><C-l> neocomplcache#complete_common_string()
+	
+	" Cancel candidates selected now and close pop-up
+	inoremap <expr><C-e> neocomplcache#cancel_popup()
+	
+	" Enable to move by cursor key during insert mode (5 lines)
+	let g:neocomplcache_enable_insert_char_pre = 1
+	
+	if !exists('g:neocomplcache_keyword_patterns')
+	        let g:neocomplcache_keyword_patterns = {}
+	endif
+	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+	
+	" display on commandline intead of statusline
+	nmap n <Plug>(anzu-n-with-echo)
+	nmap N <Plug>(anzu-N-with-echo)
+	nmap * <Plug>(anzu-star-with-echo)
+	nmap # <Plug>(anzu-sharp-with-echo)
+	
+	" Mymenu On Unite
+	let g:unite_source_menu_menus = {
+	\	"shortcut" : {
+	\		"description" : "launcher",
+	\		"command_candidates" : [
+	\			["history",          "Unite history/command -direction=botright -toggle"],
+	\			["beautiful attack", "Unite colorscheme -auto-preview -direction=botright -toggle"],
+	\			["mark",             "Unite mark -direction=botright -toggle"],
+	\			["MRU",              "MRU"],
+	\			["EasyBuffer",       "EasyBufferToggle"],
+	\			["(j) MRU",          "Unite file_mru:long -direction=botright -toggle"],
+	\			["(k) Yank history", "YRShow"],
+	\			["(h) buffer",       "Unite buffer -direction=botright -toggle"],
+	\			["(l) file",         "Unite file -direction=botright -toggle"],
+	\			["(k) yank history", "Unite history/yank -direction=botright -toggle"],
+	\			["(r) file_rec",     "Unite file_rec -direction=botright -toggle"],
+	\			["(b) bookmark",     "Unite bookmark -direction=botright -toggle"],
+	\		],
+	\	},
+	\	"shortcut2" : {
+	\		"description" : "edit files",
+	\		"command_candidates" : [
+	\			["edit .vimrc",      "edit $MYVIMRC"],
+	\			["edit .gvimrc",     "edit $MYGVIMRC"],
+	\			["edit .vimrc.local","edit ~/.vimrc.local"],
+	\			["edit .bashrc",     "edit ~/.bashrc"],
+	\			["edit .mac.bashrc", "edit ~/.mac.bashrc"],
+	\			["edit .unix.bashrc","edit ~/.unix.bashrc"],
+	\			["------------------------", ""],
+	\			["open ~/.bash.d",   "VimFiler ~/.bash.d -buffer-name=explorer -double -simple -toggle -quit"],
+	\		],
+	\	},
+	\}
+	
+	" YankRing
+	let g:yankring_enabled          = 0 " off is zero
+	let g:yankring_ignore_duplicate = 1 " zero is not addition
+	let g:yankring_window_height    = 17
+	let g:yankring_max_history      = 500
+	let g:yankring_history_dir      = expand('$HOME')
+	let g:yankring_history_file     = '.yankring_history'
+	
+	"Buftabs"
+	function! g:Date()
+		return strftime("%Y/%m/%d %H:%M")
+	endfunction
+	
+	let g:bufferline_echo = 0
+	let g:bufferline_active_buffer_left = '['
+	let g:bufferline_active_buffer_right = ']'
+	let g:bufferline_modified = '+'
+	let g:bufferline_show_bufnr = 1
+	""let g:bufferline_rotate = 0
+	""let g:bufferline_rotate = 1
+	""let g:bufferline_rotate = 2
+	""let g:bufferline_rotate = 3
+	""let g:bufferline_fname_mod = ':t'
+	""let g:bufferline_inactive_highlight = 'StatusLineNC'
+	""let g:bufferline_active_highlight = 'StatusLine'
+	""let g:bufferline_solo_highlight = 0
+	let g:airline_left_sep  = '»'
+	let g:airline_right_sep = '«'
+	let g:airline_section_z = '%4l/%4L,%3c %3p%% (%{g:Date()})'
+	let g:airline_detect_whitespace = 0 
+
+	" Unite
+	let g:unite_winwidth                   = 40
+	let g:unite_source_file_mru_limit      = 300
+	let g:unite_enable_start_insert        = 0 " off is zero
+	let g:unite_enable_split_vertically    = 0
+	let g:unite_source_history_yank_enable = 1 " enable history/yank
+	let g:unite_source_file_mru_filename_format  = ''
+	let g:unite_kind_jump_list_after_jump_scroll = 0
+	call unite#custom_default_action('directory' , 'tabvimfiler')
+	call unite#custom_default_action("directory_mru", "vimfiler")
+
+	" Keyborad Mappings On Unite
+	autocmd FileType unite call s:unite_my_settings()
+	function! s:unite_my_settings() "{{
+		" Exit unite by ESC
+		nmap <buffer> <ESC> <Plug>(unite_exit)
+		" By inputting jj to be able to normal mode when insert mode
+		imap <buffer> jj <Plug>(unite_insert_leave)
+		" ctrl+w ;; delete words and backslash
+		imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
+		nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+		inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+		nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+		inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+	endfunction "}}
+
+	" Filter of file_mru(unite.vim)
+	call unite#custom_filters('file_mru',
+				\ ['matcher_file_name', 'sorter_default', 'converter_file_directory'])
+
+	let g:splash#path = expand('$HOME/tux.txt')
+endif

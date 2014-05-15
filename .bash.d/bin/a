@@ -1,0 +1,58 @@
+#!/bin/bash
+# File: action.sh
+# Data: 2013-10-20
+
+usage() {
+	echo "ac [-h|-l|-m|-r] [<num>|<word>]"
+	echo "    <num>   do action a number in actionlist"
+	echo "    <word>  do action a word in actionlist"
+	echo "    -h      display this help and exit"
+	echo "    -l      display action list"
+	echo "    -m      modify action list"
+	echo "    -r      regist action to action list"
+	exit 1
+}
+
+function is_num() {
+	expr "$1" \* 1 >/dev/null 2>&1
+	if [ $? -ge 2 ]; then
+		return 1
+	else
+		return 0
+	fi
+}
+
+actionlist=~/.actionlist.sh
+
+if [ ! -f $actionlist ]; then
+	echo "vi $actionlist" >$actionlist
+fi
+
+if [ -z "$1" -o "$1" = '-l' ]; then
+	cat -n $actionlist
+	exit 0
+elif [ "$1" = '-m' ]; then
+	$EDITOR $actionlist
+	exit 0
+elif [ "$1" = '-r' ]; then
+	echo "$2" >>$actionlist
+	exit 0
+elif [ "$1" = '-h' ]; then
+	usage
+fi
+
+for arg do
+	if is_num "$arg"; then
+		a=$( awk 'NR=='$arg'' $actionlist )
+		$SHELL -c "$a"
+	else
+		if [ `grep -c "$arg" $actionlist` -eq 1 ]; then
+			a=$( grep $arg $actionlist )
+			$SHELL -c "$a"
+		else
+			cat -n $actionlist | grep "$arg"
+		fi
+	fi
+done
+
+exit 0

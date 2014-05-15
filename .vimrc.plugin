@@ -10,6 +10,62 @@
 "                                                           
 
 "
+" Mru:
+"
+let MRU_Use_Alt_useopen = 1         "Open MRU by line number
+let MRU_Window_Height   = 15
+let MRU_Max_Entries     = 100
+let MRU_Use_CursorLine  = 1
+nnoremap <silent><Space>j :MRU<CR>
+
+"
+" Unite:
+"
+let g:unite_winwidth                   = 40
+let g:unite_source_file_mru_limit      = 300
+let g:unite_enable_start_insert        = 0            "off is zero
+let g:unite_enable_split_vertically    = 0
+let g:unite_source_history_yank_enable = 1            "enable history/yank
+let g:unite_source_file_mru_filename_format  = ''
+let g:unite_kind_jump_list_after_jump_scroll = 0
+
+"nnoremap <silent><Space>j :Unite file_mru -direction=botright -toggle<CR>
+nnoremap <silent><Space>o :Unite outline  -direction=botright -toggle<CR>
+
+"
+" Neocomplete (Neocomplcache)
+"
+
+if neobundle#is_installed('neocomplete')
+	let g:neocomplete#enable_at_startup = 1
+	let g:neocomplete#disable_auto_complete = 0
+	let g:neocomplete#enable_ignore_case = 1
+	let g:neocomplete#enable_smart_case = 1
+	if !exists('g:neocomplete#keyword_patterns')
+		let g:neocomplete#keyword_patterns = {}
+	endif
+	let g:neocomplete#keyword_patterns._ = '\h\w*'
+elseif neobundle#is_installed('neocomplcache')
+	let g:neocomplcache_enable_at_startup = 1
+	let g:Neocomplcache_disable_auto_complete = 0
+	let g:neocomplcache_enable_ignore_case = 1
+	let g:neocomplcache_enable_smart_case = 1
+	if !exists('g:neocomplcache_keyword_patterns')
+		let g:neocomplcache_keyword_patterns = {}
+	endif
+	let g:neocomplcache_keyword_patterns._ = '\h\w*'
+	let g:neocomplcache_enable_camel_case_completion = 1
+	let g:neocomplcache_enable_underbar_completion = 1
+endif
+inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<S-TAB>"
+
+highlight Pmenu      ctermbg=lightcyan ctermfg=black
+highlight PmenuSel   ctermbg=blue      ctermfg=black
+highlight PmenuSbari ctermbg=darkgray
+highlight PmenuThumb ctermbg=lightgray
+
+"
 " Buftabs:
 "
 function! g:Date()
@@ -57,88 +113,18 @@ function! Buftabs_show(deleted_buf)
 	endif
 
 	if ! exists("w:buftabs_enabled")
-endfunction
+	endfunction
 
-"	nnoremap <silent><Space>j :Unite file_mru -direction=botright -toggle<CR>
-"	nnoremap <silent><Space>k :YRShow<CR>
-"	nnoremap <silent><Space>o :Unite outline -direction=botright -toggle<CR>
-"	
-"	" openbrowser-open
-"	nmap gW <Plug>(openbrowser-open)
-"	vmap <Leader>s <Plug>(openbrowser-smart-search)
-"	nmap <Leader>w <Plug>(openbrowser-open)
-"	
-"	" Splash-vim
-"	if !has('gui_running')
-"		let g:loaded_splash = 0 "(on=1 / off=0)
-"	endif
-"	
-"	" MRU
-"	let MRU_Use_Alt_useopen = 1 "Open MRU by line number
-"	let MRU_Window_Height   = 20
-"	let MRU_Max_Entries     = 100
-"	let MRU_Use_CursorLine  = 1
-"	
-"	" Neocomplcache
-"	highlight Pmenu      ctermbg=lightcyan ctermfg=black
-"	highlight PmenuSel   ctermbg=blue      ctermfg=black
-"	highlight PmenuSbari ctermbg=darkgray
-"	highlight PmenuThumb ctermbg=lightgray
-"	set completeopt=menuone                             "Setting about complement window
-"	let g:neocomplcache_enable_at_startup = 1           "Enable to startup NeoComplCache
-"	let g:neocomplcache_enable_smart_case = 1           "Ignore capital and small
-"	let g:neocomplcache_enable_underbar_completion = 1  "Enable to complement include underbar
-"	let g:neocomplcache_max_list = 20                   "The number of displayed candidates at pop-up menu
-"	let g:neocomplcache_min_syntax_length = 3           "The smallest strings when cashing syntax
-"	"Determine candidates selected now
-"	inoremap <expr><C-y> neocomplcache#close_popup()
-"	" Cancel complement that was carried out last time
-"	inoremap <expr><C-g> neocomplcache#undo_completion()
-"	" Complement common parts among complement candidates
-"	inoremap <expr><C-l> neocomplcache#complete_common_string()
-"	" Cancel candidates selected now and close pop-up
-"	inoremap <expr><C-e> neocomplcache#cancel_popup()
-"	" Enable to move by cursor key during insert mode (5 lines)
-"	let g:neocomplcache_enable_insert_char_pre = 1
-"	if !exists('g:neocomplcache_keyword_patterns')
-"	        let g:neocomplcache_keyword_patterns = {}
-"	endif
-"	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-"	
-"	" display on commandline intead of statusline
-"	nmap n <Plug>(anzu-n-with-echo)
-"	nmap N <Plug>(anzu-N-with-echo)
-"	nmap * <Plug>(anzu-star-with-echo)
-"	nmap # <Plug>(anzu-sharp-with-echo)
-"	
-"	" Unite
-"	let g:unite_winwidth                   = 40
-"	let g:unite_source_file_mru_limit      = 300
-"	let g:unite_enable_start_insert        = 0 " off is zero
-"	let g:unite_enable_split_vertically    = 0
-"	let g:unite_source_history_yank_enable = 1 " enable history/yank
-"	let g:unite_source_file_mru_filename_format  = ''
-"	let g:unite_kind_jump_list_after_jump_scroll = 0
-"	call unite#custom_default_action('directory' , 'tabvimfiler')
-"	call unite#custom_default_action("directory_mru", "vimfiler")
-"	
-"	" Keyborad Mappings On Unite
-"	autocmd FileType unite call s:unite_my_settings()
-"	function! s:unite_my_settings() "{{
-"		" Exit unite by ESC
-"		nmap <buffer> <ESC> <Plug>(unite_exit)
-"		" By inputting jj to be able to normal mode when insert mode
-"		imap <buffer> jj <Plug>(unite_insert_leave)
-"		" ctrl+w ;; delete words and backslash
-"		imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
-"		nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
-"		inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
-"		nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
-"		inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
-"	endfunction "}}
-"	
-"	" Filter of file_mru(unite.vim)
-"	call unite#custom_filters('file_mru',
-"				\ ['matcher_file_name', 'sorter_default', 'converter_file_directory'])
-"	
-"	let g:splash#path = expand('$HOME/tux.txt')
+"
+" Splash:
+"
+""let g:loaded_splash = 1   "(on=1 / off=0)
+let g:splash#path = expand('$HOME/vim_splash.txt')
+
+"
+" Anzu:
+"
+nmap n <Plug>(anzu-n-with-echo)
+nmap N <Plug>(anzu-N-with-echo)
+nmap * <Plug>(anzu-star-with-echo)
+nmap # <Plug>(anzu-sharp-with-echo)

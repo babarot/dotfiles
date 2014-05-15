@@ -19,7 +19,11 @@ if isdirectory(s:neobundle_root)
 	NeoBundleFetch 'Shougo/neobundle.vim'
 	
 	NeoBundle 'Shougo/unite.vim'
+	NeoBundle 'b4b4r07/mru.vim'
+	NeoBundle 'thinca/vim-splash'
 	NeoBundle 'nanotech/jellybeans.vim'
+	NeoBundle has('lua') ? 'Shougo/neocomplete' : 'Shougo/neocomplcache'
+
 	if !has("gui_running")
 		NeoBundle 'vim-scripts/buftabs'
 	endif
@@ -43,5 +47,6 @@ else
 			NeoBundle 'Shougo/unite.vim'
 			NeoBundle 'Shougo/vimproc', { 'build': { 'unix': 'make -f make_unix.mak', }, }
 			NeoBundleInstall
+			echo "Finish!"
 	  	endfunction
 endif

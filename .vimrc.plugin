@@ -69,177 +69,86 @@ function! Buftabs_show(deleted_buf)
 	if ! exists("w:buftabs_enabled")
 endfunction
 
-
-
-
-
-
-
-
-
-
-
-	nnoremap <silent><Space>m :Unite menu:shortcut -direction=botright -toggle<CR>
-	nnoremap <silent><Space>M :Unite menu:shortcut2 -direction=botright -toggle<CR>
-	nnoremap <silent><Space>b :EasyBufferToggle<CR>
-	nnoremap <silent><Space>h :Unite buffer -direction=botright -toggle<CR>
-	nnoremap <silent><Space>j :Unite file_mru -direction=botright -toggle<CR>
-	nnoremap <silent><Space>k :YRShow<CR>
-	nnoremap <silent><Space>l :Unite file -direction=botright -toggle<CR>
-	nnoremap <silent><Space>o :Unite outline -direction=botright -toggle<CR>
-	nnoremap <silent><Space>n :cd<CR>:enew<CR>
-	nnoremap <silent><Space>f :VimFiler -split -simple -winwidth=35 -toggle -quit<CR>
-
-	" openbrowser-open
-	nmap gW <Plug>(openbrowser-open)
-	vmap <Leader>s <Plug>(openbrowser-smart-search)
-	nmap <Leader>w <Plug>(openbrowser-open)
-
-	" Splash-vim
-	if !has('gui_running')
-		let g:loaded_splash = 0 " (on=1 / off=0)
-	endif
-	
-	" MRU
-	let MRU_Use_Alt_useopen = 1 " Open MRU by line number
-	let MRU_Window_Height   = 20
-	let MRU_Max_Entries     = 100
-	let MRU_Use_CursorLine  = 1
-	
-	" Neocomplcache {
-	" For CUI of pop-up menu color
-	highlight Pmenu      ctermbg=lightcyan ctermfg=black
-	highlight PmenuSel   ctermbg=blue      ctermfg=black
-	highlight PmenuSbari ctermbg=darkgray
-	highlight PmenuThumb ctermbg=lightgray
-	
-	
-	set completeopt=menuone                             "Setting about complement window
-	let g:neocomplcache_enable_at_startup = 1           "Enable to startup NeoComplCache
-	let g:neocomplcache_enable_smart_case = 1           "Ignore capital and small
-	let g:neocomplcache_enable_underbar_completion = 1  "Enable to complement include underbar
-	let g:neocomplcache_max_list = 20                   "The number of displayed candidates at pop-up menu
-	let g:neocomplcache_min_syntax_length = 3           "The smallest strings when cashing syntax
-
-	"Determine candidates selected now
-	inoremap <expr><C-y> neocomplcache#close_popup()
-	
-	" Cancel complement that was carried out last time
-	inoremap <expr><C-g> neocomplcache#undo_completion()
-	
-	" Complement common parts among complement candidates
-	inoremap <expr><C-l> neocomplcache#complete_common_string()
-	
-	" Cancel candidates selected now and close pop-up
-	inoremap <expr><C-e> neocomplcache#cancel_popup()
-	
-	" Enable to move by cursor key during insert mode (5 lines)
-	let g:neocomplcache_enable_insert_char_pre = 1
-	
-	if !exists('g:neocomplcache_keyword_patterns')
-	        let g:neocomplcache_keyword_patterns = {}
-	endif
-	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-	
-	" display on commandline intead of statusline
-	nmap n <Plug>(anzu-n-with-echo)
-	nmap N <Plug>(anzu-N-with-echo)
-	nmap * <Plug>(anzu-star-with-echo)
-	nmap # <Plug>(anzu-sharp-with-echo)
-	
-	" Mymenu On Unite
-	let g:unite_source_menu_menus = {
-	\	"shortcut" : {
-	\		"description" : "launcher",
-	\		"command_candidates" : [
-	\			["history",          "Unite history/command -direction=botright -toggle"],
-	\			["beautiful attack", "Unite colorscheme -auto-preview -direction=botright -toggle"],
-	\			["mark",             "Unite mark -direction=botright -toggle"],
-	\			["MRU",              "MRU"],
-	\			["EasyBuffer",       "EasyBufferToggle"],
-	\			["(j) MRU",          "Unite file_mru:long -direction=botright -toggle"],
-	\			["(k) Yank history", "YRShow"],
-	\			["(h) buffer",       "Unite buffer -direction=botright -toggle"],
-	\			["(l) file",         "Unite file -direction=botright -toggle"],
-	\			["(k) yank history", "Unite history/yank -direction=botright -toggle"],
-	\			["(r) file_rec",     "Unite file_rec -direction=botright -toggle"],
-	\			["(b) bookmark",     "Unite bookmark -direction=botright -toggle"],
-	\		],
-	\	},
-	\	"shortcut2" : {
-	\		"description" : "edit files",
-	\		"command_candidates" : [
-	\			["edit .vimrc",      "edit $MYVIMRC"],
-	\			["edit .gvimrc",     "edit $MYGVIMRC"],
-	\			["edit .vimrc.local","edit ~/.vimrc.local"],
-	\			["edit .bashrc",     "edit ~/.bashrc"],
-	\			["edit .mac.bashrc", "edit ~/.mac.bashrc"],
-	\			["edit .unix.bashrc","edit ~/.unix.bashrc"],
-	\			["------------------------", ""],
-	\			["open ~/.bash.d",   "VimFiler ~/.bash.d -buffer-name=explorer -double -simple -toggle -quit"],
-	\		],
-	\	},
-	\}
-	
-	" YankRing
-	let g:yankring_enabled          = 0 " off is zero
-	let g:yankring_ignore_duplicate = 1 " zero is not addition
-	let g:yankring_window_height    = 17
-	let g:yankring_max_history      = 500
-	let g:yankring_history_dir      = expand('$HOME')
-	let g:yankring_history_file     = '.yankring_history'
-	
-	"Buftabs"
-	function! g:Date()
-		return strftime("%Y/%m/%d %H:%M")
-	endfunction
-	
-	let g:bufferline_echo = 0
-	let g:bufferline_active_buffer_left = '['
-	let g:bufferline_active_buffer_right = ']'
-	let g:bufferline_modified = '+'
-	let g:bufferline_show_bufnr = 1
-	""let g:bufferline_rotate = 0
-	""let g:bufferline_rotate = 1
-	""let g:bufferline_rotate = 2
-	""let g:bufferline_rotate = 3
-	""let g:bufferline_fname_mod = ':t'
-	""let g:bufferline_inactive_highlight = 'StatusLineNC'
-	""let g:bufferline_active_highlight = 'StatusLine'
-	""let g:bufferline_solo_highlight = 0
-	let g:airline_left_sep  = '»'
-	let g:airline_right_sep = '«'
-	let g:airline_section_z = '%4l/%4L,%3c %3p%% (%{g:Date()})'
-	let g:airline_detect_whitespace = 0 
-
-	" Unite
-	let g:unite_winwidth                   = 40
-	let g:unite_source_file_mru_limit      = 300
-	let g:unite_enable_start_insert        = 0 " off is zero
-	let g:unite_enable_split_vertically    = 0
-	let g:unite_source_history_yank_enable = 1 " enable history/yank
-	let g:unite_source_file_mru_filename_format  = ''
-	let g:unite_kind_jump_list_after_jump_scroll = 0
-	call unite#custom_default_action('directory' , 'tabvimfiler')
-	call unite#custom_default_action("directory_mru", "vimfiler")
-
-	" Keyborad Mappings On Unite
-	autocmd FileType unite call s:unite_my_settings()
-	function! s:unite_my_settings() "{{
-		" Exit unite by ESC
-		nmap <buffer> <ESC> <Plug>(unite_exit)
-		" By inputting jj to be able to normal mode when insert mode
-		imap <buffer> jj <Plug>(unite_insert_leave)
-		" ctrl+w ;; delete words and backslash
-		imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
-		nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
-		inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
-		nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
-		inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
-	endfunction "}}
-
-	" Filter of file_mru(unite.vim)
-	call unite#custom_filters('file_mru',
-				\ ['matcher_file_name', 'sorter_default', 'converter_file_directory'])
-
-	let g:splash#path = expand('$HOME/tux.txt')
+"	nnoremap <silent><Space>j :Unite file_mru -direction=botright -toggle<CR>
+"	nnoremap <silent><Space>k :YRShow<CR>
+"	nnoremap <silent><Space>o :Unite outline -direction=botright -toggle<CR>
+"	
+"	" openbrowser-open
+"	nmap gW <Plug>(openbrowser-open)
+"	vmap <Leader>s <Plug>(openbrowser-smart-search)
+"	nmap <Leader>w <Plug>(openbrowser-open)
+"	
+"	" Splash-vim
+"	if !has('gui_running')
+"		let g:loaded_splash = 0 "(on=1 / off=0)
+"	endif
+"	
+"	" MRU
+"	let MRU_Use_Alt_useopen = 1 "Open MRU by line number
+"	let MRU_Window_Height   = 20
+"	let MRU_Max_Entries     = 100
+"	let MRU_Use_CursorLine  = 1
+"	
+"	" Neocomplcache
+"	highlight Pmenu      ctermbg=lightcyan ctermfg=black
+"	highlight PmenuSel   ctermbg=blue      ctermfg=black
+"	highlight PmenuSbari ctermbg=darkgray
+"	highlight PmenuThumb ctermbg=lightgray
+"	set completeopt=menuone                             "Setting about complement window
+"	let g:neocomplcache_enable_at_startup = 1           "Enable to startup NeoComplCache
+"	let g:neocomplcache_enable_smart_case = 1           "Ignore capital and small
+"	let g:neocomplcache_enable_underbar_completion = 1  "Enable to complement include underbar
+"	let g:neocomplcache_max_list = 20                   "The number of displayed candidates at pop-up menu
+"	let g:neocomplcache_min_syntax_length = 3           "The smallest strings when cashing syntax
+"	"Determine candidates selected now
+"	inoremap <expr><C-y> neocomplcache#close_popup()
+"	" Cancel complement that was carried out last time
+"	inoremap <expr><C-g> neocomplcache#undo_completion()
+"	" Complement common parts among complement candidates
+"	inoremap <expr><C-l> neocomplcache#complete_common_string()
+"	" Cancel candidates selected now and close pop-up
+"	inoremap <expr><C-e> neocomplcache#cancel_popup()
+"	" Enable to move by cursor key during insert mode (5 lines)
+"	let g:neocomplcache_enable_insert_char_pre = 1
+"	if !exists('g:neocomplcache_keyword_patterns')
+"	        let g:neocomplcache_keyword_patterns = {}
+"	endif
+"	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+"	
+"	" display on commandline intead of statusline
+"	nmap n <Plug>(anzu-n-with-echo)
+"	nmap N <Plug>(anzu-N-with-echo)
+"	nmap * <Plug>(anzu-star-with-echo)
+"	nmap # <Plug>(anzu-sharp-with-echo)
+"	
+"	" Unite
+"	let g:unite_winwidth                   = 40
+"	let g:unite_source_file_mru_limit      = 300
+"	let g:unite_enable_start_insert        = 0 " off is zero
+"	let g:unite_enable_split_vertically    = 0
+"	let g:unite_source_history_yank_enable = 1 " enable history/yank
+"	let g:unite_source_file_mru_filename_format  = ''
+"	let g:unite_kind_jump_list_after_jump_scroll = 0
+"	call unite#custom_default_action('directory' , 'tabvimfiler')
+"	call unite#custom_default_action("directory_mru", "vimfiler")
+"	
+"	" Keyborad Mappings On Unite
+"	autocmd FileType unite call s:unite_my_settings()
+"	function! s:unite_my_settings() "{{
+"		" Exit unite by ESC
+"		nmap <buffer> <ESC> <Plug>(unite_exit)
+"		" By inputting jj to be able to normal mode when insert mode
+"		imap <buffer> jj <Plug>(unite_insert_leave)
+"		" ctrl+w ;; delete words and backslash
+"		imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
+"		nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+"		inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+"		nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+"		inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+"	endfunction "}}
+"	
+"	" Filter of file_mru(unite.vim)
+"	call unite#custom_filters('file_mru',
+"				\ ['matcher_file_name', 'sorter_default', 'converter_file_directory'])
+"	
+"	let g:splash#path = expand('$HOME/tux.txt')

@@ -5,9 +5,8 @@ function random_cowsay() {
 	COWS_RANDOM=$(expr $RANDOM % $NBRE_COWS + 1)
 	COW_NAME=$(ls -1 $COWS | awk -F\. -v COWS_RANDOM_AWK=$COWS_RANDOM 'NR == COWS_RANDOM_AWK {print $1}')
 
-	if grep -w "COWSAY_USE" ~/.bashrc >/dev/null; then
-		#COW_NAME=`awk -F":" '/COWSAY_USE/{print $2}' ~/.bashrc`
-		COW_NAME=$(grep -w "COWSAY_USE" ~/.bashrc | cut -d: -f2)
+	if [ -f ~/.cowsay_name ]; then
+		COW_NAME=$(sed -n '1p' ~/.cowsay_name)
 	else
 		COW_NAME=$(ls -1 $COWS | awk -F\. -v COWS_RANDOM_AWK=$COWS_RANDOM 'NR == COWS_RANDOM_AWK {print $1}')
 	fi

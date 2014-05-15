@@ -129,7 +129,9 @@ let g:splash#path = expand(s:vim_intro . '/vim_intro.txt')
 "
 " Anzu:
 "
-nmap n <Plug>(anzu-n-with-echo)
-nmap N <Plug>(anzu-N-with-echo)
-nmap * <Plug>(anzu-star-with-echo)
-nmap # <Plug>(anzu-sharp-with-echo)
+"nmap n <Plug>(anzu-n-with-echo)
+"nmap N <Plug>(anzu-N-with-echo)
+"nmap * <Plug>(anzu-star-with-echo)
+"nmap # <Plug>(anzu-sharp-with-echo)
+nmap n <Plug>(anzu-mode-n)
+nmap N <Plug>(anzu-mode-N)

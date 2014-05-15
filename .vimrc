@@ -363,8 +363,8 @@ nnoremap <Up> <Nop>
 nnoremap <Down> <Nop>
 nnoremap <Left> <Nop>
 nnoremap <Right> <Nop>
-nnoremap n nzz
-nnoremap N Nzz
+""nnoremap n nzz
+""nnoremap N Nzz
 nnoremap * *zz
 nnoremap # #zz
 nnoremap g* g*zz

@@ -119,7 +119,10 @@ function! Buftabs_show(deleted_buf)
 " Splash:
 "
 ""let g:loaded_splash = 1   "(on=1 / off=0)
-let g:splash#path = expand('$HOME/vim_splash.txt')
+if !isdirectory($HOME . "/.vim_splash/")
+	call system('git clone https://gist.github.com/OrgaChem/7630711 .vim_splash')
+	let g:splash#path = expand('$HOME/.vim_splash/vim_intro.txt')
+endif
 
 "
 " Anzu:

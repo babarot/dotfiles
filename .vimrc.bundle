@@ -1,3 +1,13 @@
+"  .o8                                     .o8  oooo            
+"  888                                     888  `888            
+"  888oooo.  oooo  oooo  ooo. .oo.    .oooo888   888   .ooooo.  
+"  d88' `88b `888  `888  `888P"Y88b  d88' `888   888  d88' `88b 
+"  888   888  888   888   888   888  888   888   888  888ooo888 
+"  888   888  888   888   888   888  888   888   888  888    .o 
+"  `Y8bod8P'  `V88V"V8P' o888o o888o `Y8bod88P" o888o `Y8bod8P' 
+"                                                               
+"                                                               
+
 let s:noplugin = 0
 
 if g:is_windows

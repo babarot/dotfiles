@@ -51,11 +51,6 @@ if filereadable(g:local_vimrc)
 	execute 'source ' . g:local_vimrc
 endif
 
-let g:plugin_vimrc = expand('~/.vimrc.plugin')
-if filereadable(g:plugin_vimrc)
-	execute 'source ' . g:plugin_vimrc
-endif
-
 let g:bundle_vimrc = expand('~/.vimrc.bundle')
 if filereadable(g:bundle_vimrc)
 	execute 'source ' . g:bundle_vimrc
@@ -325,8 +320,6 @@ if !has("gui_running")
 endif
 
 if !has("gui_running")
-
-	""NeoBundle 'vim-scripts/buftabs'
 	if isdirectory(expand('~/.vim/bundle/buftabs'))
 		set statusline=%{buftabs}%=%m\ %y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}\ %4l/%4L,%3c\ %3p%%\ (%{g:Date()})
 	else
@@ -335,7 +328,6 @@ if !has("gui_running")
 	
 	highlight StatusLine cterm=none
 	highlight Visual     ctermfg=Black
-	
 endif
 
 "

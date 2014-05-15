@@ -26,6 +26,11 @@ if isdirectory(s:neobundle_root)
 	
 	filetype plugin indent on
 	NeoBundleCheck
+
+	let g:plugin_vimrc = expand('~/.vimrc.plugin')
+	if filereadable(g:plugin_vimrc)
+		execute 'source ' . g:plugin_vimrc
+	endif
 else
 	""let s:noplugin = 1
 	command! NeoBundleInit call s:neobundle_init()

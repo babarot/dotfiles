@@ -225,7 +225,7 @@ autocmd BufRead,BufNewFile .bashrc.* set filetype=sh
 autocmd BufRead,BufNewFile .vimrc.*  set filetype=vim
 
 "Useclipboardbutneed'+clipboard'
-"set clipboard+=unnamedplus,unnamed
+set clipboard+=unnamed
 
 "Do not insert comment when inputing newline
 autocmd FileType * setlocal formatoptions-=ro

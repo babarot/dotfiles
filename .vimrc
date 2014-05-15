@@ -56,6 +56,11 @@ if filereadable(g:plugin_vimrc)
 	execute 'source ' . g:plugin_vimrc
 endif
 
+let g:bundle_vimrc = expand('~/.vimrc.bundle')
+if filereadable(g:bundle_vimrc)
+	execute 'source ' . g:bundle_vimrc
+endif
+
 "
 " FUNCTION:
 " =======================================================================================

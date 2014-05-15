@@ -19,147 +19,13 @@
 " o888o                        "Y88888P'                    
 "                                                           
 
-let s:noplugin = 0
-
-if g:is_windows
-	let s:bundle_root = expand('$HOME/AppData/Roaming/vim/bundle')
-else
-	let s:bundle_root = expand('~/.vim/bundle')
-endif
-
-let s:neobundle_root = s:bundle_root . '/neobundle.vim'
-
-if isdirectory(s:neobundle_root)
-	" Add NeoBundle to runtimepath and initialize
-	if has('vim_starting')
-		execute "set runtimepath+=" . s:neobundle_root
-	endif
-	call neobundle#rc(s:bundle_root)
-
-	NeoBundle "Shougo/vimproc", {
-				\ "build": {
-				\   "windows"   : "make -f make_mingw32.mak",
-				\   "cygwin"    : "make -f make_cygwin.mak",
-				\   "mac"       : "make -f make_mac.mak",
-				\   "unix"      : "make -f make_unix.mak",
-				\ }}
-
-	" Manage NeoBundle by oneself
-	NeoBundleFetch 'Shougo/neobundle.vim'
-
-	""NeoBundle 'altercation/vim-colors-solarized', { "base" : $HOME . "/.vim/colors" }
-
-	NeoBundle "Shougo/unite.vim"
-	NeoBundle "Shougo/neocomplcache.vim"
-	""NeoBundle "Shougo/vimfiler"
-
-	""NeoBundle 'Shougo/vimshell.vim'
-	""NeoBundle 'Shougo/vimshell'
-	NeoBundle 'sjl/gundo.vim'
-	NeoBundle 'tpope/vim-markdown'
-	""NeoBundle "thinca/vim-quickrun"
-	"NeoBundle "mattn/mkdpreview-vim"
-	"NeoBundle "vim-scripts/copypath.vim"
-	""NeoBundle "tyru/restart.vim"
-	""NeoBundle "Lokaltog/vim-easymotion"
-
-	" unite:source
-	NeoBundle 'ujihisa/unite-colorscheme'
-	NeoBundle 'ujihisa/unite-font'
-	NeoBundle 'Shougo/unite-outline'
-	NeoBundle 'basyura/unite-converter-file-directory'
-	NeoBundle 'basyura/unite-matcher-file-name'
-	NeoBundle 'tacroe/unite-mark'
-	NeoBundle 'thinca/vim-unite-history'
-	NeoBundle 'osyo-manga/unite-qfixhowm'
-	""NeoBundle 'Shougo/unite-outline'
-	""NeoBundle 'ujihisa/unite-colorscheme'
-	""NeoBundle 'ujihisa/unite-font'
-
-	" Text arround (coding)
-	NeoBundle 'tpope/vim-surround'
-	NeoBundle 'vim-scripts/YankRing.vim'
-	""NeoBundle 'vim-scripts/matchit.zip'
-
-	" Editing
-	""NeoBundle 'thinca/vim-portal'
-	NeoBundle 'vim-scripts/sudo.vim'
-	""NeoBundle 'thinca/vim-template'
-	""NeoBundle 'vim-scripts/taglist.vim'
-	""NeoBundle 'Shougo/neosnippet'
-	""NeoBundle 'Shougo/neosnippet.vim'
-	""NeoBundle 'scrooloose/nerdcommenter'
-	""NeoBundle 'garbas/vim-snipmate'
-
-	" Memo
-	""NeoBundle 'glidenote/memolist.vim'
-	""NeoBundle 'fuenor/qfixhowm'
-	""NeoBundle "dannyob/quickfixstatus"
-
-	" Interface
-	NeoBundle 'vim-scripts/mru.vim'
-	NeoBundle 'osyo-manga/vim-anzu'
-	""NeoBundle 'scrooloose/nerdtree'
-	NeoBundle 'scrooloose/syntastic'
-	""NeoBundle 'troydm/easybuffer.vim'
-	""NeoBundle 'nathanaelkane/vim-indent-guides'
-	""NeoBundle 'altercation/vim-colors-solarized'
-	""NeoBundle 'Lokaltog/vim-easymotion'
-	NeoBundle 'nanotech/jellybeans.vim'
-
-	" Utils
-	NeoBundle 'tyru/open-browser.vim'
-	NeoBundle 'rhysd/clever-f.vim'
-	NeoBundle 'thinca/vim-splash'
-	""NeoBundle 'kannokanno/previm'
-	""NeoBundle 'fuenor/im_control.vim'
-	""NeoBundle 'mattn/benchvimrc-vim'
-	""NeoBundle 'plasticboy/vim-markdown'
-	""NeoBundle 'grauwoelfchen/hello-vim'
-	""NeoBundle 'kien/ctrlp.vim'
-
-	if has("gui_running")
-		NeoBundle 'bling/vim-bufferline'
-		NeoBundle 'bling/vim-airline'
-		" Air-line.vim
-		let g:airline_section_c = '%{bufferline#refresh_status()}' . bufferline#get_status_string()
-	endif
-
-	" Check and download the plugin that is not installed
-	NeoBundleCheck
-else
-	""let s:noplugin = 1
-	command! NeoBundleInit call s:neobundle_init()
-		function! s:neobundle_init()
-			call mkdir(s:bundle_root, 'p')
-			execute 'cd' s:bundle_root
-			call system('git clone git://github.com/Shougo/neobundle.vim')
-			execute 'set runtimepath+=' . s:bundle_root . '/neobundle.vim'
-			call neobundle#rc(s:bundle_root)
-			NeoBundle 'Shougo/unite.vim'
-			NeoBundle 'Shougo/vimproc', { 'build': { 'unix': 'make -f make_unix.mak', }, }
-			NeoBundleInstall
-	  	endfunction
-endif
-
-filetype plugin indent on
-
-if !has('gui_running')
-	let g:loaded_airline = 0
-endif
-
-"STATUSLINE"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-if !has("gui_running")
-	NeoBundle 'vim-scripts/buftabs'
-endif
-
+"
+" Buftabs:
+"
 function! g:Date()
 	return strftime("%Y/%m/%d %H:%M")
 endfunction
 
-highlight StatusLine ctermfg=black ctermbg=white cterm=none
-highlight Visual term=reverse cterm=reverse ctermfg=darkyellow ctermbg=black
 set statusline=%{buftabs}%=%m\ %y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}\ %4l/%4L,%3c\ %3p%%\ (%{g:Date()})
 
 let w:buftabs_enabled         = 0
@@ -203,9 +69,16 @@ function! Buftabs_show(deleted_buf)
 	if ! exists("w:buftabs_enabled")
 endfunction
 
-"STATUSLINE">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-if isdirectory(s:neobundle_root)
+
+
+
+
+
+
+
+
+
 	nnoremap <silent><Space>m :Unite menu:shortcut -direction=botright -toggle<CR>
 	nnoremap <silent><Space>M :Unite menu:shortcut2 -direction=botright -toggle<CR>
 	nnoremap <silent><Space>b :EasyBufferToggle<CR>
@@ -370,4 +243,3 @@ if isdirectory(s:neobundle_root)
 				\ ['matcher_file_name', 'sorter_default', 'converter_file_directory'])
 
 	let g:splash#path = expand('$HOME/tux.txt')
-endif

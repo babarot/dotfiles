@@ -1,0 +1,42 @@
+let s:noplugin = 0
+
+if g:is_windows
+	let s:bundle_root = expand('$HOME/AppData/Roaming/vim/bundle')
+else
+	let s:bundle_root = expand('~/.vim/bundle')
+endif
+let s:neobundle_root = s:bundle_root . '/neobundle.vim'
+
+if isdirectory(s:neobundle_root)
+	set nocompatible
+	filetype plugin indent off
+	
+	if has('vim_starting')
+	set runtimepath+=~/.vim/bundle/neobundle.vim
+	call neobundle#rc(expand('~/.vim/bundle'))
+	endif 
+	
+	NeoBundleFetch 'Shougo/neobundle.vim'
+	
+	NeoBundle 'Shougo/unite.vim'
+	NeoBundle 'nanotech/jellybeans.vim'
+	if !has("gui_running")
+		NeoBundle 'vim-scripts/buftabs'
+	endif
+	
+	filetype plugin indent on
+	NeoBundleCheck
+else
+	""let s:noplugin = 1
+	command! NeoBundleInit call s:neobundle_init()
+		function! s:neobundle_init()
+			call mkdir(s:bundle_root, 'p')
+			execute 'cd' s:bundle_root
+			call system('git clone git://github.com/Shougo/neobundle.vim')
+			execute 'set runtimepath+=' . s:bundle_root . '/neobundle.vim'
+			call neobundle#rc(s:bundle_root)
+			NeoBundle 'Shougo/unite.vim'
+			NeoBundle 'Shougo/vimproc', { 'build': { 'unix': 'make -f make_unix.mak', }, }
+			NeoBundleInstall
+	  	endfunction
+endif

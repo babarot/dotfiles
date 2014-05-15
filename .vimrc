@@ -415,3 +415,6 @@ nnoremap q: <Nop>
 nnoremap q/ <Nop>
 nnoremap q? <Nop>
 nnoremap <Space>j :MRU<CR>
+
+highlight StatusLine ctermfg=black ctermbg=white cterm=none
+highlight Visual term=reverse cterm=reverse ctermfg=darkyellow ctermbg=black

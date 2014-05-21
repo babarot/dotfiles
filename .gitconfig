@@ -9,6 +9,9 @@
 
 [alias]
 	st = status
+	co = checkout
+	ci = commit
+	df = diff
 [help]
 	autocorrect = 1
 [push]

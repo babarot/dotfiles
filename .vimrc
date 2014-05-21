@@ -419,3 +419,5 @@ nnoremap q? <Nop>
 
 highlight StatusLine ctermfg=black ctermbg=white cterm=none
 highlight Visual term=reverse cterm=reverse ctermfg=darkyellow ctermbg=black
+
+autocmd BufRead,BufNewFile *.sh nmap <F2> ggO#!/bin/sh<ESC>

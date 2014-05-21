@@ -33,7 +33,9 @@ if isdirectory(s:neobundle_root)
 	NeoBundle 'thinca/vim-splash'
 	NeoBundle 'tpope/vim-surround'
 	NeoBundle 'osyo-manga/vim-anzu'
-	NeoBundle 'nanotech/jellybeans.vim'
+	NeoBundle 'b4b4r07/b4color', { "base" : $HOME."/.vim/colors/" }
+	NeoBundle 'altercation/vim-colors-solarized', { "base" : $HOME."/.vim/colors/solarized" }
+	NeoBundle 'nanotech/jellybeans.vim', { "base" : $HOME."/.vim/colors/jellybeans" }
 	NeoBundle has('lua') ? 'Shougo/neocomplete' : 'Shougo/neocomplcache'
 
 	if !has("gui_running")

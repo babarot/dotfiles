@@ -259,7 +259,13 @@ else
 	" Vim for CUI
 	if g:is_mac
 		" Vim for mac
-		colorscheme desert
+		if filereadable(expand('~/.vim/colors/solarized.vim'))
+			colorscheme solarized
+		elseif filereadable(expand('~/.vim/colors/molokai.vim'))
+			colorscheme molokai
+		else
+			colorscheme desert
+		endif
 	else
 		" Vim for unix
 		colorscheme luinnar

@@ -257,19 +257,21 @@ if has('gui_running') && !g:is_windows
 	colorscheme solarized
 else
 	" Vim for CUI
-	if g:is_mac
+	"if g:is_mac
 		" Vim for mac
 		if filereadable(expand('~/.vim/colors/solarized.vim'))
 			colorscheme solarized
+		elseif filereadable(expand('~/.vim/colors/jellybeans.vim'))
+			colorscheme jellybeans
 		elseif filereadable(expand('~/.vim/colors/molokai.vim'))
 			colorscheme molokai
 		else
 			colorscheme desert
 		endif
-	else
+	"else
 		" Vim for unix
-		colorscheme luinnar
-	endif
+	"	colorscheme luinnar
+	"endif
 endif
 
 " Highlight zenkaku-space

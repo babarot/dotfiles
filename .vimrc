@@ -259,11 +259,12 @@ else
 	" Vim for CUI
 	"if g:is_mac
 		" Vim for mac
-		if filereadable(expand('~/.vim/colors/solarized.vim'))
+		if isdirectory(expand('~/.vim/colors/b4color'))
+			call system('mv ~/.vim/colors/b4color/b4color.vim ~/.vim/colors')
 			colorscheme solarized
-		elseif filereadable(expand('~/.vim/colors/jellybeans.vim'))
+		elseif isdirectory(expand('~/.vim/colors/jellybeans'))
 			colorscheme jellybeans
-		elseif filereadable(expand('~/.vim/colors/molokai.vim'))
+		elseif isdirectory(expand('~/.vim/colors/molokai'))
 			colorscheme molokai
 		else
 			colorscheme desert

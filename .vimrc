@@ -259,8 +259,7 @@ else
 	" Vim for CUI
 	if g:is_mac
 		" Vim for mac
-		colorscheme zellner
-		colorscheme jellybeans
+		colorscheme desert
 	else
 		" Vim for unix
 		colorscheme luinnar

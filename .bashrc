@@ -22,8 +22,8 @@
 
 # Variable declaration part
 export OS=$(uname | awk '{print tolower($1)}')
-export PATH="~/.bash.d/bin:$PATH"
-export HOMEBASH="$HOME/.bash.d"
+export MASTERD="$HOME/.bash.d"
+export PATH="$MASTERD/bin:$PATH"
 export HOMEDOTFILES="$HOME/.dotfiles"
 export EDITOR=vim
 export VIMC=`which vim`
@@ -50,9 +50,10 @@ fi
 [ -f /etc/git-prompt.bash ] && . /etc/git-prompt.bash
 
 # Loads the file except executable one.
-if [ -d "${HOME}/.bash.d" ] ; then
+mkdir $MASTERD
+if [ -d $MASTERD ] ; then
 	echo -en "\n"
-	for f in "${HOME}"/.bash.d/*.sh ; do
+	for f in $MASTERD/*.sh ; do
 		[ ! -x "$f" ] && . "$f" && echo load "$f"
 	done
 	echo -en "\n"

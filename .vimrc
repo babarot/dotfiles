@@ -14,9 +14,8 @@
 " Author: b4b4r07
 "
 
+" Vim mode
 set nocompatible
-"set encoding
-"scriptencoding utf-8
 
 "
 " OS 

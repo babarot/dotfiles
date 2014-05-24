@@ -33,6 +33,8 @@ if isdirectory(s:neobundle_root)
 	NeoBundle 'thinca/vim-splash'
 	NeoBundle 'tpope/vim-surround'
 	NeoBundle 'osyo-manga/vim-anzu'
+	NeoBundle 'mhinz/vim-startify'
+	NeoBundle 'LeafCage/yankround.vim'
 	NeoBundle 'b4b4r07/b4color', { "base" : $HOME."/.vim/colors/" }
 	NeoBundle 'altercation/vim-colors-solarized', { "base" : $HOME."/.vim/colors/solarized" }
 	NeoBundle 'nanotech/jellybeans.vim', { "base" : $HOME."/.vim/colors/jellybeans" }

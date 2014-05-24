@@ -353,6 +353,7 @@ endif
 
 " Easy escaping
 inoremap jj <ESC>
+vnoremap jj <ESC>
 cnoremap <expr> j getcmdline()[getcmdpos()-2] ==# 'j' ? "\<BS>\<C-c>" : 'j'
 onoremap jj <ESC>
 inoremap j<Space> j

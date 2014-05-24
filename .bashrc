@@ -50,7 +50,7 @@ fi
 [ -f /etc/git-prompt.bash ] && . /etc/git-prompt.bash
 
 # Loads the file except executable one.
-mkdir $MASTERD
+test -d $MASTERD || mkdir $MASTERD
 if [ -d $MASTERD ] ; then
 	echo -en "\n"
 	for f in $MASTERD/*.sh ; do

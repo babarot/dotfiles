@@ -135,3 +135,31 @@ let g:splash#path = expand(s:vim_intro . '/vim_intro.txt')
 "nmap # <Plug>(anzu-sharp-with-echo)
 nmap n <Plug>(anzu-mode-n)
 nmap N <Plug>(anzu-mode-N)
+
+"
+" Startify:
+"
+"Custom Header (For example, date command)"
+let g:startify_custom_header =
+  \ map(split(system('date'), '\n'), '"   ". v:val') + ['','']
+"Change shortcut number into assigned alphabet"
+let g:startify_custom_indices = ['f', 'g', 'h', 'r', 'i', 'o', 'b']
+"Set bookmark"
+let g:startify_bookmarks = [
+  \ '~/.vimrc',
+  \ '~/localrepos/blog/vac_20131215.md',
+  \ ]
+
+"
+" Yankround:
+"
+nmap p <Plug>(yankround-p)
+nmap P <Plug>(yankround-P)
+nmap <C-p> <Plug>(yankround-prev)
+nmap <C-n> <Plug>(yankround-next)
+let g:yankround_max_history = 50
+nnoremap <Space>k :Unite yankround -direction=botright -toggle<CR>
+
+"==================================================================="
+" T E S T                                                           "
+"==================================================================="

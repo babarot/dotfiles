@@ -53,8 +53,9 @@ else
 	PS_ATODE=""
 fi
 
-if [ -z "$(type -t __git_ps1)" ]; then
-	export PS1="[${PS_USER}${PS_ATODE}@${PS_HOST}${PS_SCREEN}${PS_SSH} ${PS_HIST}:${PS_WORK}]\$ "
+if [ -f $BASH_COMPLETION_DIR/git ]; then
+#if [ ! -z "$(type -t __git_ps1)" ]; then
+	export PS1="[${PS_USER}${PS_ATODE}@${PS_HOST}${PS_SCREEN}${PS_SSH} ${PS_HIST}:${PS_WORK}]\[\033[01;32m\]"'$(if git status &>/dev/null;then echo git[branch:$(git branch | cut -d" "  -f2-) change:$(git status -s |wc -l)];fi)\[\033[00m\]\$ '
 else
 	GIT_PS1_SHOWDIRTYSTATE=true
 	GIT_PS1_SHOWSTASHSTATE=true

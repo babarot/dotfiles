@@ -35,6 +35,7 @@ function _bookmark_usage() {
 				echo -en "  -h, --help     display this help and exit.\n"
 				echo -en "  -e, --edit     edit bookmark-list.\n"
 				echo -en "  -p, --plane    display the list without a color.\n\n"
+				echo -en "  -R, --refresh  update the list by deleting unavailable directorirs.\n\n"
 				shift
 				;;
 			'regist')
@@ -118,6 +119,13 @@ function _bookmark_show() {
 				cat $bookmarklist | sed "s $HOME ~ g"
 				shift 1
 				return 0
+				;;
+			'-R'|'--refresh' )
+				if _bookmark_refresh; then
+					return 0
+				else
+					return 1
+				fi
 				;;
 			'--' )
 				shift 1

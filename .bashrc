@@ -23,8 +23,7 @@
 # Variable declaration part
 export OS=$(uname | awk '{print tolower($1)}')
 export MASTERD="$HOME/.bash.d"
-export PATH="$MASTERD/bin:$PATH"
-export HOMEDOTFILES="$HOME/.dotfiles"
+export PATH="$MASTERD/bin:$HOME/bin:$PATH"
 export EDITOR=vim
 export VIMC=`which vim`
 export LANG=ja_JP.UTF-8
@@ -67,6 +66,5 @@ fi
 
 # If function 'nowon' exist, call and unset it.
 if type nowon >/dev/null 2>&1; then
-	#_COWSAY_USE:ghostbusters
 	nowon && unset nowon
 fi

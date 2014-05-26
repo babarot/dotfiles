@@ -9,7 +9,7 @@
 
 # Some aliases
 alias ls='ls -F --color=auto --show-control-chars'
-alias rm=$HOME/.bash.d/trash.sh
+alias rm="$MASTERD/trash.sh"
 alias e='gvim'
 
 # Enable the configuration file about colors

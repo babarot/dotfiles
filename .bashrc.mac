@@ -55,5 +55,5 @@ function tex() {
 
 # Some aliases
 alias e='gvim'
-alias rm='~/.bash.d/debris.sh'
+alias rm="$MASTERD/debris.sh"
 alias ql='qlmanage -p "$@" >& /dev/null'

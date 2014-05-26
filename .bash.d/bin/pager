@@ -10,6 +10,7 @@ usage() {
 
 function spl(){
 	local File Path Str Pager="${PAGER:-less}"
+	local Pager='less +Gg'
 	declare -i {D,L}Num=0
 	declare -a List
 

@@ -1,6 +1,29 @@
+function readlink() {
+
+	TARGET_FILE=$1
+	
+	cd `dirname $TARGET_FILE`
+	TARGET_FILE=`basename $TARGET_FILE`
+	
+	# Iterate down a (possible) chain of symlinks
+	while [ -L "$TARGET_FILE" ]
+	do
+		TARGET_FILE=`readlink $TARGET_FILE`
+		cd `dirname $TARGET_FILE`
+		TARGET_FILE=`basename $TARGET_FILE`
+	done
+	
+	# Compute the canonicalized name by finding the physical path 
+	# for the directory we're in and appending the target file.
+	PHYS_DIR=`pwd -P`
+	RESULT=$PHYS_DIR/$TARGET_FILE
+	echo $RESULT
+}
+
 function random_cowsay() {
 	# /usr/local/Cellar/cowsay/3.03/share/cows
-	COWS=$(readlink -f $(which cowsay))/../../share/cows
+	#COWS=$(readlink -f $(which cowsay))/../../share/cows
+	COWS=readlink $(which cowsay)/../../share/cows
 	NBRE_COWS=$(ls -1 $COWS | wc -l)
 	COWS_RANDOM=$(expr $RANDOM % $NBRE_COWS + 1)
 	COW_NAME=$(ls -1 $COWS | awk -F\. -v COWS_RANDOM_AWK=$COWS_RANDOM 'NR == COWS_RANDOM_AWK {print $1}')

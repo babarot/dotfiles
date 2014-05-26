@@ -43,6 +43,8 @@ if which git >/dev/null 2>&1; then
 	}
 fi
 
+alias cl="$MASTERD/catless.sh"
+
 # common aliases
 alias ..="cd .."
 alias .2="cd ../.."

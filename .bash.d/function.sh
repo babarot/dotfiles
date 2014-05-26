@@ -119,3 +119,264 @@ mkdir ()
 }
 
 calc(){ awk "BEGIN{ print $* }" ;}
+
+function BLACK { echo -e "\e[30$*\e[m"; }
+function RED { echo -e "\e[31m$*\e[m"; }
+function GREEN { echo -e "\e[32m$*\e[m"; }
+function YELLOW { echo -e "\e[33m$*\e[m"; }
+function BLUE { echo -e "\e[34m$*\e[m"; }
+function MAGENTA { echo -e "\e[35m$*\e[m"; }
+function CYAN { echo -e "\e[36m$*\e[m"; }
+function WHITE { echo -e "\e[37m$*\e[m"; }
+
+function color_giver() {
+	if [ $# -le 1 ]; then
+		return 1
+	elif [ $# -eq 3 ]; then
+		option="$3;"
+	fi
+	text=$1
+	color=$2
+	case $color in
+		1|[Bb]lack) color=30 ;;
+		2|[Rr]ed) color=31 ;;
+		3|[Gg]reen) color=32 ;;
+		4|[Yy]ellow) color=33 ;;
+		5|[Bb]lue) color=34 ;;
+		6|[Mm]agenta) color=35 ;;
+		7|[Cc]yan) color=36 ;;
+		8|[Ww]hite) color=37 ;;
+	esac
+	
+	echo -e "\033[${option}${color}m${text}\033[m"
+}
+
+
+function bg_rotation_bar() {
+	### How to use this function
+	###
+	###>> . ./general.func
+	###>> bg_rotation_bar
+	###>> 
+	###>> if sleep 10; then
+	###>>   kill -9 $!
+	###>>   exit 0
+	###>> fi
+	### Write the above contents to sh file.
+
+	#trap 'kill -9 $!' 1 2 3 15
+#exec 3>&1
+
+	for ((current_count=0; ; current_count++)); do
+		let type=current_count%4
+		case "$type" in
+			0) echo -ne "|\033[1D";;
+			1) echo -ne "/\033[1D";;
+			2) echo -ne "-\033[1D";;
+			3) echo -ne "\\\\\033[1D";;
+		esac
+		sleep 0.01s
+	done &
+#exec 3>&1
+}
+
+function bg_clean() {
+	### How to use this function
+	###
+	### !!case 1!!
+	###>> . ~/.bash.d/lib/general.func
+	###>> 
+	###>> trap 'bg_clean' EXIT INT ERR
+	###>> 
+	###>> bg_rotation_bar
+	###>> sleep 3
+	###
+	### !!case 2!!
+	###>> . ~/.bash.d/lib/general.func
+	###>> 
+	###>> bg_rotation_bar
+	###>> if sleep 3; then
+	###>>   bg_clean
+	###>> fi
+	###
+	[ ! -z "$!" ] && kill $!
+}
+
+function try_catch() {
+	set -e
+	set -o pipefail
+	trap 'exit -1' ERR
+}
+
+function abs_path() {
+	if [ -z "$1" ]; then
+		return 1
+	fi
+	
+	if [ `expr x"$1" : x'/'` -ne 0 ]; then
+		local rel="$1"
+	else
+		local rel="$PWD/$1"
+	fi
+	
+	local abs="/"
+	local _IFS="$IFS"; IFS='/'
+	
+	for comp in $rel; do
+		case "$comp" in
+			'.' | '')
+				continue
+				;;
+			'..'	)
+				abs=`dirname "$abs"`
+				;;
+			*		)
+				[ "$abs" = "/" ] && abs="/$comp" || abs="$abs/$comp"
+				;;
+		esac
+	done
+	echo "$abs"
+	IFS="$_IFS"
+}
+
+function rel_path() {
+	if [ -z "$1" ]; then
+		return 1
+	fi
+
+	if [ `expr x"$1" : x'/'` -eq 0 ]; then
+		echo "$1: not an absolute path"
+		return 1
+	fi
+
+	local org=`expr x"$PWD" : x'/\(.*\)'`
+	local abs=`expr x"$1"   : x'/\(.*\)'`
+	local rel="."
+	local org1=""
+	local abs1=""
+
+	while true; do
+		org1=`expr x"$org" : x'\([^/]*\)'`
+		abs1=`expr x"$abs" : x'\([^/]*\)'`
+
+		[ "$org1" != "$abs1" ] && break
+
+		org=`expr x"$org" : x'[^/]*/\(.*\)'`
+		abs=`expr x"$abs" : x'[^/]*/\(.*\)'`
+	done
+
+	if [ -n "$org" ]; then
+		local _IFS="$IFS"; IFS='/'
+		for c in $org; do
+			rel="$rel/.."
+		done
+		IFS="$_IFS"
+	fi
+
+	if [ -n "$abs" ]; then
+		rel="$rel/$abs"
+	fi
+
+	rel=`expr x"$rel" : x'\./\(.*\)'`
+	echo "$rel"
+}
+
+
+function is_pipe() {
+	if [ -p /dev/stdin ]; then
+	#if [ -p /dev/fd/0  ]; then
+	#if [ -p /proc/self/fd/0 ]; then
+	#if [ -t 0 ]; then
+		# echo a | is_pipe
+		return 0
+	elif [ -p /dev/stdout ]; then
+		# is_pipe | cat
+		return 0
+	else
+		# is_pipe (Only!)
+		return 1
+	fi
+}
+
+function in_pipe() {
+	# echo a | in_pipe
+	if [ -p /dev/stdin ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+function out_pipe() {
+	# out_pipe | cat
+	if [ -p /dev/stdout ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+function nonewline() {
+	if [ "$(echo -n)" = "-n" ]; then
+		echo "${@:-> }\c"
+	else
+		echo -n "${@:-> }"
+	fi
+}
+
+function is_num() {
+	expr "$1" \* 1 >/dev/null 2>&1
+	if [ $? -ge 2 ]; then
+		return 1
+	else
+		return 0
+	fi
+}
+
+function is_num2() {
+	[ "$1" -eq 0 ] 2>/dev/null
+	if [ $? -ge 2 ]; then
+		# $1 is a NOT a valid integer.
+		return 1
+	else
+		# $1 is a valid integer.
+		return 0
+	fi
+}
+
+function strcmp() {
+	# abc == abc (return  0)
+	# abc =< def (return -1)
+	# def >= abc (return  1)
+	if [ $# -ne 2 ]; then
+		echo "Usage: strcmp string1 string2" 1>&2
+		exit 1
+	fi
+	if [ "$1" = "$2" ]; then
+		#return 0
+		echo "0"
+	else
+		local _TMP=`{ echo "$1"; echo "$2"; } | sort -n | sed -n '1p'`
+
+		if [ "$_TMP" = "$1" ]; then
+			#return -1
+			echo "-1"
+		else
+			#return 1
+			echo "1"
+		fi
+	fi
+}
+
+function strlen() {
+	local length=`echo "$1" | wc -c | sed -e 's/ *//'`
+	echo `expr $length - 1`
+}
+
+function Atoa() {
+	echo $* | tr '[A-Z]' '[a-z]'
+}
+
+function atoA() {
+	echo $* | tr '[a-z]' '[A-Z]'
+}

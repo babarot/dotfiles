@@ -37,6 +37,7 @@ if isdirectory(s:neobundle_root)
 	NeoBundle 'LeafCage/yankround.vim'
 	NeoBundle 'junegunn/vim-easy-align'
 	NeoBundle 'jiangmiao/auto-pairs'
+	NeoBundle 'vim-scripts/Align'
 	NeoBundle 'b4b4r07/b4color', { "base" : $HOME."/.vim/colors/" }
 	NeoBundle 'altercation/vim-colors-solarized', { "base" : $HOME."/.vim/colors/solarized" }
 	NeoBundle 'nanotech/jellybeans.vim', { "base" : $HOME."/.vim/colors/jellybeans" }

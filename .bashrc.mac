@@ -53,6 +53,24 @@ function tex() {
 	fi
 }
 
+function path()
+{ 
+	if [ -z "$1" ]; then
+		echo $(abs_path ".")
+		save=$_
+	else
+		for FILE in "$@"
+		do
+			[ ! -e $FILE ] && continue
+			save+=( $(abs_path "$FILE") )
+			echo ${save[${#save[@]}-1]}
+		done
+	fi
+	for i in ${save[@]}; do
+		echo $i
+	done | pbcopy
+}
+
 # Some aliases
 alias e='gvim'
 alias rm="$MASTERD/debris.sh"

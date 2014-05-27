@@ -1,17 +1,26 @@
 #-------------------------------------------------------------
 # SOME ALIASES
 #-------------------------------------------------------------
+# May be performed as follows: If you want to cancel this setting temporarily.
+#
+# prompt:~$ alias >/tmp/alias.tmp
+# prompt:~$ unalias -a
+# prompt:~$ (some actions)
+# prompt:~$ source /tmp/alias.tmp
+#
 
-if [ "$OS" = 'darwin' ]; then
-	alias ls="`which ls` -GF"
+# LS
+if type gls >/dev/null 2>&1; then
+	alias ls="gls --color=auto -F"
 else
-	alias ls="`which ls` --color=auto -F"
+	if [ "$OS" = 'darwin' ]; then
+		alias ls="ls -GF"
+	else
+		alias ls="ls --color=auto -F"
+	fi
 fi
 
-if which gls >/dev/null; then
-	alias ls="`which gls` --color=auto -F"
-fi
-
+# VI
 if $VIMC --version | grep "+clipboard" >/dev/null; then
 	alias vi=$VIMC
 else
@@ -21,15 +30,7 @@ else
 	fi
 fi
 
-if [ "$OS" = "darwin" ]; then
-	alias ds_clear='find . -name ".DS_Store" -print -exec rm -r {} ";" ; find . -name ._* -exec rm -r {} ";"'
-elif [ "$OS" = "linux" ]; then
-	alias barc="vi ~/.bashrc; source ~/.bashrc"
-	alias virc="vi ~/.vimrc"
-	alias reload="clear; source ~/.bashrc"
-fi
-
-if which git >/dev/null 2>&1; then
+if type git >/dev/null 2>&1; then
 	alias gst='git status'
 	gdi() { git diff | awk '/^diff/{print $3}' | sed 's%^a/%%'; }
 	gvi()
@@ -44,6 +45,7 @@ if which git >/dev/null 2>&1; then
 fi
 
 alias cl="$MASTERD/catless.sh"
+alias pfsort="$MASTERD/pfsort.sh"
 
 # common aliases
 alias ..="cd .."
@@ -70,6 +72,11 @@ alias C="LANG=C"
 alias J="LANG=ja_JP.UTF-8"
 alias temp="test -e ~/temporary && command cd ~/temporary || mkdir ~/temporary && cd ~/temporary"
 alias untemp="command cd $HOME && rm ~/temporary && ls"
-alias ssle="openssl enc -e -aes-128-cbc -in"
-alias ssld="openssl enc -d -aes-128-cbc -in"
 alias cdx="builtin cd $@ && ls"
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+if type colordiff >/dev/null 2>&1 ; then
+	alias diff=colordiff
+fi

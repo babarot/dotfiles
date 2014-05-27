@@ -68,3 +68,6 @@ fi
 if type nowon >/dev/null 2>&1; then
 	nowon && unset nowon
 fi
+
+# Cdhist configure
+export enable_auto_cdls=1

@@ -380,3 +380,8 @@ function Atoa() {
 function atoA() {
 	echo $* | tr '[a-z]' '[A-Z]'
 }
+
+function exists { type $1 >/dev/null 2>&1 ; return $? ; }
+function pathview {
+	perl -e 'print join q(), map { qq($_\n) } split /:+/, $ENV{PATH}; '
+}

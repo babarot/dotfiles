@@ -1,4 +1,4 @@
-function readlink() {
+function my_readlink() {
 
 	TARGET_FILE=$1
 	
@@ -23,7 +23,7 @@ function readlink() {
 function random_cowsay() {
 	# /usr/local/Cellar/cowsay/3.03/share/cows
 	#COWS=$(readlink -f $(which cowsay))/../../share/cows
-	COWS=readlink $(which cowsay)/../../share/cows
+	COWS=`my_readlink $(which cowsay)/../../share/cows`
 	NBRE_COWS=$(ls -1 $COWS | wc -l)
 	COWS_RANDOM=$(expr $RANDOM % $NBRE_COWS + 1)
 	COW_NAME=$(ls -1 $COWS | awk -F\. -v COWS_RANDOM_AWK=$COWS_RANDOM 'NR == COWS_RANDOM_AWK {print $1}')

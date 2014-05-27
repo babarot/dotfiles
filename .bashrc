@@ -34,6 +34,7 @@ which less >/dev/null && {
 	export LESS='-f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
 	export LESSCHARSET=utf-8
 }
+export enable_auto_cdls=1
 
 # Conditional branch by operating system
 if [ "$OS" = "linux" ]; then
@@ -68,6 +69,3 @@ fi
 if type nowon >/dev/null 2>&1; then
 	nowon && unset nowon
 fi
-
-# Cdhist configure
-export enable_auto_cdls=1

@@ -75,3 +75,4 @@ function path()
 alias e='gvim'
 alias rm="$MASTERD/debris.sh"
 alias ql='qlmanage -p "$@" >& /dev/null'
+alias ds_clear='find . -name ".DS_Store" -print -exec rm -r {} ";" ; find . -name ._* -exec rm -r {} ";"'

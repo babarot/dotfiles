@@ -259,7 +259,7 @@ else
 	"if g:is_mac
 		" Vim for mac
 		if isdirectory(expand('~/.vim/colors/b4color'))
-			call system('mv ~/.vim/colors/b4color/b4color.vim ~/.vim/colors')
+			"call system('mv ~/.vim/colors/b4color/b4color.vim ~/.vim/colors')
 			colorscheme solarized
 		elseif isdirectory(expand('~/.vim/colors/jellybeans'))
 			colorscheme jellybeans

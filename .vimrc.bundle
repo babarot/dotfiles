@@ -40,7 +40,7 @@ if isdirectory(s:neobundle_root)
 	NeoBundle 'tpope/vim-fugitive'
 	NeoBundle 'vim-scripts/Align'
 	NeoBundle 'b4b4r07/solarized', { "base" : $HOME."/.vim/colors/" }
-	NeoBundle 'altercation/vim-colors-solarized', { "base" : $HOME."/.vim/colors/solarized" }
+	"NeoBundle 'altercation/vim-colors-solarized', { "base" : $HOME."/.vim/colors/solarized" }
 	NeoBundle 'nanotech/jellybeans.vim', { "base" : $HOME."/.vim/colors/jellybeans" }
 	NeoBundle has('lua') ? 'Shougo/neocomplete' : 'Shougo/neocomplcache'
 

@@ -33,7 +33,7 @@ if isdirectory(s:neobundle_root)
 	NeoBundle 'thinca/vim-splash'
 	NeoBundle 'tpope/vim-surround'
 	NeoBundle 'osyo-manga/vim-anzu'
-	NeoBundle 'mhinz/vim-startify'
+	"NeoBundle 'mhinz/vim-startify'
 	NeoBundle 'LeafCage/yankround.vim'
 	NeoBundle 'junegunn/vim-easy-align'
 	NeoBundle 'jiangmiao/auto-pairs'

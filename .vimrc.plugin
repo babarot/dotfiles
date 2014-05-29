@@ -139,6 +139,7 @@ nmap N <Plug>(anzu-mode-N)
 "
 " Startify:
 "
+let g:autoloaded_startify = 0
 "Custom Header (For example, date command)"
 let g:startify_custom_header =
   \ map(split(system('date'), '\n'), '"   ". v:val') + ['','']

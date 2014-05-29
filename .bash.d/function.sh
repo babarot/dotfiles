@@ -1,5 +1,5 @@
-function my_readlink() {
-
+function my_readlink()
+{
 	TARGET_FILE=$1
 	
 	cd `dirname $TARGET_FILE`
@@ -20,7 +20,8 @@ function my_readlink() {
 	echo $RESULT
 }
 
-function random_cowsay() {
+function random_cowsay()
+{
 	#TARGET_FILE=$(which cowsay)/../../share/cows
 
 	#while [ "$TARGET_FILE" != "" ]; do
@@ -47,7 +48,8 @@ function random_cowsay() {
 	cowsay -f $COW_NAME "`Fortune -s`"
 }
 
-function nowon() {
+function nowon()
+{
 	#[ -x ~/.bash.d/bin/readlink ] || return 1
 	if which fortune cowsay >/dev/null; then
 		while :
@@ -61,7 +63,8 @@ function nowon() {
 	echo -en "\n"
 }
 
-function _refuge_complement() {
+function _refuge_complement()
+{
 	local curw prev
 
 	COMPREPLY=()
@@ -78,7 +81,8 @@ function _refuge_complement() {
 }
 complete -F _refuge_complement refuge
 
-function _salvage_complement() {
+function _salvage_complement()
+{
 	local curw prev
 
 	COMPREPLY=()
@@ -97,7 +101,8 @@ function _salvage_complement() {
 }
 complete -F _salvage_complement salvage
 
-function _todrop_complement() {
+function _todrop_complement()
+{
 	local curw prev
 
 	COMPREPLY=()
@@ -117,7 +122,7 @@ function _todrop_complement() {
 }
 complete -F _todrop_complement todrop
 
-mkdir ()
+function mkdir()
 {
 	for arg do
 		if [ -e "$arg" ]; then
@@ -128,18 +133,19 @@ mkdir ()
 	done
 }
 
-calc(){ awk "BEGIN{ print $* }" ;}
+function calc() { awk "BEGIN{ print $* }"; }
 
-function BLACK { echo -e "\e[30$*\e[m"; }
-function RED { echo -e "\e[31m$*\e[m"; }
-function GREEN { echo -e "\e[32m$*\e[m"; }
-function YELLOW { echo -e "\e[33m$*\e[m"; }
-function BLUE { echo -e "\e[34m$*\e[m"; }
-function MAGENTA { echo -e "\e[35m$*\e[m"; }
-function CYAN { echo -e "\e[36m$*\e[m"; }
-function WHITE { echo -e "\e[37m$*\e[m"; }
+function BLACK()   { echo -e "\e[30m$*\e[m"; }
+function RED()     { echo -e "\e[31m$*\e[m"; }
+function GREEN()   { echo -e "\e[32m$*\e[m"; }
+function YELLOW()  { echo -e "\e[33m$*\e[m"; }
+function BLUE()    { echo -e "\e[34m$*\e[m"; }
+function MAGENTA() { echo -e "\e[35m$*\e[m"; }
+function CYAN()    { echo -e "\e[36m$*\e[m"; }
+function WHITE()   { echo -e "\e[37m$*\e[m"; }
 
-function color_giver() {
+function color_giver()
+{
 	if [ $# -le 1 ]; then
 		return 1
 	elif [ $# -eq 3 ]; then
@@ -162,7 +168,8 @@ function color_giver() {
 }
 
 
-function bg_rotation_bar() {
+function bg_rotation_bar()
+{
 	### How to use this function
 	###
 	###>> . ./general.func
@@ -175,7 +182,6 @@ function bg_rotation_bar() {
 	### Write the above contents to sh file.
 
 	#trap 'kill -9 $!' 1 2 3 15
-#exec 3>&1
 
 	for ((current_count=0; ; current_count++)); do
 		let type=current_count%4
@@ -187,10 +193,10 @@ function bg_rotation_bar() {
 		esac
 		sleep 0.01s
 	done &
-#exec 3>&1
 }
 
-function bg_clean() {
+function bg_clean()
+{
 	### How to use this function
 	###
 	### !!case 1!!
@@ -212,13 +218,15 @@ function bg_clean() {
 	[ ! -z "$!" ] && kill $!
 }
 
-function try_catch() {
+function try_catch()
+{
 	set -e
 	set -o pipefail
 	trap 'exit -1' ERR
 }
 
-function abs_path() {
+function abs_path()
+{
 	if [ -z "$1" ]; then
 		return 1
 	fi
@@ -249,7 +257,8 @@ function abs_path() {
 	IFS="$_IFS"
 }
 
-function rel_path() {
+function rel_path()
+{
 	if [ -z "$1" ]; then
 		return 1
 	fi
@@ -292,7 +301,8 @@ function rel_path() {
 }
 
 
-function is_pipe() {
+function is_pipe()
+{
 	if [ -p /dev/stdin ]; then
 	#if [ -p /dev/fd/0  ]; then
 	#if [ -p /proc/self/fd/0 ]; then
@@ -308,7 +318,8 @@ function is_pipe() {
 	fi
 }
 
-function in_pipe() {
+function in_pipe()
+{
 	# echo a | in_pipe
 	if [ -p /dev/stdin ]; then
 		return 0
@@ -317,7 +328,8 @@ function in_pipe() {
 	fi
 }
 
-function out_pipe() {
+function out_pipe()
+{
 	# out_pipe | cat
 	if [ -p /dev/stdout ]; then
 		return 0
@@ -326,7 +338,8 @@ function out_pipe() {
 	fi
 }
 
-function nonewline() {
+function nonewline()
+{
 	if [ "$(echo -n)" = "-n" ]; then
 		echo "${@:-> }\c"
 	else
@@ -334,7 +347,8 @@ function nonewline() {
 	fi
 }
 
-function is_num() {
+function is_num()
+{
 	expr "$1" \* 1 >/dev/null 2>&1
 	if [ $? -ge 2 ]; then
 		return 1
@@ -343,7 +357,8 @@ function is_num() {
 	fi
 }
 
-function is_num2() {
+function is_num2()
+{
 	[ "$1" -eq 0 ] 2>/dev/null
 	if [ $? -ge 2 ]; then
 		# $1 is a NOT a valid integer.
@@ -354,7 +369,8 @@ function is_num2() {
 	fi
 }
 
-function strcmp() {
+function strcmp()
+{
 	# abc == abc (return  0)
 	# abc =< def (return -1)
 	# def >= abc (return  1)
@@ -378,20 +394,39 @@ function strcmp() {
 	fi
 }
 
-function strlen() {
+function strlen()
+{
 	local length=`echo "$1" | wc -c | sed -e 's/ *//'`
 	echo `expr $length - 1`
 }
 
-function Atoa() {
+function Atoa()
+{
 	echo $* | tr '[A-Z]' '[a-z]'
 }
 
-function atoA() {
+function atoA()
+{
 	echo $* | tr '[a-z]' '[A-Z]'
 }
 
-function exists { type $1 >/dev/null 2>&1 ; return $? ; }
-function pathview {
+function exists()
+{
+	type $1 >/dev/null 2>&1; return $?;
+}
+
+function pathview()
+{
 	perl -e 'print join q(), map { qq($_\n) } split /:+/, $ENV{PATH}; '
+}
+
+function deadlink()
+{
+	local f=
+	for f in `command ls -A ${1:-$PWD}`; do
+		if [ -h "$f" ]; then
+			[ -a "$f" ] || command rm -i "$f"
+		fi
+	done
+	unset f
 }

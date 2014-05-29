@@ -22,16 +22,6 @@ function my_readlink()
 
 function random_cowsay()
 {
-	#TARGET_FILE=$(which cowsay)/../../share/cows
-
-	#while [ "$TARGET_FILE" != "" ]; do
-	#    cd `dirname $TARGET_FILE`
-	#    FILENAME=`basename $TARGET_FILE`
-	#    TARGET_FILE=`readlink $FILENAME`
-	#done
-
-	#COWS=`pwd -P`/$FILENAME
-
 	# /usr/local/Cellar/cowsay/3.03/share/cows
 	#COWS=$(readlink -f $(which cowsay))/../../share/cows
 	COWS=`my_readlink $(which cowsay)/../../share/cows`

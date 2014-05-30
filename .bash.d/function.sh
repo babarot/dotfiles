@@ -435,3 +435,30 @@ function search()
 		fi
 	done
 }
+
+function sort()
+{
+	if [ "$1" = '--help' ]
+	then
+		command sort --help
+		echo -e '\n\nOptions that are described below is an additional option that was made by b4b4r07.\n'
+		echo -e '  -p, --particular-field    sort an optional field; if not given arguments, 2 as a default\n'
+		return 0
+	elif [ "$1" = '-p' -o "$1" = '--particular-field' ]
+	then
+		shift
+		gawk '
+		{
+			line[NR] = $'${1:-2}' "\t" $0;
+		}
+
+		END {
+			asort(line);
+			for (i = 1; i <= NR; i++) {
+				print substr(line[i], index(line[i], "\t") + 1);
+			}
+		}' 2>/dev/null
+		return 0
+	fi
+	command sort "$@"
+}

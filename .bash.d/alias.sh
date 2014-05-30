@@ -14,7 +14,7 @@ if type gls >/dev/null 2>&1; then
 	alias ls="gls --color=auto -F"
 fi
 
-# VIM
+# Vim
 declare -a paths=( `. $MASTERD/function.sh; search vim` )
 declare -i I=0
 for (( I = 0; I < ${#paths[@]}; ++I  ))
@@ -27,7 +27,7 @@ do
 	fi
 done
 
-# GIT
+# Git
 if type git >/dev/null 2>&1; then
 	alias gst='git status'
 	gdi() { git diff | awk '/^diff/{print $3}' | sed 's%^a/%%'; }
@@ -42,10 +42,12 @@ if type git >/dev/null 2>&1; then
 	}
 fi
 
+# MASTERD aliases
 alias cl="$MASTERD/catless.sh"
+alias melt="$MASTERD/melt.rb"
 alias pfsort="$MASTERD/pfsort.sh"
 
-# common aliases
+# Common aliases
 alias ..="cd .."
 alias .2="cd ../.."
 alias .3="cd ../../.."

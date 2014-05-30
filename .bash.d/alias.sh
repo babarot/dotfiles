@@ -20,15 +20,19 @@ else
 	fi
 fi
 
-# VI
-if $VIMC --version | grep "+clipboard" >/dev/null; then
-	alias vi=$VIMC
-else
-	VIMC=/usr/local/bin/vim
-	if $VIMC --version | grep "+clipboard" >/dev/null; then
-		alias vi=$VIMC
+declare -a paths=( `. $MASTERD/function.sh; search vim` )
+declare -i I=0
+
+for (( I = 0; I < ${#paths[@]}; ++I  ))
+do
+	#[ -z "${paths[$I]}" ] && continue
+	if ${paths[$I]}/vim --version | grep "+clipboard" >/dev/null; then
+		VIMPATH="${paths[$I]}/vim"
+		EDITOR="$VIMPATH"
+		alias vi="$VIMPATH"
+		alias vim="$VIMPATH"
 	fi
-fi
+done
 
 if type git >/dev/null 2>&1; then
 	alias gst='git status'

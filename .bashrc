@@ -24,8 +24,7 @@
 export OS=$(uname | awk '{print tolower($1)}')
 export MASTERD="$HOME/.bash.d"
 export PATH="$MASTERD/bin:$HOME/bin:$PATH"
-export EDITOR=vim
-export VIMC=`which vim`
+export EDITOR=
 export LANG=ja_JP.UTF-8
 export LC_ALL=en_US.UTF-8
 type less >/dev/null 2>&1 && {
@@ -50,6 +49,7 @@ if [ -f ~/.bashrc.local ]; then
 	source ~/.bashrc.local
 fi
 
+# If completion files exist, load it.
 [ -f /etc/bash_completion ]     && . /etc/bash_completion
 [ -f /etc/git-completion.bash ] && . /etc/git-completion.bash
 [ -f /etc/git-prompt.bash ]     && . /etc/git-prompt.bash

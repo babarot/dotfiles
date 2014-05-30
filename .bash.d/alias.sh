@@ -80,7 +80,8 @@ alias cdx="builtin cd $@ && ls"
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
+alias diff='diff -u'
 
 if type colordiff >/dev/null 2>&1 ; then
-	alias diff=colordiff
+	alias diff='colordiff -u'
 fi

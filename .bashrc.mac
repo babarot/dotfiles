@@ -72,6 +72,7 @@ function path()
 }
 
 # Some aliases
+alias ls='ls -GF'
 alias e='gvim'
 alias rm="$MASTERD/debris.sh"
 alias ql='qlmanage -p "$@" >& /dev/null'

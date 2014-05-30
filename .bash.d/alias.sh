@@ -12,28 +12,22 @@
 # LS
 if type gls >/dev/null 2>&1; then
 	alias ls="gls --color=auto -F"
-else
-	if [ "$OS" = 'darwin' ]; then
-		alias ls="ls -GF"
-	else
-		alias ls="ls --color=auto -F"
-	fi
 fi
 
+# VIM
 declare -a paths=( `. $MASTERD/function.sh; search vim` )
 declare -i I=0
-
 for (( I = 0; I < ${#paths[@]}; ++I  ))
 do
-	#[ -z "${paths[$I]}" ] && continue
-	if ${paths[$I]}/vim --version | grep "+clipboard" >/dev/null; then
-		VIMPATH="${paths[$I]}/vim"
-		EDITOR="$VIMPATH"
-		alias vi="$VIMPATH"
-		alias vim="$VIMPATH"
+	if ${paths[$I]}/vim --version | grep "+clipboard" >/dev/null
+	then
+		export EDITOR="${paths[$I]}/vim"
+		alias vi="$EDITOR"
+		alias vim="$EDITOR"
 	fi
 done
 
+# GIT
 if type git >/dev/null 2>&1; then
 	alias gst='git status'
 	gdi() { git diff | awk '/^diff/{print $3}' | sed 's%^a/%%'; }

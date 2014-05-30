@@ -420,3 +420,18 @@ function deadlink()
 	done
 	unset f
 }
+
+function search()
+{
+	local    IFS=$'\n'
+	local -i I=0
+	local -a TARGET=( `pathview` )
+
+	for (( I = 0; I < ${#TARGET[@]}; ++I  ))
+	do
+		if [ -f ${TARGET[$I]}/"$1" ]; then
+			#echo "Exist $1 in ${TARGET[$I]}"
+			echo "${TARGET[$I]}"
+		fi
+	done
+}

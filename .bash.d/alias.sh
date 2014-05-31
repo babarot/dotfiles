@@ -45,6 +45,7 @@ fi
 # MASTERD aliases
 alias cl="$MASTERD/catless.sh"
 alias melt="$MASTERD/melt.rb"
+alias rm="$MASTERD/safe.sh"
 
 # Common aliases
 alias ..="cd .."

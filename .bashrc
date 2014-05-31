@@ -38,10 +38,10 @@ export enable_auto_cdls=1
 # Conditional branch by operating system
 if [ "$OS" = "linux" ]; then
 	#Linux
-	source ~/.bashrc.unix
+	[ -f ~/.bashrc.unix ] && source ~/.bashrc.unix
 elif [ "$OS" = "darwin" ]; then
 	#Mac OS X
-	source ~/.bashrc.mac
+	[ -f ~/.bashrc.mac ] && source ~/.bashrc.mac
 fi
 
 # If local config file exist, load it.

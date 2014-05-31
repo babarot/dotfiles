@@ -462,3 +462,12 @@ function sort()
 	fi
 	command sort "$@"
 }
+
+function tac()
+{
+	[ -z "$1" ] && exit 1
+	`which ex` -s "${1}" <<-EOF
+		g/^/mo0
+		%p
+	EOF
+}

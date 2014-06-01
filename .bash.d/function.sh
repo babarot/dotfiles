@@ -413,12 +413,15 @@ function pathview()
 function deadlink()
 {
 	local f=
-	for f in `command ls -A ${1:-$PWD}`; do
-		if [ -h "$f" ]; then
-			[ -a "$f" ] || command rm -i "$f"
+
+	for f in `command ls -A "${1:-$PWD}"`; do
+		local fpath="${1:-$PWD}/$f"
+		if [ -h "$fpath" ]; then
+			[ -a "$fpath" ] || command rm -i "$fpath"
 		fi
 	done
-	unset f
+
+	unset f fpath
 }
 
 function search()

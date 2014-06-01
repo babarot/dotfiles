@@ -474,3 +474,20 @@ function tac()
 		%p
 	EOF
 }
+
+function set_homedir_lang()
+{
+	if [ $OS = 'darwin' ]; then
+		# CF: http://qiita.com/is0me/items/0b7b846f1f0860629950
+		if [ $(echo "`sw_vers -productVersion |cut -d. -f1 -f2` > 10.8" | bc) -eq 1 ]; then
+			cd /System/Library/CoreServices/SystemFolderLocalizations/ja.lproj
+		else
+			cd /System/Library/CoreServices/SystemFolderLocalizations/Japanese.lproj
+		fi
+		sudo mv SystemFolderLocalizations.strings SystemFolderLocalizations.strings.back
+		sudo cp ../en.lproj/SystemFolderLocalizations.strings .
+		killall Finder
+	elif [ $OS = 'linux' ]; then
+		LANG=C xdg-user-dirs-gtk-update
+	fi
+}

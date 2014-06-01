@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 if [ $# -eq 0 ]; then
 	echo "usage: rm files"
 	exit 1
@@ -23,7 +24,35 @@ fi
 
 if [ "$1" = '-l' ]
 then
-	tail -n "${2:-10}" $trash_log
+	shift
+	OLDIFS=$IFS && IFS=$'\n'
+
+	array_a=( $(tail -n "${1:-10}" $trash_log | awk '{print $1,$2}') )
+	array=(   $(tail -n "${1:-10}" $trash_log | awk '{print $3}') )
+	array_e=( $(tail -n "${1:-10}" $trash_log | awk '{print $4}') )
+
+	max=`for((I = 0; I < ${#array[*]}; ++I)); do
+		echo "${#array[I]}"
+	done | sort -nr | head -1`
+	
+	for ((I = 0; I < ${#array[*]}; ++I))
+	do
+		diff+=(`expr "$max" - ${#array[I]}`)
+		for ((J = 0; J < ${diff[I]}; ++J))
+		do
+			array[I]+=" "
+		done
+	done
+
+	for ((I = 0; I < ${#array[*]}; ++I))
+	do
+		echo -e "${array_a[I]}\t${array[I]}\t${array_e[I]}"
+	done | sed "s $HOME ~ g"
+
+	IFS=$OLDIFS
+
+	#tail -n "${2:-10}" $trash_log
+
 	exit 0
 fi
 

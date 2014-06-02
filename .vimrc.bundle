@@ -38,6 +38,12 @@ if isdirectory(s:neobundle_root)
 	NeoBundle 'junegunn/vim-easy-align'
 	NeoBundle 'jiangmiao/auto-pairs'
 	NeoBundle 'tpope/vim-fugitive'
+	NeoBundle 'ujihisa/neco-look'
+	NeoBundleLazy 'mattn/excitetranslate-vim', {
+	      \ 'depends': 'mattn/webapi-vim',
+	      \ 'autoload' : { 'commands': ['ExciteTranslate']}
+	      \ }
+	NeoBundle 'mattn/gist-vim'
 	NeoBundle 'vim-scripts/Align'
 	NeoBundle 'b4b4r07/solarized', { "base" : $HOME."/.vim/colors/" }
 	"NeoBundle 'altercation/vim-colors-solarized', { "base" : $HOME."/.vim/colors/solarized" }

@@ -161,6 +161,19 @@ nmap <C-n> <Plug>(yankround-next)
 let g:yankround_max_history = 50
 nnoremap <Space>k :Unite yankround -direction=botright -toggle<CR>
 
+"
+" Gist_vim:
+"
+let g:github_user = 'b4b4r07'
+let g:github_token = '0417d1aeeb1016c444c5'
+let g:gist_curl_options = "-k"
+let g:gist_detect_filetype = 1
+
+"
+" ExciteTranslate:
+"
+xnoremap E :ExciteTranslate<CR>
+
 "==================================================================="
 " T E S T                                                           "
 "==================================================================="

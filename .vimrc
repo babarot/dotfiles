@@ -381,7 +381,6 @@ nnoremap <C-g> 1<C-g>
 nnoremap <C-j> :bnext<CR>
 nnoremap <C-k> :bprev<CR>
 nnoremap <C-q> :bdelete<CR>
-nnoremap <C-w> :bdelete<CR>
 
 inoremap <C-h> <Backspace>
 inoremap <C-d> <Delete>

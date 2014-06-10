@@ -12,6 +12,7 @@
 	co = checkout
 	ci = commit
 	df = diff
+	graph = log --graph --date-order --all --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=short
 [help]
 	autocorrect = 1
 [push]

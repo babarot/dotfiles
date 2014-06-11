@@ -18,7 +18,7 @@ then
 	src="$( tail -n 1 $trash_log | awk '{print $3}' )"
 	dst="$( tail -n 1 $trash_log | awk '{print $4}' )"
 	read -p "$src? " ANS
-	[ "$ANS" = 'y' ] && cp -p $dst $src
+	[ "$ANS" = 'y' ] && cp -p -R $dst $src
 	exit 0
 fi
 

@@ -37,6 +37,8 @@ function poweroff() {
 function op() {
 	if [ -z "$1" ]; then
 		open .
+	elif [ -p /dev/stdin ]; then
+		open $(cat -) "$@"
 	else
 		open "$@"
 	fi
@@ -55,7 +57,10 @@ function tex() {
 
 function path()
 { 
-	if [ -z "$1" ]; then
+	if [ -p /dev/stdin ]; then
+		echo $(abs_path `cat -`)
+		save=$_
+	elif [ -z "$1" ]; then
 		echo $(abs_path ".")
 		save=$_
 	else

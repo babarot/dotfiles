@@ -18,7 +18,7 @@ then
 	src="$( tail -n 1 $trash_log | awk '{print $3}' )"
 	dst="$( tail -n 1 $trash_log | awk '{print $4}' )"
 	read -p "$src? " ANS
-	[ "$ANS" = 'y' ] && cp -p -R $dst $src
+	[ "$ANS" = 'y' ] && cp -p $dst $src
 	exit 0
 fi
 
@@ -27,32 +27,20 @@ then
 	shift
 	OLDIFS=$IFS && IFS=$'\n'
 
-	array_a=( $(tail -n "${1:-10}" $trash_log | awk '{print $1,$2}') )
-	array=(   $(tail -n "${1:-10}" $trash_log | awk '{print $3}') )
-	array_e=( $(tail -n "${1:-10}" $trash_log | awk '{print $4}') )
+	array_a=( $(tail -n "${1:-10}" $trash_log | awk '{print $1,$2}' | sed "s $HOME ~ g") )
+	array=(   $(tail -n "${1:-10}" $trash_log | awk '{print $3}' | sed "s $HOME ~ g") )
+	array_e=( $(tail -n "${1:-10}" $trash_log | awk '{print $4}' | sed "s $HOME ~ g") )
 
 	max=`for((I = 0; I < ${#array[*]}; ++I)); do
 		echo "${#array[I]}"
 	done | sort -nr | head -1`
-	
+
 	for ((I = 0; I < ${#array[*]}; ++I))
 	do
-		diff+=(`expr "$max" - ${#array[I]}`)
-		for ((J = 0; J < ${diff[I]}; ++J))
-		do
-			array[I]+=" "
-		done
+		printf "%s\t%-${max}s\t%s\n" ${array_a[I]} ${array[I]} ${array_e[I]}
 	done
 
-	for ((I = 0; I < ${#array[*]}; ++I))
-	do
-		echo -e "${array_a[I]}\t${array[I]}\t${array_e[I]}"
-	done | sed "s $HOME ~ g"
-
 	IFS=$OLDIFS
-
-	#tail -n "${2:-10}" $trash_log
-
 	exit 0
 fi
 

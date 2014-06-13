@@ -2,7 +2,7 @@ function my_readlink()
 {
 	TARGET_FILE=$1
 	
-	cd `dirname $TARGET_FILE`
+	builtin cd `dirname $TARGET_FILE`
 	TARGET_FILE=`basename $TARGET_FILE`
 	
 	# Iterate down a (possible) chain of symlinks

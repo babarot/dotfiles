@@ -350,6 +350,9 @@ if g:is_windows
 elseif g:is_mac
 	nnoremap ; :
 	vnoremap ; :
+elseif g:is_unix
+	nnoremap ; :
+	vnoremap ; :
 endif
 
 " Easy escaping

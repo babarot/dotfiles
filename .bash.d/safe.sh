@@ -95,6 +95,7 @@ function safety_rm()
 }
 
 ## MAIN PART
+[ -f $safety_rm_log ] || touch $safety_rm_log
 [ -e $safety_rm_box ] || mkdir -p $safety_rm_box || {
 	echo "$safety_rm_box: could not create"
 	exit 1

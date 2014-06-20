@@ -121,29 +121,38 @@ function _cdhist_list() {
 }
 
 function _cdhist_find() {
+	[ -z "$1" ] && return 1
 	db=$(sort $cdhistlist | uniq | \grep -i "/\.\?$1")
 	shift
 
 	for i do
+		if [ "${!#}" = $i ]; then
+			if ( expr "${!#}" : '[0-9]*' ) >/dev/null; then
+				_cdhist_cd $(echo "${db}" | nl | awk '{if($1=='`eval echo '$'{$#}`') print $2}' | sed "s ~ $HOME g")
+				return
+			fi
+		fi
 		db=$(echo "${db}" | \grep -i "/\.\?${i}")
 	done
 
 	if [ $(echo "${db}" | wc -l) -eq 1 ]; then
 		_cdhist_cd "${db}"
+	elif [ $(echo "${db}" | wc -l) -le 10 ]; then
+		echo "${db}" | sed "s $HOME ~ g" | nl
 	else
 		echo "${db}" | sed "s $HOME ~ g"
 	fi
 }
 
-function - {
+function -() {
 	_cdhist_forward "$@";
 }
 
-function + {
+function +() {
 	_cdhist_back "$@";
 }
 
-function = { 
+function =() { 
 	if ( test -z "$1" || expr "$1" : '[0-9]*' || expr "`eval echo '$'{$#}`" : '[0-9]*' ) >/dev/null; then
 		_cdhist_history "$@"
 		return
@@ -165,11 +174,18 @@ function = {
 }
 
 function cd() {
-	if [ "$1" = '-l' -o "$1" = '--most-used' ]; then
+	if [ "$1" = '-h' -o "$1" = '--help' ]; then
+		echo "help"
+		return 0
+	elif [ "$1" = '-m' -o "$1" = '--most-used' ]; then
+		shift
+		_cdhist_history "$@"
+		return 0
+	elif [ "$1" = '-l' -o "$1" = '--top-used' ]; then
 		shift
 		_cdhist_list "$@"
 		return 0
-	elif [ "$1" = '-f' -o "$1" = '--find' ]; then
+	elif [ "$1" = '-s' -o "$1" = '--search' ]; then
 		shift
 		_cdhist_find "$@"
 		return 0
@@ -186,11 +202,11 @@ else
 fi
 
 if [ "$enable_auto_cdls" ]; then
-	function _cdhist_auto_cdls() {
+	function auto_cdls() {
 		if [ "$OLDPWD" != "$PWD" ]; then
 			ls
 			OLDPWD="$PWD"
 		fi
 	}
-	PROMPT_COMMAND="$PROMPT_COMMAND"$'\n'_cdhist_auto_cdls
+	PROMPT_COMMAND="$PROMPT_COMMAND"$'\n'auto_cdls
 fi

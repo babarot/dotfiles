@@ -167,7 +167,7 @@ function =() {
 	if [ $(echo "${db}" | wc -l) -eq 1 ]; then
 		_cdhist_cd $(echo "${db}" | awk '{print $2}' | sed "s ~ $HOME g")
 	else
-		echo "${db}" | sed "s ~ $HOME g"
+		echo "${db}" | sed "s $HOME ~ g"
 	fi
 }
 

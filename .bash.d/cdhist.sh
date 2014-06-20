@@ -144,11 +144,11 @@ function _cdhist_find() {
 	fi
 }
 
-function -() {
+function +() {
 	_cdhist_forward "$@";
 }
 
-function +() {
+function -() {
 	_cdhist_back "$@";
 }
 

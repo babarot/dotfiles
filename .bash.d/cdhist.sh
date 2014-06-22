@@ -11,6 +11,45 @@ declare    CDHIST_CDLOG="$HOME/.cdhistlog"
 declare -i CDHIST_CDQMAX=10
 declare -a CDHIST_CDQ=()
 
+# Enable ls after cd automatically
+if [ "$enable_auto_cdls" ]; then
+	function auto_cdls() {
+		if [ "$OLDPWD" != "$PWD" ]; then
+			ls
+			OLDPWD="$PWD"
+		fi
+	}
+	PROMPT_COMMAND="$PROMPT_COMMAND"$'\n'auto_cdls
+fi
+
+############################################################################################
+# {{{                                                                                       
+# Declare functions that manipulate the data structure in this cdhist.                      
+# *_cdhist_usage:      how to use cdhist                                                    
+# *_cdhist_initialize: when loading cdhist, assign a recent cd-history to the CDHIST_CDQ    
+# *_cdhist_reset:      if CDHIST_CDQMAX do not exist, initialize the CDHIST_CDQ             
+# *_cdhist_disp:       view HOME as ~                                                       
+# *_cdhist_add:        add rear of CDHIST_CDQ                                               
+# *_cdhist_del:        delete rear of CDHIST_CDQ                                            
+# *_cdhist_rot:        rotate the CDHIST_CDQ                                                
+# *_cdhist_cd:         cd function in cdhist script                                         
+# *_cdhist_history:    listup the CDHIST_CDQ                                                
+# *_cdhist_forward:    cd +: advance PWD                                                    
+# *_cdhist_back:       cd -: return PWD(OLDPWD)                                             
+# *_cdhist_list:       enumerate path high number of uses                                   
+# *_cdhist_find:       search path from CDHIST_CDLOG                                        
+#                                                                                           
+############################################################################################
+
+function _cdhist_usage() {
+	echo -e "cd [OPTION] path\n"
+	echo -e "\t-h\t\tdisplay this help"
+	echo -e "\t-s word\t\tnarrow down from the past movement history"
+	echo -e "\t\t\trepeat all the given arguments until it is gone"
+	echo -e "\t-l [num]\tlist up a high number of uses"
+	echo -e "\t\t\tmove to the path of argument\n"
+}
+
 function _cdhist_initialize() {
 	OLDIFS=$IFS; IFS=$'\n'
 	
@@ -116,12 +155,18 @@ function _cdhist_list() {
 	if [ -z "$1" ]; then
 		sort $CDHIST_CDLOG | uniq -c | sort -nr | head | sed "s $HOME ~ g" | awk '{printf "%-50s (%4d)\n", $2, $1}' | nl
 	else
-		_cdhist_cd $(sort $CDHIST_CDLOG | uniq -c | sort -nr | head | nl | awk '{if($1=='$1') print $3}' | sed "s ~ $HOME g")
-	fi #&& return 0
+		if [ $1 -le 10 ]; then
+			_cdhist_cd $(sort $CDHIST_CDLOG | uniq -c | sort -nr | head | nl | awk '{if($1=='$1') print $3}' | sed "s ~ $HOME g")
+		fi
+	fi
 }
 
 function _cdhist_find() {
-	[ -z "$1" ] && return 1
+	[ -z "$1" ] && {
+		echo "-s: too few arguments" 1>&2
+		return 1
+	}
+
 	db=$(sort $CDHIST_CDLOG | uniq | \grep -i "/\.\?$1")
 	shift
 
@@ -143,6 +188,9 @@ function _cdhist_find() {
 		echo "${db}" | sed "s $HOME ~ g"
 	fi
 }
+#
+# }}}
+#
 
 function +() {
 	_cdhist_forward "$@";
@@ -173,12 +221,7 @@ function =() {
 
 function cd() {
 	if [ "$1" = '-h' -o "$1" = '--help' ]; then
-		echo -e "cd [OPTION] path\n"
-		echo -e "\t-h\t\tdisplay this help"
-		echo -e "\t-s word\t\tnarrow down from the past movement history"
-		echo -e "\t\t\trepeat all the given arguments until it is gone"
-		echo -e "\t-l [num]\tlist up a high number of uses"
-		echo -e "\t\t\tmove to the path of argument\n"
+		_cdhist_usage
 		return 1
 	elif [ "$1" = '-l' -o "$1" = '--top-used' ]; then
 		shift
@@ -190,20 +233,13 @@ function cd() {
 	_cdhist_cd "$@"
 }
 
+#
+# CDHIST START
+#
 if [ -f $CDHIST_CDLOG ]; then
 	_cdhist_initialize
 	unset -f _cdhist_initialize
 	cd $HOME
 else
 	_cdhist_reset
-fi
-
-if [ "$enable_auto_cdls" ]; then
-	function auto_cdls() {
-		if [ "$OLDPWD" != "$PWD" ]; then
-			ls
-			OLDPWD="$PWD"
-		fi
-	}
-	PROMPT_COMMAND="$PROMPT_COMMAND"$'\n'auto_cdls
 fi

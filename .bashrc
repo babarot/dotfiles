@@ -36,7 +36,6 @@ type less >/dev/null 2>&1 && {
 	export LESS='-f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
 	export LESSCHARSET=utf-8
 }
-export enable_auto_cdls=1
 
 # Conditional branch by operating system
 if [ "$OS" = "linux" ]; then

@@ -20,6 +20,9 @@
 #                                                            #
 #============================================================#
 
+# Create new file with 644 perms
+umask 022
+
 # Variable declaration part
 export OS=$(uname | awk '{print tolower($1)}')
 export MASTERD="$HOME/.bash.d"

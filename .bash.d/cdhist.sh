@@ -1,9 +1,24 @@
-#!/bin/bash
-
-# Only shell script for bash
-if [ ! "$BASH_VERSION" ]; then
+#                                                                     
+#                     .o8  oooo         o8o               .           
+#                    "888  `888         `"'             .o8           
+#      .ooooo.   .oooo888   888 .oo.   oooo   .oooo.o .o888oo         
+#     d88' `"Y8 d88' `888   888P"Y88b  `888  d88(  "8   888           
+#     888       888   888   888   888   888  `"Y88b.    888           
+#     888   .o8 888   888   888   888   888  o.  )88b   888 .         
+#     `Y8bod8P' `Y8bod88P" o888o o888o o888o 8""888P'   "888"         
+#                                                                     
+######################################################################
+# 
+# Cdhist adds 'web-browser like history' to your BASH shell.          
+# Every time you change the current directory it records the          
+# directory you can go back by simply typing a short command          
+# such as '-' or '+', just like clicking web-browsers's 'back' button.
+# It's more convenient than using directory stacks                    
+# when you walk around two or three directories.                      
+# 
+if [ -z "$BASH_VERSION" ]; then
 	echo "Require bash"
-	exit
+	exit 1
 fi
 
 # Declare and initialize a variable
@@ -11,34 +26,45 @@ declare    CDHIST_CDLOG="$HOME/.cdhistlog"
 declare -i CDHIST_CDQMAX=10
 declare -a CDHIST_CDQ=()
 
-# Enable ls after cd automatically
-if [ "$enable_auto_cdls" ]; then
-	function auto_cdls() {
-		if [ "$OLDPWD" != "$PWD" ]; then
-			ls
-			OLDPWD="$PWD"
-		fi
-	}
-	PROMPT_COMMAND="$PROMPT_COMMAND"$'\n'auto_cdls
+# Loading configure file about cdhist, if exist
+if [ -f ~/.cdhist.conf ]; then
+	source ~/.cdhist.conf
 fi
 
+# Enable/disable this script
+if [ "$disable_cdhist" ]; then
+	return
+fi
+
+# Enable after cd automatically
+function do_eachtime_cd() {
+	if [ "$OLDPWD" != "$PWD" ]; then
+		# enable ls after cd, if $enable_auto_cdls exist
+		[ "$disable_auto_cdls" ] || ls
+		pwd >>$CDHIST_CDLOG
+		OLDPWD="$PWD"
+	fi
+}
+PROMPT_COMMAND="$PROMPT_COMMAND"$'\n'do_eachtime_cd
+
 ############################################################################################
-# {{{                                                                                       
-# Declare functions that manipulate the data structure in this cdhist.                      
-# *_cdhist_usage:      how to use cdhist                                                    
-# *_cdhist_initialize: when loading cdhist, assign a recent cd-history to the CDHIST_CDQ    
-# *_cdhist_reset:      if CDHIST_CDQMAX do not exist, initialize the CDHIST_CDQ             
-# *_cdhist_disp:       view HOME as ~                                                       
-# *_cdhist_add:        add rear of CDHIST_CDQ                                               
-# *_cdhist_del:        delete rear of CDHIST_CDQ                                            
-# *_cdhist_rot:        rotate the CDHIST_CDQ                                                
-# *_cdhist_cd:         cd function in cdhist script                                         
-# *_cdhist_history:    listup the CDHIST_CDQ                                                
-# *_cdhist_forward:    cd +: advance PWD                                                    
-# *_cdhist_back:       cd -: return PWD(OLDPWD)                                             
-# *_cdhist_list:       enumerate path high number of uses                                   
-# *_cdhist_find:       search path from CDHIST_CDLOG                                        
-#                                                                                           
+#                                                                                          #
+# These are the function group that users operate INDIRECTLY.                              #
+# Declare functions that manipulate the data structure in this cdhist.                     #
+# *_cdhist_usage:      how to use cdhist                                                   #
+# *_cdhist_initialize: when loading cdhist, assign a recent cd-history to the CDHIST_CDQ   #
+# *_cdhist_reset:      if CDHIST_CDQMAX do not exist, initialize the CDHIST_CDQ            #
+# *_cdhist_disp:       view HOME as ~                                                      #
+# *_cdhist_add:        add rear of CDHIST_CDQ                                              #
+# *_cdhist_del:        delete rear of CDHIST_CDQ                                           #
+# *_cdhist_rot:        rotate the CDHIST_CDQ                                               #
+# *_cdhist_cd:         cd function in cdhist script                                        #
+# *_cdhist_history:    listup the CDHIST_CDQ                                               #
+# *_cdhist_forward:    cd +: advance PWD                                                   #
+# *_cdhist_back:       cd -: return PWD(OLDPWD)                                            #
+# *_cdhist_list:       enumerate path high number of uses                                  #
+# *_cdhist_narrow:     search path from CDHIST_CDLOG                                       #
+#                                                                                          #
 ############################################################################################
 
 function _cdhist_usage() {
@@ -56,7 +82,10 @@ function _cdhist_initialize() {
 	local -a mylist=( $( cat $CDHIST_CDLOG ) )
 	local -a temp=()
 	local -i i=count=0
-	
+
+	# I want to do 'sort $CDHIST_CDLOG | uniq | tail 10'
+	# However, if I do that, the order of the lasted log file is messed up.
+	# The following for-loop execute "uniq" disposal without "sort".
 	for ((i=${#mylist[*]}-1; i>=0; i--)); do
 		if ! echo "${temp[*]}" | grep -x "${mylist[i]}" >/dev/null; then
 			temp[$count]="${mylist[i]}"
@@ -101,7 +130,7 @@ function _cdhist_rot() {
 
 function _cdhist_cd() {
 	local i f=0
-	builtin cd "$@" && pwd >>$CDHIST_CDLOG || return 1
+	builtin cd "$@" || return 1
 	for ((i=0; i<${#CDHIST_CDQ[@]}; i++)); do
 		if [ "${CDHIST_CDQ[$i]}" = "$PWD" ]; then f=1; break; fi
 	done
@@ -125,7 +154,7 @@ function _cdhist_history() {
 		done
 	elif [ "$1" -lt ${#CDHIST_CDQ[@]} ]; then
 		d=${CDHIST_CDQ[$1]}
-		if builtin cd "$d" && pwd >>$CDHIST_CDLOG; then
+		if builtin cd "$d"; then
 			_cdhist_rot $(($1+1)) -1
 		else
 			_cdhist_del $1
@@ -137,8 +166,6 @@ function _cdhist_forward() {
 	_cdhist_rot ${#CDHIST_CDQ[@]} -${1:-1}
 	if ! builtin cd "${CDHIST_CDQ[0]}"; then
 		_cdhist_del 0
-	else
-		pwd >>$CDHIST_CDLOG
 	fi
 }
 
@@ -146,8 +173,6 @@ function _cdhist_back() {
 	_cdhist_rot ${#CDHIST_CDQ[@]} ${1:-1}
 	if ! builtin cd "${CDHIST_CDQ[0]}"; then
 		_cdhist_del 0
-	else
-		pwd >>$CDHIST_CDLOG
 	fi
 }
 
@@ -161,13 +186,13 @@ function _cdhist_list() {
 	fi
 }
 
-function _cdhist_find() {
+function _cdhist_narrow() {
 	[ -z "$1" ] && {
-		echo "-s: too few arguments" 1>&2
+		echo "too few arguments" 1>&2
 		return 1
 	}
 
-	db=$(sort $CDHIST_CDLOG | uniq | \grep -i "/\.\?$1")
+	local db=$(sort $CDHIST_CDLOG | uniq | \grep -i "/\.\?$1")
 	shift
 
 	for i do
@@ -188,9 +213,17 @@ function _cdhist_find() {
 		echo "${db}" | sed "s $HOME ~ g"
 	fi
 }
-#
-# }}}
-#
+
+############################################################################################
+#                                                                                          #
+# These are the function group that users operate DIRECTLY.                                #
+# Using function accutually                                                                #
+# * +:  go to the next directory (do _cdhist_forward)                                      #
+# * -:  go back to the old directory (do _cdhist_back)                                     #
+# * =:  displays the ring buffer of the movement history (do _cdhist_history)              #
+# * cd: change directory                                                                   #
+#                                                                                          #
+############################################################################################
 
 function +() {
 	_cdhist_forward "$@";
@@ -201,12 +234,20 @@ function -() {
 }
 
 function =() { 
-	if ( test -z "$1" || expr "$1" : '[0-9]*' || expr "`eval echo '$'{$#}`" : '[0-9]*' ) >/dev/null; then
+	if [ -z "$1" ]; then
 		_cdhist_history "$@"
+		return 0
+	fi
+	if expr "$1" : '[0-9]*' >/dev/null; then
+		_cdhist_history "$1"
+		return
+	fi
+	if expr "${!#}" : '[0-9]*' >/dev/null; then
+		_cdhist_history "${!#}"
 		return
 	fi
 
-	db=$(_cdhist_history | \grep -i "/\.\?$1")
+	local db=$(_cdhist_history | \grep -i "/\.\?$1")
 	shift
 	for i do
 		db=$(echo "${db}" | \grep -i "/\.\?${i}")
@@ -220,21 +261,35 @@ function =() {
 }
 
 function cd() {
-	if [ "$1" = '-h' -o "$1" = '--help' ]; then
-		_cdhist_usage
-		return 1
-	elif [ "$1" = '-l' -o "$1" = '--top-used' ]; then
-		shift
-		_cdhist_list "$@" && return 0 || return 1
-	elif [ "$1" = '-s' -o "$1" = '--search' ]; then
-		shift
-		_cdhist_find "$@" && return 0 || return 1
-	fi
 	_cdhist_cd "$@"
 }
 
+function qfind() {
+	if [ -z "$1" ]; then
+		return 1
+	fi
+	local IFS=$'\n'
+	local array=( $(sort $CDHIST_CDLOG | uniq) )
+	
+	if [ "$1" == '-n' ]; then
+		array=( $(tail -n 100 $CDHIST_CDLOG | sort | uniq) )
+		shift
+	fi
+	
+	for i in "${array[@]}"
+	do
+		find "$i" -maxdepth 1 -type f -name "*$1*" 2>/dev/null
+	done | sed "s $HOME ~ g" | \grep --color "$1"
+}
+
+function nw() {
+	_cdhist_narrow "$@"
+}
+
 #
-# CDHIST START
+# This is a real practice department in this script
+# If $CDHIST_CDLOG exist, substitute $CDHIST_CDLOG records for $CDHIST_CDQ
+# Otherwise, execute _cdhist_reset that substitute $PWD for $CDHIST_CDQ
 #
 if [ -f $CDHIST_CDLOG ]; then
 	_cdhist_initialize

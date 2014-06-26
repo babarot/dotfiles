@@ -57,10 +57,6 @@ if [ -f ~/.bashrc.local ]; then
 	source ~/.bashrc.local
 fi
 
-# If completion files exist, load it.
-[ -f /etc/bash_completion ]     && . /etc/bash_completion
-[ -f /etc/git-completion.bash ] && . /etc/git-completion.bash
-[ -f /etc/git-prompt.bash ]     && . /etc/git-prompt.bash
 # History size and history settings
 HISTSIZE=50000
 HISTFILESIZE=50000
@@ -76,6 +72,11 @@ if [ -d $MASTERD ] ; then
 	echo -en "\n"
 	unset f
 fi
+
+# If completion files exist, load it.
+[ -f /etc/bash_completion ]     && . /etc/bash_completion
+[ -f /etc/git-completion.bash ] && . /etc/git-completion.bash
+[ -f /etc/git-prompt.bash ]     && . /etc/git-prompt.bash
 
 # If function 'nowon' exist, call and unset it.
 if type nowon >/dev/null 2>&1; then

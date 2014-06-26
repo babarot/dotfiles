@@ -1,0 +1,5 @@
+alias ..="cd .."
+alias la="ls -AF"
+alias ll="ls -lF"
+
+cd() { builtin cd "$@" && ls; }

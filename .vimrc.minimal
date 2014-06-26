@@ -1,0 +1,75 @@
+syntax on
+set number
+set autoindent
+set cindent
+set smartindent
+set smarttab
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set vb t_vb=
+set list
+set listchars=eol:<,tab:>.
+set wildmenu
+set wildmode=list,full
+set hidden
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch
+
+autocmd BufEnter * execute ":lcd " . expand("%:p:h")
+
+augroup EchoFilePath
+	autocmd WinEnter * execute "normal! 1\<C-g>"
+augroup END
+
+inoremap jj <ESC>
+cnoremap <expr> j getcmdline()[getcmdpos()-2] ==# 'j' ? "\<BS>\<C-c>" : 'j'
+onoremap jj <ESC>
+inoremap j<Space> j
+onoremap j<Space> j
+
+vnoremap v $h
+
+nnoremap <silent> <ESC><ESC> :nohls<CR>
+nnoremap j gj
+nnoremap k gk
+nnoremap <Up> <Nop>
+nnoremap <Down> <Nop>
+nnoremap <Left> <Nop>
+nnoremap <Right> <Nop>
+nnoremap n nzz
+nnoremap N Nzz
+nnoremap * *zz
+nnoremap # #zz
+nnoremap g* g*zz
+nnoremap g# g#zz
+nnoremap ZZ <Nop>
+nnoremap <C-g> 1<C-g>
+nnoremap <C-j> :bnext<CR>
+nnoremap <C-k> :bprev<CR>
+nnoremap <C-q> :bdelete<CR>
+
+inoremap <C-h> <Backspace>
+inoremap <C-d> <Delete>
+inoremap <C-m> <Return>
+inoremap <C-i> <Tab>
+inoremap [ []<LEFT>
+inoremap ( ()<LEFT>
+inoremap " ""<LEFT>
+inoremap ' ''<LEFT>
+inoremap ` ``<LEFT>
+
+cnoremap <C-k> <UP>
+cnoremap <C-j> <DOWN>
+cnoremap <C-l> <RIGHT>
+cnoremap <C-h> <LEFT>
+cnoremap <C-d> <DELETE>
+cnoremap <C-m> <CR>
+cnoremap <C-p> <UP>
+cnoremap <C-n> <DOWN>
+cnoremap <C-f> <RIGHT>
+cnoremap <C-b> <LEFT>
+cnoremap <C-a> <HOME>
+cnoremap <C-e> <END>

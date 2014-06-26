@@ -177,6 +177,12 @@ let g:gist_detect_filetype = 1
 "
 xnoremap E :ExciteTranslate<CR>
 
+"
+" Gundo_vim:
+"
+nmap U :<C-u>GundoToggle<CR>
+let g:gundo_auto_preview = 0
+
 "==================================================================="
 " T E S T                                                           "
 "==================================================================="

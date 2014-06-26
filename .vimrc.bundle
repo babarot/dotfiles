@@ -41,6 +41,7 @@ if isdirectory(s:neobundle_root)
 	NeoBundle 'jiangmiao/auto-pairs'
 	NeoBundle 'tpope/vim-fugitive'
 	NeoBundle 'ujihisa/neco-look'
+	NeoBundle 'sjl/gundo.vim'
 	NeoBundleLazy 'mattn/excitetranslate-vim', {
 	      \ 'depends': 'mattn/webapi-vim',
 	      \ 'autoload' : { 'commands': ['ExciteTranslate']}

@@ -37,6 +37,12 @@ type less >/dev/null 2>&1 && {
 	export LESSCHARSET=utf-8
 }
 
+#
+# interactive mode #------------------------------------------------------------
+[[ $- != *i* ]] && return
+# interactive mode #------------------------------------------------------------
+#
+
 # Conditional branch by operating system
 if [ "$OS" = "linux" ]; then
 	#Linux

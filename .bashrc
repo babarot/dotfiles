@@ -27,7 +27,7 @@ umask 022
 export OS=$(uname | awk '{print tolower($1)}')
 export MASTERD="$HOME/.bash.d"
 export PATH="$MASTERD/bin:$HOME/bin:$PATH"
-export EDITOR=
+export EDITOR=vi
 export LANG=ja_JP.UTF-8
 export LC_ALL=en_US.UTF-8
 type less >/dev/null 2>&1 && {

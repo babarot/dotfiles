@@ -474,3 +474,11 @@ function tac()
 		%p
 	EOF
 }
+
+function i() {
+	if [ "$1" ]; then
+		history 1000 | grep "$@"
+	else
+		history 30
+	fi
+}

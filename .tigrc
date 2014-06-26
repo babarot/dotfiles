@@ -1,0 +1,5 @@
+bind main G !@hub browse -- commit/%(commit)
+bind diff G !@hub browse -- commit/%(commit)
+set split-view-height = 80%
+set diff-context = 5
+set main-view = id:width=12 date author commit-title:graph=yes,refs=yes

@@ -61,6 +61,10 @@ fi
 [ -f /etc/bash_completion ]     && . /etc/bash_completion
 [ -f /etc/git-completion.bash ] && . /etc/git-completion.bash
 [ -f /etc/git-prompt.bash ]     && . /etc/git-prompt.bash
+# History size and history settings
+HISTSIZE=50000
+HISTFILESIZE=50000
+shopt -s histappend
 
 # Loads the file except executable one.
 test -d $MASTERD || mkdir $MASTERD

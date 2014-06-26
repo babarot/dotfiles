@@ -1,24 +1,24 @@
-#=============================================================
-#    _               _              
-#   | |__   __ _ ___| |__  _ __ ___ 
-#   | '_ \ / _` / __| '_ \| '__/ __|
-#  _| |_) | (_| \__ \ | | | | | (__ 
-# (_)_.__/ \__,_|___/_| |_|_|  \___|
-#                                   
-#*************************************************************
-#
-#  bash - GNU Bourne-Again SHell
-#  Bash is Copyright (C) 1989-2011 by the Free Software
-#  Foundation, Inc.
-#  Multiplatform bashrc (.bashrc) file of b4b4r07
-#
-#  The majority of the code here assumes you are on a GNU
-#  system (most likely a Linux box) and is based on code
-#  found on Usenet or internet.
-#
-#  Report bugs to b4b4r07 at gmail dot com.
-#
-#=============================================================
+#============================================================#
+#       _               _                                    #
+#      | |__   __ _ ___| |__  _ __ ___                       #
+#      | '_ \ / _` / __| '_ \| '__/ __|                      #
+#     _| |_) | (_| \__ \ | | | | | (__                       #
+#    (_)_.__/ \__,_|___/_| |_|_|  \___|                      #
+#                                                            #
+#************************************************************#
+#                                                            #
+#  bash - GNU Bourne-Again SHell                             #
+#  Bash is Copyright (C) 1989-2011 by the Free Software      #
+#  Foundation, Inc.                                          #
+#  Multiplatform bashrc (.bashrc) file of b4b4r07            #
+#                                                            #
+#  The majority of the code here assumes you are on a GNU    #
+#  system (most likely a Linux box) and is based on code     #
+#  found on Usenet or internet.                              #
+#                                                            #
+#  Report bugs to b4b4r07 at gmail dot com.                  #
+#                                                            #
+#============================================================#
 
 # Variable declaration part
 export OS=$(uname | awk '{print tolower($1)}')

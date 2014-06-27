@@ -488,3 +488,51 @@ function i() {
 		history 30
 	fi
 }
+
+function catless() {
+	declare    File
+	declare -a List
+	declare -i {,D,L}Num=0
+	declare -r Pager='less +Gg'
+
+	#unalias -a
+
+	while (( $# > 0 ));
+	do
+		if [ -d "$1" ]; then
+			#echo "$1: directory"
+			ls -bF "$1"
+			return 0
+		elif [ -r "$1" ]; then
+			List[${#List[@]}]=$( < "$1" )
+		else
+			#List[${#List[@]}]=$( <$(ls -1 | agrep -1 -i "$1") )
+			echo "$1: no such file or directory"
+			return 1
+		fi
+		shift
+	done
+
+	if (( ${#List[@]} > 0 )); then
+		# pack the all contents of ${List[@]} into the $File
+		File=$( for i in "${List[@]}"; do echo "$i"; done )
+	elif [[ -t 0 ]] ; then
+		echo "no argument" 1>&2
+		return 1
+	else
+		File=$( cat - )
+	fi
+
+	LNum=$( echo -n "$File" | grep -c '' )
+	(( LNum > 0 )) || {
+		echo "no entry" 1>&2
+		return 1
+	}
+
+	DNum=$[ $( stty 'size' < '/dev/tty' | cut -d' ' -f1 ) - 2 ]
+	if (( LNum > DNum )); then
+		echo "$File" |${Pager}
+	else
+		echo "$File"
+	fi
+}

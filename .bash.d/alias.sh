@@ -9,6 +9,8 @@
 # prompt:~$ source /tmp/alias.tmp
 #
 
+unalias -a
+
 # LS
 if type gls >/dev/null 2>&1; then
 	alias ls="gls --color=auto -F"

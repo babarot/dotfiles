@@ -83,3 +83,9 @@ alias diff='diff -u'
 if type colordiff >/dev/null 2>&1 ; then
 	alias diff='colordiff -u'
 fi
+
+# The first word of each simple command, if unquoted, is checked to see 
+# if it has an alias. [...] If the last character of the alias value is 
+# a space or tab character, then the next command word following the 
+# alias is also checked for alias expansion
+alias sudo='sudo '

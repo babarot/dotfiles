@@ -1,40 +1,51 @@
-FILES=$(shell echo .??*)
-EXCES=.DS_Store .git
+RSYNC_OPTS	= --exclude ".git/" --exclude ".DS_Store" --exclude "README.md" --exclude="Makefile" -avh --no-perms
 
 all: help
 
-copy: $(foreach f, $(filter-out $(EXCES), $(FILES)), copy-$(f))
-
-install: $(foreach f, $(filter-out $(EXCES), $(FILES)), link-$(f))
-
-.PHONY: clean
-clean: $(foreach f, $(filter-out $(EXCES), $(FILES)), unlink-$(f))
-
-copy-%: %
-	@rm -rf $(HOME)/$<
-	@cp -f -R $(CURDIR)/$< $(HOME)/$<
-	@printf "Create Copy %-15s => %-30s\n" $< $(HOME)/$<
-
-link-%: %
-	@ln -snf $(CURDIR)/$< $(HOME)/$<
-	@printf "Create Symlink %-15s => %-30s\n" $< $(HOME)/$<
-
-unlink-%: %
-	@rm -rf $(HOME)/$<
-	@echo "Remove $(HOME)/$<"
-
-#vim: clean
-vim:
-	@rm -rf $(HOME)/.vimrc
-	@cp -f -R $(CURDIR)/.vimrc.ext $(HOME)/.vimrc
-
-work:
-	@rm -rf $(HOME)/.vimrc
-	@ln -snf $(CURDIR)/.vimrc.ex $(HOME)/.vimrc
-
 help:
-	@echo 'make         -> show this help'
-	@echo 'make copy    -> create copy files'
-	@echo 'make install -> create symlink files'
-	@echo 'make clean   -> remove the files'
-	@echo 'make vim     -> create vimrc.ex as vimrc'
+	@echo "make list             #=> ls -a"
+	@echo "make deploy           #=> create symlink"
+	@echo "make dry-run          #=> rsync --dry-run"
+	@echo "make run              #=> rsync"
+	@echo "make mini             #=> cp minimal rc files"
+	@echo "make update           #=> git pull origin master"
+	@echo "make clean            #=> rm -rf all files"
+
+list:
+	@ls -A
+
+deploy:
+	@echo "Start deploy dotfiles current directory."
+	@echo "If this is \"dotdir\", curretly it is ignored and copy your hand."
+	@echo ""
+	@for f in .??* ; do \
+		test "$${f}" = .git -o "$${f}" = .git/ && continue ; \
+		test "$${f}" = .DS_Store  && continue ; \
+		test "$${f}" = .bashrc.minimal  && continue ; \
+		test "$${f}" = .vimrc.minimal  && continue ; \
+		ln -v -f -s "$(PWD)/$${f}" ~ ; \
+	done ; true
+
+dry-run:
+	rsync --dry-run $(RSYNC_OPTS) . ~;
+
+run:
+	rsync $(RSYNC_OPTS) . ~;
+
+mini:
+	@for x in .*.minimal; do \
+		rm -rf  ~/"$${x%.*}"; \
+		cp -v -f "$(PWD)/$$x" ~/"$${x%.*}"; \
+	done ; true
+
+update:
+	git pull origin master
+
+clean:
+	@for f in .??* ; do \
+		test "$${f}" = .git -o "$${f}" = .git/ && continue ; \
+		test "$${f}" = .DS_Store  && continue ; \
+		test "$${f}" = .bashrc.minimal  && continue ; \
+		test "$${f}" = .vimrc.minimal  && continue ; \
+		rm -v -rf ~/"$${f}" ; \
+	done ; true

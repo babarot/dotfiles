@@ -125,6 +125,16 @@ for opt do
 				shift 2
 			fi
 			;;
+		'-o'|'--original' )
+			shift 1
+			command rm -rf "$@"
+			break
+			;;
+		'-f'|'--find' )
+			shift 1
+			find $HOME/.safe -iname *$1*
+			exit 0
+			;;
 		'--'|'-' )
 			shift 1
 			param+=( "$@" )

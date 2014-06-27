@@ -422,7 +422,15 @@ nnoremap q: <Nop>
 nnoremap q/ <Nop>
 nnoremap q? <Nop>
 
-nnoremap <C-p> :only<CR>
+nnoremap s <Nop>
+nnoremap sp <C-u>:split<CR>
+nnoremap vs <C-u>:vsplit<CR>
+nnoremap ss <C-w>w
+nnoremap S <C-w>w
+nnoremap sj <C-w>j
+nnoremap sk <C-w>k
+nnoremap sl <C-w>l
+nnoremap sh <C-w>h
 
 highlight StatusLine ctermfg=black ctermbg=white cterm=none
 highlight Visual term=reverse cterm=reverse ctermfg=darkyellow ctermbg=black

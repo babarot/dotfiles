@@ -1,3 +1,9 @@
+function functions()
+{
+	cat $MASTERD/function.sh | grep '^function' | sed 's/^function \(.*\)().*/\1/'
+	return 0
+}
+
 function my_readlink()
 {
 	TARGET_FILE=$1

@@ -26,7 +26,7 @@ deploy:
 		ln -v -f -s "$(PWD)/$${f}" "$(HOME)/$${f}" ; \
 	done ; true
 
-run:
+sync:
 	rsync $(RSYNC_OPTS) . ~;
 
 mini:

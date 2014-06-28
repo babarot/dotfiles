@@ -2,6 +2,20 @@
 
 This repository is b4b4r07's config files. By the clone this repository, you can build the same environment everywhere.
 
+## Downlands
+
+To downland it, just execute the following command:
+
+	# If you have curl installed
+	curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh
+
+	# If you have wget installed
+	wget -q -O - https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh
+
+## Much still remains to be done
+
+	cd ~/.dotfiles
+	make install
 
 ## Hierarchical description
 

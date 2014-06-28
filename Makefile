@@ -22,9 +22,8 @@ deploy:
 	@for f in .??* ; do \
 		test "$${f}" = .git -o "$${f}" = .git/ && continue ; \
 		test "$${f}" = .DS_Store  && continue ; \
-		test "$${f}" = .bashrc.minimal  && continue ; \
-		test "$${f}" = .vimrc.minimal  && continue ; \
-		ln -v -f -s "$(PWD)/$${f}" ~ ; \
+		echo "$${f}" | grep -q 'minimal' && continue ; \
+		ln -v -f -s "$(PWD)/$${f}" "$(HOME)/$${f}" ; \
 	done ; true
 
 dry-run:

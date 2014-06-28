@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 function doIt() {
 	git clone https://github.com/b4b4r07/dotfiles.git ~/.dotfiles;

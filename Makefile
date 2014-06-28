@@ -47,9 +47,6 @@ endif
 
 clean:
 	@for f in .??* ; do \
-		test "$${f}" = .git -o "$${f}" = .git/ && continue ; \
-		test "$${f}" = .DS_Store  && continue ; \
-		test "$${f}" = .bashrc.minimal  && continue ; \
-		test "$${f}" = .vimrc.minimal  && continue ; \
 		rm -v -rf ~/"$${f}" ; \
 	done ; true
+	rm -rf $(DOTFILES)

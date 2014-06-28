@@ -21,12 +21,12 @@ function doIt() {
 #if [ "$1" == "--force" -o "$1" == "-f" ]; then
 #	doIt;
 #else
-	echo "Start to install..."
-	read -p "Cloning dotfiles repo to your home. Are you sure? (y/n) " -n 1;
-	echo "";
-	if [[ $REPLY =~ ^[Yy]$ ]]; then
+#	echo "Start to install..."
+#	read -p "Cloning dotfiles repo to your home. Are you sure? (y/n) " -n 1;
+#	echo "";
+#	if [[ $REPLY =~ ^[Yy]$ ]]; then
 		doIt;
-	fi;
+#	fi;
 #fi;
 
 unset doIt;

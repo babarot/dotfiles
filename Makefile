@@ -39,6 +39,12 @@ update:
 	#git fetch && git mergr origin/master
 	git pull origin master
 
+install:
+	sh etc/myenvironment.sh
+ifeq ($(shell uname),Darwin)
+	sh osx/defaults.sh
+endif
+
 clean:
 	@for f in .??* ; do \
 		test "$${f}" = .git -o "$${f}" = .git/ && continue ; \

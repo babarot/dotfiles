@@ -1,14 +1,15 @@
-RSYNC_OPTS	= --exclude ".git/" --exclude ".DS_Store" --exclude "README.md" --exclude="Makefile" -avh --no-perms
+RSYNC_OPTS = --exclude ".git/" --exclude ".DS_Store" --exclude "README.md" --exclude="Makefile" -avh --no-perms
+DOTFILES   = $(PWD)
 
 all: help
 
 help:
-	@echo "make list             #=> ls -a"
+	@echo "make list             #=> ls -A"
 	@echo "make deploy           #=> create symlink"
-	@echo "make dry-run          #=> rsync --dry-run"
-	@echo "make run              #=> rsync"
-	@echo "make mini             #=> cp minimal rc files"
+	@echo "make rsync            #=> copy files by rsync"
+	@echo "make mini             #=> copy minimal rc files"
 	@echo "make update           #=> git pull origin master"
+	@echo "make install          #=> setup environment"
 	@echo "make clean            #=> rm -rf all files"
 
 list:

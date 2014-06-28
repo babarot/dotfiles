@@ -26,9 +26,6 @@ deploy:
 		ln -v -f -s "$(PWD)/$${f}" "$(HOME)/$${f}" ; \
 	done ; true
 
-dry-run:
-	rsync --dry-run $(RSYNC_OPTS) . ~;
-
 run:
 	rsync $(RSYNC_OPTS) . ~;
 

@@ -1,7 +1,5 @@
 # b4b4r07's dotfiles
 
-===
-
 This repository is b4b4r07's config files. By the clone this repository, you can build the same environment everywhere.
 
 ## Hierarchical description

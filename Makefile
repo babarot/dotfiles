@@ -36,7 +36,7 @@ mini:
 	done ; true
 
 update:
-	#git fetch && git mergr origin/master
+	#git fetch && git merge origin/master
 	git pull origin master
 
 install:

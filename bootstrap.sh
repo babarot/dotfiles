@@ -25,7 +25,7 @@ function doIt() {
 }
 
 if [ "$1" == "--force" -o "$1" == "-f" ]; then
-	doIt;
+	doIt
 else
 	make help
 	echo ""
@@ -33,6 +33,8 @@ else
 	echo "  1. git clone b4b4r07/dotfiles.git"
 	echo "  2. make deploy"
 	echo "  3. source .bash_profile"
-fi;
+	echo ""
+	echo "Otherwise, any other changes."
+fi
 
-unset doIt;
+unset doIt

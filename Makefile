@@ -40,6 +40,7 @@ update:
 	git pull origin master
 
 install:
+	sh init/setup.sh
 	sh init/lang.sh
 	sh init/package.sh
 ifeq ($(shell uname),Darwin)

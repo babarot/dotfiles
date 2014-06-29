@@ -9,6 +9,10 @@ echo '  \__,_|\___/ \__|_| |_|_|\___||___/ '
 echo ''
 
 function doIt() {
+	if [ -d ~/.dotfiles ]; then
+		mv  -f ~/.dotfiles ~/.dotfiles.old
+	fi
+
 	git clone https://github.com/b4b4r07/dotfiles.git ~/.dotfiles;
 	if [ $? -eq 0 ]; then
 		cd ~/.dotfiles;

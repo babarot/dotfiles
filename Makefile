@@ -40,7 +40,8 @@ update:
 	git pull origin master
 
 install:
-	sh etc/myenvironment.sh
+	sh init/lang.sh
+	sh init/package.sh
 ifeq ($(shell uname),Darwin)
 	sh osx/defaults.sh
 endif

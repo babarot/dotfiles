@@ -35,6 +35,8 @@ else
 	echo "  3. source .bash_profile"
 	echo ""
 	echo "Otherwise, any other changes."
+	echo "  Author; B4B4R07 <b4b4r07@gmail.com>"
+	echo "  GitHub; https://github.com/b4b4r07/dotfiles.git"
 fi
 
 unset doIt

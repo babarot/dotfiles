@@ -1,5 +1,12 @@
 #!/bin/bash
 
+read -p "Change from Japanese to English display of directory name. Are you sure? (y/n) " -n 1
+echo ""
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+	echo "Nothing to do. To exit."
+	exit 1
+fi
+	
 if uname -s | grep -qi "darwin"
 then
 	sudo -v

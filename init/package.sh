@@ -1,5 +1,12 @@
 #!/bin/bash
 
+read -p "Install the required commands using the package management system. Are you sure? (y/n) " -n 1
+echo ""
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+	echo "Nothing to do. To exit."
+	exit 1
+fi
+
 if [ "$OS" == "darwin" ]; then
 	PACMAN="brew"
 elif [ "$OS" == "linux" ]; then

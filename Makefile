@@ -40,11 +40,9 @@ update:
 	git pull origin master
 
 install:
-	sh init/setup.sh
-	sh init/lang.sh
-	sh init/package.sh
+	@for x in init/*.sh ; do sh $$x; done
 ifeq ($(shell uname),Darwin)
-	sh osx/defaults.sh
+	@for x in osx/*.sh ; do sh $$x; done
 endif
 
 clean:

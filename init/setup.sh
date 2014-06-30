@@ -2,7 +2,14 @@
 
 function bash_completion_install() {
 	cd /usr/local/src
-	wget http://bash-completion.alioth.debian.org/files/bash-completion-1.2.tar.gz
+	if type curl >/dev/null 2>&1; then
+		curl http://bash-completion.alioth.debian.org/files/bash-completion-1.2.tar.gz >bash-completion-1.2.tar.gz
+	elif type wget >/dev/null 2>&1; then
+		wget http://bash-completion.alioth.debian.org/files/bash-completion-1.2.tar.gz
+	else
+		echo "You don't have downloader."
+		exit
+	fi
 	./configure --prefix=''
 	sudo -v
 	sudo make
@@ -31,12 +38,12 @@ function git_setting()
 	
 	else
 		echo "You don't have downloader."
-		exit 1
+		exit
 	
 	fi
 }
 
-read -p "Install git-[completion|prompt].[bash|sh] from source. Are you sure? (y/n) " -n 1
+read -p "Install git-completion.bash and git-prompt.sh from source. Are you sure? (y/n) " -n 1
 echo ""
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	git_setting

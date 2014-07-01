@@ -41,11 +41,13 @@ function Install_Vim_From_Source()
 	sudo make install
 }
 
-if [ "$Huge" ]; then
-	# same as vim -c "NeoBundleInit";
-	vim +"NeoBundleInit";
-else
+if [ "$Small" ]; then
 	Install_Vim_From_Source;
+else
+	# same as vim -c "NeoBundleInit";
+	if [ ! -d ~/.vim/bundle/neobundle.vim ]; then
+		vim +"NeoBundleInit";
+	fi
 fi
 
 #

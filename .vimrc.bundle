@@ -79,5 +79,6 @@ else
 			NeoBundleInstall
 			echo "Finish!"
 	  	endfunction
-	call s:neobundle_init()
+	"call s:neobundle_init()
+	echo "You should do ':NeoBundleInit' at first!"
 endif

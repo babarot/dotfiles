@@ -37,6 +37,12 @@ else
 	echo "Otherwise, any other changes."
 	echo "  Author; B4B4R07 <b4b4r07@gmail.com>"
 	echo "  GitHub; https://github.com/b4b4r07/dotfiles.git"
+	echo ""
+	read -p "Cloning git repository and deploying dotfiles. Are you sure? (y/n) " -n 1
+	echo ""
+	if [[ $REPLY =~ ^[Yy]$ ]]; then
+		doIt;
+	fi
 fi
 
 unset doIt

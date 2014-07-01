@@ -124,8 +124,10 @@ function! Buftabs_show(deleted_buf)
 ""let g:loaded_splash = 1   "(on=1 / off=0)
 let s:vim_intro = $HOME . "/.vim/bundle/vim-splash/sample/intro"
 if !isdirectory(s:vim_intro)
+	call mkdir(s:vim_intro, 'p')
+	execute ":lcd " . s:vim_intro . "/.."
 	call system('git clone https://gist.github.com/OrgaChem/7630711 intro')
-	call system('mv intro $HOME/.vim/bundle/vim-splash/sample/')
+	"call system('mv intro $HOME/.vim/bundle/vim-splash/sample/')
 endif
 let g:splash#path = expand(s:vim_intro . '/vim_intro.txt')
 

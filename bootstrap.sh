@@ -27,7 +27,7 @@ function doIt() {
 if [ "$1" == "--force" -o "$1" == "-f" ]; then
 	doIt
 else
-	make help
+	#make help
 	echo ""
 	echo "By executing ./bootstrap.sh with -f option, the following commands are run."
 	echo "  1. git clone b4b4r07/dotfiles.git"

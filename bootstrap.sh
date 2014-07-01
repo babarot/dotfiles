@@ -17,10 +17,9 @@ function doIt() {
 	if [ $? -eq 0 ]; then
 		cd ~/.dotfiles;
 		make deploy;
-		cd;
-		source ~/.bash_profile
 		make help
-		echo -e "You should do '\033[33mmake install\033[m' to setup your environment."
+		source ~/.bash_profile
+		echo "You should do '\033[33mmake install\033[m' to setup your environment."
 	fi;
 }
 

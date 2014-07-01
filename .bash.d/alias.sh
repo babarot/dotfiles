@@ -21,9 +21,9 @@ declare -a paths=( `. $MASTERD/function.sh; search vim` )
 declare -i I=0
 for (( I = 0; I < ${#paths[@]}; ++I  ))
 do
-	if ${paths[$I]}/vim --version | grep "+clipboard" >/dev/null
+	if ${paths[$I]} --version | grep "+clipboard" >/dev/null
 	then
-		export EDITOR="${paths[$I]}/vim"
+		export EDITOR="${paths[$I]}"
 		alias vi="$EDITOR"
 		alias vim="$EDITOR"
 	fi

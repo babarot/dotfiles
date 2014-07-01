@@ -440,7 +440,7 @@ function search()
 	do
 		if [ -f ${TARGET[$I]}/"$1" ]; then
 			#echo "Exist $1 in ${TARGET[$I]}"
-			echo "${TARGET[$I]}"
+			echo "${TARGET[$I]}/$1"
 		fi
 	done
 }

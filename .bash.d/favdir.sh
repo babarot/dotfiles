@@ -24,7 +24,7 @@ function _favdir_usage() {
 	local -a commands
 
 	width=$( stty 'size' <'/dev/tty' | cut -d' ' -f2 )
-	commands=('show' 'regist' 'go' 'print' 'delete')
+	commands=('show' 'regist' 'gg' 'print' 'delete')
 
 	if [ $# -eq 0 ]; then
 		echo -en "${commands[@]}\n\n"
@@ -55,8 +55,8 @@ function _favdir_usage() {
 				echo -en "  -t, --temp     save paths as a disposable\n\n"
 				shift
 				;;
-			'go')
-				echo -en "go name\n"
+			'gg')
+				echo -en "gg name\n"
 				echo -en "  Go to the registered path just like jumping\n\n"
 				echo -en "Options:\n"
 				echo -en "  -h, --help     display this help and exit\n\n"
@@ -231,10 +231,10 @@ function _favdir_regist() {
 	unset opt option_t fname limit i param
 }
 
-#(3/5): go
-function _favdir_go() {
-	# show go about go function
-	[ "$1" = "-h" ] || [ "$1" = "--help" ] && { _favdir_usage 'go'; return $exit_usage; }
+#(3/5): gg
+function _favdir_gg() {
+	# show gg about gg function
+	[ "$1" = "-h" ] || [ "$1" = "--help" ] && { _favdir_usage 'gg'; return $exit_usage; }
 	# if listfile does not exist, output error message and exit
 	[ -f $favdir_list ] || { echo "$(basename $bookmarklist): no exist"; return 1; }
 
@@ -244,8 +244,8 @@ function _favdir_go() {
 	fpath=$( awk '$1 ~ /'"^$1"'$/' $favdir_list | awk '{print $2}' )
 
 	if [ $# -eq 0 ]; then
-		echo "go: too few arguments"
-		echo "Try 'go --help' for more information."
+		echo "gg: too few arguments"
+		echo "Try 'gg --help' for more information."
 		return 1
 	else
 		# case of unregistered
@@ -255,7 +255,7 @@ function _favdir_go() {
 		# case of registered
 		else
 			if cd "$fpath" 2>/dev/null; then
-				echo "$(date '+%Y-%m-%d %H:%M:%S')	$1" >>$favdir_log
+				echo "$(date '+%Y-%m-%d %H:%M:%S')	$1	$fpath" >>$favdir_log
 				# case of -t option
 				if [ -f $favdir_temp ]; then
 					if awk '{print $2}' $favdir_temp | grep -x $fpath >/dev/null; then
@@ -418,18 +418,18 @@ function _favdir_complement() {
 alias favdir='_favdir_usage'
 alias show='_favdir_show'
 alias reg='_favdir_regist'
-alias go='_favdir_go'
+alias gg='_favdir_gg'
 alias del='_favdir_delete'
 alias p='_favdir_print'
 
 if [ "$BASH_VERSION" ]; then
-	complete -F _favdir_complement go
+	complete -F _favdir_complement gg
 	complete -F _favdir_complement del
 	complete -F _favdir_complement p
 elif [ "$ZSH_VERSION" ]; then
 	autoload -U compinit
 	compinit -u
-	compdef _favdir_complement go
+	compdef _favdir_complement gg
 	compdef _favdir_complement del
 	compdef _favdir_complement p
 fi

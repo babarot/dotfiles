@@ -1,11 +1,21 @@
 #!/bin/bash
 
+read -p "Install vim from source. Are you sure? (y/n) " -n 1
+echo ""
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+	exit
+fi
+
 if vim --version | grep "version" | grep -q "^Huge"; then
 	Huge='on'
+elif vim --version | grep "version" | grep -q "^Normal"; then
+	Normal='on'
 elif vim --version | grep "version" | grep -q "^Small"; then
 	Small='on'
 else
-	echo "Unknown vim"
+	echo "Unknown vim type"
+	echo "If you had to choose one, which would you choose?"
+	echo "  tiny, small, normal, big, huge"
 	exit
 fi
 
@@ -32,7 +42,6 @@ function Install_Vim_From_Source()
 }
 
 if [ "$Huge" ]; then
-	 
 	# same as vim -c "NeoBundleInit";
 	vim +"NeoBundleInit";
 else

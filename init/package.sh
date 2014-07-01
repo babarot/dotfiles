@@ -1,5 +1,11 @@
 #!/bin/bash
 
+read -p "Install some commands by package management system. Are you sure? (y/n) " -n 1
+echo ""
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+	exit
+fi
+
 if uname -s | grep -qi "darwin"; then
 	if type brew >/dev/null 2>&1; then
 		PACMAN='brew'

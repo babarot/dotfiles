@@ -79,4 +79,5 @@ else
 			NeoBundleInstall
 			echo "Finish!"
 	  	endfunction
+	call s:neobundle_init()
 endif

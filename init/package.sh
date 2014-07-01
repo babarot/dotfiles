@@ -1,56 +1,32 @@
 #!/bin/bash
 
-function install_commands_by_pacman()
-{
-	if [ "$OS" == "darwin" ]; then
-		PACMAN="brew"
-	elif [ "$OS" == "linux" ]; then
-		if [ -f /etc/issue ]; then
-			KIND=$(cat /etc/issue | cut -d' ' -f1)
-			case "$KIND" in
-				"Ubuntu"|"Debian" ) PACMAN="apt-get" ;;
-				"CentOS"|"Fedora" ) PACMAN="yum" ;;
-				* ) PACMAN=""
-			esac
-		fi
+if uname -s | grep -qi "darwin"; then
+	if type brew >/dev/null 2>&1; then
+		PACMAN='brew'
+	elif type port >/dev/null 2>&1; then
+		PACMAN='port'
+		PACMAN="sudo $PACMAN"
 	fi
-	
-	COMMANDS=(
-		'ack'
-		'bash-completion'
-		'colordiff' 
-		'cowsay'
-		'figlet'
-		'fortune'
-		'gawk'
-		'gist'
-		'gisty'
-		'hub'
-		'tig'
-		'tree'
-		'vim'
-		'wget'
-	);
-	
-	if [ -z "$PACMAN" ]; then
-		read -p "Enter package manager name you want to use: " PACMAN
+elif uname -s | grep -qi "linux"; then
+	if type yum >/dev/null 2>&1; then
+		PACMAN='yum'
+		PACMAN="sudo $PACMAN"
+	elif type apt-get >/dev/null 2>&1; then
+		PACMAN='apt-get'
+		PACMAN="sudo $PACMAN"
 	fi
-	
-	for cmd in "${COMMANDS[@]}"
-	do
-		sudo "$PACMAN" install "$cmd" 2>/dev/null
-		if [ $? -ne 0 ]; then
-			failed+=("$cmd")
-		fi
-	done
-	
-	if [ $cmd ]; then
-		echo "${failed[@]}: not installed"
-	fi
-}
-
-read -p "Install the required commands using the package management system. Are you sure? (y/n) " -n 1
-echo ""
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-	install_commands_by_pacman
+else
+	echo "Unknown package system."
 fi
+
+COMMANDS=( $(cat ./package.list) )
+
+sudo -v
+for x in "${COMMANDS[@]}"; do
+	$PACMAN install $x
+	if [ $? -ne 0 ]; then
+		NOT_INSTALLED=( ${NOT_INSTALLED[@]} $x );
+	fi
+done
+
+echo "$NOT_INSTALLED: not installed" >/dev/stderr

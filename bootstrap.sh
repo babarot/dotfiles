@@ -25,7 +25,7 @@ function doIt() {
 }
 
 if [ "$1" == "--force" -o "$1" == "-f" ]; then
-	doIt
+	doIt;
 	exit
 else
 	#make help
@@ -46,6 +46,6 @@ else
 		exit
 	fi
 fi
-doIt;
 
+doIt;
 unset doIt

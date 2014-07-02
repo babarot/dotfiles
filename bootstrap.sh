@@ -25,7 +25,6 @@ function doIt() {
 
 if [ "$1" == "--force" -o "$1" == "-f" ]; then
 	doIt;
-	exit
 else
 	#make help
 	echo ""
@@ -42,9 +41,11 @@ else
 	echo ""
 	if [[ $REPLY =~ ^[Yy]$ ]]; then
 		doIt;
-		exit
 	fi
 fi
 
-doIt;
+if [[ -p /dev/stdin ]]; then
+	doIt;
+fi
+
 unset doIt

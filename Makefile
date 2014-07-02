@@ -23,7 +23,7 @@ deploy:
 		test "$${f}" = .git -o "$${f}" = .git/ && continue ; \
 		test "$${f}" = .DS_Store  && continue ; \
 		echo "$${f}" | grep -q 'minimal' && continue ; \
-		ln -v -f -s "$(PWD)/$${f}" "$(HOME)/$${f}" ; \
+		ln -sfnv "$(PWD)/$${f}" "$(HOME)/$${f}" ; \
 	done ; true
 
 sync:

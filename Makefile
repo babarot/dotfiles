@@ -46,6 +46,7 @@ ifeq ($(shell uname),Darwin)
 endif
 
 clean:
+	@rm -rf files...
 	@for f in .??* ; do \
 		rm -v -rf ~/"$${f}" ; \
 	done ; true

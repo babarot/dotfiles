@@ -17,37 +17,28 @@ function doIt() {
 	if [ $? -eq 0 ]; then
 		cd ~/.dotfiles;
 		make deploy;
-		echo ""
-		make help
-		echo ""
-		echo "You should do 'make install' to setup your environment"
-		cd ~/.dotfiles
-		exec /bin/bash --norc
+		echo ""; make help;
+		echo "";
+		exec /bin/bash --norc --noprofile;
 	fi;
 }
 
-if [ "$1" == "--force" -o "$1" == "-f" ]; then
-	doIt;
-else
-	echo ""
-	echo "By executing ./bootstrap.sh with -f option, the following commands are run."
-	echo "  1. git clone b4b4r07/dotfiles.git"
-	echo "  2. make deploy"
-	echo "  3. source .bash_profile"
-	echo ""
-	echo "Otherwise, any other changes."
-	echo "  Author; B4B4R07 <b4b4r07@gmail.com>"
-	echo "  GitHub; https://github.com/b4b4r07/dotfiles.git"
-	echo ""
-	read -p "Cloning git repository and deploying dotfiles. Are you sure? (y/n) " -n 1
-	echo ""
-	if [[ $REPLY =~ ^[Yy]$ ]]; then
-		doIt;
-	fi
-fi
+msg=$(
+cat <<-EOF
+By executing ./bootstrap.sh, the following commands are run
+  1. git clone b4b4r07/dotfiles.git
+  2. make deploy
+  3. restart bash without running rcfiles
+Otherwise, any other changes
 
-if [[ -p /dev/stdin ]]; then
-	doIt;
-fi
+For more information, contact me
+  Author; B4B4R07 <b4b4r07@gmail.com>
+  GitHub; https://github.com/b4b4r07/dotfiles.git
 
-unset doIt
+EOF
+)
+
+echo "$msg";
+doIt;
+
+unset doIt;

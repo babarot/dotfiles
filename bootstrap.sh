@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if echo "$-" | \grep -iq "i"; then
+	cd ~/.dotfiles
+	return
+fi
+
 echo ''
 echo '     | |     | |  / _(_) |           '
 echo '   __| | ___ | |_| |_ _| | ___  ___  '
@@ -17,8 +22,10 @@ function doIt() {
 	if [ $? -eq 0 ]; then
 		cd ~/.dotfiles;
 		make deploy;
+		echo ""
 		make help
 		source ~/.bash_profile
+		. $0
 		echo "You should do '\033[33mmake install\033[m' to setup your environment."
 	fi;
 }
@@ -26,7 +33,6 @@ function doIt() {
 if [ "$1" == "--force" -o "$1" == "-f" ]; then
 	doIt;
 else
-	#make help
 	echo ""
 	echo "By executing ./bootstrap.sh with -f option, the following commands are run."
 	echo "  1. git clone b4b4r07/dotfiles.git"

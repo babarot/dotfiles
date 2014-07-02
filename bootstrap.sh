@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if echo "$-" | \grep -iq "i"; then
-	cd ~/.dotfiles
-	return
-fi
-
 echo ''
 echo '     | |     | |  / _(_) |           '
 echo '   __| | ___ | |_| |_ _| | ___  ___  '
@@ -24,8 +19,8 @@ function doIt() {
 		make deploy;
 		echo ""
 		make help
-		source ~/.bash_profile
-		. $0
+		cd ~/.dotfiles
+		exec /bin/bash
 		echo "You should do '\033[33mmake install\033[m' to setup your environment."
 	fi;
 }

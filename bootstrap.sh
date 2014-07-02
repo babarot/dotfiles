@@ -22,7 +22,7 @@ function doIt() {
 		echo ""
 		echo "You should do 'make install' to setup your environment"
 		cd ~/.dotfiles
-		exec /bin/bash --noprofile
+		exec /bin/bash --norc
 	fi;
 }
 

@@ -19,7 +19,7 @@ function doIt() {
 		make deploy;
 		echo ""; make help;
 		echo "";
-		exec /bin/bash --norc --noprofile;
+		exec /bin/bash;
 	fi;
 }
 

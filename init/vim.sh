@@ -1,24 +1,5 @@
 #!/bin/bash
 
-read -p "Install vim from source. Are you sure? (y/n) " -n 1
-echo ""
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-	exit
-fi
-
-if vim --version | grep "version" | grep -q "^Huge"; then
-	Huge='on'
-elif vim --version | grep "version" | grep -q "^Normal"; then
-	Normal='on'
-elif vim --version | grep "version" | grep -q "^Small"; then
-	Small='on'
-else
-	echo "Unknown vim type"
-	echo "If you had to choose one, which would you choose?"
-	echo "  tiny, small, normal, big, huge"
-	exit
-fi
-
 function Install_Vim_From_Source()
 {
 	INSTALL_DIR=/usr/loca/app/vim.new
@@ -41,12 +22,44 @@ function Install_Vim_From_Source()
 	sudo make install
 }
 
+function Check_The_Vim()
+{
+	Huge=Normal=moreNormal=Small=
+
+	if vim --version | grep "version" | grep -q "^Huge"; then
+		Huge='on'
+		moreNormal='on'
+	elif vim --version | grep "version" | grep -q "^Normal"; then
+		Normal='on'
+		moreNormal='on'
+	elif vim --version | grep "version" | grep -q "^Small"; then
+		Small='on'
+	else
+		echo "Unknown vim type"
+		echo "If you had to choose one, which would you choose?"
+		echo "  tiny, small, normal, big, huge"
+		exit
+	fi
+}
+
+Check_The_Vim;
 if [ "$Small" ]; then
-	Install_Vim_From_Source;
-else
-	# same as vim -c "NeoBundleInit";
+	read -p "Install vim from source. Are you sure? (y/n) " -n 1
+	echo ""
+	if [[ $REPLY =~ ^[Yy]$ ]]; then
+		Install_Vim_From_Source;
+		Check_The_Vim;
+	fi
+fi
+
+if [ "$moreNormal" ]; then
 	if [ ! -d ~/.vim/bundle/neobundle.vim ]; then
-		vim +"NeoBundleInit";
+		read -p "Execute vim with +'NeoBundleInit'. Are you sure? (y/n) " -n 1
+		echo ""
+		if [[ $REPLY =~ ^[Yy]$ ]]; then
+			# same as vim -c "NeoBundleInit";
+			vim +"NeoBundleInit";
+		fi
 	fi
 fi
 

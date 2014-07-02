@@ -25,7 +25,7 @@ else
 	echo "Unknown package system."
 fi
 
-COMMANDS=( $(cat ./package.list) )
+COMMANDS=( $(cat "$(dirname "${BASH_SOURCE}")"/package.list | grep -v "^#") )
 
 sudo -v
 for x in "${COMMANDS[@]}"; do

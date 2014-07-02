@@ -1,12 +1,14 @@
 ack
 bash-completion
 colordiff 
+coreutils
 cowsay
 figlet
 fortune
 gawk
 gist
 gisty
+go
 hg
 hub
 tig

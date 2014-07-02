@@ -21,6 +21,8 @@ function doIt() {
 		make help
 		echo ""
 		echo "You should do 'make install' to setup your environment"
+		cd ~/.dotfiles
+		exec /bin/bash
 	fi;
 }
 
@@ -46,8 +48,6 @@ fi
 
 if [[ -p /dev/stdin ]]; then
 	doIt;
-	cd ~/.dotfiles
-	exec /bin/bash
 fi
 
 unset doIt

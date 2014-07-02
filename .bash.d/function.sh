@@ -55,8 +55,7 @@ function nowon()
 	fi && unset random_cowsay
 	LANG=C
 	echo -e  "\033[33m$(date +'%Y/%m/%d %T')\033[m"
-	echo -en "\n"; sleep 0.5; pwd; ls
-	echo -en "\n"
+	echo -en "\n"; pwd; echo -en "\n"
 }
 
 function _refuge_complement()

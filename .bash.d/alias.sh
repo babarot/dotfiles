@@ -9,7 +9,7 @@
 # prompt:~$ source /tmp/alias.tmp
 #
 
-unalias -a
+#unalias -a
 
 # LS
 if type gls >/dev/null 2>&1; then

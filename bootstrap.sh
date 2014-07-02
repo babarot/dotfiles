@@ -34,7 +34,7 @@ Otherwise, any other changes
 For more information, contact me
   Author; B4B4R07 <b4b4r07@gmail.com>
   GitHub; https://github.com/b4b4r07/dotfiles.git
-
+  
 EOF
 )
 

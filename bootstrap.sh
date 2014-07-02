@@ -19,9 +19,8 @@ function doIt() {
 		make deploy;
 		echo ""
 		make help
-		cd ~/.dotfiles
+		echo "You should do 'make install' to setup your environment"
 		exec /bin/bash
-		echo "You should do '\033[33mmake install\033[m' to setup your environment."
 	fi;
 }
 

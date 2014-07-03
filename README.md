@@ -2,6 +2,8 @@
 
 This repository is b4b4r07's config files. By the clone this repository, you can build the same environment everywhere.
 
+![dotfiles](http://cl.ly/image/101i2a0O093e/dotfiles_%E2%80%94_bash_%E2%80%94_80%C3%9726.png)
+
 ## Downlands
 
 To downland it, just execute the following command:
@@ -71,20 +73,16 @@ Only the files that have unexecute permissions(644) on the directory `${MASTERD:
 
 **This is part of the bashrc:**
 
-```
-...
-
-if [ -d $MASTERD ] ; then
-	echo -en "\n"
-	for f in $MASTERD/*.sh ; do
-		[ ! -x "$f" ] && . "$f" && echo load "$f"
-	done
-	echo -en "\n"
-	unset f
-fi
-...
-
-```
+	...
+	if [ -d $MASTERD ] ; then
+		echo -en "\n"
+		for f in $MASTERD/*.sh ; do
+			[ ! -x "$f" ] && . "$f" && echo load "$f"
+		done
+		echo -en "\n"
+		unset f
+	fi
+	...
 
 The directory `~/.bash.d` called `$MASTERD` in **dotfiles** has some unexecutable files such as the following:
 
@@ -104,7 +102,7 @@ The directory `~/.bash.d` called `$MASTERD` in **dotfiles** has some unexecutabl
 * ./function.sh
 * ./myhistory.sh
 
-	*Apart from the `~ /. bash_history`, this is a self-made script that provides a rich history.*
+	*Apart from the `~/.bash_history`, this is a self-made script that provides a rich history.*
 
 * ./prompt.sh
 

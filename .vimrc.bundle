@@ -53,10 +53,10 @@ if isdirectory(s:neobundle_root)
 	NeoBundle 'nanotech/jellybeans.vim', { "base" : $HOME."/.vim/colors/jellybeans" }
 	NeoBundle has('lua') ? 'Shougo/neocomplete' : 'Shougo/neocomplcache'
 
-	if !has("gui_running")
+	"if !has("gui_running")
 		"NeoBundle 'vim-scripts/buftabs'
 		NeoBundle 'b4b4r07/buftabs.vim'
-	endif
+	"endif
 	
 	filetype plugin indent on
 	NeoBundleCheck

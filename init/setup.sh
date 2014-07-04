@@ -18,12 +18,6 @@ function bash_completion_install() {
 	sudo chmod +x /etc/profile.d/bash_completion.sh
 }
 
-read -p "Install bash_completion.sh from source. Are you sure? (y/n) " -n 1
-echo ""
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-	bash_completion_install && echo -e "\033[31mComplete!\033[m"
-fi
-
 function git_setting()
 {
 	if type curl >/dev/null 2>&1

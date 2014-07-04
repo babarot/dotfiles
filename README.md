@@ -4,24 +4,55 @@ This repository is b4b4r07's config files. By the clone this repository, you can
 
 ![dotfiles](http://cl.ly/image/101i2a0O093e/dotfiles_%E2%80%94_bash_%E2%80%94_80%C3%9726.png)
 
-## Downlands
+## Implementation
 
 To downland it, just execute the following command:
 
-	# If you have curl installed
+	# OK installation
+	sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)
+
+	# NG installation
 	curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh
 
-	# If you have wget installed
-	wget -q -O - https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh
+**IF YOU DO THIS:**
+
+1. git clone b4b4r07/dotfiles.git
+2. make deploy
+3. source ~/.bash_profile
+
+`make deploy` is
+	
+	deploy:
+		@echo "Start deploy dotfiles current directory."
+		@echo "If this is \"dotdir\", curretly it is ignored and copy your hand."
+		@echo ""
+		@for f in .??* ; do \
+			test "$${f}" = .git -o "$${f}" = .git/ && continue ; \
+			test "$${f}" = .DS_Store  && continue ; \
+			echo "$${f}" | grep -q 'minimal' && continue ; \
+			ln -sfnv "$(PWD)/$${f}" "$(HOME)/$${f}" ; \
+		done ; true
+
+The `make deploy` create symbolic links to your home directory.
 
 ## Much still remains to be done
 
 	cd ~/.dotfiles
 	make install
 
+`make install` is
+
+	install:
+		@for x in init/*.sh ; do sh $$x; done
+	ifeq ($(shell uname),Darwin)
+		@for x in osx/*.sh ; do sh $$x; done
+	endif
+
+Execute all of the files within `init/`. 
+
 ## Hierarchical description
 
-### ABOUT dotfiles/
+### dotfiles/
 
 * .bash_profile
 * .bashrc
@@ -68,7 +99,7 @@ To downland it, just execute the following command:
 
 * README.md
 
-### ABOUT dotfiles/.bash.d/
+### dotfiles/.bash.d/
 Only the files that have unexecute permissions(644) on the directory `${MASTERD:=~/.bash.d}`, load at startup.
 
 **This is part of the bashrc:**

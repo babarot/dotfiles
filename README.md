@@ -172,11 +172,41 @@ The directory `~/.bash.d` called `$MASTERD` in **dotfiles** has some unexecutabl
 * ./queue.sh
 * ./stack.sh
 
+## Temporary use
+
+**ALL FILES COPY**:
+
+	make sync
+
+Use the `rsync` command to create simple copy files instead of the symbolic links.
+
+**A particular file**:
+
+	make mini
+
+Build an environment with minimum configuration. To be specific, `.bashrc.minimal` and `.vimrc.minimal` are copied. It is written that only the minimum necessary.
+
+## Deal with the aftermath
+
+Delete all rcfiles despite link in your home directory.
+
+	make clean
+
+`make clean` is
+
+	clean:
+		@echo "rm -rf files..."
+		@for f in .??* ; do \
+			rm -v -rf ~/"$${f}" ; \
+		done ; true
+		rm -rf $(DOTFILES)
+
+Finally, remove `~/.dotfiles` directory that contains all rcfiles.
+
 ## Credits
 
 * Iterative installation based on [@Mathias's dotfiles](https://github.com/mathiasbynens/dotfiles)
-* hoge based on [@skwp's dotfiles](https://github.com/skwp/dotfiles)
-
+* README layout based on [@skwp's dotfiles](https://github.com/skwp/dotfiles)
 
 ## Author
 
@@ -185,7 +215,6 @@ The directory `~/.bash.d` called `$MASTERD` in **dotfiles** has some unexecutabl
 | [b4b4r07's Qiita](http://qiita.com/b4b4r07/ "b4b4r07 on Qiita") |
 
 ## Licence
-
 
 > The MIT License (MIT)
 > 

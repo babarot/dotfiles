@@ -49,7 +49,7 @@ brew:
 	brew bundle osx/Brewfile
 
 clean:
-	@rm -rf files...
+	@echo "rm -rf files..."
 	@for f in .??* ; do \
 		rm -v -rf ~/"$${f}" ; \
 	done ; true

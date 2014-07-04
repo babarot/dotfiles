@@ -338,6 +338,11 @@ endif
 	highlight Visual     ctermfg=Black guibg=Black
 "endif
 
+highlight StatusLine ctermfg=black ctermbg=white cterm=none
+highlight Visual term=reverse cterm=reverse ctermfg=darkyellow ctermbg=black
+
+autocmd BufRead * execute ":only"
+
 "
 " MAPPING:
 " =======================================================================================
@@ -366,8 +371,8 @@ vnoremap v $h
 
 nnoremap <silent> <ESC><ESC> :nohls<CR>
 nnoremap Y y$
-nnoremap s ^
-nnoremap S $
+nnoremap <Space>h  ^
+nnoremap <Space>l  $
 nnoremap j gj
 nnoremap k gk
 nnoremap <Up> <Nop>
@@ -376,15 +381,34 @@ nnoremap <Left> <Nop>
 nnoremap <Right> <Nop>
 ""nnoremap n nzz
 ""nnoremap N Nzz
+nnoremap <expr> n <SID>search_forward_p() ? 'nzv' : 'Nzv'
+nnoremap <expr> N <SID>search_forward_p() ? 'Nzv' : 'nzv'
+vnoremap <expr> n <SID>search_forward_p() ? 'nzv' : 'Nzv'
+vnoremap <expr> N <SID>search_forward_p() ? 'Nzv' : 'nzv'
+
+function! s:search_forward_p()
+	return exists('v:searchforward') ? v:searchforward : 1
+endfunction
+
+nnoremap <Space>/  *<C-o>
+nnoremap g<Space>/ g*<C-o>
 nnoremap * *zz
 nnoremap # #zz
 nnoremap g* g*zz
 nnoremap g# g#zz
 nnoremap ZZ <Nop>
-nnoremap <C-g> 1<C-g>
+nnoremap ZQ <Nop>
+nnoremap Q gq
+
+noremap <Space>o  :<C-u>for i in range(v:count1) \| call append(line('.'), '') \| endfor<CR>
+nnoremap <Space>O  :<C-u>for i in range(v:count1) \| call append(line('.')-1, '') \| endfor<CR>
+
 nnoremap <C-j> :bnext<CR>
 nnoremap <C-k> :bprev<CR>
 nnoremap <C-q> :bdelete<CR>
+nnoremap <silent> tt  :<C-u>tabe<CR>
+"nnoremap <C-p>  gT
+"nnoremap <C-n>  gt
 
 inoremap <C-h> <Backspace>
 inoremap <C-d> <Delete>
@@ -413,11 +437,10 @@ nnoremap <Leader>p "0p
 nnoremap <Leader>wc :%s/\i\+/&/gn<CR>
 vnoremap <Leader>wc :s/\i\+/&/gn<CR>
 nnoremap <Space>. :<C-u>edit $MYVIMRC<CR>
+nnoremap <C-g> 1<C-g>
+nnoremap gs :<C-u>%s///g<Left><Left><Left>
+vnoremap gs :s///g<Left><Left><Left>
 nnoremap HP :<C-u>help<Space><C-r><C-w><CR>
-nnoremap <F4> <ESC>i<C-R>=strftime("%Y/%m/%d (%a) %H:%M")<CR><CR>
-nnoremap <C-s> dd"0P
-nnoremap <F5> <CR>q:
-nnoremap <F6> <CR>q/
 nnoremap q: <Nop>
 nnoremap q/ <Nop>
 nnoremap q? <Nop>
@@ -431,8 +454,3 @@ nnoremap sj <C-w>j
 nnoremap sk <C-w>k
 nnoremap sl <C-w>l
 nnoremap sh <C-w>h
-
-highlight StatusLine ctermfg=black ctermbg=white cterm=none
-highlight Visual term=reverse cterm=reverse ctermfg=darkyellow ctermbg=black
-
-autocmd BufRead * execute ":only"

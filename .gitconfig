@@ -1,6 +1,3 @@
-[user]
-	name = b4b4r07
-	email = b4b4r07@gmail.com
 [core]
 	pager = less -q -R
 	excludesfile = ~/.gitignore
@@ -16,4 +13,10 @@
 [help]
 	autocorrect = 1
 [push]
-	default = simple
+	# Use the Git 1.x.x default to avoid errors on machines with old Git
+	# installations. To use `simple` instead, add this to your `~/.extra` file:
+	# `git config --global push.default simple`. See http://git.io/mMah-w.
+	default = matching
+[user]
+	name = Z1Z1R07
+	email = z1z1r07@gmail.com

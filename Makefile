@@ -45,6 +45,9 @@ ifeq ($(shell uname),Darwin)
 	@for x in osx/*.sh ; do sh $$x; done
 endif
 
+brew:
+	brew bundle osx/Brewfile
+
 clean:
 	@rm -rf files...
 	@for f in .??* ; do \

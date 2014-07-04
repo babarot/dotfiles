@@ -124,14 +124,14 @@ Many in accordance with the convention, but show the definition about my origina
 * .gvimrc
 * .inputrc
 > Life on the command line will enrich if you set `~/.inputrc` that is the configuration file about `readline`.
-> 
+
 * .vimrc
 * .vimrc.bundle
 > Initialization setting of NeoBundle is described in this file.
-> 
+
 * .vimrc.plugin
 > Detailed settings for vim-plugin is described in this file.
-> 
+
 * Makefile
 * README.md
 

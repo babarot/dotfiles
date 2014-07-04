@@ -281,7 +281,7 @@ if has('syntax')
 	function! ActivateInvisibleIndicator()
 		"highlight ZenkakuSpace cterm=underline ctermfg=darkgrey gui=underline guifg=#FF0000
 		highlight ZenkakuSpace cterm=underline ctermfg=lightblue gui=underline guibg=#666666
-		match ZenkakuSpace /$B!!(B/
+		match ZenkakuSpace /　/
 	endfunction
 	augroup InvisibleIndicator
 		autocmd!
@@ -294,7 +294,7 @@ endif
 " =======================================================================================
 "
 
-if !has("gui_running")
+"if !has("gui_running")
 	if has('syntax')
 		augroup InsertHook
 			autocmd!
@@ -303,7 +303,7 @@ if !has("gui_running")
 		augroup END
 	endif
 	
-	let g:hi_insert = 'highlight StatusLine guifg=darkblue guibg=darkyellow gui=none ctermfg=black ctermbg=yellow cterm=none'
+	let g:hi_insert = 'highlight StatusLine guifg=black guibg=darkyellow gui=none ctermfg=black ctermbg=yellow cterm=none'
 	let s:slhlcmd = ''
 	function! s:StatusLine(mode)
 		if a:mode == 'Enter'
@@ -325,18 +325,18 @@ if !has("gui_running")
 	endfunction
 	
 	set laststatus=2 "Show two lines at statusline
-endif
+"endif
 
-if !has("gui_running")
+"if !has("gui_running")
 	if isdirectory(expand('~/.vim/bundle/buftabs'))
 		set statusline=%{buftabs}%=%m\ %y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}\ %4l/%4L,%3c\ %3p%%\ (%{g:Date()})
 	else
 		set statusline=[%n]%t%M%=%y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}\ %4l/%4L,%3c\ %3p%%\ (%{g:Date()})
 	endif
 	
-	highlight StatusLine cterm=none
-	highlight Visual     ctermfg=Black
-endif
+	highlight StatusLine cterm=none    gui=none
+	highlight Visual     ctermfg=Black guibg=Black
+"endif
 
 "
 " MAPPING:

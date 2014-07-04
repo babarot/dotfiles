@@ -112,22 +112,26 @@ Many in accordance with the convention, but show the definition about my origina
 * .bashrc.unix
 > Bashrc for unix. Mainly, write here the settings that you do not do in mac. For example, `'ls -F --color=auto --show-control-chars'`, `eval $(dircolors -b ~/.dir_colors)` and all are written here. 
 * .dir_colors
-> The file and dir color which displayed by ls command is described in the file.
-> Program `ls (1)`, by using the environment variable `LS_COLORS`, will be determined by what color you want to display the file name. This environment variable is set by using a command like this usually.
+> The file and dir color which displayed by ls command is described in the file. Program `ls (1)`, by using the environment variable `LS_COLORS`, will be determined by what color you want to display the file name. This environment variable is set by using a command like this usually.
 >
 >		eval `dircolors some_path/dir_colors`
 >
 > The file used here is usually `/etc/DIR_COLORS`, but will be overridden by `.dir_colors` in your home directory.
+> 
+
 * .gitconfig
 * .gitignore
 * .gvimrc
 * .inputrc
 > Life on the command line will enrich if you set `~/.inputrc` that is the configuration file about `readline`.
+> 
 * .vimrc
 * .vimrc.bundle
 > Initialization setting of NeoBundle is described in this file.
+> 
 * .vimrc.plugin
 > Detailed settings for vim-plugin is described in this file.
+> 
 * Makefile
 * README.md
 

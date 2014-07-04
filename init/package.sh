@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if uname -s | grep -qi "darwin"; then
-	echo "$0; should do 'brew bundle osx/Brewfile'"
+	echo "$0: should do 'brew bundle osx/Brewfile'"
 	exit
 elif uname -s | grep -qi "linux"; then
 	:

@@ -1,6 +1,6 @@
 #/bin/bash
 
-read -p "Install bash_completion.sh from source. Are you sure? (y/n) " -n 1
+read -p "$0: Install bash_completion.sh from source. Are you sure? (y/n) " -n 1
 echo ""
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 	exit

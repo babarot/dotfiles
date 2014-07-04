@@ -44,7 +44,7 @@ function Check_The_Vim()
 
 Check_The_Vim;
 if [ "$Small" ]; then
-	read -p "Install vim from source. Are you sure? (y/n) " -n 1
+	read -p "$0: Install vim from source. Are you sure? (y/n) " -n 1
 	echo ""
 	if [[ $REPLY =~ ^[Yy]$ ]]; then
 		Install_Vim_From_Source;
@@ -54,7 +54,7 @@ fi
 
 if [ "$moreNormal" ]; then
 	if [ ! -d ~/.vim/bundle/neobundle.vim ]; then
-		read -p "Execute vim with +'NeoBundleInit'. Are you sure? (y/n) " -n 1
+		read -p "$0: Execute vim with +'NeoBundleInit'. Are you sure? (y/n) " -n 1
 		echo ""
 		if [[ $REPLY =~ ^[Yy]$ ]]; then
 			# same as vim -c "NeoBundleInit";

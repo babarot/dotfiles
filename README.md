@@ -104,13 +104,15 @@ Many in accordance with the convention, but show the definition about my origina
 
 * .bash.d/
 > See the [following clause](#bashd).
+
 * .bash_profile
 * .bashrc
 * .bashrc.mac
 > Bashrc for mac. For example, op() function is `open` command of OS X Limited. Also, some aliases such as `alias ls='ls -GF'` are written here.
 
 * .bashrc.unix
-> Bashrc for unix. Mainly, write here the settings that you do not do in mac. For example, `'ls -F --color=auto --show-control-chars'`, `eval $(dircolors -b ~/.dir_colors)` and all are written here. 
+> Bashrc for unix. Mainly, write here the settings that you do not do in mac. For example, `'ls -F --color=auto --show-control-chars'`, `eval $(dircolors -b ~/.dir_colors)` and all are written here.
+
 * .dir_colors
 > The file and dir color which displayed by ls command is described in the file. Program `ls (1)`, by using the environment variable `LS_COLORS`, will be determined by what color you want to display the file name. This environment variable is set by using a command like this usually.
 >

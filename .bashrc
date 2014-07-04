@@ -57,6 +57,10 @@ if [ -f ~/.bashrc.local ]; then
 	source ~/.bashrc.local
 fi
 
+if [ -f ~/.vital ]; then
+	source ~/.vital
+fi
+
 # History size and history settings
 HISTSIZE=50000
 HISTFILESIZE=50000

@@ -1,14 +1,17 @@
 #!/bin/bash
 
-if uname -s | grep -qi "linux"; then
+if uname -s | grep -qi "darwin"; then
+	echo "$0; should do 'brew bundle osx/Brewfile'"
+	exit
+elif uname -s | grep -qi "linux"; then
+	:
 	if type yum >/dev/null 2>&1; then
 		PACMAN='yum'
 	elif type apt-get >/dev/null 2>&1; then
 		PACMAN='apt-get'
 	fi
-else
-	exit
 fi
+
 
 read -p "Install some commands by package management system. Are you sure? (y/n) " -n 1
 echo ""

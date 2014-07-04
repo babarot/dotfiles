@@ -1,6 +1,6 @@
-# b4b4r07's dotfiles
+# [B4B4R07](https://twitter.com/b4b4r07)'s dotfiles
 
-This repository is b4b4r07's config files. By the clone this repository, you can build the same environment everywhere.
+This repository makes installation easier on us in all environment. By the cloning it, you can build the same environment everywhere. All you have to do is in accordance with the following. **So I'll start.**
 
 ![dotfiles](http://cl.ly/image/101i2a0O093e/dotfiles_%E2%80%94_bash_%E2%80%94_80%C3%9726.png)
 
@@ -8,17 +8,26 @@ This repository is b4b4r07's config files. By the clone this repository, you can
 
 To downland it, just execute the following command:
 
-	# OK installation
 	sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)
+or
 
-	# NG installation
+	sh <(wget -q -O - https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)
+
+**Alternate spellings**:
+
 	curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh
+	wget -q -O - https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh
+	
+is not recommended.
 
 **IF YOU DO THIS:**
 
 1. git clone b4b4r07/dotfiles.git
 2. make deploy
 3. source ~/.bash_profile
+
+By executing `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)`, automatically clone git-repo by git and `make deploy`. Lastly, reload `~/.bash_profile`.
+
 
 `make deploy` is
 	
@@ -33,76 +42,100 @@ To downland it, just execute the following command:
 			ln -sfnv "$(PWD)/$${f}" "$(HOME)/$${f}" ; \
 		done ; true
 
-The `make deploy` create symbolic links to your home directory.
+that create symbolic links to your home directory.
 
-## Much still remains to be done
+To update later on, just run that command again:
 
-	cd ~/.dotfiles
-	make install
+	make update
 
-`make install` is
+## Things to do next
 
-	install:
-		@for x in init/*.sh ; do sh $$x; done
-	ifeq ($(shell uname),Darwin)
-		@for x in osx/*.sh ; do sh $$x; done
-	endif
+The processing of `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)` is completed, it is necessary to execute following as soon as possible you.
 
-Execute all of the files within `init/`. 
+1. cd ~/.dotfiles
+2. make install
 
-## Hierarchical description
+	`make install` is
+	
+		install:
+			@for x in init/*.sh; do sh $$x; done
+		ifeq ($(shell uname),Darwin)
+			@for x in osx/*.sh; do sh $$x; done
+		endif
+	
+	Execute all of the files within `init/`. In addition, in the case of OS X, execute all of the files within `osx/`. 
+	
+	Events are mainly executed are follows.
+	
+	* Install some commands by Package Management System (*nix only)
+	* Set language of `$HOME` Japanese to English and vice versa
+	* Execute vim with  `-c "NeoBundleInit"`. *Only type of vim is 'normal' or [more](http://www.drchip.org/astronaut/vim/vimfeat.html).*
+	
+	**ONLY OS X**
+	
+	* Install some commands from Brewfile
+	* Setting up OS X defaults
+	
+	Also, you should do this:
+	
+		brew bundle osx/Brewfile
+	
+	You can install native applications via Homebrew without browsing each websites.
 
-### dotfiles/
+3. make check
+4. Create `~/.vital` (like `~/.local`) file.
 
+	If ~/.vital exists, it will be sourced along with the other files. You can use this to add a few custom commands without the need to fork this entire repository, or to add commands you don’t want to commit to a public repository.
+	
+	My `~/.vital` looks something like this:
+
+		GIT_AUTHOR_NAME="B4B4R07"
+		GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
+		git config --global user.name "$GIT_AUTHOR_NAME"
+		GIT_AUTHOR_EMAIL="b4b4r07@gmail.com"
+		GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
+		git config --global user.email "$GIT_AUTHOR_EMAIL"
+
+## Description
+
+Many in accordance with the convention, but show the definition about my original configuration files.
+
+### dotfiles/.??* and *
+
+* .bash.d/
+> See the [following clause](#bashd).
 * .bash_profile
 * .bashrc
 * .bashrc.mac
-
-	*bashrc for mac*
+> Bashrc for mac. For example, op() function is `open` command of OS X Limited. Also, some aliases such as `alias ls='ls -GF'` are written here.
 
 * .bashrc.unix
-
-	*bashrc for unix such as linux ( Ubuntu, Fedora, and SUSE, etc )*
-
+> Bashrc for unix. Mainly, write here the settings that you do not do in mac. For example, `'ls -F --color=auto --show-control-chars'`, `eval $(dircolors -b ~/.dir_colors)` and all are written here. 
 * .dir_colors
-
-	*The file and dir color which displayed by ls command is described in the file.* 
-	
-	*Program `ls (1)`, by using the environment variable `LS_COLORS`, will be determined by what color you want to display the file name. This environment variable is set by using a command like this usually.*
-
-	 
-```
-	eval `dircolors some_path/dir_colors`
-```
-
-*The file used here is usually `/etc/DIR_COLORS`, but will be overridden by `.dir_colors` in your home directory.*
-
+> The file and dir color which displayed by ls command is described in the file.
+> Program `ls (1)`, by using the environment variable `LS_COLORS`, will be determined by what color you want to display the file name. This environment variable is set by using a command like this usually.
+>
+>		eval `dircolors some_path/dir_colors`
+>
+> The file used here is usually `/etc/DIR_COLORS`, but will be overridden by `.dir_colors` in your home directory.
 * .gitconfig
 * .gitignore
 * .gvimrc
 * .inputrc
-
-	*Life on the command line will enrich if you set `~/.inputrc` that is the configuration file about `readline`.*
-
+> Life on the command line will enrich if you set `~/.inputrc` that is the configuration file about `readline`.
 * .vimrc
 * .vimrc.bundle
-
-	*Initialization setting of NeoBundle is described in this file.*
-
+> Initialization setting of NeoBundle is described in this file.
 * .vimrc.plugin
-
-	*Detailed settings for vim-plugin is described in this file.*
-
+> Detailed settings for vim-plugin is described in this file.
 * Makefile
-
-	*Make a symbolic link of the configuration file to your home directory.*
-
 * README.md
 
-### dotfiles/.bash.d/
-Only the files that have unexecute permissions(644) on the directory `${MASTERD:=~/.bash.d}`, load at startup.
+### <a name="bashd"> dotfiles/.bash.d/.??* and * </a>
 
-**This is part of the bashrc:**
+Only the files that have unexecute permissions(644) on the directory `${MASTERD:=~/.bash.d}`, load at startup and reload `~/.bashrc`.
+
+**Part of the bashrc:**
 
 	...
 	if [ -d $MASTERD ] ; then
@@ -119,54 +152,27 @@ The directory `~/.bash.d` called `$MASTERD` in **dotfiles** has some unexecutabl
 
 * ./alias.sh
 * ./autofetch.sh
-
-	*For more information about this script, access [b4b4r07/autofetch](https://github.com/b4b4r07/autofetch).*
-
+> For more information about this script, access [b4b4r07/autofetch](https://github.com/b4b4r07/autofetch).
 * ./bashmark.sh
-
-	*For more information about this script, access [b4b4r07/bashmark](https://github.com/b4b4r07/bashmark).*
-
+> For more information about this script, access [b4b4r07/bashmark](https://github.com/b4b4r07/bashmark).
 * ./cdhist.sh
-
-	*For more information about this script, access [b4b4r07/cdhist](https://github.com/b4b4r07/cdhist).*
-
+> For more information about this script, access [b4b4r07/cdhist](https://github.com/b4b4r07/cdhist).
+* ./favdir.sh
+> For more information about this script, access [b4b4r07/favdir](https://github.com/b4b4r07/favdir).
 * ./function.sh
 * ./myhistory.sh
-
-	*Apart from the `~/.bash_history`, this is a self-made script that provides a rich history.*
-
+> Apart from the `~/.bash_history`, this is a self-made script that provides a rich history.
 * ./prompt.sh
-
-	*About PS1 and so on...*
-
 * ./queue.sh
 * ./stack.sh
 
-## Installation
+## Credits
 
-===
+* Iterative installation based on [@Mathias's dotfiles](https://github.com/mathiasbynens/dotfiles)
+* hoge based on [@skwp's dotfiles](https://github.com/skwp/dotfiles)
 
-### Git install
-
-You can clone the repository wherever you want. I like to keep it in `~/dotfiles`.
-
-	git clone https://github.com/b4b4r07/dotfiles.git && cd dotfiles && make install
-
-To update, cd into your local dotfiles repository and then:
-
-	git pull origin master
-
-### Git-free install
-
-To install these dotfiles without Git:
-
-	cd; wget -O - https://github.com/b4b4r07/dotfiles/tarball/master | tar xvf -
-
-To update later on, just run that command again.
 
 ## Author
-
-===
 
 | [![twitter/b4b4r07](http://www.gravatar.com/avatar/8238c3c0be55b887aa9d6d59bfefa504.png)](http://twitter.com/b4b4r07 "Follow @b4b4r07 on Twitter") |
 |:---:|
@@ -174,7 +180,6 @@ To update later on, just run that command again.
 
 ## Licence
 
-===
 
 > The MIT License (MIT)
 > 

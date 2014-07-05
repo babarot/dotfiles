@@ -16,7 +16,7 @@ or
 **Alternate spellings**:
 
 	curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh
-	wget -q -O - https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh
+	wget -q -O - https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh
 	
 is not recommended.
 

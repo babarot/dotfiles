@@ -52,8 +52,8 @@ To update later on, just run that command again:
 
 The processing of `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)` is completed, it is necessary to execute following as soon as possible you.
 
-1. cd ~/.dotfiles
-2. make install
+\1. cd ~/.dotfiles
+\2. make install
 
 	`make install` is
 	
@@ -69,7 +69,7 @@ The processing of `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/b
 	
 	* Install some commands by Package Management System (*nix only)
 	* Set language of `$HOME` Japanese to English and vice versa
-	* Execute vim with  `-c "NeoBundleInit"`. *Only type of vim is 'normal' or [more](http://www.drchip.org/astronaut/vim/vimfeat.html).*
+	* Execute vim with  `-c "NeoBundleInit"`. **Only type of vim is 'normal' or [more](http://www.drchip.org/astronaut/vim/vimfeat.html).**
 	
 	**ONLY OS X**
 	
@@ -82,8 +82,8 @@ The processing of `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/b
 	
 	You can install native applications via Homebrew without browsing each websites.
 
-3. make check
-4. Create `~/.vital` (like `~/.local`) file.
+\3. make check
+\4. Create `~/.vital` (like `~/.local`) file.
 
 	If ~/.vital exists, it will be sourced along with the other files. You can use this to add a few custom commands without the need to fork this entire repository, or to add commands you don’t want to commit to a public repository.
 	
@@ -159,15 +159,20 @@ The directory `~/.bash.d` called `$MASTERD` in **dotfiles** has some unexecutabl
 * ./alias.sh
 * ./autofetch.sh
 > For more information about this script, access [b4b4r07/autofetch](https://github.com/b4b4r07/autofetch).
+> 
 * ./bashmark.sh
 > For more information about this script, access [b4b4r07/bashmark](https://github.com/b4b4r07/bashmark).
+> 
 * ./cdhist.sh
 > For more information about this script, access [b4b4r07/cdhist](https://github.com/b4b4r07/cdhist).
+> 
 * ./favdir.sh
 > For more information about this script, access [b4b4r07/favdir](https://github.com/b4b4r07/favdir).
+> 
 * ./function.sh
 * ./myhistory.sh
 > Apart from the `~/.bash_history`, this is a self-made script that provides a rich history.
+> 
 * ./prompt.sh
 * ./queue.sh
 * ./stack.sh

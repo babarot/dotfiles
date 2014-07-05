@@ -15,6 +15,16 @@
 if type gls >/dev/null 2>&1; then
 	alias ls="gls --color=auto -F -b"
 fi
+declare -a paths=( `. $MASTERD/function.sh; search ls` )
+declare -i I=0
+for (( I = 0; I < ${#paths[@]}; ++I  ))
+do
+	if ${paths[$I]} --version 2>/dev/null | grep -qi "gnu"
+	then
+		export LSPATH="${paths[$I]}"
+		alias ls="$LSPATH --color=auto -F -b"
+	fi
+done
 
 # Vim
 declare -a paths=( `. $MASTERD/function.sh; search vim` )

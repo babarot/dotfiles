@@ -25,6 +25,7 @@ install hub
 install macvim --with-lua --with-luajit
 install openssl
 install tig
+install reattach-to-user-namespace
 install tmux
 install tree
 install vim --override-system-vi

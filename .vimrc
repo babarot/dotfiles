@@ -251,6 +251,8 @@ set directory=~/.swap
 "
 
 " Colorscheme
+set t_ut=
+set t_Co=256
 set background=dark
 if has('gui_running') && !g:is_windows
 	"For MacVim, only

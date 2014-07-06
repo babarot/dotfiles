@@ -1,6 +1,6 @@
 #!/bin/bash
 
-read -p "Change from Japanese to English display of directory name. Are you sure? (y/n) " -n 1
+read -p "$0: Change from Japanese to English display of directory name. Are you sure? (y/n) " -n 1
 echo ""
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 	exit

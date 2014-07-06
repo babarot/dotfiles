@@ -99,6 +99,15 @@ else
 	endif
 endif
 
+" TMUX Cursor
+if exists('$TMUX')
+  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+else
+  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
+
 " Cursor appears if not movement
 augroup vimrc-auto-cursorline
 	autocmd!
@@ -141,6 +150,7 @@ augroup vimrc_restore_cursor_position
 	autocmd!
 	autocmd BufWinEnter * call s:RestoreCursorPostion()
 augroup END
+
 " Automatically make directory if it does not exist when storing file {{{
 augroup vimrc-auto-mkdir
 	autocmd!
@@ -402,8 +412,8 @@ nnoremap ZZ <Nop>
 nnoremap ZQ <Nop>
 nnoremap Q gq
 
-noremap <Space>o  :<C-u>for i in range(v:count1) \| call append(line('.'), '') \| endfor<CR>
-nnoremap <Space>O  :<C-u>for i in range(v:count1) \| call append(line('.')-1, '') \| endfor<CR>
+noremap <Space>O  :<C-u>for i in range(v:count1) \| call append(line('.'), '') \| endfor<CR>
+"nnoremap <Space>O  :<C-u>for i in range(v:count1) \| call append(line('.')-1, '') \| endfor<CR>
 
 nnoremap <C-j> :bnext<CR>
 nnoremap <C-k> :bprev<CR>

@@ -4,6 +4,9 @@
 update
 upgrade
 
+# For groff
+brew tap homebrew/dupes
+
 #
 # Brew <http://brew.sh/>
 #

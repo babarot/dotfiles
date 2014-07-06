@@ -433,7 +433,7 @@ function search()
 {
 	local    IFS=$'\n'
 	local -i I=0
-	local -a TARGET=( `pathview` )
+	local -a TARGET=( `pathview | sort | uniq` )
 
 	for (( I = 0; I < ${#TARGET[@]}; ++I  ))
 	do

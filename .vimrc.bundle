@@ -33,6 +33,7 @@ if isdirectory(s:neobundle_root)
 	NeoBundle 'Shougo/unite-outline'
 	NeoBundle 'b4b4r07/mru.vim'
 	NeoBundle 'thinca/vim-splash'
+	NeoBundle 'thinca/vim-quickrun'
 	NeoBundle 'tpope/vim-surround'
 	NeoBundle 'osyo-manga/vim-anzu'
 	"NeoBundle 'mhinz/vim-startify'

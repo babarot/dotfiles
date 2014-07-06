@@ -248,7 +248,6 @@ augroup EchoFilePath
 	autocmd WinEnter * execute "normal! 1\<C-g>"
 augroup END
 
-
 " Swap
 if !isdirectory(expand('~/.swap'))
 	call s:mkdir(expand('~/.swap'))

@@ -20,6 +20,7 @@ install gist
 install git
 install gnu-sed --default-names
 install go --cross-compile-common
+install groff
 install hg
 install hub
 install macvim --with-lua --with-luajit
@@ -54,6 +55,7 @@ cask install keyremap4macbook    || true
 cask install keyremap4macbook    || true
 cask install kobito              || true
 cask install lyrics-master       || true
+cask install marked              || true
 cask install mou                 || true
 cask install onepassword         || true
 cask install skype               || true

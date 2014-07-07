@@ -50,4 +50,6 @@ clean:
 	@for f in .??* ; do \
 		rm -v -rf ~/"$${f}" ; \
 	done ; true
+	rm -rf .vim
+	rm -rf .vital
 	rm -rf $(DOTFILES)

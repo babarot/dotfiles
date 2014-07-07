@@ -37,6 +37,7 @@ if isdirectory(s:neobundle_root)
 	NeoBundle 'tpope/vim-surround'
 	NeoBundle 'osyo-manga/vim-anzu'
 	"NeoBundle 'mhinz/vim-startify'
+	NeoBundle 'b4b4r07/buftabs'
 	NeoBundle 'LeafCage/yankround.vim'
 	NeoBundle 'junegunn/vim-easy-align'
 	NeoBundle 'jiangmiao/auto-pairs'
@@ -49,17 +50,9 @@ if isdirectory(s:neobundle_root)
 	      \ }
 	NeoBundle 'mattn/gist-vim'
 	NeoBundle 'vim-scripts/Align'
-	NeoBundle 'b4b4r07/solarized', { "base" : $HOME."/.vim/colors/" }
-
-	"NeoBundle 'b4b4r07/vim-colors-solarized', { "base" : $HOME."/.vim/colors/" }
-	"NeoBundle 'altercation/vim-colors-solarized', { "base" : $HOME."/.vim/colors/solarized" }
+	NeoBundle 'b4b4r07/solarized.vim', { "base" : $HOME."/.vim/colors/" }
 	NeoBundle 'nanotech/jellybeans.vim', { "base" : $HOME."/.vim/colors/jellybeans" }
 	NeoBundle has('lua') ? 'Shougo/neocomplete' : 'Shougo/neocomplcache'
-
-	"if !has("gui_running")
-		"NeoBundle 'vim-scripts/buftabs'
-		NeoBundle 'b4b4r07/buftabs.vim'
-	"endif
 	
 	filetype plugin indent on
 	NeoBundleCheck

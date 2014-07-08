@@ -1,7 +1,7 @@
 #!/bin/bash
 
-myrm_log="$HOME/.safe/log"
-myrm_box="$HOME/.safe/$(date '+%Y')/$(date '+%m')/$(date '+%d')"
+myrm_log="$HOME/.myrm/log"
+myrm_box="$HOME/.myrm/$(date '+%Y')/$(date '+%m')/$(date '+%d')"
 
 function myrm()
 {

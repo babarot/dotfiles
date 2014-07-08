@@ -19,6 +19,7 @@ function doIt() {
 		make deploy;
 		echo ""; make help;
 		echo "";
+		exec /bin/bash;
 	fi;
 }
 
@@ -38,15 +39,14 @@ EOF
 );
 
 echo "$msg";
-if [[ ! "$0" =~ "bootstrap.sh" ]]; then
+if [[ "$0" =~ "bootstrap.sh" ]]; then
+	echo "That this file is started directly is not recommended"
+else
 	doIt;
 	if [ "$1" = 'all' ]; then
 		sudo -v
 		yes | make install
 	fi
-	exec /bin/bash;
-else
-	echo "Started by a method that is not recommended"
 fi
 
 unset doIt;

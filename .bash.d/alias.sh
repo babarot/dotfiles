@@ -55,7 +55,7 @@ if type git >/dev/null 2>&1; then
 fi
 
 # MASTERD aliases
-alias cl="$MASTERD/catless.sh"
+alias cl="catless"
 alias melt="$MASTERD/melt.rb"
 alias rm="$MASTERD/safe.sh"
 

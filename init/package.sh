@@ -1,43 +1,28 @@
 #!/bin/bash
 
-if uname -s | grep -qi "darwin"; then
-	echo "$0: should do 'brew bundle osx/Brewfile'"
+#case ${OSTYPE} in
+#	darwin*)
+#		echo "try 'brew bundle osx/Brewfile'"
+#	    exit
+#		;;
+#esac
+
+if type yum >/dev/null 2>&1; then
+	PACMAN='yum'
+elif type apt-get >/dev/null 2>&1; then
+	PACMAN='apt-get'
+else
+	echo "No package manager"
 	exit
-elif uname -s | grep -qi "linux"; then
-	:
-	if type yum >/dev/null 2>&1; then
-		PACMAN='yum'
-	elif type apt-get >/dev/null 2>&1; then
-		PACMAN='apt-get'
-	fi
 fi
 
-
-read -p "Install some commands by package management system. Are you sure? (y/n) " -n 1
+read -p "Install some commands via package (y/n) " -n 1
 echo ""
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 	exit
 fi
 
-COMMANDS=(
-	ack
-	bash-completion
-	colordiff 
-	coreutils
-	cowsay
-	figlet
-	fortune
-	gawk
-	gist
-	gisty
-	go
-	hg
-	hub
-	tig
-	tree
-	vim
-	wget
-)
+COMMANDS=(`awk '/^install/{print $2}' ../osx/Brewfile`)
 
 sudo -v
 for x in "${COMMANDS[@]}"; do
@@ -47,4 +32,6 @@ for x in "${COMMANDS[@]}"; do
 	fi
 done
 
-echo "$NOT_INSTALLED: not installed" >/dev/stderr
+if [ "$NOT_INSTALLED" ]; then
+	echo "$NOT_INSTALLED: failed"
+fi

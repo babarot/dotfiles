@@ -19,7 +19,6 @@ function doIt() {
 		make deploy;
 		echo ""; make help;
 		echo "";
-		exec /bin/bash;
 	fi;
 }
 
@@ -42,10 +41,10 @@ echo "$msg";
 if [[ ! "$0" =~ "bootstrap.sh" ]]; then
 	doIt;
 	if [ "$1" = 'all' ]; then
-		echo debug
 		sudo -v
 		yes | make install
 	fi
+	exec /bin/bash;
 else
 	echo "Started by a method that is not recommended"
 fi

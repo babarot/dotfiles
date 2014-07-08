@@ -2,17 +2,17 @@
 
 This repository makes installation easier on us in all environment. By the cloning it, you can build the same environment everywhere. All you have to do is in accordance with the following. **So I'll start.**
 
-![dotfiles](http://cl.ly/image/3A3e0i1L0v0J/environment.png)
+![dotfiles](http://cl.ly/image/3A3e0i1L0v0J/environment.png "sample-env")
 
 ## Implementation
 
-To downland it, just execute the following command:
+To downland and install it, just execute the following command:
 
 	sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)
 or
 
-	sh <(wget -q -O - https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)
-
+	sh -c "`curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh`"
+	
 **Alternate spellings**:
 
 	curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh
@@ -20,7 +20,7 @@ or
 	
 is not recommended.
 
-When you select *wget(1)* as downloader, the `curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh` replaces `wget -q -O - https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh`.
+When you select *wget(1)* as a downloader, the `curl -L {URL}` replaces `wget -q -O - {URL}`.
 
 **IF YOU DO THIS:**
 
@@ -29,7 +29,6 @@ When you select *wget(1)* as downloader, the `curl -L https://raw.github.com/b4b
 3. source ~/.bash_profile
 
 By executing `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)`, automatically clone git-repo by git and `make deploy`. Lastly, reload `~/.bash_profile`.
-
 
 `make deploy` is
 	
@@ -52,7 +51,7 @@ To update later on, just run that command again:
 
 ## Things to do next
 
-The processing of `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)` is completed, it is necessary to execute following as soon as possible you.
+The processing of `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)` is completed, it is necessary to execute following as soon as possible.
 
 1. cd ~/.dotfiles
 2. make install
@@ -69,11 +68,11 @@ The processing of `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/b
 	
 	Events are mainly executed are follows.
 	
-	* Install some commands by Package Management System (*nix only)
+	* Install some commands under the Package Management System (*nix only, except **OS X**)
 	* Set language of `$HOME` Japanese to English and vice versa
-	* Execute vim with  `-c "NeoBundleInit"`. **Only type of vim is 'normal' or [more](http://www.drchip.org/astronaut/vim/vimfeat.html).**
+	* Execute vim with  `-c "NeoBundleInit"`. (**Only type of vim is 'normal' or [more](http://www.drchip.org/astronaut/vim/vimfeat.html)**)
 	
-	**ONLY OS X**
+	**Only OS X**
 	
 	* Install some commands from Brewfile
 	* Setting up OS X defaults
@@ -86,7 +85,7 @@ The processing of `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/b
 
 3. Create `~/.vital` (like `~/.local`) file.
 
-	If ~/.vital exists, it will be sourced along with the other files. You can use this to add a few custom commands without the need to fork this entire repository, or to add commands you don’t want to commit to a public repository.
+	If `~/.vital` exists, it will be sourced along with the other files. You can use this to add a few custom commands without the need to fork this entire repository, or to add commands you don’t want to commit to a public repository.
 	
 	My `~/.vital` looks something like this:
 
@@ -99,22 +98,22 @@ The processing of `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/b
 
 ## Description
 
-Many in accordance with the convention, but show the definition about my original configuration files.
+Many files are named by following the convention in the past, but explain to pick up a certain file because the files that were originally developed with the extension is located. All of the rcfiles within `dotfiles/` are maintained beneath `it`. the other files such as some binary and original command scripts are maintained within and beneath `dotfiles/.bash.d/` called `$MASTERD`.
 
 ### dotfiles/.??* and *
 
-* .bash.d/
+* [.bash.d/](./.bash.d/)
 > See the [following clause](#bashd).
 
-* .bash_profile
-* .bashrc
-* .bashrc.mac
+* [.bash_profile](./.bash_profile)
+* [.bashrc](./.bashrc)
+* [.bashrc.mac](./.bashrc.mac)
 > Bashrc for mac. For example, op() function is `open` command of OS X Limited. Also, some aliases such as `alias ls='ls -GF'` are written here.
 
-* .bashrc.unix
-> Bashrc for unix. Mainly, write here the settings that you do not do in mac. For example, `'ls -F --color=auto --show-control-chars'`, `eval $(dircolors -b ~/.dir_colors)` and all are written here.
+* [.bashrc.unix](./.bashrc.unix)
+> Bashrc for unix. Mainly, write here the settings that you do not do in mac. For example, `ls -F --color=auto --show-control-chars`, `eval $(dircolors -b ~/.dir_colors)` and all are written here.
 
-* .dir_colors
+* [.dir_colors](./.dir_colors)
 > The file and dir color which displayed by ls command is described in the file. Program `ls (1)`, by using the environment variable `LS_COLORS`, will be determined by what color you want to display the file name. This environment variable is set by using a command like this usually.
 >
 >		eval `dircolors some_path/dir_colors`
@@ -122,20 +121,20 @@ Many in accordance with the convention, but show the definition about my origina
 > The file used here is usually `/etc/DIR_COLORS`, but will be overridden by `.dir_colors` in your home directory.
 > 
 
-* .gitconfig
-* .gitignore
-* .gvimrc
-* .inputrc
+* [.gitconfig](./.gitconfig)
+* [.gitignore](./.gitignore)
+* [.gvimrc](./.gvimrc)
+* [.inputrc](./.inputrc)
 > Life on the command line will enrich if you set `~/.inputrc` that is the configuration file about `readline`.
 
-* .vimrc
-* .vimrc.bundle
+* [.vimrc](./.vimrc)
+* [.vimrc.bundle](./.vimrc.bundle)
 > Initialization setting of NeoBundle is described in this file.
 
-* .vimrc.plugin
+* [.vimrc.plugin](./.vimrc.plugin)
 > Detailed settings for vim-plugin is described in this file.
 
-* Makefile
+* [Makefile](./Makefile)
 * README.md
 
 ### <a name="bashd"> dotfiles/.bash.d/.??* and * </a>
@@ -145,9 +144,9 @@ Only the files that have unexecute permissions(644) on the directory `${MASTERD:
 **Part of the bashrc:**
 
 	...
-	if [ -d $MASTERD ] ; then
+	if [ -d "$MASTERD" ] ; then
 		echo -en "\n"
-		for f in $MASTERD/*.sh ; do
+		for f in "$MASTERD"/*.sh ; do
 			[ ! -x "$f" ] && . "$f" && echo load "$f"
 		done
 		echo -en "\n"
@@ -155,44 +154,46 @@ Only the files that have unexecute permissions(644) on the directory `${MASTERD:
 	fi
 	...
 
-The directory `~/.bash.d` called `$MASTERD` in **dotfiles** has some unexecutable files such as the following:
+The directory `~/.bash.d` called `$MASTERD` in **dotfiles** has some executable files such as the following:
 
-* ./alias.sh
-* ./autofetch.sh
+* [alias.sh](./.bash.d/alias.sh)
+* [autofetch.sh](./.bash.d/autofetch.sh)
 > For more information about this script, access [b4b4r07/autofetch](https://github.com/b4b4r07/autofetch).
 
-* ./bashmark.sh
+* [bashmark.sh](./.bash.d/bashmark.sh)
 > For more information about this script, access [b4b4r07/bashmark](https://github.com/b4b4r07/bashmark).
 
-* ./cdhist.sh
+* [cdhist.sh](./.bash.d/cdhist.sh)
 > For more information about this script, access [b4b4r07/cdhist](https://github.com/b4b4r07/cdhist).
 
-* ./favdir.sh
+* [favdir.sh](./.bash.d/favdir.sh)
 > For more information about this script, access [b4b4r07/favdir](https://github.com/b4b4r07/favdir).
 
-* ./function.sh
-* ./myhistory.sh
+* [function.sh](./.bash.d/function.sh)
+* [myhistory.sh](./.bash.d/myhistory.sh)
 > Apart from the `~/.bash_history`, this is a self-made script that provides a rich history.
 
-* ./prompt.sh
-* ./queue.sh
-* ./stack.sh
+* [prompt.sh](./.bash.d/prompt.sh)
+* [queue.sh](./.bash.d/queue.sh)
+* [stack.sh](./.bash.d/stack.sh)
 
-## Temporary use
+File with an asterisk at the end of the file name is not executed.
 
-**ALL FILES COPY**:
+## Case of temporary use
+
+**Copy all file**:
 
 	make sync
 
 Use the `rsync` command to create simple copy files instead of the symbolic links.
 
-**A particular file**:
+**Copy a particular file**:
 
 	make mini
 
 Build an environment with minimum configuration. To be specific, `.bashrc.minimal` and `.vimrc.minimal` are copied. It is written that only the minimum necessary.
 
-## Deal with the aftermath
+## Finishing
 
 Delete all rcfiles despite link in your home directory.
 
@@ -207,12 +208,15 @@ Delete all rcfiles despite link in your home directory.
 		done ; true
 		rm -rf $(DOTFILES)
 
-Finally, remove `~/.dotfiles` directory that contains all rcfiles.
+Finally, remove `~/.dotfiles` directory that contains all rcfiles and all the symbolic link
+s that `Makefile` creates.
 
 ## Credits
 
-* Iterative installation based on [@Mathias's dotfiles](https://github.com/mathiasbynens/dotfiles)
-* README layout based on [@skwp's dotfiles](https://github.com/skwp/dotfiles)
+* Dotfiles' `README` layout based on [@Mathias's dotfiles](https://github.com/mathiasbynens/dotfiles)
+* File Hierarchy based on [@Pritzker's dotfiles](https://github.com/skwp/dotfiles)
+* `Makefile` based on [@Tetsuji's dotfiles](https://github.com/xtetsuji/dotfiles)
+* `bootstrap.sh` based on [@Rocha's dotfiles](https://github.com/zenorocha/old-dotfiles)
 
 ## Author
 
@@ -224,7 +228,7 @@ Finally, remove `~/.dotfiles` directory that contains all rcfiles.
 
 > The MIT License (MIT)
 > 
-> Copyright (c) 2014 b4b4r07
+> Copyright (c) 2014 B4B4R07
 > 
 > Permission is hereby granted, free of charge, to any person obtaining a copy
 > of this software and associated documentation files (the "Software"), to deal

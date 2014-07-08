@@ -2,7 +2,7 @@
 
 This repository makes installation easier on us in all environment. By the cloning it, you can build the same environment everywhere. All you have to do is in accordance with the following. **So I'll start.**
 
-![dotfiles](http://cl.ly/image/101i2a0O093e/dotfiles_%E2%80%94_bash_%E2%80%94_80%C3%9726.png)
+![dotfiles](http://cl.ly/image/3A3e0i1L0v0J/environment.png)
 
 ## Implementation
 
@@ -19,6 +19,8 @@ or
 	wget -q -O - https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh
 	
 is not recommended.
+
+When you select *wget(1)* as downloader, the `curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh` replaces `wget -q -O - https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh`.
 
 **IF YOU DO THIS:**
 

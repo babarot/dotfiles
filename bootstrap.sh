@@ -43,10 +43,6 @@ if [[ "$0" =~ "bootstrap.sh" ]]; then
 	echo "That this file is started directly is not recommended"
 else
 	doIt;
-	if [ "$1" = 'all' ]; then
-		sudo -v
-		yes | make install
-	fi
 fi
 
 unset doIt;

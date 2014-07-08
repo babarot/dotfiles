@@ -39,10 +39,14 @@ EOF
 );
 
 echo "$msg";
-doIt;
-if [ "$1" == 'all' ]; then
-	sudo -v
-	yes | make install
+if [[ "$0" != "bootstrap.sh" ]]; then
+	doIt;
+	if [ "$1" == 'all' ]; then
+		sudo -v
+		yes | make install
+	fi
+else
+	echo "Started by a method that is not recommended"
 fi
 
 unset doIt;

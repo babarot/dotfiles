@@ -10,8 +10,8 @@ echo '';
 
 function doIt() {
 	if [ -d ~/.dotfiles ]; then
-		mv  -f ~/.dotfiles ~/.dotfiles.old
-	fi
+		mv  -f ~/.dotfiles ~/.dotfiles.old;
+	fi;
 
 	git clone https://github.com/b4b4r07/dotfiles.git ~/.dotfiles;
 	if [ $? -eq 0 ]; then
@@ -36,9 +36,13 @@ For more information, contact me
   GitHub; https://github.com/b4b4r07/dotfiles.git
   
 EOF
-)
+);
 
 echo "$msg";
 doIt;
+if [ "$1" == 'all' ]; then
+	sudo -v
+	yes | make install
+fi
 
 unset doIt;

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-read -p "$0: Install some commands under brew. Are you sure? (y/n) " -n 1
+read -p "Install some commands under Homebrew (y/n) " -n 1
 echo ""
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 	exit

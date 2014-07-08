@@ -1,6 +1,6 @@
 #!/bin/sh
 
-read -p "$0: Change the settings hidden in Mac. Are you sure? (y/n) " -n 1
+read -p "Powerup your OSX by defaults (y/n) " -n 1
 echo ""
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 	exit

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-#case ${OSTYPE} in
-#	darwin*)
-#		echo "try 'brew bundle osx/Brewfile'"
-#	    exit
-#		;;
-#esac
+case ${OSTYPE} in
+	darwin*)
+		echo "try 'brew bundle osx/Brewfile'"
+	    exit
+		;;
+esac
 
 if type yum >/dev/null 2>&1; then
 	PACMAN='yum'

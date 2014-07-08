@@ -12,19 +12,19 @@ function make_ruby() {
 }
 
 function make_tukubai() {
-	mv -f ~/tukubai ~/tukubai
+	mv -f ~/tukubai ~/tukubai.old
 	git clone https://github.com/usp-engineers-community/Open-usp-Tukubai ~/tukubai
 	cd ~/tukubai
 	make install
 }
 
-read -p "$0: Setup ruby. Are you sure? (y/n) " -n 1
+read -p "Setup ruby (y/n) " -n 1
 echo ""
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	make_ruby
 fi
 
-read -p "$0: Setup Open-usp-Tukubai. Are you sure? (y/n) " -n 1
+read -p "Setup Open-usp-Tukubai (y/n) " -n 1
 echo ""
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	make_tukubai

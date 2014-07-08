@@ -39,7 +39,7 @@ EOF
 );
 
 echo "$msg";
-if [[ "$0" != "bootstrap.sh" ]]; then
+if [[ ! "$0" =~ "bootstrap.sh" ]]; then
 	doIt;
 	if [ "$1" == 'all' ]; then
 		sudo -v

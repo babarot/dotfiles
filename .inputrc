@@ -12,9 +12,3 @@ set meta-flag on
 set input-meta on
 set output-meta on
 set convert-meta off
-
-## Vi Mode
-#set editing-mode vi
-#"\C-p": history-search-backward
-#"\C-n": history-search-forward
-#"\C-j": vi-movement-mode

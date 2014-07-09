@@ -16,7 +16,6 @@ or
 **Alternate spellings**:
 
 	curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh
-	wget -q -O - https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh
 	
 is not recommended.
 
@@ -68,9 +67,9 @@ The processing of `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/b
 	
 	Events are mainly executed are follows.
 	
-	* Install some commands under the Package Management System (*nix only, except **OS X**)
+	* Install some commands under the Package Management System (*nix only, except OS X)
 	* Set language of `$HOME` Japanese to English and vice versa
-	* Execute vim with  `-c "NeoBundleInit"`. (**Only type of vim is 'normal' or [more](http://www.drchip.org/astronaut/vim/vimfeat.html)**)
+	* Execute vim with  `-c "NeoBundleInit"`. (Only type of vim is **normal** or **[more](http://www.drchip.org/astronaut/vim/vimfeat.html)**)
 	
 	**Only OS X**
 	

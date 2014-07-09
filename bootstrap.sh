@@ -28,7 +28,7 @@ cat <<-EOF
 By executing ./bootstrap.sh, the following commands are run
   1. git clone b4b4r07/dotfiles.git
   2. make deploy
-  3. restart bash without running rcfiles
+  3. restart your current bash
 Otherwise, any other changes
 
 For more information, contact me

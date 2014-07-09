@@ -1,6 +1,5 @@
 syntax enable
 
-
 " Distinction by means of OS
 let s:is_windows = has('win16') || has('win32') || has('win64')
 let s:is_cygwin = has('win32unix')
@@ -22,10 +21,6 @@ elseif has('mac')
 	" For Mac OS.
 	""set guifont=Osaka－等幅:h14
 	set guifont=Andale\ Mono:h12
-	""set linespace=1
-	""if has('kaoriya')
-	""	set ambiwidth=auto
-	""endif
 elseif has('xfontset')
 	" For UNIX.
 	set guifontset=a14,r14,k14
@@ -106,11 +101,3 @@ elseif s:is_mac
 	au GUIEnter * set lines=50
 	au GUIEnter * set columns=150
 endif
-
-"augroup hack234
-"  autocmd!
-"  if has('mac')
-"    autocmd FocusGained * set transparency=0
-"    autocmd FocusLost * set transparency=50
-"  endif
-"augroup END

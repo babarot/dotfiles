@@ -89,6 +89,7 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 alias diff='diff -u'
+alias nvim='vim -N -u NONE -i NONE'
 
 if type colordiff >/dev/null 2>&1 ; then
 	alias diff='colordiff -u'

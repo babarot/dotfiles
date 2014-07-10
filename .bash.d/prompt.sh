@@ -49,10 +49,6 @@ fi
 
 PS1=
 if type __git_ps1 >/dev/null 2>&1; then
-	PS1+="[${PS_USER}${PS_ATODE}@${PS_HOST}${PS_SCREEN}${PS_SSH}:${PS_WORK}]\[\033[01;32m\]"
-	PS1+='$(if git status &>/dev/null;then echo git[branch:$(git branch | cut -d" "  -f2-) change:$(git status -s |wc -l)];fi)\[\033[00m\]'
-	PS1+='$ '
-else
 	GIT_PS1_SHOWDIRTYSTATE=true
 	GIT_PS1_SHOWSTASHSTATE=true
 	GIT_PS1_SHOWUNTRACKEDFILES=true
@@ -60,6 +56,10 @@ else
 	PS_GIT="${COLOUR_RED}"'$(__git_ps1)'"${COLOUR_DEFAULT}"
 
 	PS1+="${PS_USER}@${PS_HOST}:${PS_WORK}${PS_GIT}"
+	PS1+='$ '
+else
+	PS1+="[${PS_USER}${PS_ATODE}@${PS_HOST}${PS_SCREEN}${PS_SSH}:${PS_WORK}]\[\033[01;32m\]"
+	PS1+='$(if git status &>/dev/null;then echo git[branch:$(git branch | cut -d" "  -f2-) change:$(git status -s |wc -l)];fi)\[\033[00m\]'
 	PS1+='$ '
 fi
 export PS1;

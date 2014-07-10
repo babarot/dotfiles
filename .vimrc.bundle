@@ -50,7 +50,7 @@ if isdirectory(s:neobundle_root)
 	      \ }
 	NeoBundle 'mattn/gist-vim'
 	NeoBundle 'vim-scripts/Align'
-	NeoBundle 'b4b4r07/solarized.vim', { "base" : $HOME."/.vim/colors/" }
+	NeoBundle 'b4b4r07/solarized.vim', { "base" : $HOME."/.vim/colors" }
 	NeoBundle 'nanotech/jellybeans.vim', { "base" : $HOME."/.vim/colors/jellybeans" }
 	NeoBundle has('lua') ? 'Shougo/neocomplete' : 'Shougo/neocomplcache'
 	

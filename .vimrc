@@ -270,8 +270,8 @@ else
 	" Vim for CUI
 	"if g:is_mac
 		" Vim for mac
-		if isdirectory(expand('~/.vim/colors/solarized'))
-			call system('mv ~/.vim/colors/solarized/solarized.vim ~/.vim/colors')
+		if isdirectory(expand('~/.vim/colors/solarized.vim'))
+			"call system('mv ~/.vim/colors/solarized/solarized.vim ~/.vim/colors')
 			colorscheme solarized
 		elseif isdirectory(expand('~/.vim/colors/jellybeans'))
 			colorscheme jellybeans

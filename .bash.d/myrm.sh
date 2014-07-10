@@ -27,13 +27,16 @@ function myrm()
 	return 0
 }
 
-[ -f $myrm_log ] || touch $myrm_log
-[ -e $myrm_box ] || mkdir -p $myrm_box || {
+[ -d $myrm_box ] || mkdir -p $myrm_box || {
 	echo "$myrm_box: could not create"
 	exit 1
 }
+[ -f $myrm_log ] || touch $myrm_log
 
-if [ "$1" = '-l' ]; then
+if [ -z "$1" ]; then
+	echo "too few arguments"
+	exit 1
+elif [ "$1" = '-l' ]; then
 	shift
 	if [ -z "$1" ]; then
 		sed "s $HOME ~ g" $myrm_log | nl

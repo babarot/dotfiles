@@ -48,8 +48,8 @@ else
 fi
 
 PS1=
-if type __git_ps1 >/dev/null 2>&1; then
-	PS1+="[${PS_USER}${PS_ATODE}@${PS_HOST}${PS_SCREEN}${PS_SSH}:${PS_WORK}]\[\033[01;32m\]"
+if ! type __git_ps1 >/dev/null 2>&1; then
+	PS1+="${PS_USER}${PS_ATODE}@${PS_HOST}${PS_SCREEN}${PS_SSH}:${PS_WORK}\[\033[01;32m\]"
 	PS1+='$(if git status &>/dev/null;then echo git[branch:$(git branch | cut -d" "  -f2-) change:$(git status -s |wc -l)];fi)\[\033[00m\]'
 	PS1+='$ '
 else

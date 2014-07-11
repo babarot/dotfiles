@@ -10,16 +10,12 @@
 "    ~~~~         \/__/         /:/  /       |:|  |        \:\__\    
 "                               \/__/         \|__|         \/__/    
 
-"
-" Author: b4b4r07
-"
+" BASIC: OS, Load files {{{
 
-" Vim mode
+" No vi
 set nocompatible
 
-"
-" OS 
-"
+" OS
 let g:is_windows = has('win16') || has('win32') || has('win64')
 let g:is_cygwin = has('win32unix')
 let g:is_mac = !g:is_windows && !g:is_cygwin
@@ -28,23 +24,12 @@ let g:is_mac = !g:is_windows && !g:is_cygwin
 	\    system('uname') =~? '^darwin'))
 let g:is_unix = !g:is_mac && has('unix')
 
-"
-" Use English interface.
-"
-if g:is_windows
-	language message en "For Windows
-else
-	language mes C      "For Linux
-endif
-
 if g:is_windows
 	set shellslash "Exchange path separator
 	let $HOME=$VIM "Change home directory
 endif
 
-"
 " Loading divided files
-"
 let g:local_vimrc = expand('~/.vimrc.local')
 if filereadable(g:local_vimrc)
 	execute 'source ' . g:local_vimrc
@@ -55,13 +40,15 @@ if filereadable(g:bundle_vimrc)
 	execute 'source ' . g:bundle_vimrc
 endif
 
-"
-" FUNCTION:
-" =======================================================================================
-"
-function! g:Date()
-	return strftime("%Y/%m/%d %H:%M")
-endfunction
+" Enable modeline
+set modeline
+set modelines=3
+"}}}
+
+" FILES: Edit & Search {{{
+
+" Always only one window when opening files
+autocmd BufRead * execute ":only"
 
 " Function that make its directory if the directory you want to make do not exist
 function! s:mkdir(file, ...)
@@ -70,126 +57,8 @@ function! s:mkdir(file, ...)
 		call mkdir(f, 'p')
 	endif
 endfunction
-
 call s:mkdir(expand('$HOME/.vim/colors'))
 
-" Backup automatically
-set backup
-if g:is_windows
-	call s:mkdir(expand('$VIM/.backup'))
-	set backupdir=$VIM/.backup
-	set backupext=.bak
-else
-	set backupdir=~/.backup/vim
-	set viewdir=~/.backup/view
-	if has( "autocmd" )
-		autocmd BufWritePre * call UpdateBackupFile()
-		function! UpdateBackupFile()
-			let dir = strftime("~/.backup/vim/%Y/%m/%d", localtime())
-			if !isdirectory(dir)
-				let retval = system("mkdir -p ".dir)
-				let retval = system("chown goth:staff ".dir)
-			endif
-			exe "set backupdir=".dir
-			unlet dir
-			let ext = strftime("%H_%M_%S", localtime())
-			exe "set backupext=.".ext
-			unlet ext
-		endfunction
-	endif
-endif
-
-" TMUX Cursor
-if exists('$TMUX')
-  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-else
-  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-endif
-
-" Cursor appears if not movement
-augroup vimrc-auto-cursorline
-	autocmd!
-	autocmd CursorMoved,CursorMovedI * call s:auto_cursorline('CursorMoved')
-	autocmd CursorHold,CursorHoldI * call s:auto_cursorline('CursorHold')
-	autocmd WinEnter * call s:auto_cursorline('WinEnter')
-	autocmd WinLeave * call s:auto_cursorline('WinLeave')
-
-	let s:cursorline_lock = 0
-	function! s:auto_cursorline(event)
-		if a:event ==# 'WinEnter'
-			setlocal cursorline
-			let s:cursorline_lock = 2
-		elseif a:event ==# 'WinLeave'
-			setlocal nocursorline
-		elseif a:event ==# 'CursorMoved'
-			if s:cursorline_lock
-				if 1 < s:cursorline_lock
-					let s:cursorline_lock = 1
-				else
-					setlocal nocursorline
-					let s:cursorline_lock = 0
-				endif
-			endif
-		elseif a:event ==# 'CursorHold'
-			setlocal cursorline
-			let s:cursorline_lock = 1
-		endif
-	endfunction
-augroup END
-
-" Restore cursor position when opening the file
-function! s:RestoreCursorPostion()
-	if line("'\"") <= line("$")
-		normal! g`"
-		return 1
-	endif
-endfunction
-augroup vimrc_restore_cursor_position
-	autocmd!
-	autocmd BufWinEnter * call s:RestoreCursorPostion()
-augroup END
-
-" Automatically make directory if it does not exist when storing file {{{
-augroup vimrc-auto-mkdir
-	autocmd!
-	autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
-	function! s:auto_mkdir(dir, force)
-		if !isdirectory(a:dir) && (a:force ||
-			\ input(printf('"%s" does not exist. Create? [y/N]', a:dir)) =~? '^y\%[es]$')
-			call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
-		endif
-	endfunction
-augroup END
-
-"
-" ENCODING:
-" =======================================================================================
-"
-
-set ambiwidth=double
-set fileformat=unix
-set fileformats=unix,dos,mac
-set fileencoding=utf-8
-set fileencodings=iso-2022-jp,cp932,sjis,euc-jp,utf-8
-
-command! -bang -bar -complete=file -nargs=? Sjis      edit<bang> ++enc=sjis <args>
-command! -bang -bar -complete=file -nargs=? Utf8      edit<bang> ++enc=utf-8 <args>
-command! -bang -bar -complete=file -nargs=? Iso2022jp edit<bang> ++enc=iso-2022-jp <args>
-command! -bang -bar -complete=file -nargs=? Cp932     edit<bang> ++enc=cp932 <args>
-command! -bang -bar -complete=file -nargs=? Euc       edit<bang> ++enc=euc-jp <args>
-command! -bang -bar -complete=file -nargs=? Utf16     edit<bang> ++enc=ucs-2le <args>
-command! -bang -bar -complete=file -nargs=? Utf16be   edit<bang> ++enc=ucs-2 <args>
-
-if has('multi_byte_ime')
-	set iminsert=0 imsearch=0
-endif
-
-"
-" FILES:
-" =======================================================================================
-"
 syntax on
 set number                          "Show a row"
 set showmode                        "Show the current mode"
@@ -248,6 +117,32 @@ augroup EchoFilePath
 	autocmd WinEnter * execute "normal! 1\<C-g>"
 augroup END
 
+" Backup automatically
+set backup
+if g:is_windows
+	call s:mkdir(expand('$VIM/.backup'))
+	set backupdir=$VIM/.backup
+	set backupext=.bak
+else
+	set backupdir=~/.backup/vim
+	set viewdir=~/.backup/view
+	if has( "autocmd" )
+		autocmd BufWritePre * call UpdateBackupFile()
+		function! UpdateBackupFile()
+			let dir = strftime("~/.backup/vim/%Y/%m/%d", localtime())
+			if !isdirectory(dir)
+				let retval = system("mkdir -p ".dir)
+				let retval = system("chown goth:staff ".dir)
+			endif
+			exe "set backupdir=".dir
+			unlet dir
+			let ext = strftime("%H_%M_%S", localtime())
+			exe "set backupext=.".ext
+			unlet ext
+		endfunction
+	endif
+endif
+
 " Swap
 if !isdirectory(expand('~/.swap'))
 	call s:mkdir(expand('~/.swap'))
@@ -255,35 +150,78 @@ endif
 set swapfile
 set directory=~/.swap
 
-"
-" APPEARANCE:
-"
+" Automatically make directory if it does not exist when saving file
+augroup vimrc-auto-mkdir
+	autocmd!
+	autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
+	function! s:auto_mkdir(dir, force)
+		if !isdirectory(a:dir) && (a:force ||
+			\ input(printf('"%s" does not exist. Create? [y/N]', a:dir)) =~? '^y\%[es]$')
+			call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+		endif
+	endfunction
+augroup END
+
+" Auto sudo if the file is readonly
+cmap w!! w !sudo tee > /dev/null %
+
+" Type 'q' to quit in help or qf buffers
+"autocmd MyAutoCmd FileType help,qf nnoremap <buffer> q <C-w>c
+"}}}
+
+" ENCODING: Moji-code {{{
+
+if has('gui_running')
+	set encoding=utf-8
+endif
+scriptencoding cp932
+
+set ambiwidth=double
+set fileformat=unix
+set fileformats=unix,dos,mac
+set fileencoding=utf-8
+set fileencodings=iso-2022-jp,cp932,sjis,euc-jp,utf-8
+
+command! -bang -bar -complete=file -nargs=? Sjis      edit<bang> ++enc=sjis <args>
+command! -bang -bar -complete=file -nargs=? Utf8      edit<bang> ++enc=utf-8 <args>
+command! -bang -bar -complete=file -nargs=? Iso2022jp edit<bang> ++enc=iso-2022-jp <args>
+command! -bang -bar -complete=file -nargs=? Cp932     edit<bang> ++enc=cp932 <args>
+command! -bang -bar -complete=file -nargs=? Euc       edit<bang> ++enc=euc-jp <args>
+command! -bang -bar -complete=file -nargs=? Utf16     edit<bang> ++enc=ucs-2le <args>
+command! -bang -bar -complete=file -nargs=? Utf16be   edit<bang> ++enc=ucs-2 <args>
+
+if has('multi_byte_ime')
+	set iminsert=0 imsearch=0
+endif
+"}}}
+
+" APPEARANCE: External appearance of the Vim {{{
+
+" Use English interface
+if g:is_windows
+	language message en
+else
+	language mes C
+endif
 
 " Colorscheme
 set t_ut=
 set t_Co=256
 set background=dark
 if has('gui_running') && !g:is_windows
-	"For MacVim, only
+	" For MacVim, only
 	colorscheme solarized
 else
 	" Vim for CUI
-	"if g:is_mac
-		" Vim for mac
-		if isdirectory(expand('~/.vim/colors/solarized.vim'))
-			"call system('mv ~/.vim/colors/solarized/solarized.vim ~/.vim/colors')
-			colorscheme solarized
-		elseif isdirectory(expand('~/.vim/colors/jellybeans'))
-			colorscheme jellybeans
-		elseif isdirectory(expand('~/.vim/colors/molokai'))
-			colorscheme molokai
-		else
-			colorscheme desert
-		endif
-	"else
-		" Vim for unix
-	"	colorscheme luinnar
-	"endif
+	if isdirectory(expand('~/.vim/colors/solarized.vim'))
+		colorscheme solarized
+	elseif isdirectory(expand('~/.vim/colors/jellybeans.vim'))
+		colorscheme jellybeans
+	elseif isdirectory(expand('~/.vim/colors/molokai.vim'))
+		colorscheme molokai
+	else
+		colorscheme desert
+	endif
 endif
 
 " Highlight zenkaku-space
@@ -300,64 +238,109 @@ if has('syntax')
 	augroup END
 endif
 
-"
-" STATUSLINE:
-" =======================================================================================
-"
-
-"if !has("gui_running")
-	if has('syntax')
-		augroup InsertHook
-			autocmd!
-			autocmd InsertEnter * call s:StatusLine('Enter')
-			autocmd InsertLeave * call s:StatusLine('Leave')
-		augroup END
-	endif
-	
-	let g:hi_insert = 'highlight StatusLine guifg=black guibg=darkyellow gui=none ctermfg=black ctermbg=yellow cterm=none'
-	let s:slhlcmd = ''
-	function! s:StatusLine(mode)
-		if a:mode == 'Enter'
-			 silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
-			 silent exec g:hi_insert
-		else
-			 highlight clear StatusLine
-			 silent exec s:slhlcmd
-		endif
-	endfunction
-	
-	function! s:GetHighlight(hi)
-		 redir => hl
-		 exec 'highlight '.a:hi
-		 redir END
-		 let hl = substitute(hl, '[\r\n]', '', 'g')
-		 let hl = substitute(hl, 'xxx', '', '')
-		 return hl
-	endfunction
-	
-	set laststatus=2 "Show two lines at statusline
-"endif
-
-"if !has("gui_running")
-	if isdirectory(expand('~/.vim/bundle/buftabs'))
-		set statusline=%{buftabs}%=%m\ %y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}\ %4l/%4L,%3c\ %3p%%\ (%{g:Date()})
-	else
-		set statusline=[%n]%t%M%=%y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}\ %4l/%4L,%3c\ %3p%%\ (%{g:Date()})
-	endif
-	
-	highlight StatusLine cterm=none    gui=none
-	highlight Visual     ctermfg=Black guibg=Black
-"endif
-
+" Editing original color
+highlight StatusLine cterm=none    gui=none
+highlight Visual     ctermfg=Black guibg=Black
 highlight StatusLine ctermfg=black ctermbg=white cterm=none
 highlight Visual term=reverse cterm=reverse ctermfg=darkyellow ctermbg=black
+"}}}
 
-autocmd BufRead * execute ":only"
+" CURSOR: Auto restore {{{
 
-"
-" MAPPING:
-" =======================================================================================
-"
+" Display vertical line at 80 always
+set colorcolumn=80
+
+" TMUX Cursor
+if exists('$TMUX')
+	let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+	let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+else
+	let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+	let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
+
+" Cursor appears if not movement
+augroup vimrc-auto-cursorline
+	autocmd!
+	autocmd CursorMoved,CursorMovedI * call s:auto_cursorline('CursorMoved')
+	autocmd CursorHold,CursorHoldI * call s:auto_cursorline('CursorHold')
+	autocmd WinEnter * call s:auto_cursorline('WinEnter')
+	autocmd WinLeave * call s:auto_cursorline('WinLeave')
+
+	let s:cursorline_lock = 0
+	function! s:auto_cursorline(event)
+		if a:event ==# 'WinEnter'
+			setlocal cursorline
+			let s:cursorline_lock = 2
+		elseif a:event ==# 'WinLeave'
+			setlocal nocursorline
+		elseif a:event ==# 'CursorMoved'
+			if s:cursorline_lock
+				if 1 < s:cursorline_lock
+					let s:cursorline_lock = 1
+				else
+					setlocal nocursorline
+					let s:cursorline_lock = 0
+				endif
+			endif
+		elseif a:event ==# 'CursorHold'
+			setlocal cursorline
+			let s:cursorline_lock = 1
+		endif
+	endfunction
+augroup END
+
+" Restore cursor position when opening the file
+function! s:RestoreCursorPostion()
+	if line("'\"") <= line("$")
+		normal! g`"
+		return 1
+	endif
+endfunction
+augroup vimrc_restore_cursor_position
+	autocmd!
+	autocmd BufWinEnter * call s:RestoreCursorPostion()
+augroup END
+"}}}
+
+" STATUSLINE: My statusline, buftabs{{{
+
+" Show two lines at statusline
+set laststatus=2
+set statusline=[%n]%t%M%=%y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}\ %4l/%4L,%3c\ %3p%%\ (%{g:Date()})
+
+" Yellow statusline at Insert mode
+if has('syntax')
+	augroup InsertHook
+		autocmd!
+		autocmd InsertEnter * call s:StatusLine('Enter')
+		autocmd InsertLeave * call s:StatusLine('Leave')
+	augroup END
+endif
+
+let g:hi_insert = 'highlight StatusLine guifg=black guibg=darkyellow gui=none ctermfg=black ctermbg=yellow cterm=none'
+let s:slhlcmd = ''
+function! s:StatusLine(mode)
+	if a:mode == 'Enter'
+		 silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
+		 silent exec g:hi_insert
+	else
+		 highlight clear StatusLine
+		 silent exec s:slhlcmd
+	endif
+endfunction
+
+function! s:GetHighlight(hi)
+	 redir => hl
+	 exec 'highlight '.a:hi
+	 redir END
+	 let hl = substitute(hl, '[\r\n]', '', 'g')
+	 let hl = substitute(hl, 'xxx', '', '')
+	 return hl
+endfunction
+"}}}
+
+" MAPPING: {n,x,c,i}noremap {{{
 
 " For US keyborad mapping
 if g:is_windows
@@ -469,3 +452,8 @@ nnoremap sh <C-w>h
 if has('clipboard')
 	set clipboard=unnamed
 endif
+"}}}
+
+" vim: foldmethod=marker
+" vim: foldcolumn=3
+" vim: foldlevel=0

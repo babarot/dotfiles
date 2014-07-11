@@ -8,6 +8,7 @@
 "                                                               
 "                                                               
 
+" Enable neobundle ('one' is Disenable)
 let s:noplugin = 0
 
 if g:is_windows
@@ -17,52 +18,76 @@ else
 endif
 let s:neobundle_root = s:bundle_root . '/neobundle.vim'
 
-if isdirectory(s:neobundle_root)
+if isdirectory(s:neobundle_root) || v:version > 702
 	set nocompatible
 	filetype plugin indent off
 	
 	if has('vim_starting')
-	set runtimepath+=~/.vim/bundle/neobundle.vim
-	call neobundle#rc(expand('~/.vim/bundle'))
+		set runtimepath+=~/.vim/bundle/neobundle.vim
+		call neobundle#rc(expand('~/.vim/bundle'))
 	endif 
 	
+	" Taking care of NeoBundle by itself
 	NeoBundleFetch 'Shougo/neobundle.vim'
 	
+	" NeoBundle List
 	NeoBundle 'Shougo/unite.vim'
-	"NeoBundle 'h1mesuke/unite-outline'
-	NeoBundle 'Shougo/unite-outline'
+	NeoBundle 'Shougo/vimproc', {
+		\ 'build': {
+		\ 'windows': 'make -f make_mingw32.mak',
+		\ 'cygwin': 'make -f make_cygwin.mak',
+		\ 'mac': 'make -f make_mac.mak',
+		\ 'unix': 'make -f make_unix.mak',
+		\ }
+		\}
 	NeoBundle 'b4b4r07/mru.vim'
+	NeoBundle 'b4b4r07/buftabs'
 	NeoBundle 'thinca/vim-splash'
 	NeoBundle 'thinca/vim-quickrun'
 	NeoBundle 'tpope/vim-surround'
 	NeoBundle 'osyo-manga/vim-anzu'
-	"NeoBundle 'mhinz/vim-startify'
-	NeoBundle 'b4b4r07/buftabs'
 	NeoBundle 'LeafCage/yankround.vim'
 	NeoBundle 'junegunn/vim-easy-align'
 	NeoBundle 'jiangmiao/auto-pairs'
-	NeoBundle 'tpope/vim-fugitive'
 	NeoBundle 'ujihisa/neco-look'
-	NeoBundle 'sjl/gundo.vim'
-	NeoBundleLazy 'mattn/excitetranslate-vim', {
-	      \ 'depends': 'mattn/webapi-vim',
-	      \ 'autoload' : { 'commands': ['ExciteTranslate']}
-	      \ }
+	NeoBundle 'tpope/vim-fugitive'
 	NeoBundle 'mattn/gist-vim'
 	NeoBundle 'vim-scripts/Align'
-	NeoBundle 'b4b4r07/solarized.vim', { "base" : $HOME."/.vim/colors" }
-	NeoBundle 'nanotech/jellybeans.vim', { "base" : $HOME."/.vim/colors/jellybeans" }
 	NeoBundle has('lua') ? 'Shougo/neocomplete' : 'Shougo/neocomplcache'
+	NeoBundleLazy 'Shougo/vimshell', {
+		\ 'autoload' : { 'commands' : [ 'VimShell', "VimShellPop", "VimShellInteractive" ] }
+		\}
+	NeoBundleLazy 'basyura/TweetVim', { 'depends' :
+		\ ['basyura/twibill.vim', 'tyru/open-browser.vim'],
+		\ 'autoload' : { 'commands' : 'TweetVimHomeTimeline' }}
+	NeoBundleLazy 'sjl/gundo.vim', {
+		\ "autoload": {"commands": ["GundoToggle"]}}
+	NeoBundleLazy 'mattn/excitetranslate-vim', {
+		\ 'depends': 'mattn/webapi-vim',
+		\ 'autoload' : { 'commands': ['ExciteTranslate']}
+		\ }
+	NeoBundleLazy 'Shougo/unite-outline', {
+		\ "autoload": {
+		\   "unite_sources": ["outline"],
+		\ }}
+	NeoBundleLazy 'jnwhiteh/vim-golang',{
+		\ "autoload" : {"filetypes" : ["go"]}
+		\}
+	NeoBundle 'b4b4r07/solarized.vim', { "base" : $HOME."/.vim/colors" }
+	NeoBundle 'nanotech/jellybeans.vim', { "base" : $HOME."/.vim/colors" }
+	NeoBundle 'tomasr/molokai', { "base" : $HOME."/.vim/colors" }
+	NeoBundle 'w0ng/vim-hybrid', { "base" : $HOME."/.vim/colors" }
 	
 	filetype plugin indent on
 	NeoBundleCheck
 
+	" Source plugin file for NeoBundle
 	let g:plugin_vimrc = expand('~/.vimrc.plugin')
 	if filereadable(g:plugin_vimrc)
 		execute 'source ' . g:plugin_vimrc
 	endif
 else
-	""let s:noplugin = 1
+	"let s:noplugin = 1
 	command! NeoBundleInit call s:neobundle_init()
 		function! s:neobundle_init()
 			call mkdir(s:bundle_root, 'p')

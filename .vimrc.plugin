@@ -36,9 +36,8 @@ nnoremap <silent><Space>o :Unite outline -vertical -winwidth=40 -toggle<CR>
 "nnoremap <silent><Space>o :Unite outline -vertical -no-quit -winwidth=40 -toggle<CR>
 
 "
-" Neocomplete (Neocomplcache)
+" Neocomplete:
 "
-
 if neobundle#is_installed('neocomplete')
 	let g:neocomplete#enable_at_startup = 1
 	let g:neocomplete#disable_auto_complete = 0
@@ -75,7 +74,11 @@ function! g:Date()
 	return strftime("%Y/%m/%d %H:%M")
 endfunction
 
-set statusline=%{buftabs}%=%m\ %y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}\ %4l/%4L,%3c\ %3p%%\ (%{g:Date()})
+if exists("g:buftabs_enabled")
+	set statusline=%{buftabs}%=%m\ %y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}\ %4l/%4L,%3c\ %3p%%\ (%{g:Date()})
+else
+	set statusline=[%n]%t%M%=%y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}\ %4l/%4L,%3c\ %3p%%\ (%{g:Date()})
+endif
 
 let w:buftabs_enabled         = 0
 let g:buftabs_only_basename   = 1
@@ -116,18 +119,17 @@ function! Buftabs_show(deleted_buf)
 	endif
 
 	if ! exists("w:buftabs_enabled")
-	endfunction
+endfunction
 
 "
 " Splash:
 "
-""let g:loaded_splash = 1   "(on=1 / off=0)
+"let g:loaded_splash = 1
 let s:vim_intro = $HOME . "/.vim/bundle/vim-splash/sample/intro"
 if !isdirectory(s:vim_intro)
 	call mkdir(s:vim_intro, 'p')
 	execute ":lcd " . s:vim_intro . "/.."
 	call system('git clone https://gist.github.com/OrgaChem/7630711 intro')
-	"call system('mv intro $HOME/.vim/bundle/vim-splash/sample/')
 endif
 let g:splash#path = expand(s:vim_intro . '/vim_intro.txt')
 
@@ -140,21 +142,6 @@ let g:splash#path = expand(s:vim_intro . '/vim_intro.txt')
 "nmap # <Plug>(anzu-sharp-with-echo)
 nmap n <Plug>(anzu-mode-n)
 nmap N <Plug>(anzu-mode-N)
-
-"
-" Startify:
-"
-let g:autoloaded_startify = 0
-"Custom Header (For example, date command)"
-let g:startify_custom_header =
-  \ map(split(system('date'), '\n'), '"   ". v:val') + ['','']
-"Change shortcut number into assigned alphabet"
-let g:startify_custom_indices = ['f', 'g', 'h', 'r', 'i', 'o', 'b']
-"Set bookmark"
-let g:startify_bookmarks = [
-  \ '~/.vimrc',
-  \ '~/localrepos/blog/vac_20131215.md',
-  \ ]
 
 "
 " Yankround:
@@ -190,13 +177,20 @@ let g:gundo_auto_preview = 0
 "
 let g:quickrun_config = {}
 let g:quickrun_config.markdown = {
-      \ 'outputter' : 'null',
-      \ 'command'   : 'open',
-      \ 'cmdopt'    : '-a',
-      \ 'args'      : 'Marked',
-      \ 'exec'      : '%c %o %a %s',
-      \ }
+	\ 'outputter' : 'null',
+	\ 'command'   : 'open',
+	\ 'cmdopt'    : '-a',
+	\ 'args'      : 'Marked',
+	\ 'exec'      : '%c %o %a %s',
+	\ }
 
-"==================================================================="
-" T E S T                                                           "
-"==================================================================="
+"
+" VimShell:
+"
+let g:vimshell_prompt_expr = 'getcwd()." > "'
+let g:vimshell_prompt_pattern = '^\f\+ > '
+augroup my-vimshell
+    autocmd!
+    autocmd FileType vimshell
+		\ imap <expr> <buffer> <C-n> pumvisible() ? "\<C-n>" : "\<Plug>(vimshell_history_neocomplete)"
+augroup END

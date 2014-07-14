@@ -18,7 +18,7 @@ else
 endif
 let s:neobundle_root = s:bundle_root . '/neobundle.vim'
 
-if isdirectory(s:neobundle_root) || v:version > 702
+if isdirectory(s:neobundle_root)
 	set nocompatible
 	filetype plugin indent off
 	

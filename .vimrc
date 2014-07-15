@@ -573,7 +573,8 @@ endfunction
 " }}}2
 
 " Tab pages {{{2
-if v:version >= 700
+let s:enable_tab_pages = 0
+if v:version >= 700 && exists(s:enable_tab_pages)
 	" Anywhere SID.
 	function! s:SID_PREFIX()
 		return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSID_PREFIX$')

@@ -76,55 +76,103 @@ if s:bundled('neobundle.vim')
 				\ 'cygwin': 'make -f make_cygwin.mak',
 				\ 'mac': 'make -f make_mac.mak',
 				\ 'unix': 'make -f make_unix.mak',
-				\ }
+				\ }}
+	NeoBundle has('lua') ? 'Shougo/neocomplete' : 'Shougo/neocomplcache'
+	NeoBundleLazy 'Shougo/vimshell', {
+				\ 'autoload' : { 'commands' : [ 'VimShell', "VimShellPop", "VimShellInteractive" ] }
 				\}
+	NeoBundleLazy 'Shougo/unite-outline', {
+				\ "autoload": {
+				\   "unite_sources": ["outline"],
+				\ }}
+	NeoBundleLazy 'Shougo/neomru.vim', { 'autoload' : {
+				\ 'unite_sources' : 'file_mru',
+				\ }}
+	NeoBundle 'Shougo/vimfiler'
+	call neobundle#config('vimfiler', {
+				\ 'lazy' : 1,
+				\ 'depends' : 'Shougo/unite.vim',
+				\ 'autoload' : {
+				\    'commands' : [{ 'name' : 'VimFiler',
+				\                    'complete' : 'customlist,vimfiler#complete' },
+				\                  'VimFilerExplorer',
+				\                  'Edit', 'Read', 'Source', 'Write'],
+				\    'mappings' : ['<Plug>(vimfiler_switch)']
+				\ }
+				\ })
+	NeoBundle 'Shougo/vimshell'
+	call neobundle#config('vimshell', {
+				\ 'lazy' : 1,
+				\ 'autoload' : {
+				\   'commands' : [{ 'name' : 'VimShell',
+				\                   'complete' : 'customlist,vimshell#complete'},
+				\                 'VimShellExecute', 'VimShellInteractive',
+				\                 'VimShellTerminal', 'VimShellPop'],
+				\   'mappings' : ['<Plug>(vimshell_switch)']
+				\ }})
+	NeoBundleLazy 'thinca/vim-scouter', '', 'same', { 'autoload' : {
+				\ 'commands' : 'Scouter'
+				\ }}
+	NeoBundleLazy 'thinca/vim-ref', { 'autoload' : {
+				\ 'commands' : 'Ref'
+				\ }}
+	NeoBundle 'thinca/vim-quickrun'
+	NeoBundle 'thinca/vim-unite-history', '', 'same'
+	NeoBundle 'thinca/vim-splash'
+	NeoBundleLazy 'thinca/vim-qfreplace', '', 'same', { 'autoload' : {
+				\ 'filetypes' : ['unite', 'quickfix'],
+				\ }}
+	NeoBundle 'tyru/skk.vim'
+	NeoBundleLazy 'tyru/eskk.vim', { 'autoload' : {
+				\ 'mappings' : [['i', '<Plug>(eskk:toggle)']],
+				\ }}
+	NeoBundleLazy 'tyru/open-browser.vim', '', 'same', { 'autoload' : {
+				\ 'mappings' : '<Plug>(open-browser-wwwsearch)',
+				\ }}
+	NeoBundleLazy 'tyru/restart.vim', '', 'same', {
+				\ 'gui' : 1,
+				\ 'autoload' : {
+				\  'commands' : 'Restart'
+				\ }}
+	NeoBundleLazy 'sjl/gundo.vim', '', 'same', { 'autoload' : {
+				\ 'commands' : 'GundoToggle'
+				\ }}
+	NeoBundle 'ujihisa/neco-look'
+	NeoBundleLazy 'ujihisa/unite-colorscheme', '', 'same'
+	NeoBundle 'yomi322/unite-tweetvim'
 	NeoBundle 'b4b4r07/mru.vim'
 	NeoBundle 'b4b4r07/buftabs'
-	NeoBundle 'thinca/vim-splash'
-	NeoBundle 'thinca/vim-quickrun'
 	NeoBundle 'tpope/vim-surround'
 	NeoBundle 'osyo-manga/vim-anzu'
 	NeoBundle 'LeafCage/yankround.vim'
 	NeoBundle 'junegunn/vim-easy-align'
 	NeoBundle 'jiangmiao/auto-pairs'
-	NeoBundle 'ujihisa/neco-look'
 	NeoBundle 'tpope/vim-fugitive'
 	NeoBundle 'mattn/gist-vim'
 	NeoBundle 'vim-scripts/Align'
-	NeoBundle has('lua') ? 'Shougo/neocomplete' : 'Shougo/neocomplcache'
-	NeoBundleLazy 'Shougo/vimshell', {
-				\ 'autoload' : { 'commands' : [ 'VimShell', "VimShellPop", "VimShellInteractive" ] }
-				\}
-	NeoBundleLazy 'basyura/TweetVim', { 'depends' :
-				\ ['basyura/twibill.vim', 'tyru/open-browser.vim'],
-				\ 'autoload' : { 'commands' : 'TweetVimHomeTimeline' }}
-	NeoBundleLazy 'sjl/gundo.vim', {
-				\ "autoload": {"commands": ["GundoToggle"]}}
 	NeoBundleLazy 'mattn/excitetranslate-vim', {
 				\ 'depends': 'mattn/webapi-vim',
 				\ 'autoload' : { 'commands': ['ExciteTranslate']}
 				\ }
-	NeoBundleLazy 'Shougo/unite-outline', {
-				\ "autoload": {
-				\   "unite_sources": ["outline"],
-				\ }}
 	NeoBundleLazy 'jnwhiteh/vim-golang',{
 				\ "autoload" : {"filetypes" : ["go"]}
 				\}
-	NeoBundleLazy 'Shougo/neomru.vim', { 'autoload' : {
-				\ 'unite_sources' : 'file_mru',
-				\ }}
+	NeoBundle 'mattn/webapi-vim'
 	NeoBundleLazy 'mattn/benchvimrc-vim', {
 				\ 'autoload' : {
 				\   'commands' : [
 				\     'BenchVimrc'
 				\   ]},
 				\ }
+	NeoBundleLazy 'basyura/TweetVim', { 
+				\'depends' : ['basyura/twibill.vim', 'tyru/open-browser.vim'],
+				\ 'autoload' : { 'commands' : 'TweetVimHomeTimeline' }
+				\ }
+	NeoBundle 'kien/ctrlp.vim'
 	NeoBundle 'b4b4r07/solarized.vim', { "base" : $HOME."/.vim/colors" }
 	NeoBundle 'nanotech/jellybeans.vim', { "base" : $HOME."/.vim/colors" }
 	NeoBundle 'tomasr/molokai', { "base" : $HOME."/.vim/colors" }
 	NeoBundle 'w0ng/vim-hybrid', { "base" : $HOME."/.vim/colors" }
-	NeoBundle 'tyru/skk.vim'
 
 	" Japanese help
 	NeoBundle 'vim-jp/vimdoc-ja'
@@ -475,6 +523,7 @@ set cursorline
 augroup MyAutoCmd
 	autocmd InsertEnter * highlight CursorLine ctermfg=236 ctermbg=24               | highlight CursorColumn ctermfg=236 ctermbg=24
 	autocmd InsertLeave * highlight CursorLine ctermbg=236 ctermfg=24 guibg=#303030 | highlight CursorColumn ctermbg=236 ctermfg=24 guibg=#303030
+	autocmd VimEnter * highlight CursorLine ctermbg=236 ctermfg=24 guibg=#303030 | highlight CursorColumn ctermbg=236 ctermfg=24 guibg=#303030
 augroup END
 
 highlight StatusLine ctermfg=black ctermbg=white cterm=none guifg=black guibg=white gui=none
@@ -689,7 +738,6 @@ nnoremap g* g*zz
 nnoremap g# g#zz
 nnoremap ZZ <Nop>
 nnoremap ZQ <Nop>
-nnoremap Q gq
 
 noremap <Space>O  :<C-u>for i in range(v:count1) \| call append(line('.'), '') \| endfor<CR>
 "nnoremap <Space>O  :<C-u>for i in range(v:count1) \| call append(line('.')-1, '') \| endfor<CR>
@@ -789,11 +837,6 @@ function! s:CountChar(c) "{{{
 endfunction "}}}
 command! -nargs=1 CountChar call s:CountChar(<f-args>)
 
-augroup MyAutoCmd
-	autocmd BufWinEnter,InsertLeave,CursorHold * call WordCount('char')
-augroup END
-let s:WordCountStr = ''
-let s:WordCountDict = {'word': 2, 'char': 3, 'byte': 4}
 function! WordCount(...) "{{{
 	if a:0 == 0
 		return s:WordCountStr
@@ -819,6 +862,23 @@ function! WordCount(...) "{{{
 	let v:statusmsg = s:saved_status
 	return s:WordCountStr
 endfunction "}}}
+augroup MyAutoCmd
+	autocmd BufWinEnter,InsertLeave,CursorHold * call WordCount('char')
+augroup END
+let s:WordCountStr = ''
+let s:WordCountDict = {'word': 2, 'char': 3, 'byte': 4}
+
+function! s:ChangeShellScriptPermission() "{{{
+	if !has("win32")
+		if &ft =~ "\\(z\\|c\\|ba\\)\\?sh$" && expand('%:t') !~ "\\(zshrc\\|zshenv\\)$"
+			call system("chmod 755 " . shellescape(expand('%:p')))
+			echo "Set permission 755"
+		endif
+	endif
+endfunction "}}}
+augroup MyAutoCmd
+	autocmd BufWritePost * call s:ChangeShellScriptPermission()
+augroup END
 
 " }}}2
 
@@ -905,15 +965,15 @@ if s:bundled('buftabs')
 	let g:buftabs_marker_modified = "+"
 	let g:buftabs_active_highlight_group = "Visual"
 	let w:original_statusline = matchstr(&statusline, "%=.*")
-	
+
 	if &diff
 		finish
 	endif
-	
+
 	function! Buftabs_enable()
 		let w:buftabs_enabled = 1
 	endfunction
-	
+
 	let s:Pecho=''
 	function! s:Pecho(msg)
 		if &ut!=1|let s:hold_ut=&ut|let &ut=1|en
@@ -924,7 +984,7 @@ if s:bundled('buftabs')
 					\|aug Pecho|exe 'au!'|aug END|aug! Pecho
 		aug END
 	endf
-	
+
 	function! Buftabs_show(deleted_buf)
 		let l:i = 1
 		let s:list = ''
@@ -933,7 +993,7 @@ if s:bundled('buftabs')
 		if ! exists("w:from") 
 			let w:from = 0
 		endif
-	
+
 		"if ! exists("w:buftabs_enabled")
 	endfunction
 endif

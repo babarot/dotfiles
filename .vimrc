@@ -15,8 +15,10 @@
 " Note: Skip initialization for vim-tiny or vim-small.
 if !1 | finish | endif
 
-" Necesary for lots of cool vim things
-set nocompatible
+if has('vim_starting')
+	" Necesary for lots of cool vim things
+	set nocompatible
+endif
 
 " Starting time
 if has('vim_starting') && has('reltime')

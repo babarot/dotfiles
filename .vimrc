@@ -15,18 +15,17 @@
 " Note: Skip initialization for vim-tiny or vim-small.
 if !1 | finish | endif
 
+" Starting time
 if has('vim_starting')
 	" Necesary for lots of cool vim things
 	set nocompatible
-endif
-
-" Starting time
-if has('vim_starting') && has('reltime')
-	let g:startuptime = reltime()
-	augroup vimrc-startuptime
-		autocmd! VimEnter * let g:startuptime = reltime(g:startuptime) | redraw
-					\ | echomsg 'startuptime: ' . reltimestr(g:startuptime)
-	augroup END
+	if has('reltime')
+		let g:startuptime = reltime()
+		augroup vimrc-startuptime
+			autocmd! VimEnter * let g:startuptime = reltime(g:startuptime) | redraw
+						\ | echomsg 'startuptime: ' . reltimestr(g:startuptime)
+		augroup END
+	endif
 endif
 
 " Operating System

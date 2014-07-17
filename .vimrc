@@ -726,8 +726,8 @@ nnoremap <silent> <ESC><ESC> :nohls<CR>
 nnoremap Y y$
 nnoremap <Space>h  ^
 nnoremap <Space>l  $
-""nnoremap n nzz
-""nnoremap N Nzz
+nnoremap n nzz
+nnoremap N Nzz
 nnoremap <expr> n <SID>search_forward_p() ? 'nzv' : 'Nzv'
 nnoremap <expr> N <SID>search_forward_p() ? 'Nzv' : 'nzv'
 vnoremap <expr> n <SID>search_forward_p() ? 'nzv' : 'Nzv'
@@ -1021,12 +1021,12 @@ endif
 
 " vim-anzu {{{2
 if s:bundled('vim-anzu')
-	"nmap n <Plug>(anzu-n-with-echo)
-	"nmap N <Plug>(anzu-N-with-echo)
-	"nmap * <Plug>(anzu-star-with-echo)
-	"nmap # <Plug>(anzu-sharp-with-echo)
-	nmap n <Plug>(anzu-mode-n)
-	nmap N <Plug>(anzu-mode-N)
+	nmap n <Plug>(anzu-n-with-echo)zz
+	nmap N <Plug>(anzu-N-with-echo)zz
+	nmap * <Plug>(anzu-star-with-echo)zz
+	nmap # <Plug>(anzu-sharp-with-echo)zz
+	"nmap n <Plug>(anzu-mode-n)
+	"nmap N <Plug>(anzu-mode-N)
 endif
 " }}}2
 

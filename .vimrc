@@ -277,6 +277,7 @@ set mousehide
 set virtualedit=block
 
 set foldenable
+set foldtext=foldCC#foldtext()
 "set foldmethod=marker
 "set foldopen=all
 "set foldclose=all

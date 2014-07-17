@@ -230,7 +230,7 @@ set tabstop=4
 set noexpandtab
 set autoindent
 set backspace=indent,eol,start
-set nowrapscan
+set wrapscan
 set showmatch
 set matchtime=1
 set matchpairs+=<:>

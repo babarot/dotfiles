@@ -143,16 +143,23 @@ if s:bundled('neobundle.vim')
 				\ }}
 	NeoBundle 'ujihisa/neco-look'
 	NeoBundleLazy 'ujihisa/unite-colorscheme', '', 'same'
-	NeoBundle 'yomi322/unite-tweetvim'
 	NeoBundle 'b4b4r07/mru.vim'
 	NeoBundle 'b4b4r07/buftabs'
 	NeoBundle 'tpope/vim-surround'
+	NeoBundle 'tpope/vim-fugitive'
 	NeoBundle 'osyo-manga/vim-anzu'
 	NeoBundle 'LeafCage/yankround.vim'
+	NeoBundle 'LeafCage/foldCC'
 	NeoBundle 'junegunn/vim-easy-align'
 	NeoBundle 'jiangmiao/auto-pairs'
-	NeoBundle 'tpope/vim-fugitive'
 	NeoBundle 'mattn/gist-vim'
+	NeoBundle 'mattn/webapi-vim'
+	NeoBundleLazy 'mattn/benchvimrc-vim', {
+				\ 'autoload' : {
+				\   'commands' : [
+				\     'BenchVimrc'
+				\   ]},
+				\ }
 	NeoBundle 'vim-scripts/Align'
 	NeoBundleLazy 'mattn/excitetranslate-vim', {
 				\ 'depends': 'mattn/webapi-vim',
@@ -161,17 +168,11 @@ if s:bundled('neobundle.vim')
 	NeoBundleLazy 'jnwhiteh/vim-golang',{
 				\ "autoload" : {"filetypes" : ["go"]}
 				\}
-	NeoBundle 'mattn/webapi-vim'
-	NeoBundleLazy 'mattn/benchvimrc-vim', {
-				\ 'autoload' : {
-				\   'commands' : [
-				\     'BenchVimrc'
-				\   ]},
-				\ }
 	NeoBundleLazy 'basyura/TweetVim', { 
 				\'depends' : ['basyura/twibill.vim', 'tyru/open-browser.vim'],
 				\ 'autoload' : { 'commands' : 'TweetVimHomeTimeline' }
 				\ }
+	NeoBundle 'yomi322/unite-tweetvim'
 	NeoBundle 'kien/ctrlp.vim'
 	NeoBundle 'b4b4r07/solarized.vim', { "base" : $HOME."/.vim/colors" }
 	NeoBundle 'nanotech/jellybeans.vim', { "base" : $HOME."/.vim/colors" }

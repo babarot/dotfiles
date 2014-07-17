@@ -19,11 +19,12 @@ if !1 | finish | endif
 if has('vim_starting')
 	" Necesary for lots of cool vim things
 	set nocompatible
+
 	if has('reltime')
 		let g:startuptime = reltime()
 		augroup vimrc-startuptime
 			autocmd! VimEnter * let g:startuptime = reltime(g:startuptime) | redraw
-						\ | echomsg 'startuptime: ' . reltimestr(g:startuptime)
+						\ | echomsg 'startuptime: ' . reltimestr(g:startuptime) . "...Start Vim!!!"
 		augroup END
 	endif
 endif
@@ -62,7 +63,9 @@ endfunction
 
 filetype off
 if has('vim_starting') && isdirectory(s:neobundle_root)
-	set runtimepath+=~/.vim/bundle/neobundle.vim
+	"set runtimepath+=~/.vim/bundle/neobundle.vim
+	let $NEOBUNDLEROOT = s:neobundle_root
+	set runtimepath+=$NEOBUNDLEROOT
 endif 
 
 let s:noplugin = 0
@@ -216,8 +219,11 @@ filetype plugin indent on
 
 syntax enable
 
+set lazyredraw
+set ttyfast
+
 set modeline
-set modelines=3
+set modelines=4
 set keywordprg=:help " Open Vim internal help by K command
 set helplang& helplang=ja 
 
@@ -274,10 +280,11 @@ set lines=50
 set previewheight=10
 set helpheight=999
 set mousehide
-set virtualedit=block
+"set virtualedit=block
+set virtualedit& virtualedit+=block
 
+" Foldings
 set foldenable
-set foldtext=foldCC#foldtext()
 "set foldmethod=marker
 "set foldopen=all
 "set foldclose=all
@@ -285,17 +292,30 @@ set foldlevel=0
 set foldnestmax=2
 set foldcolumn=2
 
+" IM
+" IM off when starting up
+set iminsert=0 imsearch=0
+" Use IM always
+"set noimdisable
+" Disable IM on cmdline
+set noimcmdline
+
+" Use clipboard
 if has('clipboard')
 	set clipboard=unnamed
 endif
 
+if has('patch-7.4.338')
+  set breakindent
+endif
+
 " Function that make its directory if the directory you want to make do not exist
-function! s:mkdir(file, ...)
+function! s:mkdir(file, ...) "{{{
 	let f = a:0 ? fnamemodify(a:file, a:1) : a:file
 	if !isdirectory(f)
 		call mkdir(f, 'p')
 	endif
-endfunction
+endfunction " }}}
 call s:mkdir(expand('$HOME/.vim/colors'))
 
 " Backup automatically {{{
@@ -338,37 +358,8 @@ function! s:mkdir(file, ...) "{{{
 	if !isdirectory(f)
 		call mkdir(f, 'p')
 	endif
-endfunction
-" }}}
+endfunction " }}}
 call s:mkdir(expand('$HOME/.vim/colors'))
-
-" Encode {{{
-if has('gui_running')
-	set encoding=utf-8
-endif
-scriptencoding cp932
-
-set fileformat=unix
-set fileformats=unix,dos,mac
-set fileencoding=utf-8
-set fileencodings=iso-2022-jp,cp932,sjis,euc-jp,utf-8
-
-command! -bang -bar -complete=file -nargs=? Sjis      edit<bang> ++enc=sjis <args>
-command! -bang -bar -complete=file -nargs=? Utf8      edit<bang> ++enc=utf-8 <args>
-command! -bang -bar -complete=file -nargs=? Iso2022jp edit<bang> ++enc=iso-2022-jp <args>
-command! -bang -bar -complete=file -nargs=? Cp932     edit<bang> ++enc=cp932 <args>
-command! -bang -bar -complete=file -nargs=? Euc       edit<bang> ++enc=euc-jp <args>
-command! -bang -bar -complete=file -nargs=? Utf16     edit<bang> ++enc=ucs-2le <args>
-command! -bang -bar -complete=file -nargs=? Utf16be   edit<bang> ++enc=ucs-2 <args>
-
-if has('multi_byte_ime')
-	set iminsert=0 imsearch=0
-endif
-
-if exists('&ambiwidth')
-	set ambiwidth=double
-endif
-" }}}
 
 " Initialize autocmd
 augroup MyAutoCmd
@@ -394,17 +385,6 @@ augroup END
 "Do not insert comment when inputing newline
 augroup MyAutoCmd
 	autocmd FileType * setlocal formatoptions-=ro
-augroup END
-
-augroup MyAutoCmd
-	autocmd!
-	autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
-	function! s:auto_mkdir(dir, force)
-		if !isdirectory(a:dir) && (a:force ||
-					\ input(printf('"%s" does not exist. Create? [y/N]', a:dir)) =~? '^y\%[es]$')
-			call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
-		endif
-	endfunction
 augroup END
 
 " highlight cursorline and cursorcolumn only current window
@@ -534,8 +514,9 @@ augroup END
 
 highlight StatusLine ctermfg=black ctermbg=white cterm=none guifg=black guibg=white gui=none
 highlight Visual     term=reverse cterm=reverse ctermfg=darkyellow ctermbg=black
+highlight SpellBad ctermbg=Red
 
-" Yellow statusline at Insert mode
+" Yellow statusline at Insert mode {{{
 if has('syntax')
 	augroup InsertHook
 		autocmd!
@@ -564,6 +545,7 @@ function! s:GetHighlight(hi)
 	let hl = substitute(hl, 'xxx', '', '')
 	return hl
 endfunction
+" }}}
 
 " Show two lines at statusline
 set laststatus=2
@@ -671,6 +653,12 @@ nnoremap <silent> <C-w>t     :<C-u>call <SID>move_window_into_tab_page(0)<CR>
 let mapleader = ","
 let maplocalleader = ","
 
+" Today file
+let $TODAY = strftime('%Y%m%d')
+if isdirectory(expand('$HOME/Dropbox'))
+	nnoremap <Space>e :edit ~/Dropbox/file.$TODAY<CR>
+endif
+
 " swap ; and :
 nnoremap ; :
 vnoremap ; :
@@ -682,6 +670,7 @@ vnoremap : ;
 " Easy escaping
 inoremap jj <ESC>
 cnoremap <expr> j getcmdline()[getcmdpos()-2] ==# 'j' ? "\<BS>\<C-c>" : 'j'
+vnoremap <C-j><C-j> <ESC>
 onoremap jj <ESC>
 inoremap j<Space> j
 onoremap j<Space> j
@@ -728,14 +717,6 @@ nnoremap <Space>h  ^
 nnoremap <Space>l  $
 nnoremap n nzz
 nnoremap N Nzz
-nnoremap <expr> n <SID>search_forward_p() ? 'nzv' : 'Nzv'
-nnoremap <expr> N <SID>search_forward_p() ? 'Nzv' : 'nzv'
-vnoremap <expr> n <SID>search_forward_p() ? 'nzv' : 'Nzv'
-vnoremap <expr> N <SID>search_forward_p() ? 'Nzv' : 'nzv'
-
-function! s:search_forward_p()
-	return exists('v:searchforward') ? v:searchforward : 1
-endfunction
 
 nnoremap <Space>/  *<C-o>
 nnoremap g<Space>/ g*<C-o>
@@ -812,6 +793,12 @@ nnoremap sk <C-w>k
 nnoremap sl <C-w>l
 nnoremap sh <C-w>h
 
+" Add a relative number toggle
+nnoremap <silent> <Leader>r :<C-u>set relativenumber!<CR>
+
+" Add a spell check toggle
+nnoremap <silent> <Leader>s :<C-u>set spell!<CR>
+
 " edit vimrc
 if has('gui')
 	nnoremap <silent> <Space>.   :<C-u>execute 'tab drop ' . escape(resolve($MYVIMRC), ' ')<CR>
@@ -825,6 +812,12 @@ noremap gF gf
 
 " Don't use Ex mode, use Q for formatting
 nnoremap Q gq
+
+" Goto {num} row like a {num}gg, {num}G and :{num}<CR>
+nnoremap <expr><Tab> v:count !=0 ? "G" : "\<Tab>"
+
+" Insert null line
+nnoremap <silent><CR> :<C-u>call append(expand('.'), '')<CR>j
 
 " }}}2
 
@@ -844,6 +837,7 @@ function! s:CountChar(c) "{{{
 endfunction "}}}
 command! -nargs=1 CountChar call s:CountChar(<f-args>)
 
+" Count Word
 function! WordCount(...) "{{{
 	if a:0 == 0
 		return s:WordCountStr
@@ -875,17 +869,56 @@ augroup END
 let s:WordCountStr = ''
 let s:WordCountDict = {'word': 2, 'char': 3, 'byte': 4}
 
+" Create directory if it doesn't exist
+function! s:auto_mkdir(dir, force) "{{{
+	if !isdirectory(a:dir) && (a:force ||
+				\ input(printf('"%s" does not exist. Create? [y/N]', a:dir)) =~? '^y\%[es]$')
+		call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+	endif
+endfunction "}}}
+augroup MyAutoCmd
+	autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
+augroup END
+
+" Change permission
 function! s:ChangeShellScriptPermission() "{{{
-	if !has("win32")
-		if &ft =~ "\\(z\\|c\\|ba\\)\\?sh$" && expand('%:t') !~ "\\(zshrc\\|zshenv\\)$"
-			call system("chmod 755 " . shellescape(expand('%:p')))
-			echo "Set permission 755"
+	if !g:is_windows
+		if &ft =~ "\\(z\\|c\\|ba\\)\\?sh$" && expand('%:t') !~ "\\(zshrc\\|zshenv\\)$" 
+			" Check the file head if starting from '#!'
+			if strpart(getline(1), 0, 2) == "#!"
+						\ || system("stat --format='%a' " . shellescape(expand('%:p'))) != 755
+						\ && input(printf('"%s" is not perm 755. Change mode? [y/N]', expand('%:t'))) =~? '^y\%[es]$'
+				call system("chmod 755 " . shellescape(expand('%:p')))
+				echo " "
+				echo "Set permission 755!"
+			endif
 		endif
 	endif
 endfunction "}}}
 augroup MyAutoCmd
 	autocmd BufWritePost * call s:ChangeShellScriptPermission()
 augroup END
+
+" Use ,q to quit nameless buffers without confirmation or !
+nnoremap <silent> <Leader>q :<C-u>call QuitIfNameless()<CR>
+function! QuitIfNameless() "{{{
+	if empty(bufname('%'))
+		setlocal nomodified
+	endif
+	execute 'confirm quit'
+endfunction " }}}
+
+" Measure fighting power of Vim!
+function! Scouter(file, ...) "{{{
+	let pat = '^\s*$\|^\s*"'
+	let lines = readfile(a:file)
+	if !a:0 || !a:1
+		let lines = split(substitute(join(lines, "\n"), '\n\s*\\', '', 'g'), "\n")
+	endif
+	return len(filter(lines,'v:val !~ pat'))
+endfunction " }}}
+command! -bar -bang -nargs=? -complete=file Scouter
+			\        echo Scouter(empty(<q-args>) ? $MYVIMRC : expand(<q-args>), <bang>0)
 
 " }}}2
 
@@ -1033,11 +1066,17 @@ endif
 " yankround.vim {{{2
 if s:bundled('yankround.vim')
 	nmap p <Plug>(yankround-p)
+	xmap p <Plug>(yankround-p)
 	nmap P <Plug>(yankround-P)
+	nmap gp <Plug>(yankround-gp)
+	xmap gp <Plug>(yankround-gp)
+	nmap gP <Plug>(yankround-gP)
 	nmap <C-p> <Plug>(yankround-prev)
 	nmap <C-n> <Plug>(yankround-next)
-	let g:yankround_max_history = 50
-	nnoremap <Space>k :Unite yankround -direction=botright -toggle<CR>
+	let g:yankround_max_history = 100
+	if s:bundled('unite.vim')
+		nnoremap <Space>p :Unite yankround -direction=botright -toggle<CR>
+	endif
 endif
 " }}}2
 
@@ -1109,9 +1148,41 @@ if s:bundled('eskk.vim')
 	let g:eskk#large_dictionary = { 'path': "~/SKK_JISYO.L", 'sorted': 1, 'encoding': 'utf-8', }
 	let g:eskk#enable_completion = 1
 endif
-
 " }}}2
+
+" foldCC {{{2
+if s:bundled('foldCC')
+	set foldtext=foldCC#foldtext()
+	let g:foldCCtext_head = 'v:folddashes. " "'
+	let g:foldCCtext_tail = 'printf(" %s[%4d lines Lv%-2d]%s", v:folddashes, v:foldend-v:foldstart+1, v:foldlevel, v:folddashes)'
+	let g:foldCCtext_enable_autofdc_adjuster = 1
+	nnoremap <expr>l  foldclosed('.') != -1 ? 'zo' : 'l'
+	nnoremap <silent>z0    :<C-u>set foldlevel=<C-r>=foldlevel('.')<CR><CR>
+	nnoremap <silent><C-_> :<C-u>call <SID>smart_foldcloser()<CR>
+	function! s:smart_foldcloser() "{{{
+		if foldlevel('.') == 0
+			norm! zM
+			return
+		endif
+
+		let foldc_lnum = foldclosed('.')
+		norm! zc
+		if foldc_lnum == -1
+			return
+		endif
+
+		if foldclosed('.') != foldc_lnum
+			return
+		endif
+		norm! zM
+	endfunction
+	"}}}
+endif
+" }}}2
+
 " }}}1
+
+" __END__ {{{
 
 " Loading divided files
 let g:local_vimrc = expand('~/.vimrc.local')
@@ -1119,6 +1190,34 @@ if filereadable(g:local_vimrc)
 	execute 'source ' . g:local_vimrc
 endif
 
+	nnoremap <silent><C-_> :<C-u>call <SID>smart_foldcloser()<CR>
+	function! s:smart_foldcloser() "{{{
+		if foldlevel('.') == 0
+			norm! zM
+			return
+		endif
+
+		let foldc_lnum = foldclosed('.')
+		norm! zc
+		if foldc_lnum == -1
+			return
+		endif
+
+		if foldclosed('.') != foldc_lnum
+			return
+		endif
+		norm! zM
+	endfunction
+	"}}}
+
+"  _               _              __     ___               _              
+" | |    _____   _(_)_ __   __ _  \ \   / (_)_ __ ___     | |_ ___   ___  
+" | |   / _ \ \ / / | '_ \ / _` |  \ \ / /| | '_ ` _ \    | __/ _ \ / _ \ 
+" | |__| (_) \ V /| | | | | (_| |   \ V / | | | | | | |_  | || (_) | (_) |
+" |_____\___/ \_/ |_|_| |_|\__, |    \_/  |_|_| |_| |_( )  \__\___/ \___/ 
+"                          |___/                      |/                  
+
 " vim: foldmethod=marker
 " vim: foldcolumn=3
 " vim: foldlevel=0
+" }}}

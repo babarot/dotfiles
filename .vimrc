@@ -11,7 +11,7 @@
 "                               \/__/         \|__|         \/__/     
 
 " basic {{{1
- 
+
 " Note: Skip initialization for vim-tiny or vim-small.
 if !1 | finish | endif
 
@@ -63,7 +63,6 @@ endfunction
 
 filetype off
 if has('vim_starting') && isdirectory(s:neobundle_root)
-	"set runtimepath+=~/.vim/bundle/neobundle.vim
 	let $NEOBUNDLEROOT = s:neobundle_root
 	set runtimepath+=$NEOBUNDLEROOT
 endif 
@@ -182,6 +181,8 @@ if s:bundled('neobundle.vim')
 	NeoBundle 'tomasr/molokai', { "base" : $HOME."/.vim/colors" }
 	NeoBundle 'w0ng/vim-hybrid', { "base" : $HOME."/.vim/colors" }
 
+	NeoBundle 'itchyny/lightline.vim'
+
 	" Japanese help
 	NeoBundle 'vim-jp/vimdoc-ja'
 
@@ -203,7 +204,6 @@ else
 		execute 'set runtimepath+=' . s:bundle_root . '/neobundle.vim'
 		call neobundle#rc(s:bundle_root)
 		NeoBundle 'Shougo/unite.vim'
-		NeoBundle 'Shougo/vimproc', { 'build': { 'unix': 'make -f make_unix.mak', }, }
 		NeoBundleInstall
 		echo "Finish!"
 	endfunction
@@ -270,12 +270,14 @@ set winaltkeys=no
 set visualbell
 set vb t_vb=
 set noequalalways
+set history=10000
 
-set nowrap
+set wrap
 set laststatus=2
 set cmdheight=2
 set showcmd
-set title
+"set title
+set notitle
 set lines=50
 set previewheight=10
 set helpheight=999
@@ -292,7 +294,7 @@ set foldlevel=0
 set foldnestmax=2
 set foldcolumn=2
 
-" IM
+" IM settings
 " IM off when starting up
 set iminsert=0 imsearch=0
 " Use IM always
@@ -300,13 +302,19 @@ set iminsert=0 imsearch=0
 " Disable IM on cmdline
 set noimcmdline
 
+" Change some neccesary settings for win
+if g:is_windows
+	set shellslash "Exchange path separator
+	let $HOME=$VIM "Change home directory
+endif
+
 " Use clipboard
 if has('clipboard')
 	set clipboard=unnamed
 endif
 
 if has('patch-7.4.338')
-  set breakindent
+	set breakindent
 endif
 
 " Function that make its directory if the directory you want to make do not exist
@@ -367,6 +375,8 @@ augroup MyAutoCmd
 augroup END
 
 " Always only one window when opening files
+
+"autocmd MyAutoCmd BufRead * if &filetype == 'mru' | execute ":only" | endif
 augroup MyAutoCmd
 	autocmd BufRead * execute ":only"
 augroup END
@@ -387,39 +397,21 @@ augroup MyAutoCmd
 	autocmd FileType * setlocal formatoptions-=ro
 augroup END
 
-" highlight cursorline and cursorcolumn only current window
-augroup MyAutoCmd
-	autocmd BufWinEnter,WinEnter * setlocal cursorline cursorcolumn
-	autocmd BufWinLeave,WinLeave * setlocal nocursorline nocursorcolumn
-augroup END
-
 " }}}2
 
 " Appearance {{{2
 
-" Change some neccesary settings for win
-if g:is_windows
-	set shellslash "Exchange path separator
-	let $HOME=$VIM "Change home directory
-endif
+highlight Visual     term=reverse cterm=reverse ctermfg=darkyellow ctermbg=black
+highlight SpellBad   ctermbg=Red
 
-" TMUX Cursor
-if exists('$TMUX')
-	let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-	let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-else
-	let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-	let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-endif
-
-" Use English interface
+" English interface {{{
 if g:is_windows
 	language message en
 else
 	language mes C
-endif
+endif "}}}
 
-" Colorscheme
+" Colorscheme "{{{
 set t_ut=
 set t_Co=256
 set background=dark
@@ -439,9 +431,9 @@ else
 	else
 		colorscheme desert
 	endif
-endif
+endif "}}}
 
-" Highlight zenkaku-space
+" Highlight zenkaku-space {{{
 if has('syntax')
 	syntax enable
 	function! ActivateInvisibleIndicator()
@@ -452,9 +444,93 @@ if has('syntax')
 	augroup MyAutoCmd
 		autocmd BufEnter * call ActivateInvisibleIndicator()
 	augroup END
-endif
+endif "}}}
 
-" Restore cursor position
+" Statusline {{{
+let s:use_buftabs = 1
+if has('statusline')
+	if version >= 700
+		set statusline=
+		set statusline+=%#MyColor3#
+		set statusline+=\ %<%1.30{getcwd()}
+		set statusline+=%#MyColor1#
+		set statusline+=\ %<%1.30f
+		set statusline+=%#MyColor4#
+		set statusline+=\ %r%m                " read-only, modified flags
+		set statusline+=%=                    " indent right
+		set statusline+=%#MyColor2#
+		set statusline+=\ %y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}
+		set statusline+=%#MyColor1#
+		set statusline+=\ %4l/%4L,%3c\ %3p%%
+		set statusline+=\ [WC=%{exists('*WordCount')?WordCount():[]}]
+		set statusline+=%#MyColor5#
+		set statusline+=\ (%{g:Date()})
+		highlight StatusLine ctermfg=black   ctermbg=white cterm=none guifg=black   guibg=white gui=none
+		highlight MyColor1   ctermfg=white   ctermbg=black cterm=none guifg=white   guibg=white gui=none
+		highlight MyColor2   ctermfg=gray    ctermbg=black cterm=none guifg=#aaa    guibg=white gui=none
+		highlight MyColor3   ctermfg=green   ctermbg=black cterm=none guifg=#7f7    guibg=white gui=none
+		highlight MyColor4   ctermfg=magenta ctermbg=black cterm=none guifg=#ff0    guibg=white gui=none
+		highlight MyColor5   ctermfg=blue    ctermbg=black cterm=none guifg=blue    guibg=white gui=none
+	endif
+endif
+" }}}
+
+" Yellow statusline at Insert mode {{{
+if !s:bundled('lightline.vim')
+	if has('syntax')
+		augroup InsertHook
+			autocmd!
+			autocmd InsertEnter * call s:StatusLine('Enter')
+			autocmd InsertLeave * call s:StatusLine('Leave')
+		augroup END
+	endif
+	"highlight StatusLine ctermfg=black ctermbg=white cterm=none guifg=black guibg=white gui=none
+
+	let g:hi_insert = 'highlight StatusLine guifg=black guibg=darkyellow gui=none ctermfg=black ctermbg=yellow cterm=none'
+	let s:slhlcmd = ''
+	function! s:StatusLine(mode)
+		if a:mode == 'Enter'
+			silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
+			silent exec g:hi_insert
+		else
+			highlight clear StatusLine
+			silent exec s:slhlcmd
+		endif
+	endfunction
+
+	function! s:GetHighlight(hi)
+		redir => hl
+		exec 'highlight '.a:hi
+		redir END
+		let hl = substitute(hl, '[\r\n]', '', 'g')
+		let hl = substitute(hl, 'xxx', '', '')
+		return hl
+	endfunction
+endif
+" }}}
+
+" Cursor {{{
+set cursorline
+"set cursorcolumn
+"set colorcolumn=80
+
+augroup MyAutoCmd
+	autocmd CursorMoved,CursorMovedI,WinLeave * setlocal nocursorcolumn
+	autocmd CursorHold,CursorHoldI            * setlocal cursorcolumn
+	autocmd CursorHold,CursorHoldI            * execute "normal! 1\<C-g>"
+augroup END
+"}}}
+
+" TMUX Cursor {{{
+if exists('$TMUX')
+	let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+	let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+else
+	let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+	let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif " }}}
+
+" Restore cursor position {{{
 function! s:RestoreCursorPostion()
 	if line("'\"") <= line("$")
 		normal! g`"
@@ -463,100 +539,7 @@ function! s:RestoreCursorPostion()
 endfunction
 augroup MyAutoCmd
 	autocmd BufWinEnter * call s:RestoreCursorPostion()
-augroup END
-
-" CursorColumn appears if it does'nt move
-augroup MyAutoCmd
-	autocmd CursorMoved,CursorMovedI,WinLeave * setlocal nocursorcolumn
-	autocmd CursorHold,CursorHoldI * setlocal cursorcolumn
-augroup END
-"augroup MyAutoCmd
-"	autocmd CursorMoved,CursorMovedI * call s:auto_cursorline('CursorMoved')
-"	autocmd CursorHold,CursorHoldI * call s:auto_cursorline('CursorHold')
-"	autocmd WinEnter * call s:auto_cursorline('WinEnter')
-"	autocmd WinLeave * call s:auto_cursorline('WinLeave')
-"
-"	let s:cursorline_lock = 0
-"	function! s:auto_cursorline(event)
-"		if a:event ==# 'WinEnter'
-"			setlocal cursorline
-"			let s:cursorline_lock = 2
-"		elseif a:event ==# 'WinLeave'
-"			setlocal nocursorline
-"		elseif a:event ==# 'CursorMoved'
-"			if s:cursorline_lock
-"				if 1 < s:cursorline_lock
-"					let s:cursorline_lock = 1
-"				else
-"					"setlocal nocursorline
-"					setlocal nocursorcolumn
-"					let s:cursorline_lock = 0
-"				endif
-"			endif
-"		elseif a:event ==# 'CursorHold'
-"			"setlocal cursorline
-"			setlocal cursorcolumn
-"			let s:cursorline_lock = 1
-"		endif
-"	endfunction
-"augroup END
-
-set cursorline
-"set cursorcolumn
-"set colorcolumn=80
-
-" Change CursorLine color
-augroup MyAutoCmd
-	autocmd InsertEnter * highlight CursorLine ctermfg=236 ctermbg=24               | highlight CursorColumn ctermfg=236 ctermbg=24
-	autocmd InsertLeave * highlight CursorLine ctermbg=236 ctermfg=24 guibg=#303030 | highlight CursorColumn ctermbg=236 ctermfg=24 guibg=#303030
-	autocmd VimEnter * highlight CursorLine ctermbg=236 ctermfg=24 guibg=#303030 | highlight CursorColumn ctermbg=236 ctermfg=24 guibg=#303030
-augroup END
-
-highlight StatusLine ctermfg=black ctermbg=white cterm=none guifg=black guibg=white gui=none
-highlight Visual     term=reverse cterm=reverse ctermfg=darkyellow ctermbg=black
-highlight SpellBad ctermbg=Red
-
-" Yellow statusline at Insert mode {{{
-if has('syntax')
-	augroup InsertHook
-		autocmd!
-		autocmd InsertEnter * call s:StatusLine('Enter')
-		autocmd InsertLeave * call s:StatusLine('Leave')
-	augroup END
-endif
-
-let g:hi_insert = 'highlight StatusLine guifg=black guibg=darkyellow gui=none ctermfg=black ctermbg=yellow cterm=none'
-let s:slhlcmd = ''
-function! s:StatusLine(mode)
-	if a:mode == 'Enter'
-		silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
-		silent exec g:hi_insert
-	else
-		highlight clear StatusLine
-		silent exec s:slhlcmd
-	endif
-endfunction
-
-function! s:GetHighlight(hi)
-	redir => hl
-	exec 'highlight '.a:hi
-	redir END
-	let hl = substitute(hl, '[\r\n]', '', 'g')
-	let hl = substitute(hl, 'xxx', '', '')
-	return hl
-endfunction
-" }}}
-
-" Show two lines at statusline
-set laststatus=2
-"set statusline=[%n]%t%M%=%y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}\ %4l/%4L,%3c\ %3p%%\ (%{g:Date()})
-set statusline=[%n]%t%M%=%y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}
-set statusline+=\ %4l/%4L,%3c\ %3p%%
-set statusline+=\ [WC=%{exists('*WordCount')?WordCount():[]}]
-set statusline+=\ (%{g:Date()})
-function! g:Date()
-	return strftime("%Y/%m/%d %H:%M")
-endfunction
+augroup END "}}}
 
 " }}}2
 
@@ -708,6 +691,9 @@ noremap <Space>l $
 " Type 'v', select end of line in visual mode
 vnoremap v $h
 
+" Kill buffer
+nnoremap <C-x>k :call BufferWipeoutInteractive()<CR>
+
 " virtual replace mode
 nnoremap R gR
 
@@ -817,11 +803,21 @@ nnoremap Q gq
 nnoremap <expr><Tab> v:count !=0 ? "G" : "\<Tab>"
 
 " Insert null line
-nnoremap <silent><CR> :<C-u>call append(expand('.'), '')<CR>j
+"nnoremap <silent><CR> :<C-u>call append(expand('.'), '')<CR>j
 
 " }}}2
 
 " Functions {{{2
+
+" Date
+function! g:Date() "{{{
+	return strftime("%Y/%m/%d %H:%M")
+endfunction "}}}
+
+" Get dirname
+function! s:dirname(path) "  {{{
+  return fnamemodify(a:path, ':h')
+endfunction " }}}
 
 " Count Char
 function! s:CountChar(c) "{{{
@@ -869,6 +865,36 @@ augroup END
 let s:WordCountStr = ''
 let s:WordCountDict = {'word': 2, 'char': 3, 'byte': 4}
 
+" Get buffers and window
+function! SelectInteractive(question, candidates) " {{{
+	try
+		let a:candidates[0] = toupper(a:candidates[0])
+		let l:select = 0
+		while index(a:candidates, l:select, 0, 1) == -1
+			let l:select = input(a:question . ' [' . join(a:candidates, '/') . '] ')
+			if l:select == ''
+				let l:select = a:candidates[0]
+			endif
+		endwhile
+		return tolower(l:select)
+	finally
+		redraw!
+	endtry
+endfunction " }}}
+function! BufferWipeoutInteractive() " {{{
+	if &modified == 1
+		let l:selected = SelectInteractive('Buffer is unsaved. Force quit?', ['n', 'w', 'y'])
+		if l:selected == 'w'
+			write
+			bwipeout
+		elseif l:selected == 'y'
+			bwipeout!
+		endif
+	else
+		bwipeout
+	endif
+endfunction " }}}
+
 " Create directory if it doesn't exist
 function! s:auto_mkdir(dir, force) "{{{
 	if !isdirectory(a:dir) && (a:force ||
@@ -888,6 +914,7 @@ function! s:ChangeShellScriptPermission() "{{{
 			if strpart(getline(1), 0, 2) == "#!"
 						\ || system("stat --format='%a' " . shellescape(expand('%:p'))) != 755
 						\ && input(printf('"%s" is not perm 755. Change mode? [y/N]', expand('%:t'))) =~? '^y\%[es]$'
+
 				call system("chmod 755 " . shellescape(expand('%:p')))
 				echo " "
 				echo "Set permission 755!"
@@ -898,6 +925,26 @@ endfunction "}}}
 augroup MyAutoCmd
 	autocmd BufWritePost * call s:ChangeShellScriptPermission()
 augroup END
+
+nnoremap <silent><C-_> :<C-u>call <SID>smart_foldcloser()<CR>
+function! s:smart_foldcloser() "{{{
+	if foldlevel('.') == 0
+		norm! zM
+		return
+	endif
+
+	let foldc_lnum = foldclosed('.')
+	norm! zc
+	if foldc_lnum == -1
+		return
+	endif
+
+	if foldclosed('.') != foldc_lnum
+		return
+	endif
+	norm! zM
+endfunction
+"}}}
 
 " Use ,q to quit nameless buffers without confirmation or !
 nnoremap <silent> <Leader>q :<C-u>call QuitIfNameless()<CR>
@@ -984,13 +1031,182 @@ highlight PmenuSbari ctermbg=darkgray
 highlight PmenuThumb ctermbg=lightgray
 " }}}2
 
+" lightline.vim {{{2
+if s:bundled('lightline.vim')
+	let s:use_buftabs = 0
+	let g:lightline = {
+				\ 'colorscheme': 'solarized',
+				\ 'mode_map': {'c': 'NORMAL'},
+				\ 'active': {
+				\   'left':  [ [ 'mode', 'paste' ], [ 'fugitive', 'filepath'], [ 'filename' ], [ 'buflist' ] ],
+				\   'right' : [ [ 'date' ], [ 'lineinfo', 'percent' ], [ 'filetype', 'fileencoding', 'fileformat' ] ],
+				\ },
+				\ 'component_function': {
+				\   'modified': 'MyModified',
+				\   'readonly': 'MyReadonly',
+				\   'fugitive': 'MyFugitive',
+				\   'filepath': 'MyFilepath',
+				\   'filename': 'MyFilename',
+				\   'fileformat': 'MyFileformat',
+				\   'filetype': 'MyFiletype',
+				\   'fileencoding': 'MyFileencoding',
+				\   'mode': 'MyMode',
+				\   'date': 'MyDate',
+				\   'buflist' : 'Mline_buflist'
+				\ }
+				\ }
+
+	function! MyDate()
+		return strftime("%Y/%m/%d %H:%M")
+	endfunction
+
+	function! MyModified()
+		return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+	endfunction
+
+	function! MyReadonly()
+		return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? 'x' : ''
+	endfunction
+
+	function! MyFilepath()
+		"return expand('%:p:h')
+		return expand('%:~:h') . "/"
+	endfunction
+
+	function! MyFilename()
+		return ('' != MyReadonly() ? MyReadonly() . ' ' : '') .
+					\ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
+					\  &ft == 'unite' ? unite#get_status_string() :
+					\  &ft == 'vimshell' ? vimshell#get_status_string() :
+					\ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
+					\ ('' != MyModified() ? ' ' . MyModified() : '')
+	endfunction
+
+	function! MyFugitive()
+		try
+			if &ft !~? 'vimfiler\|gundo' && exists('*fugitive#head')
+				return fugitive#head()
+			endif
+		catch
+		endtry
+		return ''
+	endfunction
+
+	function! MyFileformat()
+		return winwidth(0) > 70 ? &fileformat : ''
+	endfunction
+
+	function! MyFiletype()
+		return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'NONE') : ''
+	endfunction
+
+	function! MyFileencoding()
+		return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
+	endfunction
+
+	function! MyMode()
+		return winwidth(0) > 60 ? lightline#mode() : ''
+	endfunction
+
+	" http://ac-mopp.blogspot.jp/2014/03/lightlinevim.html {{{
+	let g:mline_bufhist_queue = []
+	let g:mline_bufhist_limit = 4
+	let g:mline_bufhist_exclution_pat = '^$\|.jax$\|vimfiler:\|\[unite\]\|tagbar'
+	let g:mline_bufhist_enable = 0
+	command! Btoggle :let g:mline_bufhist_enable = g:mline_bufhist_enable ? 0 : 1 | :redrawstatus!
+
+	function! Mline_buflist()
+		if &filetype =~? 'unite\|vimfiler\|tagbar' || !&modifiable || len(g:mline_bufhist_queue) == 0 || g:mline_bufhist_enable == 0
+			return ''
+		endif
+
+		let current_buf_nr = bufnr('%')
+		let buf_names_str = ''
+		let last = g:mline_bufhist_queue[-1]
+		for i in g:mline_bufhist_queue
+			let t = fnamemodify(i, ':t')
+			let n = bufnr(t)
+
+			if n != current_buf_nr
+				let buf_names_str .= printf('[%d]:%s' . (i == last ? '' : ' | '), n, t)
+			endif
+		endfor
+
+		return buf_names_str
+	endfunction
+
+	function! s:update_recent_buflist(file)
+		if a:file =~? g:mline_bufhist_exclution_pat
+			" exclusion from queue
+			return
+		endif
+
+		if len(g:mline_bufhist_queue) == 0
+			" init
+			for i in range(min( [ bufnr('$'), g:mline_bufhist_limit + 1 ] ))
+				let t = bufname(i)
+				if bufexists(i) && t !~? g:mline_bufhist_exclution_pat
+					call add(g:mline_bufhist_queue, fnamemodify(t, ':p'))
+				endif
+			endfor
+		endif
+
+		" update exist buffer
+		let idx = index(g:mline_bufhist_queue, a:file)
+		if 0 <= idx
+			call remove(g:mline_bufhist_queue, idx)
+		endif
+
+		call insert(g:mline_bufhist_queue, a:file)
+
+		if g:mline_bufhist_limit + 1 < len(g:mline_bufhist_queue)
+			call remove(g:mline_bufhist_queue, -1)
+		endif
+	endfunction
+
+	augroup general
+		autocmd!
+		autocmd TabEnter,BufWinEnter * call s:update_recent_buflist(expand('<amatch>'))
+	augroup END
+	"}}}
+endif
+" }}}2
+
 " buftabs.vim {{{2
-"if exists("g:buftabs_enabled")
-"	set statusline=%{buftabs}%=%m\ %y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}\ %4l/%4L,%3c\ %3p%%\ (%{g:Date()})
-"else
-"	set statusline=[%n]%t%M%=%y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}\ %4l/%4L,%3c\ %3p%%\ (%{g:Date()})
-"endif
-if s:bundled('buftabs')
+if s:bundled('buftabs') && s:use_buftabs == 1
+	set statusline=%{buftabs}
+	set statusline+=%=                    " indent right
+	set statusline+=%#MyColor3#
+	set statusline+=\ %<%1.30{getcwd()}
+	"set statusline+=%#MyColor4#
+	"set statusline+=\ %r%m                " read-only, modified flags
+	set statusline+=%#MyColor2#
+	set statusline+=\ %y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}
+	set statusline+=%#MyColor1#
+	set statusline+=\ %4l/%4L,%3c\ %3p%%
+	set statusline+=%#MyColor5#
+	set statusline+=\ (%{g:Date()})
+	highlight StatusLine ctermfg=black   ctermbg=white cterm=none guifg=black   guibg=white gui=none
+	highlight MyColor1   ctermfg=white   ctermbg=black cterm=none guifg=white   guibg=white gui=none
+	highlight MyColor2   ctermfg=gray    ctermbg=black cterm=none guifg=#aaa    guibg=white gui=none
+	highlight MyColor3   ctermfg=green   ctermbg=black cterm=none guifg=#7f7    guibg=white gui=none
+	highlight MyColor4   ctermfg=magenta ctermbg=black cterm=none guifg=#ff0    guibg=white gui=none
+	highlight MyColor5   ctermfg=blue    ctermbg=black cterm=none guifg=blue    guibg=white gui=none
+
+	let w:buftabs_enabled         = 0
+	let g:buftabs_only_basename   = 1
+	let g:buftabs_in_statusline   = 1
+	let g:buftabs_marker_start    = "["
+	let g:buftabs_marker_end      = "]"
+	let g:buftabs_separator       = "#"
+	let g:buftabs_marker_modified = "+"
+	let g:buftabs_active_highlight_group = "Visual"
+	let w:original_statusline = matchstr(&statusline, "%=.*")
+endif
+" }}}2
+
+" buftabs.vim.old {{{2
+if s:bundled('buftabs.old')
 	set statusline=%{buftabs}%=%m\ %y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}
 	set statusline+=\ %4l/%4L,%3c\ %3p%%
 	set statusline+=\ [WC=%{exists('*WordCount')?WordCount():[]}]
@@ -1158,25 +1374,6 @@ if s:bundled('foldCC')
 	let g:foldCCtext_enable_autofdc_adjuster = 1
 	nnoremap <expr>l  foldclosed('.') != -1 ? 'zo' : 'l'
 	nnoremap <silent>z0    :<C-u>set foldlevel=<C-r>=foldlevel('.')<CR><CR>
-	nnoremap <silent><C-_> :<C-u>call <SID>smart_foldcloser()<CR>
-	function! s:smart_foldcloser() "{{{
-		if foldlevel('.') == 0
-			norm! zM
-			return
-		endif
-
-		let foldc_lnum = foldclosed('.')
-		norm! zc
-		if foldc_lnum == -1
-			return
-		endif
-
-		if foldclosed('.') != foldc_lnum
-			return
-		endif
-		norm! zM
-	endfunction
-	"}}}
 endif
 " }}}2
 
@@ -1189,26 +1386,6 @@ let g:local_vimrc = expand('~/.vimrc.local')
 if filereadable(g:local_vimrc)
 	execute 'source ' . g:local_vimrc
 endif
-
-	nnoremap <silent><C-_> :<C-u>call <SID>smart_foldcloser()<CR>
-	function! s:smart_foldcloser() "{{{
-		if foldlevel('.') == 0
-			norm! zM
-			return
-		endif
-
-		let foldc_lnum = foldclosed('.')
-		norm! zc
-		if foldc_lnum == -1
-			return
-		endif
-
-		if foldclosed('.') != foldc_lnum
-			return
-		endif
-		norm! zM
-	endfunction
-	"}}}
 
 "  _               _              __     ___               _              
 " | |    _____   _(_)_ __   __ _  \ \   / (_)_ __ ___     | |_ ___   ___  

@@ -1174,6 +1174,7 @@ endif
 
 " buftabs.vim {{{2
 if s:bundled('buftabs')
+	set laststatus=2
 	set statusline=
 	set statusline+=%{buftabs}
 	set statusline+=%=                    " indent right

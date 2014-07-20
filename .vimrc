@@ -181,7 +181,7 @@ if s:bundled('neobundle.vim')
 	NeoBundle 'tomasr/molokai', { "base" : $HOME."/.vim/colors" }
 	NeoBundle 'w0ng/vim-hybrid', { "base" : $HOME."/.vim/colors" }
 
-	NeoBundle 'itchyny/lightline.vim'
+	"NeoBundle 'itchyny/lightline.vim'
 
 	" Japanese help
 	NeoBundle 'vim-jp/vimdoc-ja'
@@ -282,7 +282,7 @@ set lines=50
 set previewheight=10
 set helpheight=999
 set mousehide
-"set virtualedit=block
+set virtualedit=block
 set virtualedit& virtualedit+=block
 
 " Foldings
@@ -447,14 +447,14 @@ if has('syntax')
 endif "}}}
 
 " Statusline {{{
-let s:use_buftabs = 1
+let s:use_buftabs = 0
 if has('statusline')
 	if version >= 700
 		set statusline=
 		set statusline+=%#MyColor3#
-		set statusline+=\ %<%1.30{getcwd()}
+		set statusline+=\ %{getcwd()}
 		set statusline+=%#MyColor1#
-		set statusline+=\ %<%1.30f
+		set statusline+=\ %f
 		set statusline+=%#MyColor4#
 		set statusline+=\ %r%m                " read-only, modified flags
 		set statusline+=%=                    " indent right
@@ -462,15 +462,15 @@ if has('statusline')
 		set statusline+=\ %y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}
 		set statusline+=%#MyColor1#
 		set statusline+=\ %4l/%4L,%3c\ %3p%%
-		set statusline+=\ [WC=%{exists('*WordCount')?WordCount():[]}]
+		set statusline+=\ [WC=%{exists('*WordCount')?WordCount():[]}]\ 
 		set statusline+=%#MyColor5#
 		set statusline+=\ (%{g:Date()})
 		highlight StatusLine ctermfg=black   ctermbg=white cterm=none guifg=black   guibg=white gui=none
-		highlight MyColor1   ctermfg=white   ctermbg=black cterm=none guifg=white   guibg=white gui=none
-		highlight MyColor2   ctermfg=gray    ctermbg=black cterm=none guifg=#aaa    guibg=white gui=none
-		highlight MyColor3   ctermfg=green   ctermbg=black cterm=none guifg=#7f7    guibg=white gui=none
-		highlight MyColor4   ctermfg=magenta ctermbg=black cterm=none guifg=#ff0    guibg=white gui=none
-		highlight MyColor5   ctermfg=blue    ctermbg=black cterm=none guifg=blue    guibg=white gui=none
+		highlight MyColor1   ctermfg=white   ctermbg=black cterm=none guifg=white   guibg=black gui=none
+		highlight MyColor2   ctermfg=gray    ctermbg=black cterm=none guifg=#aaa    guibg=black gui=none
+		highlight MyColor3   ctermfg=green   ctermbg=black cterm=none guifg=#7f7    guibg=black gui=none
+		highlight MyColor4   ctermfg=magenta ctermbg=black cterm=none guifg=#ff0    guibg=black gui=none
+		highlight MyColor5   ctermfg=blue    ctermbg=white cterm=none guifg=blue    guibg=white gui=none
 	endif
 endif
 " }}}
@@ -1112,7 +1112,7 @@ if s:bundled('lightline.vim')
 	let g:mline_bufhist_queue = []
 	let g:mline_bufhist_limit = 4
 	let g:mline_bufhist_exclution_pat = '^$\|.jax$\|vimfiler:\|\[unite\]\|tagbar'
-	let g:mline_bufhist_enable = 0
+	let g:mline_bufhist_enable = 1
 	command! Btoggle :let g:mline_bufhist_enable = g:mline_bufhist_enable ? 0 : 1 | :redrawstatus!
 
 	function! Mline_buflist()
@@ -1173,8 +1173,9 @@ endif
 " }}}2
 
 " buftabs.vim {{{2
-if s:bundled('buftabs') && s:use_buftabs == 1
-	set statusline=%{buftabs}
+if s:bundled('buftabs')
+	set statusline=
+	set statusline+=%{buftabs}
 	set statusline+=%=                    " indent right
 	set statusline+=%#MyColor3#
 	set statusline+=\ %<%1.30{getcwd()}
@@ -1183,75 +1184,26 @@ if s:bundled('buftabs') && s:use_buftabs == 1
 	set statusline+=%#MyColor2#
 	set statusline+=\ %y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}
 	set statusline+=%#MyColor1#
-	set statusline+=\ %4l/%4L,%3c\ %3p%%
+	set statusline+=\ %4l/%4L,%3c\ %3p%%\ 
 	set statusline+=%#MyColor5#
 	set statusline+=\ (%{g:Date()})
+
 	highlight StatusLine ctermfg=black   ctermbg=white cterm=none guifg=black   guibg=white gui=none
-	highlight MyColor1   ctermfg=white   ctermbg=black cterm=none guifg=white   guibg=white gui=none
-	highlight MyColor2   ctermfg=gray    ctermbg=black cterm=none guifg=#aaa    guibg=white gui=none
-	highlight MyColor3   ctermfg=green   ctermbg=black cterm=none guifg=#7f7    guibg=white gui=none
-	highlight MyColor4   ctermfg=magenta ctermbg=black cterm=none guifg=#ff0    guibg=white gui=none
-	highlight MyColor5   ctermfg=blue    ctermbg=black cterm=none guifg=blue    guibg=white gui=none
+	highlight MyColor1   ctermfg=white   ctermbg=black cterm=none guifg=white   guibg=black gui=none
+	highlight MyColor2   ctermfg=gray    ctermbg=black cterm=none guifg=#aaa    guibg=black gui=none
+	highlight MyColor3   ctermfg=green   ctermbg=black cterm=none guifg=#7f7    guibg=black gui=none
+	highlight MyColor4   ctermfg=magenta ctermbg=black cterm=none guifg=#ff0    guibg=black gui=none
+	highlight MyColor5   ctermfg=blue    ctermbg=white cterm=none guifg=blue    guibg=white gui=none
 
-	let w:buftabs_enabled         = 0
-	let g:buftabs_only_basename   = 1
+	let g:buftabs_enabled = 1
+	let g:original_statusline = matchstr(&statusline, "%=.*")
 	let g:buftabs_in_statusline   = 1
+	let g:buftabs_only_basename   = 1
 	let g:buftabs_marker_start    = "["
 	let g:buftabs_marker_end      = "]"
 	let g:buftabs_separator       = "#"
 	let g:buftabs_marker_modified = "+"
 	let g:buftabs_active_highlight_group = "Visual"
-	let w:original_statusline = matchstr(&statusline, "%=.*")
-endif
-" }}}2
-
-" buftabs.vim.old {{{2
-if s:bundled('buftabs.old')
-	set statusline=%{buftabs}%=%m\ %y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}
-	set statusline+=\ %4l/%4L,%3c\ %3p%%
-	set statusline+=\ [WC=%{exists('*WordCount')?WordCount():[]}]
-	set statusline+=\ (%{g:Date()})
-
-	let w:buftabs_enabled         = 0
-	let g:buftabs_only_basename   = 1
-	let g:buftabs_in_statusline   = 1
-	let g:buftabs_marker_start    = "["
-	let g:buftabs_marker_end      = "]"
-	let g:buftabs_separator       = "#"
-	let g:buftabs_marker_modified = "+"
-	let g:buftabs_active_highlight_group = "Visual"
-	let w:original_statusline = matchstr(&statusline, "%=.*")
-
-	if &diff
-		finish
-	endif
-
-	function! Buftabs_enable()
-		let w:buftabs_enabled = 1
-	endfunction
-
-	let s:Pecho=''
-	function! s:Pecho(msg)
-		if &ut!=1|let s:hold_ut=&ut|let &ut=1|en
-		let s:Pecho=a:msg
-		aug Pecho
-			au CursorHold * if s:Pecho!=''|echo s:Pecho
-						\|let s:Pecho=''|let &ut=s:hold_ut|en
-					\|aug Pecho|exe 'au!'|aug END|aug! Pecho
-		aug END
-	endf
-
-	function! Buftabs_show(deleted_buf)
-		let l:i = 1
-		let s:list = ''
-		let l:start = 0
-		let l:end = 0
-		if ! exists("w:from") 
-			let w:from = 0
-		endif
-
-		"if ! exists("w:buftabs_enabled")
-	endfunction
 endif
 " }}}2
 

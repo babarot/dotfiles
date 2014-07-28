@@ -10,21 +10,57 @@
 "    ~~~~         \/__/         /:/  /       |:|  |        \:\__\     
 "                               \/__/         \|__|         \/__/     
 
+" Coding Rules {{{
+" Author:   <B4B4R07> Plz call me BABAROT.
+" Contacts: <b4b4r07@gmail.com>.
+" - Naming rules {{{2
+" -- Global function => CamelCase
+" -- Local function => snake_case
+"}}}2
+" - License {{{2
+"  The MIT License (MIT)
+"  
+"  Copyright (c) 2014 B4B4R07
+"  
+"  Permission is hereby granted, free of charge, to any person obtaining a copy of
+"  this software and associated documentation files (the "Software"), to deal in
+"  the Software without restriction, including without limitation the rights to
+"  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+"  of the Software, and to permit persons to whom the Software is furnished to do
+"  so, subject to the following conditions:
+"  
+"  The above copyright notice and this permission notice shall be included in all
+"  copies or substantial portions of the Software.
+"  
+"  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+"  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+"  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+"  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+"  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+"  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+"  SOFTWARE.
+"}}}2
+"}}}
+
 " Initial: {{{1
 " Skip initialization for vim-tiny or vim-small
 if !1 | finish | endif
+
 " Use plain vim
 " when vim was invoked by 'sudo' command.
+" or, invoked as 'git difftool'
 if exists('$SUDO_USER') || exists('$GIT_DIR')
 	finish
 endif
 
-" Starting time
+" Only once execution when starting vim
 if has('vim_starting')
 	" Necesary for lots of cool vim things
 	set nocompatible
+	" Define entire file encoding
 	scriptencoding utf-8
 
+	" Vim starting time
 	if has('reltime')
 		let g:startuptime = reltime()
 		augroup vimrc-startuptime
@@ -34,7 +70,7 @@ if has('vim_starting')
 	endif
 endif
 
-" Operating System {{{
+" Operating System {{{2
 let g:is_windows = has('win16') || has('win32') || has('win64')
 let g:is_cygwin = has('win32unix')
 let g:is_mac = !g:is_windows && !g:is_cygwin
@@ -42,8 +78,9 @@ let g:is_mac = !g:is_windows && !g:is_cygwin
 			\    (!executable('xdg-open') &&
 			\    system('uname') =~? '^darwin'))
 let g:is_unix = !g:is_mac && has('unix')
-"}}}
+"}}}2
 
+" Define neobundle runtimepath
 if g:is_windows
 	let $DOTVIM=expand('~/vimfiles')
 else
@@ -52,6 +89,7 @@ endif
 let $VIMBUNDLE=$DOTVIM . '/bundle'
 let $NEOBUNDLEPATH=$VIMBUNDLE . '/neobundle.vim'
 
+" Environment variable
 let $MYVIMRC = expand('~/.vimrc')
 
 " Initialize autocmd
@@ -67,9 +105,10 @@ let s:enable_sujest_neobundleinit = s:true
 let s:enable_eof_to_bof = s:true
 let g:enable_auto_highlight_cursorline = s:true
 let g:enable_buftabs = s:true
-"}}}
+let s:enable_restore_cursor_position = s:false
+"}}}2
 
-function! s:bundled(bundle) "{{{
+function! s:bundled(bundle) "{{{2
 	if !isdirectory($VIMBUNDLE)
 		return 0
 	endif
@@ -82,14 +121,13 @@ function! s:bundled(bundle) "{{{
 	else
 		return neobundle#is_installed(a:bundle)
 	endif
-endfunction "}}}
-
-"}}}
+endfunction "}}}2
+"}}}1
 
 " NeoBundle: {{{1
 filetype off
 
-" Add Path
+" Add neobundle to runtimepath
 if has('vim_starting') && isdirectory($NEOBUNDLEPATH)
 	set runtimepath+=$NEOBUNDLEPATH
 endif
@@ -188,6 +226,7 @@ if s:bundled('neobundle.vim') "{{{2
 	NeoBundle 'b4b4r07/mru.vim'
 	NeoBundle 'b4b4r07/buftabs'
 	NeoBundle 'tpope/vim-surround'
+	NeoBundle 'tpope/vim-repeat'
 	NeoBundleLazy 'tpope/vim-markdown', { 'autoload' : {
 				\ 'filetypes' : ['markdown'] }}
 	NeoBundleLazy 'tpope/vim-fugitive', { 'autoload': {
@@ -234,17 +273,20 @@ if s:bundled('neobundle.vim') "{{{2
 	NeoBundle 'nanotech/jellybeans.vim', { "base" : $HOME."/.vim/colors" }
 	NeoBundle 'tomasr/molokai', { "base" : $HOME."/.vim/colors" }
 	NeoBundle 'w0ng/vim-hybrid', { "base" : $HOME."/.vim/colors" }
+	NeoBundle 'tyru/nextfile.vim'
+	NeoBundle 'scrooloose/syntastic'
 
 	NeoBundle 'itchyny/lightline.vim'
 	if g:enable_buftabs == s:true
 		NeoBundleDisable lightline.vim
 	endif
-	NeoBundle 'scrooloose/syntastic'
+	NeoBundleDisable ctrlp.vim
 
 	" Japanese help
 	NeoBundle 'vim-jp/vimdoc-ja'
 
 	filetype plugin indent on
+
 	NeoBundleCheck
 
 	" Source plugin file for NeoBundle
@@ -252,7 +294,8 @@ if s:bundled('neobundle.vim') "{{{2
 	if filereadable(g:plugin_vimrc)
 		execute 'source ' . g:plugin_vimrc
 	endif
-else "}}}
+else "}}}2
+	" Set neobundle rootdirectory
 	if g:is_windows
 		let s:bundle_root = expand('$HOME/AppData/Roaming/vim/bundle')
 	else
@@ -260,6 +303,7 @@ else "}}}
 	endif
 	let s:neobundle_root = s:bundle_root . '/neobundle.vim'
 
+	" If neobundle doesn't exist
 	command! NeoBundleInit call s:neobundle_init()
 	function! s:neobundle_init() "{{{2
 		echon "Installing neobundle.vim..."
@@ -274,7 +318,7 @@ else "}}}
 		call neobundle#rc(s:bundle_root)
 		NeoBundleInstall
 		echo "Finish!"
-	endfunction "}}}
+	endfunction "}}}2
 
 	"call s:neobundle_init()
 	if s:enable_sujest_neobundleinit == s:true
@@ -282,8 +326,9 @@ else "}}}
 	endif
 endif
 
+" Filetype start
 filetype plugin indent on
-"}}}
+"}}}1
 
 " Utilities: {{{1
 function! s:SID() "{{{
@@ -433,6 +478,17 @@ function! s:Rename() "{{{
 	endif
 endfunction "}}}
 
+function! s:RenameExt() "{{{
+	let filename = input('New extname: ', expand('%:p:t:r') . '.')
+	if filename != '' && filename !=# 'file'
+		execute 'file' filename
+		write
+		let ext = expand('%:e')
+		execute 'setlocal filetype=' . ext
+		call delete(expand('#'))
+	endif
+endfunction "}}}
+
 function! s:move(file, bang, base) "{{{
 	let pwd = getcwd()
 	cd `=a:base`
@@ -461,15 +517,17 @@ function! s:move(file, bang, base) "{{{
 endfunction "}}}
 
 function! s:open_junk_file() "{{{
-	let junk_dir = $HOME . '/.vim_junk'. strftime('/%Y/%m')
+	let junk_dir = $HOME . '/.vim/junk'. strftime('/%Y/%m/%d')
 	if !isdirectory(junk_dir)
 		call mkdir(junk_dir, 'p')
 	endif
 
-	let filename = input('Junk Code: ', junk_dir.strftime('/%Y-%m-%d-%H%M%S.'))
-	if filename != ''
-		execute 'edit ' . filename
+	let ext = input('Junk Ext: ')
+	let filename = junk_dir . tolower(strftime('/%A')) . strftime('_%H%M%S')
+	if !empty(ext)
+		let filename = filename . '.' . ext
 	endif
+	execute 'edit ' . filename
 endfunction "}}}
 
 function! s:copy_current_path() "{{{
@@ -620,6 +678,14 @@ function! S(f, ...) "{{{
 				\      ? eval(cfunc) : call(cfunc, a:000)
 endfunction "}}}
 
+function! HomedirOrBackslash() "{{{
+	if getcmdtype() == ':' && (getcmdline() =~# '^e ' || getcmdline() =~? '^r\?!' || getcmdline() =~? '^cd ')
+		return '~/'
+	else
+		return '\'
+	endif
+endfunction "}}}
+
 function! Date() "{{{
 	return strftime("%Y/%m/%d %H:%M")
 endfunction "}}}
@@ -694,18 +760,6 @@ function! GetBufname(bufnr, tail) "{{{
 endfunction "}}}
 
 function! GetFileInfo() "{{{
-	"let line = ''
-	"let line .= '"'
-	"let line .= expand('%:p:~')
-	"let line .= ' ' 
-	"let line .= line('.')
-	"let line .= '/'
-	"let line .= line('$')
-	"let line .= ' '
-	"let line .= 100 * line('.') / line('$')
-	"let line .= '%'
-	"let line .= '"'
-	"return line
 	let line  = ''
 	if bufname(bufnr("%")) == ''
 		let line .= 'No name'
@@ -713,7 +767,8 @@ function! GetFileInfo() "{{{
 		let line .= '"'
 		let line .= expand('%:p:~')
 		let line .= ' (' . line('.') . '/' . line('$') . ') '
-		let line .= '--' . 100 * line('.') / line('$') . '%--'
+		"let line .= '--' . 100 * line('.') / line('$') . '%--'
+		let line .= GetDocumentPosition()
 		let line .= '"'
 	endif
 	return line
@@ -785,7 +840,7 @@ function! WordCount(...) "{{{
 	return s:WordCountStr
 endfunction "}}}
 
-function! BufInfo() "{{{
+function! GetBufInfo() "{{{
 	echo '[ fpath ]' expand('%:p')
 	echo '[ bufnr ]' bufnr('%')
 	if filereadable(expand('%'))
@@ -794,6 +849,7 @@ function! BufInfo() "{{{
 	echo '[ fline ]' line('$') 'lines'
 	"echo '[ fsize ]' s:GetBufByte() 'bytes'
 	echo '[ fsize ]' GetFileSize()
+	echo '[ power ]' Scouter($MYVIMRC)
 endfunction "}}}
 
 function! SelectInteractive(question, candidates) "{{{
@@ -845,76 +901,7 @@ function! ToggleVariable(variable_name) "{{{
 	endif
 	echo printf('%s = %s', a:variable_name, eval(a:variable_name))
 endfunction "}}}
-
-" Add execute permission {{{
-if executable('chmod')
-	augroup vimrc-autoexecutable
-		autocmd!
-		autocmd BufWritePost * call s:add_permission_x()
-	augroup END
-
-	function! s:add_permission_x()
-		let file = expand('%:p')
-		if !executable(file)
-			if getline(1) =~# '^#!' || &ft =~ "\\(z\\|c\\|ba\\)\\?sh$" && input(printf('"%s" is not perm 755. Change mode? [y/N] ', expand('%:t'))) =~? '^y\%[es]$'
-				call system("chmod 755 " . shellescape(file))
-				dcho " "
-				echo "Set permission 755!"
-			endif
-		endif
-	endfunction
-endif "}}}
-
-" Backup automatically {{{
-set backup
-if g:is_windows
-	call s:mkdir(expand('$VIM/.backup'))
-	set backupdir=$VIM/.backup
-	set backupext=.bak
-else
-	set backupdir=~/.backup/vim
-	set viewdir=~/.backup/view
-	if has('autocmd')
-		autocmd BufWritePre * call UpdateBackupFile()
-		function! UpdateBackupFile()
-			let dir = strftime("~/.backup/vim/%Y/%m/%d", localtime())
-			if !isdirectory(dir)
-				let retval = system("mkdir -p " . dir)
-				let retval = system("chown goth:staff " . dir)
-			endif
-			exe "set backupdir=".dir
-			unlet dir
-			let ext = strftime("%H_%M_%S", localtime())
-			exe "set backupext=." . ext
-			unlet ext
-		endfunction
-	endif
-endif
-" }}}
-
-" Swap settings {{{
-if !isdirectory(expand('~/.swap'))
-	call s:mkdir(expand('~/.swap'))
-endif
-set swapfile
-set directory=~/.swap
-" }}}
-
-" Restore cursor position {{{
-function! s:RestoreCursorPostion()
-	if line("'\"") <= line("$")
-		normal! g`"
-		return 1
-	endif
-endfunction
-augroup restore-cursor-position
-	autocmd!
-	autocmd BufWinEnter * call s:RestoreCursorPostion()
-augroup END "}}}
-
-call s:mkdir(expand('$HOME/.vim/colors'))
-
-"}}}
+"}}}1
 
 " Appearance: {{{1
 " English interface {{{
@@ -924,7 +911,7 @@ else
 	language mes C
 endif "}}}
 
-" Colorscheme "{{{
+" Colorscheme "{{{2
 set background=dark
 set t_Co=256
 if &t_Co < 256
@@ -947,7 +934,7 @@ else
 			colorscheme desert
 		endif
 	endif
-endif "}}}
+endif "}}}2
 
 set laststatus=2  statusline=%!MakeStatusLine()
 set showtabline=2 tabline=%!MakeTabLine()
@@ -1176,8 +1163,7 @@ function! MakeTabLine() "{{{
 	let info .= fnamemodify(getcwd(), ":~") . ' '
 	return tabs . '%=' . info
 endfunction "}}}
-
-"}}}
+"}}}1
 
 " Options: {{{1
 syntax enable
@@ -1336,7 +1322,7 @@ augroup no-comment
 	autocmd FileType * setlocal formatoptions-=ro
 augroup END
 
-"}}}
+"}}}1
 
 " Mappings: {{{1
 " It is likely to be changed by $VIM/vimrc.
@@ -1345,9 +1331,15 @@ if has('vim_starting')
 	mapclear!
 endif
 
+if g:is_mac
+	noremap (J\(B \
+	noremap \ (J\(B
+endif
+
 let mapleader = ","
 let maplocalleader = ","
 
+" function's commands {{{2
 " Smart folding close
 nnoremap <silent><C-_> :<C-u>call <SID>smart_foldcloser()<CR>
 
@@ -1357,12 +1349,18 @@ nnoremap <silent> <Leader>q :<C-u>call QuitIfNameless()<CR>
 " Kill buffer
 nnoremap <C-x>k :call BufferWipeoutInteractive()<CR>
 
-if g:is_mac
-	noremap (J\(B \
-	noremap \ (J\(B
-endif
+" Move middle of current line.(not middle of screen)
+nnoremap <silent> gm :<C-u>call <SID>MoveMiddleOfLine()<CR>
 
+" Open vimrc with tab
+nnoremap <Space>. :call <SID>recycle_open('tabedit', $MYVIMRC)<CR>
+
+" Make junkfile
 nnoremap <silent> <Space>e  :<C-u>JunkFile<CR>
+
+" Easy typing tilda insted of backslash
+cnoremap <expr> <Bslash> HomedirOrBackslash()
+"}}}
 
 " swap ; and : {{{
 nnoremap ; :
@@ -1413,33 +1411,10 @@ if s:enable_eof_to_bof == s:true
 	nnoremap <expr><silent> j Down("gj")
 endif "}}}
 
-" key map ^,$ to <Space>h,l. Because ^ and $ is difficult to type and damage little finger!!!
-noremap <Space>h ^
-noremap <Space>l $
-
-" Type 'v', select end of line in visual mode
-vnoremap v $h
-
 " virtual replace mode {{{
 nnoremap R gR
 nnoremap gR R
 "}}}
-
-nnoremap <silent> <ESC><ESC> :nohlsearch<CR>
-nnoremap Y y$
-nnoremap n nzz
-nnoremap N Nzz
-
-nnoremap <Space>/  *<C-o>
-nnoremap g<Space>/ g*<C-o>
-nnoremap S *zz
-nnoremap * *zz
-nnoremap # #zz
-nnoremap g* g*zz
-nnoremap g# g#zz
-
-"noremap <Space>O  :<C-u>for i in range(v:count1) \| call append(line('.'), '') \| endfor<CR>
-"nnoremap <Space>O  :<C-u>for i in range(v:count1) \| call append(line('.')-1, '') \| endfor<CR>
 
 " Buffer and Tabs {{{
 nnoremap <C-j> :bnext<CR>
@@ -1482,14 +1457,6 @@ nnoremap + <C-a>
 nnoremap - <C-x>
 "}}}
 
-nnoremap <Leader>wc :%s/\i\+/&/gn<CR>
-vnoremap <Leader>wc :s/\i\+/&/gn<CR>
-"nnoremap <Space>. :<C-u>edit $MYVIMRC<CR>
-nnoremap <C-g> 1<C-g>
-nnoremap gs :<C-u>%s///g<Left><Left><Left>
-vnoremap gs :s///g<Left><Left><Left>
-nnoremap HP :<C-u>help<Space><C-r><C-w><CR>
-
 " Disable features {{{
 nnoremap q: <Nop>
 nnoremap q/ <Nop>
@@ -1517,29 +1484,6 @@ nnoremap _  :sp<CR>
 nnoremap <bar>  :vsp<CR>
 
 "}}}
-
-" Add a relative number toggle
-nnoremap <silent> <Leader>r :<C-u>set relativenumber!<CR>
-
-" Add a spell check toggle
-nnoremap <silent> <Leader>s :<C-u>set spell!<CR>
-
-" swap gf and gF
-noremap gf gF
-noremap gF gf
-
-" IM off when breaking insert-mode
-inoremap <ESC> <ESC>
-inoremap <C-[> <ESC>
-
-" Don't use Ex mode, use Q for formatting
-nnoremap Q gq
-
-" Goto {num} row like a {num}gg, {num}G and :{num}<CR>
-nnoremap <expr><Tab> v:count !=0 ? "G" : "\<Tab>"
-
-" Insert null line
-"nnoremap <silent><CR> :<C-u>call append(expand('.'), '')<CR>j
 
 " Encoding commands {{{
 " Command group opening with a specific character code again
@@ -1581,38 +1525,29 @@ cnoremap <C-d> <Del>
 cnoremap <C-h> <BS>
 "}}}
 
-" Move to top/center/bottom
-noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ?
-			\ 'zt' : (winline() == 1)? 'zb' : 'zz'
-
-nnoremap <silent>W :<C-u>keepjumps normal! }<CR>
-nnoremap <silent>B :<C-u>keepjumps normal! {<CR>
-
-nnoremap <silent><F4> :let &tabstop = (&tabstop * 2 > 16) ? 2 : &tabstop * 2<CR>:echo 'tabstop:' &tabstop<CR>
-
 " Folding {{{
 nnoremap <expr>l  foldclosed('.') != -1 ? 'zo' : 'l'
 nnoremap <expr>h col('.') == 1 && foldlevel(line('.')) > 0 ? 'zc' : 'h'
 nnoremap <silent>z0 :<C-u>set foldlevel=<C-r>=foldlevel('.')<CR><CR>
 "}}}
 
-" move middle of current line.(not middle of screen)
-nnoremap <silent> gm :<C-u>call <SID>MoveMiddleOfLine()<CR>
-
-nnoremap <Space>. :call <SID>recycle_open('tabedit', $MYVIMRC)<CR>
-
 " Commands! {{{
+
+" Show all runtimepaths
+command! -bar RTP echo substitute(&runtimepath, ',', "\n", 'g')
+
 command! -bar -bang -nargs=? -complete=file Scouter
 			\        echo Scouter(empty(<q-args>) ? $MYVIMRC : expand(<q-args>), <bang>0)
 
 command! -nargs=? -bang -bar -complete=file Delete call s:delete_with_confirm(<q-args>, <bang>0)
 command! -nargs=0 Rename call s:Rename()
+command! -nargs=0 RenameExt call s:RenameExt()
 command! -nargs=0 JunkFile call s:open_junk_file()
 
 " Remove ^M
 command! RemoveCr call s:ExecuteKeepView('silent! %substitute/\r$//g | nohlsearch')
 
-"Remove space
+" Remove EOL space
 command! RemoveEolSpace call s:ExecuteKeepView('silent! %substitute/ \+$//g | nohlsearch')
 
 " Remove blank line
@@ -1634,10 +1569,86 @@ command! -nargs=1 -bang -bar -complete=file Move
 command! -bang SafeQuit call s:safeQuit('<bang>')
 
 command! -nargs=+ Grep call s:Grep(<f-args>)
+
 command! -nargs=? -bar -bang -complete=dir Ls call s:get_list(<f-args>)
+
+command! -nargs=* -complete=mapping AllMaps map <args> | map! <args> | lmap <args>
+
+command! -bar DeleteHideBuffer :call s:delete_hide_buffer()
+
+command! -bar DeleteNoFileBuffer :call s:delete_no_file_buffer()
 "}}}
 
-"}}}
+" Useful settings {{{2
+inoremap <silent> <C-CR> <Esc>:set expandtab<CR>a<CR> <Esc>:set noexpandtab<CR>a<BS>
+
+nnoremap <Leader>wc :%s/\i\+/&/gn<CR>
+vnoremap <Leader>wc :s/\i\+/&/gn<CR>
+nnoremap gs :<C-u>%s///g<Left><Left><Left>
+vnoremap gs :s///g<Left><Left><Left>
+
+" Add a relative number toggle
+nnoremap <silent> <Leader>r :<C-u>set relativenumber!<CR>
+
+" Add a spell check toggle
+nnoremap <silent> <Leader>s :<C-u>set spell!<CR>
+
+" Goto {num} row like a {num}gg, {num}G and :{num}<CR>
+nnoremap <expr><Tab> v:count !=0 ? "G" : "\<Tab>"
+
+nnoremap <silent>~ :let &tabstop = (&tabstop * 2 > 16) ? 2 : &tabstop * 2<CR>:echo 'tabstop:' &tabstop<CR>
+
+" Move to top/center/bottom
+noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ?
+			\ 'zt' : (winline() == 1)? 'zb' : 'zz'
+
+" Reset highlight searching
+nnoremap <silent> <ESC><ESC> :nohlsearch<CR>
+"}}}2
+
+" key map ^,$ to <Space>h,l. Because ^ and $ is difficult to type and damage little finger!!!
+noremap <Space>h ^
+noremap <Space>l $
+
+" Type 'v', select end of line in visual mode
+vnoremap v $h
+
+nnoremap Y y$
+nnoremap n nzz
+nnoremap N Nzz
+
+nnoremap <Space>/  *<C-o>
+nnoremap g<Space>/ g*<C-o>
+nnoremap S *zz
+nnoremap * *zz
+nnoremap # #zz
+nnoremap g* g*zz
+nnoremap g# g#zz
+
+"noremap <Space>O  :<C-u>for i in range(v:count1) \| call append(line('.'), '') \| endfor<CR>
+"nnoremap <Space>O  :<C-u>for i in range(v:count1) \| call append(line('.')-1, '') \| endfor<CR>
+
+nnoremap <C-g> 1<C-g>
+noremap g<CR> g;
+nnoremap <CR> :<C-u>w<CR>
+
+" swap gf and gF
+noremap gf gF
+noremap gF gf
+
+" IM off when breaking insert-mode
+inoremap <ESC> <ESC>
+inoremap <C-[> <ESC>
+
+" Don't use Ex mode, use Q for formatting
+nnoremap Q gq
+
+" Insert null line
+"nnoremap <silent><CR> :<C-u>call append(expand('.'), '')<CR>j
+
+nnoremap <silent>W :<C-u>keepjumps normal! }<CR>
+nnoremap <silent>B :<C-u>keepjumps normal! {<CR>
+"}}}1
 
 " Plugins: {{{1
 " mru.vim {{{2
@@ -2036,6 +2047,8 @@ endif
 " }}}1
 
 " Misc: {{{1
+call s:mkdir(expand('$HOME/.vim/colors'))
+
 augroup show-git-branch "{{{
 	autocmd!
 	autocmd BufEnter * let b:git_branch = GetGitBranchName()
@@ -2065,6 +2078,61 @@ augroup get-file-info "{{{
 	autocmd CursorHold,CursorHoldI * execute "echo GetFileInfo()"
 augroup END "}}}
 
+augroup vimrc-auto-mkdir "{{{
+	autocmd!
+	autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
+	function! s:auto_mkdir(dir, force)
+		if !isdirectory(a:dir)
+					\   && (a:force
+					\       || input("'" . a:dir . "' does not exist. Create? [y/N]") =~? '^y\%[es]$')
+			call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+		endif
+	endfunction
+augroup END "}}}
+
+" Launched with -b option {{{
+if has('vim_starting') && &binary
+	augroup vimrc-xxd
+		autocmd!
+		autocmd BufReadPost * if &l:binary | setlocal filetype=xxd | endif
+	augroup END
+endif "}}}
+
+" Add execute permission {{{
+if executable('chmod')
+	augroup vimrc-autoexecutable
+		autocmd!
+		autocmd BufWritePost * call s:add_permission_x()
+	augroup END
+
+	function! s:add_permission_x()
+		let file = expand('%:p')
+		if !executable(file)
+			if getline(1) =~# '^#!' 
+						\ || &ft =~ "\\(z\\|c\\|ba\\)\\?sh$"
+						\ && input(printf('"%s" is not perm 755. Change mode? [y/N] ', expand('%:t'))) =~? '^y\%[es]$'
+				call system("chmod 755 " . shellescape(file))
+				dcho " "
+				echo "Set permission 755!"
+			endif
+		endif
+	endfunction
+endif "}}}
+
+" Restore cursor position {{{
+function! s:RestoreCursorPostion()
+	if line("'\"") <= line("$")
+		normal! g`"
+		return 1
+	endif
+endfunction
+if s:enable_restore_cursor_position == s:true
+	augroup restore-cursor-position
+		autocmd!
+		autocmd BufWinEnter * call s:RestoreCursorPostion()
+	augroup END
+endif "}}}
+
 " Loading divided files {{{
 let g:local_vimrc = expand('~/.vimrc.local')
 if filereadable(g:local_vimrc)
@@ -2072,10 +2140,61 @@ if filereadable(g:local_vimrc)
 endif
 "}}}
 
+" View directory {{{
+call s:mkdir(expand('$HOME/.vim/view'))
+set viewdir=~/.vim/view
+set viewoptions-=options
+set viewoptions+=slash,unix
+augroup vimrc-view
+	autocmd!
+	autocmd BufLeave * if expand('%') !=# '' && &buftype ==# ''
+				\    |   mkview
+				\    | endif
+	autocmd BufReadPost * if !exists('b:view_loaded') &&
+				\           expand('%') !=# '' && &buftype ==# ''
+				\       |   silent! loadview
+				\       |   let b:view_loaded = 1
+				\       | endif
+	autocmd VimLeave * call map(split(glob(&viewdir . '/*'), "\n"),
+				\                           'delete(v:val)')
+augroup END "}}}
+
+" Backup automatically {{{
+set backup
+if g:is_windows
+	call s:mkdir(expand('$VIM/.backup'))
+	set backupdir=$VIM/.backup
+	set backupext=.bak
+else
+	call s:mkdir(expand('~/.backup/vim'))
+	set backupdir=~/.backup/vim
+	set viewdir=~/.backup/view
+	autocmd BufWritePre * call UpdateBackupFile()
+	function! UpdateBackupFile()
+		let dir = strftime("~/.backup/vim/%Y/%m/%d", localtime())
+		if !isdirectory(dir)
+			let retval = system("mkdir -p " . dir)
+			let retval = system("chown goth:staff " . dir)
+		endif
+		execute "set backupdir=" . dir
+		unlet dir
+		let ext = strftime("%H_%M_%S", localtime())
+		execute "set backupext=." . ext
+		unlet ext
+	endfunction
+endif
+" }}}
+
+" Swap settings {{{
+call s:mkdir(expand('~/.swap'))
+set swapfile
+set directory=~/.swap
+" }}}
+
 " must be written at the last.  see :help 'secure'.
 set secure
 
 " vim: foldmethod=marker
 " vim: foldcolumn=3
 " vim: foldlevel=0
-"}}}
+"}}}1

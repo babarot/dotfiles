@@ -13,9 +13,13 @@
 " Coding Rules {{{
 " Author:   <B4B4R07> Plz call me BABAROT.
 " Contacts: <b4b4r07@gmail.com>.
-" - Naming rules {{{2
+"  Naming rules {{{2
+" - Functions
 " -- Global function => CamelCase
 " -- Local function => snake_case
+" - Mapping prefix
+" -- <Space> is vim-wise
+" -- <Leader> is plugin-wise
 "}}}2
 " - License {{{2
 "  The MIT License (MIT)
@@ -275,6 +279,7 @@ if s:bundled('neobundle.vim') "{{{2
 	NeoBundle 'w0ng/vim-hybrid', { "base" : $HOME."/.vim/colors" }
 	NeoBundle 'tyru/nextfile.vim'
 	NeoBundle 'scrooloose/syntastic'
+	NeoBundle 'b4b4r07/autocdls.vim'
 
 	NeoBundle 'itchyny/lightline.vim'
 	if g:enable_buftabs == s:true
@@ -479,7 +484,11 @@ function! s:Rename() "{{{
 endfunction "}}}
 
 function! s:RenameExt() "{{{
-	let filename = input('New extname: ', expand('%:p:t:r') . '.')
+	let ext = input('New ext: ', '', 'filetype')
+	let filename = expand('%:p:t:r')
+	if !empty(ext)
+		let filename = filename . '.' . ext
+	endif
 	if filename != '' && filename !=# 'file'
 		execute 'file' filename
 		write
@@ -613,12 +622,15 @@ endfunction "}}}
 function! s:get_list(...) "{{{
 	let l:pwd = getcwd()
 	if a:0 == 1
+		if !isdirectory(a:1)
+			echohl ErrorMsg | echo a:1 ": No such file or directory" | echohl NONE
+			return
+		endif
 		execute ":lcd " . expand(a:1)
 	endif
 	let filelist = glob(getcwd() . "/*")
 
 	let splitted = split(filelist, "\n")
-	let l:echon = 1
 	for file in splitted
 		if isdirectory(file)
 			echon fnamemodify(file, ":t") . "/" . " "
@@ -1606,6 +1618,9 @@ noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ?
 nnoremap <silent> <ESC><ESC> :nohlsearch<CR>
 "}}}2
 
+" Go to last last changes
+nnoremap <C-g> zRg;zz
+
 " key map ^,$ to <Space>h,l. Because ^ and $ is difficult to type and damage little finger!!!
 noremap <Space>h ^
 noremap <Space>l $
@@ -2049,6 +2064,33 @@ endif
 " Misc: {{{1
 call s:mkdir(expand('$HOME/.vim/colors'))
 
+" CD {{{
+"command! -complete=customlist,<SID>CommandComplete_cdpath -nargs=1
+"       \ CD  cd <args>
+"
+"function! s:CommandComplete_cdpath(arglead, cmdline, cursorpos)
+"  return  split(globpath(&cdpath, a:arglead . '*/'), "\n")
+"endfunction
+"
+"let s:CMapABC_Entries = []
+"function! s:CMapABC_Add(original_pattern, alternate_name)
+"  call add(s:CMapABC_Entries, [a:original_pattern, a:alternate_name])
+"endfunction
+"
+"cnoremap <expr> <Space>  <SID>CMapABC()
+"function! s:CMapABC()
+"  let cmdline = getcmdline()
+"  for [original_pattern, alternate_name] in s:CMapABC_Entries
+"    if cmdline =~# original_pattern
+"      return "\<C-u>" . alternate_name . ' '
+"    endif
+"  endfor
+"  return ' '
+"endfunction
+"
+"call s:CMapABC_Add('^cd', 'CD')
+"}}}
+
 augroup show-git-branch "{{{
 	autocmd!
 	autocmd BufEnter * let b:git_branch = GetGitBranchName()
@@ -2133,13 +2175,6 @@ if s:enable_restore_cursor_position == s:true
 	augroup END
 endif "}}}
 
-" Loading divided files {{{
-let g:local_vimrc = expand('~/.vimrc.local')
-if filereadable(g:local_vimrc)
-	execute 'source ' . g:local_vimrc
-endif
-"}}}
-
 " View directory {{{
 call s:mkdir(expand('$HOME/.vim/view'))
 set viewdir=~/.vim/view
@@ -2162,14 +2197,12 @@ augroup END "}}}
 " Backup automatically {{{
 set backup
 if g:is_windows
-	call s:mkdir(expand('$VIM/.backup'))
-	set backupdir=$VIM/.backup
+	set backupdir=$VIM/backup
 	set backupext=.bak
 else
-	call s:mkdir(expand('~/.backup/vim'))
-	set backupdir=~/.backup/vim
-	set viewdir=~/.backup/view
+	call s:mkdir(expand('~/.vim/backup'))
 	autocmd BufWritePre * call UpdateBackupFile()
+
 	function! UpdateBackupFile()
 		let dir = strftime("~/.backup/vim/%Y/%m/%d", localtime())
 		if !isdirectory(dir)
@@ -2186,10 +2219,17 @@ endif
 " }}}
 
 " Swap settings {{{
-call s:mkdir(expand('~/.swap'))
+call s:mkdir(expand('~/.vim/swap'))
 set swapfile
-set directory=~/.swap
+set directory=~/.vim/swap
 " }}}
+
+" Loading divided files {{{
+let g:local_vimrc = expand('~/.vimrc.local')
+if filereadable(g:local_vimrc)
+	execute 'source ' . g:local_vimrc
+endif
+"}}}
 
 " must be written at the last.  see :help 'secure'.
 set secure

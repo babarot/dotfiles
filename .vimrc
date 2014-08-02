@@ -230,7 +230,7 @@ if s:bundled('neobundle.vim') "{{{2
 	NeoBundle 'ujihisa/neco-look'
 	NeoBundleLazy 'ujihisa/unite-colorscheme', '', 'same'
 	NeoBundle 'b4b4r07/mru.vim'
-	NeoBundle 'b4b4r07/autocdls.vim'
+	NeoBundle 'b4b4r07/vim-autocdls'
 	if !has('gui_running')
 		NeoBundle 'b4b4r07/buftabs'
 	endif

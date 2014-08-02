@@ -553,6 +553,16 @@ function! s:copy_current_path() "{{{
 	else
 		let @*=expand('%:p')
 	endif
+	echon expand('%:p')
+endfunction "}}}
+
+function! s:copy_current_dir() "{{{
+	if g:is_windows
+		let @*=substitute(expand('%:p:h'), '\\/', '\\', 'g')
+	else
+		let @*=expand('%:p:h')
+	endif
+	echon expand('%:p:h')
 endfunction "}}}
 
 function! s:find_tabnr(bufnr) "{{{
@@ -1680,6 +1690,7 @@ command! -nargs=0 AllWipeout call s:AllWipeout()
 command! -nargs=0 BdKeepWin call s:BdKeepWin()
 
 command! CopyCurrentPath :call s:copy_current_path()
+command! CopyCurrentDir :call s:copy_current_dir()
 
 command! -nargs=1 -bang -bar -complete=file Rename
 			\        call s:move(<q-args>, <q-bang>, expand('%:h'))

@@ -44,6 +44,7 @@
 "  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 "  SOFTWARE.
 "}}}2
+
 "}}}
 
 " Initial: {{{1
@@ -210,6 +211,7 @@ if s:bundled('neobundle.vim') "{{{2
 	NeoBundleLazy 'thinca/vim-qfreplace', '', 'same', { 'autoload' : {
 				\ 'filetypes' : ['unite', 'quickfix'],
 				\ }}
+	NeoBundle 'tyru/nextfile.vim'
 	NeoBundle 'tyru/skk.vim'
 	NeoBundleLazy 'tyru/eskk.vim', { 'autoload' : {
 				\ 'mappings' : [['i', '<Plug>(eskk:toggle)']],
@@ -228,7 +230,14 @@ if s:bundled('neobundle.vim') "{{{2
 	NeoBundle 'ujihisa/neco-look'
 	NeoBundleLazy 'ujihisa/unite-colorscheme', '', 'same'
 	NeoBundle 'b4b4r07/mru.vim'
-	NeoBundle 'b4b4r07/buftabs'
+	NeoBundle 'b4b4r07/autocdls.vim'
+	if !has('gui_running')
+		NeoBundle 'b4b4r07/buftabs'
+	endif
+	if has('gui_running')
+		NeoBundle 'itchyny/lightline.vim'
+	endif
+	NeoBundle 'scrooloose/syntastic'
 	NeoBundle 'tpope/vim-surround'
 	NeoBundle 'tpope/vim-repeat'
 	NeoBundleLazy 'tpope/vim-markdown', { 'autoload' : {
@@ -273,22 +282,21 @@ if s:bundled('neobundle.vim') "{{{2
 	NeoBundle 'kana/vim-gf-user'
 	NeoBundle 'yomi322/unite-tweetvim'
 	NeoBundle 'kien/ctrlp.vim'
+
+	" Japanese help
+	NeoBundle 'vim-jp/vimdoc-ja'
+
+	" Colorscheme plugins
 	NeoBundle 'b4b4r07/solarized.vim', { "base" : $HOME."/.vim/colors" }
 	NeoBundle 'nanotech/jellybeans.vim', { "base" : $HOME."/.vim/colors" }
 	NeoBundle 'tomasr/molokai', { "base" : $HOME."/.vim/colors" }
 	NeoBundle 'w0ng/vim-hybrid', { "base" : $HOME."/.vim/colors" }
-	NeoBundle 'tyru/nextfile.vim'
-	NeoBundle 'scrooloose/syntastic'
-	NeoBundle 'b4b4r07/autocdls.vim'
 
-	NeoBundle 'itchyny/lightline.vim'
-	if g:enable_buftabs == s:true
+	" Disable plugins
+	if g:enable_buftabs == s:true && !has('gui_running')
 		NeoBundleDisable lightline.vim
 	endif
 	NeoBundleDisable ctrlp.vim
-
-	" Japanese help
-	NeoBundle 'vim-jp/vimdoc-ja'
 
 	filetype plugin indent on
 
@@ -690,6 +698,20 @@ function! S(f, ...) "{{{
 				\      ? eval(cfunc) : call(cfunc, a:000)
 endfunction "}}}
 
+function! Sourcefile(file) "{{{
+	let l:file = a:file
+	if empty(a:file)
+		let l:file = expand('%:p')
+	endif
+
+	try
+		execute "source " . l:file
+		echo "Success!"
+	catch
+		echohl WarningMsg | echo "ERROR!" | echohl NONE
+	endtry
+endfunction "}}}
+
 function! HomedirOrBackslash() "{{{
 	if getcmdtype() == ':' && (getcmdline() =~# '^e ' || getcmdline() =~? '^r\?!' || getcmdline() =~? '^cd ')
 		return '~/'
@@ -794,6 +816,15 @@ function! GetGitBranchName() "{{{
 		let branch = split(r,"/")[-1][:-2]
 	endif
 	return branch
+endfunction "}}}
+
+function! DoSource(...) "{{{
+	if a:0
+		let l:target = a:1
+	else
+		let l:target = expand('%:p')
+	endif
+	execute 'source ' . l:target
 endfunction "}}}
 
 function! GetFileList(...) "{{{
@@ -951,12 +982,23 @@ endif "}}}2
 set laststatus=2  statusline=%!MakeStatusLine()
 set showtabline=2 tabline=%!MakeTabLine()
 
+" Cursor color on when IME ON {{{
+if has('multi_byte_ime') || has('xim')
+	highlight Cursor guibg=NONE guifg=Yellow
+	highlight CursorIM guibg=NONE guifg=Red
+	set iminsert=0 imsearch=0
+	if has('xim') && has('GUI_GTK')
+		""set imactivatekey=s-space
+	endif
+	inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
+endif "}}}
+
 " Display JISX0208Space {{{
 if has("syntax")
 	" the line is required for POD bug fix
 	syntax on
 	function! ActivateInvisibleIndicator()
-		syntax match InvisibleJISX0208Space "$B!!(B" display containedin=ALL
+		syntax match InvisibleJISX0208Space "　" display containedin=ALL
 		highlight InvisibleJISX0208Space term=underline ctermbg=Blue guibg=darkgray gui=underline
 	endfunction
 	autocmd MyAutoCmd BufNew,BufRead * call ActivateInvisibleIndicator()
@@ -964,7 +1006,7 @@ endif
 "augroup hilightIdegraphicSpace
 "  autocmd!
 "  autocmd VimEnter,ColorScheme * highlight IdeographicSpace term=underline ctermbg=DarkGreen guibg=DarkGreen
-"  autocmd WinEnter * match IdeographicSpace /$B!!(B/
+"  autocmd WinEnter * match IdeographicSpace /　/
 "augroup END
 "}}}
 
@@ -1038,6 +1080,21 @@ augroup vimrc-auto-cursorcolumn
 augroup END
 "}}}
 
+"recalculate the trailing whitespace warning when idle, and after saving
+autocmd cursorhold,bufwritepost * unlet! b:statusline_trailing_space_warning
+
+"return '[\s]' if trailing white space is detected
+function! StatuslineTrailingSpaceWarning()
+  if !exists("b:statusline_trailing_space_warning")
+    if search('\s\+$', 'nw') != 0
+      let b:statusline_trailing_space_warning = '[SPC:' . search('\s\+$', 'nw') . ']'
+    else
+      let b:statusline_trailing_space_warning = ''
+    endif
+  endif
+  return b:statusline_trailing_space_warning
+endfunction
+
 function! StatusLineExtra() "{{{
 	let extra = ''
 	for scope in ['w:', 'b:', 't:', 'g:']
@@ -1058,7 +1115,7 @@ function! MakeStatusLine() "{{{
 	" (3) is buftabs.vim (g:enable_buftabs == s:false)
 
 	" MyColor {{{
-	highlight StatusMyColor0 ctermfg=black ctermbg=white cterm=bold guifg=black guibg=white gui=bold
+	highlight StatusMyColor0 ctermfg=black ctermbg=white cterm=bold guifg=black guibg=white gui=none
 	highlight StatusMyColor1 ctermfg=black ctermbg=white cterm=none guifg=black guibg=white gui=none
 	highlight StatusMyColor2 ctermfg=white ctermbg=black cterm=none guifg=white guibg=black gui=none
 	highlight link StatusDefaultColor StatusLine
@@ -1102,7 +1159,7 @@ function! MakeStatusLine() "{{{
 	let line .= '%#StatusMyColor1#'
 	let line .= '[%{GetFileSize()}]' " Rough file size.
 	let line .= '[%{GetCharacterCode()}]' " Character code under the cursor.
-	let line .= $LANG =~# '^ja' ? ' %l/%L$B9T(B %3v$B7e(B'
+	let line .= $LANG =~# '^ja' ? ' %l/%L行 %3v桁'
 				\               : ' %l/%LL %2vC'   " Line and column.
 	let line .= ' %3p%%'         " Percentage through file in lines.
 
@@ -1186,17 +1243,23 @@ set ttyfast
 set modeline
 set modelines=4
 set keywordprg=:help " Open Vim internal help by K command
-set helplang& helplang=ja 
+set helplang& helplang=ja
 
 set ignorecase
 set smartcase
 set incsearch
 set hlsearch
 
-" Auto reload when changed by external.
+" Have Vim automatically reload changed files on disk. Very useful when using
+" git and switching between branches
 set autoread
 
+" Automatically write buffers to file when current window switches to another
+" buffer as a result of :next, :make, etc. See :h autowrite.
+set autowrite
+
 set switchbuf=useopen,usetab,newtab
+
 
 set nostartofline
 set tabstop=4
@@ -1220,7 +1283,10 @@ set shiftwidth=4
 set smartindent
 set smarttab
 set whichwrap=b,s,h,l,<,>,[,]
+
+" Hide buffers instead of unloading them
 set hidden
+
 set textwidth=0
 set formatoptions-=t
 set formatoptions-=c
@@ -1229,7 +1295,10 @@ set formatoptions-=o
 set formatoptions-=v
 set formatoptions+=l
 set number
+
+" Show line and column number
 set ruler
+
 set list
 set listchars=tab:>-,trail:-,nbsp:%,extends:>,precedes:<,eol:<
 set listchars=eol:<,tab:>.
@@ -1242,13 +1311,27 @@ set noequalalways
 set history=10000
 
 set wrap
+
+" String to put at the start of lines that have been wrapped.
 let &showbreak = '+++ '
+
+" Always display a status line
 set laststatus=2
+
+" Set command window height to reduce number of 'Press ENTER...' prompts
 set cmdheight=2
+
+" Show current mode (insert, visual, normal, etc.)
+set showmode
+
+" Show last command in status line
 set showcmd
+
+" Lets vim set the title of the console
 set notitle
+
 set lines=50
-set columns=150
+set columns=160
 set previewheight=10
 set helpheight=999
 set mousehide
@@ -1309,6 +1392,22 @@ if has('patch-7.4.338')
 	set breakindent
 endif
 
+" GUI options {{{
+" No menubar
+set guioptions-=m
+" No frame
+set guioptions-=C
+set guioptions-=T
+" No right scroolbar
+set guioptions-=r
+set guioptions-=R
+" No left scroolbar
+set guioptions-=l
+set guioptions-=L
+" No under scroolbar
+set guioptions-=b
+"}}}
+
 " Always only one window when opening files
 augroup file-only
 	autocmd!
@@ -1334,6 +1433,12 @@ augroup no-comment
 	autocmd FileType * setlocal formatoptions-=ro
 augroup END
 
+augroup gvim-window-siz
+	autocmd!
+	autocmd GUIEnter * setlocal lines=50
+	autocmd GUIEnter * setlocal columns=160
+augroup END
+
 "}}}1
 
 " Mappings: {{{1
@@ -1344,8 +1449,8 @@ if has('vim_starting')
 endif
 
 if g:is_mac
-	noremap (J\(B \
-	noremap \ (J\(B
+	noremap ¥ \
+	noremap \ ¥
 endif
 
 let mapleader = ","
@@ -1368,7 +1473,7 @@ nnoremap <silent> gm :<C-u>call <SID>MoveMiddleOfLine()<CR>
 nnoremap <Space>. :call <SID>recycle_open('tabedit', $MYVIMRC)<CR>
 
 " Make junkfile
-nnoremap <silent> <Space>e  :<C-u>JunkFile<CR>
+"nnoremap <silent> <Space>e  :<C-u>JunkFile<CR>
 
 " Easy typing tilda insted of backslash
 cnoremap <expr> <Bslash> HomedirOrBackslash()
@@ -1554,7 +1659,11 @@ command! -bar -bang -nargs=? -complete=file Scouter
 command! -nargs=? -bang -bar -complete=file Delete call s:delete_with_confirm(<q-args>, <bang>0)
 command! -nargs=0 Rename call s:Rename()
 command! -nargs=0 RenameExt call s:RenameExt()
-command! -nargs=0 JunkFile call s:open_junk_file()
+"command! -nargs=0 JunkFile call s:open_junk_file()
+
+command! -nargs=1 Mkdir call s:mkdir(expand(<q-args>, ':p'))
+
+command! -nargs=? Source call Sourcefile(<q-args>)
 
 " Remove ^M
 command! RemoveCr call s:ExecuteKeepView('silent! %substitute/\r$//g | nohlsearch')
@@ -1728,7 +1837,7 @@ if s:bundled('lightline.vim')
 				\ 'colorscheme': 'solarized',
 				\ 'mode_map': {'c': 'NORMAL'},
 				\ 'active': {
-				\   'left':  [ [ 'mode', 'paste' ], [ 'fugitive', 'filepath'], [ 'filename' ], [ 'buflist' ] ],
+				\   'left':  [ [ 'mode', 'paste' ], [ 'fugitive', 'filepath'], [ 'filename' ] ],
 				\   'right' : [ [ 'date' ], [ 'lineinfo', 'percent' ], [ 'filetype', 'fileencoding', 'fileformat' ] ],
 				\ },
 				\ 'component_function': {
@@ -1741,8 +1850,7 @@ if s:bundled('lightline.vim')
 				\   'filetype': 'MyFiletype',
 				\   'fileencoding': 'MyFileencoding',
 				\   'mode': 'MyMode',
-				\   'date': 'MyDate',
-				\   'buflist' : 'Mline_buflist'
+				\   'date': 'MyDate'
 				\ }
 				\ }
 
@@ -1883,6 +1991,7 @@ if s:bundled('buftabs')
 	endif
 	set statusline+=%=
 	set statusline+=%#StatusMyColor1#
+	set statusline+=%{StatuslineTrailingSpaceWarning()}
 	set statusline+=%y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}
 	set statusline+=%r
 	set statusline+=%h
@@ -2064,6 +2173,10 @@ endif
 " Misc: {{{1
 call s:mkdir(expand('$HOME/.vim/colors'))
 
+"let g:junkmemo_path = '$HOME/junk2'
+"let g:junkmemo_memotitle = 'test'
+"let g:junkmemo_suffix = 'vim'
+
 " CD {{{
 "command! -complete=customlist,<SID>CommandComplete_cdpath -nargs=1
 "       \ CD  cd <args>
@@ -2150,7 +2263,7 @@ if executable('chmod')
 	function! s:add_permission_x()
 		let file = expand('%:p')
 		if !executable(file)
-			if getline(1) =~# '^#!' 
+			if getline(1) =~# '^#!'
 						\ || &ft =~ "\\(z\\|c\\|ba\\)\\?sh$"
 						\ && input(printf('"%s" is not perm 755. Change mode? [y/N] ', expand('%:t'))) =~? '^y\%[es]$'
 				call system("chmod 755 " . shellescape(file))
@@ -2223,6 +2336,24 @@ call s:mkdir(expand('~/.vim/swap'))
 set swapfile
 set directory=~/.vim/swap
 " }}}
+
+" Automatically save and restore window size {{{
+"let g:save_window_file = expand('$HOME/.vimwinpos')
+"augroup SaveWindow
+"	autocmd!
+"	autocmd VimLeavePre * call s:save_window()
+"	function! s:save_window()
+"		let options = [
+"			\ 'set columns=' . &columns,
+"			\ 'set lines=' . &lines,
+"			\ 'winpos ' . getwinposx() . ' ' . getwinposy(),
+"			\ ]
+"		call writefile(options, g:save_window_file)
+"	endfunction
+"augroup END
+"if filereadable(g:save_window_file)
+"  execute 'source' g:save_window_file
+"endif "}}}
 
 " Loading divided files {{{
 let g:local_vimrc = expand('~/.vimrc.local')

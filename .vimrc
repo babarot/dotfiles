@@ -661,6 +661,85 @@ function! s:get_list(...) "{{{
 	execute ":lcd " . expand(l:pwd)
 endfunction "}}}
 
+function! s:ls(path, bang) "{{{
+	let l:bang = a:bang
+	" Argmrnt of ':Ls'
+	if empty(a:path)
+		let l:path = getcwd()
+	else
+		let l:path = substitute(expand(a:path), '/$', '', 'g')
+		" Failure to get the file list
+		if !isdirectory(l:path)
+			echohl ErrorMsg
+			echo l:path ": No such file or directory"
+			echohl NONE
+			return
+		endif
+	endif
+
+	" Get the file list, accutually
+	let l:filelist = glob(l:path . "/*")
+	if !empty(a:bang)
+		let l:filelist .= glob(l:path . "/.??*")
+	endif
+
+	if empty(filelist)
+		echo "no file"
+		return
+	endif
+
+	let s:count = 0
+	let s:lists = ''
+	for file in split(l:filelist, "\n")
+		" Add '/' to tail of the file name if it is directory
+		let s:count += 1
+		if isdirectory(file)
+			let s:lists .= fnamemodify(file, ":t") . "/" . " "
+		else
+			let s:lists .= fnamemodify(file, ":t") . " "
+		endif
+	endfor
+
+	highlight FileCounter cterm=NONE ctermfg=red ctermbg=black gui=NONE guifg=red guibg=black
+	echohl FileCounter | echon s:count | echohl NONE
+	echon "\: "
+
+	echon s:lists
+endfunction "}}}
+
+function! s:rm(file) "{{{
+	if isdirectory(a:file)
+		try
+			call system("rm -rf ".shellescape(expand(a:file)))
+		catch
+			echohl ErrorMsg | echo a:file . ' failed!' | echohl NONE
+		finally
+			echo 'done'
+			return
+		endtry
+	endif
+
+	if !filereadable(a:file)
+		echohl ErrorMsg | echo a:file . ' no exists!' | echohl NONE
+	endif
+	if delete(a:file) != 0
+		echohl ErrorMsg | echo a:file . ' failed!' | echohl NONE
+		return
+	endif
+	echo 'done'
+endfunction "}}}
+
+function! s:cat(file) "{{{
+	if isdirectory(a:file)
+		echohl ErrorMsg | echo a:file . ' is directory' | echohl NONE
+		return
+	endif
+
+	for line in readfile(a:file)
+		echo line
+	endfor
+endfunction "}}}
+
 function! S(f, ...) "{{{
 	" Ref: http://goo.gl/S4JFkn
 	" Call a script local function.
@@ -1702,13 +1781,16 @@ command! -bang SafeQuit call s:safeQuit('<bang>')
 
 command! -nargs=+ Grep call s:Grep(<f-args>)
 
-command! -nargs=? -bar -bang -complete=dir Ls call s:get_list(<f-args>)
-
 command! -nargs=* -complete=mapping AllMaps map <args> | map! <args> | lmap <args>
 
 command! -bar DeleteHideBuffer :call s:delete_hide_buffer()
 
 command! -bar DeleteNoFileBuffer :call s:delete_no_file_buffer()
+
+command! -nargs=1 -complete=file Rm call s:rm(<f-args>)
+"command! -nargs=1 -complete=file Cat call s:cat(<f-args>)
+command! -nargs=? -bang -complete=dir Ls call s:ls(<q-args>,<q-bang>)
+
 "}}}
 
 " Useful settings {{{2
@@ -2184,9 +2266,44 @@ endif
 " Misc: {{{1
 call s:mkdir(expand('$HOME/.vim/colors'))
 
-"let g:junkmemo_path = '$HOME/junk2'
-"let g:junkmemo_memotitle = 'test'
-"let g:junkmemo_suffix = 'vim'
+function! s:file_complete(A,L,P)
+	let s:lists = []
+	let l:filelist = glob(getcwd() . "/*")
+
+	for file in split(l:filelist, "\n")
+		if !isdirectory(file)
+			call add(s:lists, fnamemodify(file, ":t"))
+		endif
+	endfor
+	return s:lists
+endfunction
+
+command! -nargs=1 -complete=customlist,<SID>file_complete Edit edit<bang> <args>
+command! -nargs=1 -complete=customlist,<SID>file_complete Cat call s:cat(<f-args>)
+
+" alter letter {{{
+let s:CMapABC_Entries = []
+function! s:CMapABC_Add(original_pattern, alternate_name)
+  call add(s:CMapABC_Entries, [a:original_pattern, a:alternate_name])
+endfunction
+
+cnoremap <expr> <Space>  <SID>CMapABC(1)
+"cnoremap <expr> <CR>     <SID>CMapABC(0)
+
+function! s:CMapABC(arg)
+	let cmdline = getcmdline()
+	for [original_pattern, alternate_name] in s:CMapABC_Entries
+		if cmdline =~# original_pattern
+			return a:arg ? "\<C-u>" . alternate_name . ' ' : "\<C-u>" . alternate_name . "\<CR>"
+		endif
+	endfor
+	return a:arg ? ' ' : "\<CR>"
+endfunction
+
+call s:CMapABC_Add('^e$', 'Edit')
+call s:CMapABC_Add('^cat$', 'Cat')
+call s:CMapABC_Add('^ls$', 'Ls')
+"}}}
 
 " CD {{{
 "command! -complete=customlist,<SID>CommandComplete_cdpath -nargs=1
@@ -2241,8 +2358,9 @@ let s:WordCountDict = {'word': 2, 'char': 3, 'byte': 4}
 augroup get-file-info "{{{
 	autocmd!
 	"autocmd CursorHold,CursorHoldI * execute "normal! 1\<C-g>"
+	autocmd CursorHold,CursorHoldI * redraw
 	autocmd CursorHold,CursorHoldI * execute "echo GetFileInfo()"
-augroup END "}}}
+augroup END "}}
 
 augroup vimrc-auto-mkdir "{{{
 	autocmd!

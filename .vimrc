@@ -75,6 +75,15 @@ if has('vim_starting')
 	endif
 endif
 
+if getcwd() ==# expand('~/.vim/dev')
+	let s:devfile = fnamemodify(findfile(".vimrc.dev", getcwd().";".expand("$HOME")), ":p")
+	if filereadable(s:devfile)
+		autocmd! VimEnter * execute 'source ' . s:devfile
+					\ | echomsg "source '" . s:devfile . "'!"
+		finish
+	endif
+endif
+
 " Operating System {{{2
 let g:is_windows = has('win16') || has('win32') || has('win64')
 let g:is_cygwin = has('win32unix')
@@ -330,12 +339,15 @@ else "}}}2
 		execute 'set runtimepath+=' . s:bundle_root . '/neobundle.vim'
 		call neobundle#rc(s:bundle_root)
 		NeoBundleInstall
+		highlight Finish cterm=underline ctermfg=red ctermfg=black gui=underline guifg=red guibg=black
 		echo "Finish!"
 	endfunction "}}}2
 
 	"call s:neobundle_init()
 	if s:enable_sujest_neobundleinit == s:true
-		autocmd! VimEnter * echohl WarningMsg | echo "You should do ':NeoBundleInit' at first!" | echohl None
+		autocmd! VimEnter * echohl WarningMsg
+					\ | echo "You should do ':NeoBundleInit' at first!"
+					\ | echohl None
 	endif
 endif
 
@@ -367,20 +379,8 @@ function! s:echomsg(hl, msg) "{{{
 	endtry
 endfunction "}}}
 
-function! s:Confirm(msg) "{{{
+function! s:confirm(msg) "{{{
 	return input(printf('%s [y/N]: ', a:msg)) =~? '^y\%[es]$'
-endfunction "}}}
-
-function! s:ErrorMsg(msg) "{{{
-	echohl ErrorMsg
-	echo 'ERROR: ' . a:msg
-	echohl None
-endfunction "}}}
-
-function! s:WarningMsg(msg) "{{{
-	echohl WarningMsg
-	echo 'WARNING: ' . a:msg
-	echohl None
 endfunction "}}}
 
 function! s:ExecuteKeepView(expr) "{{{
@@ -389,7 +389,7 @@ function! s:ExecuteKeepView(expr) "{{{
 	call winrestview(wininfo)
 endfunction "}}}
 
-function! s:MoveMiddleOfLine() "{{{
+function! s:move_middle_line() "{{{
 	let strwidth = strdisplaywidth(getline('.'))
 	let winwidth  = winwidth(0)
 
@@ -443,30 +443,12 @@ function! s:smart_foldcloser() "{{{
 endfunction
 "}}}
 
-function! s:AllWipeout() "{{{
+function! s:all_buf_wipeout() "{{{
 	for i in range(1, bufnr('$'))
 		if bufexists(i)
 			execute 'bwipeout ' . i
 		endif
 	endfor
-endfunction "}}}
-
-function! s:BdKeepWin() "{{{
-	if bufname('%') != ''
-		let curbuf = bufnr('%')
-		let altbuf = bufnr('#')
-		let buflist = filter(range(1, bufnr('$')), 'buflisted(v:val) && curbuf != v:val')
-		if len(buflist) == 0
-			enew
-		elseif curbuf != altbuf
-			execute 'buffer ' . (buflisted(altbuf) ? altbuf : buflist[0])
-		else
-			execute 'buffer ' . buflist[0]
-		endif
-		if buflisted(curbuf) && bufwinnr(curbuf) == -1
-			execute 'bdelete ' . curbuf
-		endif
-	endif
 endfunction "}}}
 
 function! s:delete_with_confirm(file, force) "{{{
@@ -482,7 +464,10 @@ function! s:delete_with_confirm(file, force) "{{{
 	endif
 endfunction "}}}
 
-function! s:Rename() "{{{
+function! s:rename() "{{{
+	highlight Finish cterm=underline ctermfg=red ctermfg=black gui=underline guifg=red guibg=black
+	echohl Finish | echo "rename" | echohl NONE
+
 	let filename = input('New filename: ', expand('%:p:h') . '/', 'file')
 	if filename != '' && filename !=# 'file'
 		execute 'file' filename
@@ -491,7 +476,7 @@ function! s:Rename() "{{{
 	endif
 endfunction "}}}
 
-function! s:RenameExt() "{{{
+function! s:re_ext() "{{{
 	let ext = input('New ext: ', '', 'filetype')
 	let filename = expand('%:p:t:r')
 	if !empty(ext)
@@ -547,22 +532,14 @@ function! s:open_junk_file() "{{{
 	execute 'edit ' . filename
 endfunction "}}}
 
-function! s:copy_current_path() "{{{
+function! s:copy_current_path(file) "{{{
+	let l:path = a:file ? expand('%:p') : expand('%:p:h')
 	if g:is_windows
-		let @*=substitute(expand('%:p'), '\\/', '\\', 'g')
+		let @* = substitute(l:path, '\\/', '\\', 'g')
 	else
-		let @*=expand('%:p')
+		let @* = l:path
 	endif
-	echon expand('%:p')
-endfunction "}}}
-
-function! s:copy_current_dir() "{{{
-	if g:is_windows
-		let @*=substitute(expand('%:p:h'), '\\/', '\\', 'g')
-	else
-		let @*=expand('%:p:h')
-	endif
-	echon expand('%:p:h')
+	echon l:path
 endfunction "}}}
 
 function! s:find_tabnr(bufnr) "{{{
@@ -632,35 +609,6 @@ function! s:system(command) "{{{
 	return _
 endfunction "}}}
 
-function! s:Grep(pattern, target) "{{{
-	execute 'grep ' . a:pattern . ' ' . a:target
-	Unite -no-quit -direction=botright quickfix
-endfunction "}}}
-
-function! s:get_list(...) "{{{
-	let l:pwd = getcwd()
-	if a:0 == 1
-		if !isdirectory(a:1)
-			echohl ErrorMsg | echo a:1 ": No such file or directory" | echohl NONE
-			return
-		endif
-		execute ":lcd " . expand(a:1)
-	endif
-	let filelist = glob(getcwd() . "/*")
-
-	let splitted = split(filelist, "\n")
-	for file in splitted
-		if isdirectory(file)
-			echon fnamemodify(file, ":t") . "/" . " "
-			"echo fnamemodify(file, ":t") . "/"
-		else
-			echon fnamemodify(file, ":t") . " "
-			"echo fnamemodify(file, ":t")
-		endif
-	endfor
-	execute ":lcd " . expand(l:pwd)
-endfunction "}}}
-
 function! s:ls(path, bang) "{{{
 	let l:bang = a:bang
 	" Argmrnt of ':Ls'
@@ -708,7 +656,7 @@ function! s:ls(path, bang) "{{{
 endfunction "}}}
 
 function! s:rm(file) "{{{
-	if isdirectory(a:file)
+	if isdirectory(expand(a:file))
 		try
 			call system("rm -rf ".shellescape(expand(a:file)))
 		catch
@@ -719,14 +667,14 @@ function! s:rm(file) "{{{
 		endtry
 	endif
 
-	if !filereadable(a:file)
+	if !filereadable(expand(a:file))
 		echohl ErrorMsg | echo a:file . ' no exists!' | echohl NONE
 	endif
-	if delete(a:file) != 0
+	if delete(expand(a:file)) != 0
 		echohl ErrorMsg | echo a:file . ' failed!' | echohl NONE
 		return
 	endif
-	echo 'done'
+	echo fnamemodify(a:file, ':p').' done'
 endfunction "}}}
 
 function! s:cat(file) "{{{
@@ -738,6 +686,18 @@ function! s:cat(file) "{{{
 	for line in readfile(a:file)
 		echo line
 	endfor
+endfunction "}}}
+
+function! ErrorMsg(msg) "{{{
+	echohl ErrorMsg
+	echo 'ERROR: ' . a:msg
+	echohl None
+endfunction "}}}
+
+function! WarningMsg(msg) "{{{
+	echohl WarningMsg
+	echo 'WARNING: ' . a:msg
+	echohl None
 endfunction "}}}
 
 function! S(f, ...) "{{{
@@ -795,9 +755,10 @@ function! Sourcefile(file) "{{{
 
 	try
 		execute "source " . l:file
-		echo "Success!"
 	catch
 		echohl WarningMsg | echo "ERROR!" | echohl NONE
+	finally
+		echo "Success!"
 	endtry
 endfunction "}}}
 
@@ -1556,7 +1517,7 @@ nnoremap <silent> <Leader>q :<C-u>call QuitIfNameless()<CR>
 nnoremap <C-x>k :call BufferWipeoutInteractive()<CR>
 
 " Move middle of current line.(not middle of screen)
-nnoremap <silent> gm :<C-u>call <SID>MoveMiddleOfLine()<CR>
+nnoremap <silent> gm :<C-u>call <SID>move_middle_line()<CR>
 
 " Open vimrc with tab
 nnoremap <Space>. :call <SID>recycle_open('tabedit', $MYVIMRC)<CR>
@@ -1746,8 +1707,8 @@ command! -bar -bang -nargs=? -complete=file Scouter
 			\        echo Scouter(empty(<q-args>) ? $MYVIMRC : expand(<q-args>), <bang>0)
 
 command! -nargs=? -bang -bar -complete=file Delete call s:delete_with_confirm(<q-args>, <bang>0)
-command! -nargs=0 Rename call s:Rename()
-command! -nargs=0 RenameExt call s:RenameExt()
+command! -nargs=0 Rename call s:rename()
+command! -nargs=0 ReExt call s:re_ext()
 "command! -nargs=0 JunkFile call s:open_junk_file()
 
 command! -nargs=1 Mkdir call s:mkdir(expand(<q-args>, ':p'))
@@ -1764,12 +1725,10 @@ command! RemoveEolSpace call s:ExecuteKeepView('silent! %substitute/ \+$//g | no
 command! RemoveBlankLine silent! global/^$/delete | nohlsearch | normal! ``
 
 " Remove all Buffer wipeout
-command! -nargs=0 AllWipeout call s:AllWipeout()
+command! -nargs=0 AllWipeout call s:all_buf_wipeout()
 
-command! -nargs=0 BdKeepWin call s:BdKeepWin()
-
-command! CopyCurrentPath :call s:copy_current_path()
-command! CopyCurrentDir :call s:copy_current_dir()
+command! CopyCurrentPath :call s:copy_current_path(1)
+command! CopyCurrentDir :call s:copy_current_path(0)
 
 command! -nargs=1 -bang -bar -complete=file Rename
 			\        call s:move(<q-args>, <q-bang>, expand('%:h'))
@@ -1778,8 +1737,6 @@ command! -nargs=1 -bang -bar -complete=file Move
 			\        call s:move(<q-args>, <q-bang>, getcwd())
 
 command! -bang SafeQuit call s:safeQuit('<bang>')
-
-command! -nargs=+ Grep call s:Grep(<f-args>)
 
 command! -nargs=* -complete=mapping AllMaps map <args> | map! <args> | lmap <args>
 
@@ -2264,6 +2221,7 @@ endif
 " }}}1
 
 " Misc: {{{1
+
 call s:mkdir(expand('$HOME/.vim/colors'))
 
 function! s:file_complete(A,L,P)
@@ -2360,7 +2318,7 @@ augroup get-file-info "{{{
 	"autocmd CursorHold,CursorHoldI * execute "normal! 1\<C-g>"
 	autocmd CursorHold,CursorHoldI * redraw
 	autocmd CursorHold,CursorHoldI * execute "echo GetFileInfo()"
-augroup END "}}
+augroup END "}}}
 
 augroup vimrc-auto-mkdir "{{{
 	autocmd!

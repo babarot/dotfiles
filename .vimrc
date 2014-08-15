@@ -115,11 +115,11 @@ augroup END
 let s:true = 1
 let s:false = 0
 
-let s:enable_sujest_neobundleinit = s:true
-let s:enable_eof_to_bof = s:true
+let s:enable_sujest_neobundleinit      = s:true
+let s:enable_eof_to_bof                = s:true
 let g:enable_auto_highlight_cursorline = s:true
-let g:enable_buftabs = s:true
-let s:enable_restore_cursor_position = s:false
+let g:enable_buftabs                   = s:true
+let s:enable_restore_cursor_position   = s:false
 "}}}2
 
 function! s:bundled(bundle) "{{{2
@@ -240,6 +240,7 @@ if s:bundled('neobundle.vim') "{{{2
 	NeoBundleLazy 'ujihisa/unite-colorscheme', '', 'same'
 	NeoBundle 'b4b4r07/mru.vim'
 	NeoBundle 'b4b4r07/vim-autocdls'
+	NeoBundle 'b4b4r07/vim-shellutils'
 	if !has('gui_running')
 		NeoBundle 'b4b4r07/buftabs'
 	endif
@@ -383,7 +384,7 @@ function! s:confirm(msg) "{{{
 	return input(printf('%s [y/N]: ', a:msg)) =~? '^y\%[es]$'
 endfunction "}}}
 
-function! s:ExecuteKeepView(expr) "{{{
+function! s:execute_keep_view(expr) "{{{
 	let wininfo = winsaveview()
 	execute a:expr
 	call winrestview(wininfo)
@@ -465,9 +466,6 @@ function! s:delete_with_confirm(file, force) "{{{
 endfunction "}}}
 
 function! s:rename() "{{{
-	highlight Finish cterm=underline ctermfg=red ctermfg=black gui=underline guifg=red guibg=black
-	echohl Finish | echo "rename" | echohl NONE
-
 	let filename = input('New filename: ', expand('%:p:h') . '/', 'file')
 	if filename != '' && filename !=# 'file'
 		execute 'file' filename
@@ -596,7 +594,7 @@ endfunction "}}}
 function! s:load_source(path) "{{{
 	let path = expand(a:path)
 	if filereadable(path)
-		execute "source ".path
+		execute 'source ' . path
 	endif
 endfunction "}}}
 
@@ -748,17 +746,14 @@ function! S(f, ...) "{{{
 endfunction "}}}
 
 function! Sourcefile(file) "{{{
-	let l:file = a:file
-	if empty(a:file)
-		let l:file = expand('%:p')
-	endif
-
+	let file = empty(a:file) ? expand('%') : a:file
 	try
-		execute "source " . l:file
+		execute 'source ' . file
 	catch
-		echohl WarningMsg | echo "ERROR!" | echohl NONE
+		call ErrorMsg(v:exception)
+		return
 	finally
-		echo "Success!"
+		echo 'Success!'
 	endtry
 endfunction "}}}
 
@@ -770,7 +765,7 @@ function! HomedirOrBackslash() "{{{
 	endif
 endfunction "}}}
 
-function! Date() "{{{
+function! GetDate() "{{{
 	return strftime("%Y/%m/%d %H:%M")
 endfunction "}}}
 
@@ -856,25 +851,6 @@ function! GetFileInfo() "{{{
 		let line .= '"'
 	endif
 	return line
-endfunction "}}}
-
-function! GetGitBranchName() "{{{
-	let dir = expand('%:p:h')
-	let branch = ""
-	let r = system('cd ' . dir . ' && git symbolic-ref HEAD 2> /dev/null')
-	if r != ""
-		let branch = split(r,"/")[-1][:-2]
-	endif
-	return branch
-endfunction "}}}
-
-function! DoSource(...) "{{{
-	if a:0
-		let l:target = a:1
-	else
-		let l:target = expand('%:p')
-	endif
-	execute 'source ' . l:target
 endfunction "}}}
 
 function! GetFileList(...) "{{{
@@ -966,7 +942,7 @@ function! BufferWipeoutInteractive() "{{{
 		let l:selected = SelectInteractive('Buffer is unsaved. Force quit?', ['n', 'w', 'y'])
 		if l:selected == 'w'
 			if bufname(bufnr("%")) == ''
-				call s:ErrorMsg("This buffer is [No name]. Should do ':q!'")
+				call ErrorMsg("This buffer is [No name]. Should do ':q!'")
 				return
 				"quit!
 			else
@@ -1217,7 +1193,7 @@ function! MakeStatusLine() "{{{
 	if exists('*WordCount')
 		let line .= ' [WC=%{WordCount()}]'
 	endif
-	let line .= ' (%{Date()})'
+	let line .= ' (%{GetDate()})'
 	let line .= '%{exists("b:git_branch") && b:git_branch != "" ? "[Git:" . b:git_branch . "]" : ""}'
 
 	return line
@@ -1711,15 +1687,13 @@ command! -nargs=0 Rename call s:rename()
 command! -nargs=0 ReExt call s:re_ext()
 "command! -nargs=0 JunkFile call s:open_junk_file()
 
-command! -nargs=1 Mkdir call s:mkdir(expand(<q-args>, ':p'))
-
 command! -nargs=? Source call Sourcefile(<q-args>)
 
 " Remove ^M
-command! RemoveCr call s:ExecuteKeepView('silent! %substitute/\r$//g | nohlsearch')
+command! RemoveCr call s:execute_keep_view('silent! %substitute/\r$//g | nohlsearch')
 
 " Remove EOL space
-command! RemoveEolSpace call s:ExecuteKeepView('silent! %substitute/ \+$//g | nohlsearch')
+command! RemoveEolSpace call s:execute_keep_view('silent! %substitute/ \+$//g | nohlsearch')
 
 " Remove blank line
 command! RemoveBlankLine silent! global/^$/delete | nohlsearch | normal! ``
@@ -1744,9 +1718,9 @@ command! -bar DeleteHideBuffer :call s:delete_hide_buffer()
 
 command! -bar DeleteNoFileBuffer :call s:delete_no_file_buffer()
 
-command! -nargs=1 -complete=file Rm call s:rm(<f-args>)
+"command! -nargs=1 -complete=file Rm call s:rm(<f-args>)
 "command! -nargs=1 -complete=file Cat call s:cat(<f-args>)
-command! -nargs=? -bang -complete=dir Ls call s:ls(<q-args>,<q-bang>)
+"command! -nargs=? -bang -complete=dir Ls call s:ls(<q-args>,<q-bang>)
 
 "}}}
 
@@ -2052,7 +2026,7 @@ if s:bundled('buftabs')
 	if exists('*WordCount')
 		set statusline+=\ [WC=%{WordCount()}]
 	endif
-	set statusline+=\ (%{Date()})
+	set statusline+=\ (%{GetDate()})
 
 	let g:buftabs_in_statusline   = 1
 	let g:buftabs_only_basename   = 1
@@ -2218,6 +2192,23 @@ if s:bundled('vim-poslist')
 	map <C-i> <Plug>(poslist-next-pos)
 endif
 " }}}2
+" vim-autocdls {{{2
+if s:bundled('vim-autocdls')
+	let g:autocdls_autols#enable = 1
+	let g:autocdls_set_cmdheight = 2
+	let g:autocdls_show_filecounter = 1
+	let g:autocdls_show_pwd = 0
+	let g:autocdls_alter_letter = 1
+	let g:autocdls_newline_disp = 0
+	let g:autocdls_ls_highlight = 1
+	let g:autocdls_lsgrep_ignorecase = 1
+endif
+" }}}2
+" vim-shellutils {{{2
+if s:bundled('vim-shellutils')
+	let g:shellutils_disable_commands = ['Ls']
+endif
+" }}}2
 " }}}1
 
 " Misc: {{{1
@@ -2236,8 +2227,8 @@ function! s:file_complete(A,L,P)
 	return s:lists
 endfunction
 
-command! -nargs=1 -complete=customlist,<SID>file_complete Edit edit<bang> <args>
-command! -nargs=1 -complete=customlist,<SID>file_complete Cat call s:cat(<f-args>)
+"command! -nargs=1 -complete=customlist,<SID>file_complete Edit edit<bang> <args>
+"command! -nargs=1 -complete=customlist,<SID>file_complete Cat call s:cat(<f-args>)
 
 " alter letter {{{
 let s:CMapABC_Entries = []
@@ -2258,9 +2249,9 @@ function! s:CMapABC(arg)
 	return a:arg ? ' ' : "\<CR>"
 endfunction
 
-call s:CMapABC_Add('^e$', 'Edit')
+"call s:CMapABC_Add('^e$', 'Edit')
 call s:CMapABC_Add('^cat$', 'Cat')
-call s:CMapABC_Add('^ls$', 'Ls')
+"call s:CMapABC_Add('^ls$', 'Ls')
 "}}}
 
 " CD {{{
@@ -2289,11 +2280,6 @@ call s:CMapABC_Add('^ls$', 'Ls')
 "
 "call s:CMapABC_Add('^cd', 'CD')
 "}}}
-
-augroup show-git-branch "{{{
-	autocmd!
-	autocmd BufEnter * let b:git_branch = GetGitBranchName()
-augroup END "}}}
 
 augroup vim-startup-nomodified "{{{
 	autocmd!

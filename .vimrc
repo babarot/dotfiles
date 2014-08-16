@@ -360,7 +360,6 @@ filetype plugin indent on
 function! s:SID() "{{{
 	return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSID$')
 endfunction "}}}
-
 function! s:has_plugin(name) "{{{
 	let nosuffix = a:name =~? '\.vim$' ? a:name[:-5] : a:name
 	let suffix   = a:name =~? '\.vim$' ? a:name      : a:name . '.vim'
@@ -370,7 +369,6 @@ function! s:has_plugin(name) "{{{
 				\   || globpath(&rtp, 'autoload/' . suffix, 1) != ''
 				\   || globpath(&rtp, 'autoload/' . tolower(suffix), 1) != ''
 endfunction "}}}
-
 function! s:echomsg(hl, msg) "{{{
 	execute 'echohl' a:hl
 	try
@@ -379,17 +377,14 @@ function! s:echomsg(hl, msg) "{{{
 		echohl None
 	endtry
 endfunction "}}}
-
 function! s:confirm(msg) "{{{
 	return input(printf('%s [y/N]: ', a:msg)) =~? '^y\%[es]$'
 endfunction "}}}
-
 function! s:execute_keep_view(expr) "{{{
 	let wininfo = winsaveview()
 	execute a:expr
 	call winrestview(wininfo)
 endfunction "}}}
-
 function! s:move_middle_line() "{{{
 	let strwidth = strdisplaywidth(getline('.'))
 	let winwidth  = winwidth(0)
@@ -400,7 +395,6 @@ function! s:move_middle_line() "{{{
 		normal! gm
 	endif
 endfunction "}}}
-
 function! s:check_flag(flag) "{{{
 	if exists('b:' . a:flag)
 		return b:{a:flag}
@@ -410,21 +404,18 @@ function! s:check_flag(flag) "{{{
 	endif
 	return 0
 endfunction "}}}
-
 function! s:mkdir(file, ...) "{{{
 	let f = a:0 ? fnamemodify(a:file, a:1) : a:file
 	if !isdirectory(f)
 		call mkdir(f, 'p')
 	endif
 endfunction "}}}
-
 function! s:auto_mkdir(dir, force) "{{{
 	if !isdirectory(a:dir) && (a:force ||
 				\ input(printf('"%s" does not exist. Create? [y/N] ', a:dir)) =~? '^y\%[es]$')
 		call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
 	endif
 endfunction "}}}
-
 function! s:smart_foldcloser() "{{{
 	if foldlevel('.') == 0
 		norm! zM
@@ -443,7 +434,6 @@ function! s:smart_foldcloser() "{{{
 	norm! zM
 endfunction
 "}}}
-
 function! s:all_buf_wipeout() "{{{
 	for i in range(1, bufnr('$'))
 		if bufexists(i)
@@ -451,20 +441,6 @@ function! s:all_buf_wipeout() "{{{
 		endif
 	endfor
 endfunction "}}}
-
-function! s:delete_with_confirm(file, force) "{{{
-	let file = a:file ==# '' ? expand('%') : a:file
-	if !a:force
-		echo 'Delete "' . file . '"? [y/N]: '
-	endif
-	if a:force || nr2char(getchar()) ==? 'y'
-		call delete(file)
-		echo 'Deleted "' . file . '"!'
-	else
-		echo 'Cancelled.'
-	endif
-endfunction "}}}
-
 function! s:rename() "{{{
 	let filename = input('New filename: ', expand('%:p:h') . '/', 'file')
 	if filename != '' && filename !=# 'file'
@@ -473,7 +449,6 @@ function! s:rename() "{{{
 		call delete(expand('#'))
 	endif
 endfunction "}}}
-
 function! s:re_ext() "{{{
 	let ext = input('New ext: ', '', 'filetype')
 	let filename = expand('%:p:t:r')
@@ -488,7 +463,6 @@ function! s:re_ext() "{{{
 		call delete(expand('#'))
 	endif
 endfunction "}}}
-
 function! s:move(file, bang, base) "{{{
 	let pwd = getcwd()
 	cd `=a:base`
@@ -515,7 +489,6 @@ function! s:move(file, bang, base) "{{{
 		cd `=pwd`
 	endtry
 endfunction "}}}
-
 function! s:open_junk_file() "{{{
 	let junk_dir = $HOME . '/.vim/junk'. strftime('/%Y/%m/%d')
 	if !isdirectory(junk_dir)
@@ -529,7 +502,6 @@ function! s:open_junk_file() "{{{
 	endif
 	execute 'edit ' . filename
 endfunction "}}}
-
 function! s:copy_current_path(file) "{{{
 	let l:path = a:file ? expand('%:p') : expand('%:p:h')
 	if g:is_windows
@@ -539,7 +511,6 @@ function! s:copy_current_path(file) "{{{
 	endif
 	echon l:path
 endfunction "}}}
-
 function! s:find_tabnr(bufnr) "{{{
 	for tabnr in range(1, tabpagenr("$"))
 		if index(tabpagebuflist(tabnr), a:bufnr) !=# -1
@@ -548,7 +519,6 @@ function! s:find_tabnr(bufnr) "{{{
 	endfor
 	return -1
 endfunction "}}}
-
 function! s:find_winnr(bufnr) "{{{
 	for winnr in range(1, winnr("$"))
 		if a:bufnr ==# winbufnr(winnr)
@@ -557,7 +527,6 @@ function! s:find_winnr(bufnr) "{{{
 	endfor
 	return 1
 endfunction "}}}
-
 function! s:recycle_open(default_open, path) "{{{
 	let default_action = a:default_open . ' ' . a:path
 	if bufexists(a:path)
@@ -574,8 +543,7 @@ function! s:recycle_open(default_open, path) "{{{
 		execute default_action
 	endif
 endfunction "}}}
-
-function! s:safeQuit(bang) "{{{
+function! s:safe_quit(bang) "{{{
 	if !(tabpagenr('$') == 1 && winnr('$') == 1)
 		execute 'quit'.a:bang
 		return
@@ -590,114 +558,97 @@ function! s:safeQuit(bang) "{{{
 		execute 'quit'.a:bang
 	endif
 endfunction "}}}
-
 function! s:load_source(path) "{{{
 	let path = expand(a:path)
 	if filereadable(path)
 		execute 'source ' . path
 	endif
 endfunction "}}}
-
-function! s:system(command) "{{{
-	let _ = system(a:command)
-	if v:shell_error != 0
-		echoerr 'Command failed:' string(a:command)
-		let _ = ''
-	endif
-	return _
+function! s:open(filename) "{{{
+	if !executable("open") | return 0 | endif
+	let filename = empty(a:filename) ? expand('%') : fnamemodify(a:filename, ':p')
+	call system(printf('%s %s &', 'open', shellescape(filename)))
+	return 1
 endfunction "}}}
+function! s:bwipeout(bang) "{{{
+	setlocal hidden
 
-function! s:ls(path, bang) "{{{
-	let l:bang = a:bang
-	" Argmrnt of ':Ls'
-	if empty(a:path)
-		let l:path = getcwd()
-	else
-		let l:path = substitute(expand(a:path), '/$', '', 'g')
-		" Failure to get the file list
-		if !isdirectory(l:path)
-			echohl ErrorMsg
-			echo l:path ": No such file or directory"
-			echohl NONE
-			return
-		endif
-	endif
-
-	" Get the file list, accutually
-	let l:filelist = glob(l:path . "/*")
+	" Bwipeout! all buffers
 	if !empty(a:bang)
-		let l:filelist .= glob(l:path . "/.??*")
+		for i in range(1, bufnr('$'))
+			if bufexists(i)
+				execute 'bwipeout! ' . i
+			endif
+		endfor
+		return 1
 	endif
 
-	if empty(filelist)
-		echo "no file"
-		return
+	" Priority
+	" 1. windows (LOW)
+	" 2. tabpages
+	" 3. buffers (HIGH)
+	if winnr('$') != 1
+		quit
+		return 0
 	endif
 
-	let s:count = 0
-	let s:lists = ''
-	for file in split(l:filelist, "\n")
-		" Add '/' to tail of the file name if it is directory
-		let s:count += 1
-		if isdirectory(file)
-			let s:lists .= fnamemodify(file, ":t") . "/" . " "
-		else
-			let s:lists .= fnamemodify(file, ":t") . " "
-		endif
-	endfor
+	if tabpagenr('$') != 1
+		tabclose
+		return 0
+	endif
 
-	highlight FileCounter cterm=NONE ctermfg=red ctermbg=black gui=NONE guifg=red guibg=black
-	echohl FileCounter | echon s:count | echohl NONE
-	echon "\: "
+	let bufname = empty(bufname(bufnr('%'))) ? bufnr('%') . "#" : bufname(bufnr('%'))
+	if &modified
+		echo printf("'%s' is unsaved. Quit!? [y/N/w] ", bufname)
+		let c = nr2char(getchar())
 
-	echon s:lists
-endfunction "}}}
-
-function! s:rm(file) "{{{
-	if isdirectory(expand(a:file))
-		try
-			call system("rm -rf ".shellescape(expand(a:file)))
-		catch
-			echohl ErrorMsg | echo a:file . ' failed!' | echohl NONE
-		finally
-			echo 'done'
+		if c ==? 'w'
+			let filename = ''
+			if bufname(bufnr("%")) ==# filename
+				redraw
+				while empty(filename)
+					let filename = input('Tell me filename: ')
+				endwhile
+			endif
+			execute "write " . filename
+			bwipeout!
 			return
-		endtry
-	endif
+		endif
 
-	if !filereadable(expand(a:file))
-		echohl ErrorMsg | echo a:file . ' no exists!' | echohl NONE
+		redraw
+		if c ==? 'y'
+			echo "Bwipeout! " . bufname
+			bwipeout!
+		else
+			echo "Do nothing"
+		endif
+	else
+		echo "Bwipeout " . bufname
+		bwipeout
 	endif
-	if delete(expand(a:file)) != 0
-		echohl ErrorMsg | echo a:file . ' failed!' | echohl NONE
-		return
-	endif
-	echo fnamemodify(a:file, ':p').' done'
 endfunction "}}}
-
-function! s:cat(file) "{{{
-	if isdirectory(a:file)
-		echohl ErrorMsg | echo a:file . ' is directory' | echohl NONE
-		return
+function! s:newbuf(buf, bang) "{{{
+	let buf = empty(a:buf) ? '' : a:buf
+	execute "new" buf | only
+	if !empty(a:bang)
+		let bufname = empty(buf) ? '[Scratch]' : buf
+		setlocal bufhidden=unload
+		setlocal nobuflisted
+		setlocal buftype=nofile
+		setlocal noswapfile
+		silent file `=bufname`
 	endif
-
-	for line in readfile(a:file)
-		echo line
-	endfor
 endfunction "}}}
-
 function! ErrorMsg(msg) "{{{
 	echohl ErrorMsg
 	echo 'ERROR: ' . a:msg
 	echohl None
 endfunction "}}}
-
 function! WarningMsg(msg) "{{{
 	echohl WarningMsg
 	echo 'WARNING: ' . a:msg
 	echohl None
 endfunction "}}}
-
 function! S(f, ...) "{{{
 	" Ref: http://goo.gl/S4JFkn
 	" Call a script local function.
@@ -744,7 +695,6 @@ function! S(f, ...) "{{{
 	return 0 <= match(func, '^\w*\s*(.*)\s*$')
 				\      ? eval(cfunc) : call(cfunc, a:000)
 endfunction "}}}
-
 function! Sourcefile(file) "{{{
 	let file = empty(a:file) ? expand('%') : a:file
 	try
@@ -756,7 +706,6 @@ function! Sourcefile(file) "{{{
 		echo 'Success!'
 	endtry
 endfunction "}}}
-
 function! HomedirOrBackslash() "{{{
 	if getcmdtype() == ':' && (getcmdline() =~# '^e ' || getcmdline() =~? '^r\?!' || getcmdline() =~? '^cd ')
 		return '~/'
@@ -764,15 +713,12 @@ function! HomedirOrBackslash() "{{{
 		return '\'
 	endif
 endfunction "}}}
-
 function! GetDate() "{{{
 	return strftime("%Y/%m/%d %H:%M")
 endfunction "}}}
-
 function! GetDocumentPosition() "{{{
 	return float2nr(str2float(line('.')) / str2float(line('$')) * 100) . "%"
 endfunction "}}}
-
 function! GetTildaPath(full) "{{{
 	if a:full
 		return expand('%:~')
@@ -780,7 +726,6 @@ function! GetTildaPath(full) "{{{
 		return expand('%:~:h')
 	endif
 endfunction "}}}
-
 function! GetCharacterCode() "{{{
 	let str = iconv(matchstr(getline('.'), '.', col('.') - 1), &enc, &fenc)
 	let out = '0x'
@@ -792,7 +737,6 @@ function! GetCharacterCode() "{{{
 	endif
 	return out
 endfunction "}}}
-
 function! GetFileSize() "{{{
 	let size = &encoding ==# &fileencoding || &fileencoding ==# ''
 				\        ? line2byte(line('$') + 1) - 1 : getfsize(expand('%'))
@@ -808,7 +752,6 @@ function! GetFileSize() "{{{
 	endfor
 	return size . 'GB'
 endfunction "}}}
-
 function! GetBufname(bufnr, tail) "{{{
 	let bufname = bufname(a:bufnr)
 	if bufname =~# '^[[:alnum:].+-]\+:\\\\'
@@ -837,7 +780,6 @@ function! GetBufname(bufnr, tail) "{{{
 	endif
 	return bufname
 endfunction "}}}
-
 function! GetFileInfo() "{{{
 	let line  = ''
 	if bufname(bufnr("%")) == ''
@@ -852,26 +794,12 @@ function! GetFileInfo() "{{{
 	endif
 	return line
 endfunction "}}}
-
-function! GetFileList(...) "{{{
-	if a:0
-		let filelist = glob("**")
-	else
-		let filelist = glob("*")
-	endif
-	let splitted = split(filelist, "\n")
-	for file in splitted
-		echo file
-	endfor
-endfunction "}}}
-
 function! QuitIfNameless() "{{{
 	if empty(bufname('%'))
 		setlocal nomodified
 	endif
 	execute 'confirm quit'
 endfunction " }}}
-
 function! Scouter(file, ...) "{{{
 	" Measure fighting power of Vim!
 	" :echo len(readfile($MYVIMRC))
@@ -882,7 +810,6 @@ function! Scouter(file, ...) "{{{
 	endif
 	return len(filter(lines,'v:val !~ pat'))
 endfunction " }}}
-
 function! WordCount(...) "{{{
 	if a:0 == 0
 		return s:WordCountStr
@@ -908,7 +835,6 @@ function! WordCount(...) "{{{
 	let v:statusmsg = s:saved_status
 	return s:WordCountStr
 endfunction "}}}
-
 function! GetBufInfo() "{{{
 	echo '[ fpath ]' expand('%:p')
 	echo '[ bufnr ]' bufnr('%')
@@ -920,7 +846,6 @@ function! GetBufInfo() "{{{
 	echo '[ fsize ]' GetFileSize()
 	echo '[ power ]' Scouter($MYVIMRC)
 endfunction "}}}
-
 function! SelectInteractive(question, candidates) "{{{
 	try
 		let a:candidates[0] = toupper(a:candidates[0])
@@ -936,7 +861,6 @@ function! SelectInteractive(question, candidates) "{{{
 		redraw!
 	endtry
 endfunction "}}}
-
 function! BufferWipeoutInteractive() "{{{
 	if &modified == 1
 		let l:selected = SelectInteractive('Buffer is unsaved. Force quit?', ['n', 'w', 'y'])
@@ -956,12 +880,10 @@ function! BufferWipeoutInteractive() "{{{
 		bwipeout
 	endif
 endfunction "}}}
-
 function! ToggleOption(option_name) "{{{
 	execute 'setlocal' a:option_name.'!'
 	execute 'setlocal' a:option_name.'?'
 endfunction "}}}
-
 function! ToggleVariable(variable_name) "{{{
 	if eval(a:variable_name)
 		execute 'let' a:variable_name.' = 0'
@@ -1467,6 +1389,73 @@ augroup END
 
 "}}}1
 
+" Commands: {{{
+
+" Open new buffer or scratch buffer with bang
+command! -bang -nargs=? -complete=file New call <SID>newbuf(<q-args>, <q-bang>)
+
+" Bwipeout(!) for all-purpose
+command -nargs=0 -bang Bwipeout call <SID>bwipeout(<q-bang>)
+
+" Open a file.
+command! -nargs=? -complete=file Open call <SID>open(<q-args>)
+
+" Show all runtimepaths
+command! -bar RTP echo substitute(&runtimepath, ',', "\n", 'g')
+
+" Measure fighting strength of Vim
+command! -bar -bang -nargs=? -complete=file Scouter echo Scouter(empty(<q-args>) ? $MYVIMRC : expand(<q-args>), <bang>0)
+
+" Rename the current editing file
+command! -nargs=0 Rename call s:rename()
+
+" Change the current editing file extention
+command! -nargs=0 ReExt call s:re_ext()
+
+" Make the notitle file called 'Junk'
+"command! -nargs=0 JunkFile call s:open_junk_file()
+
+" Source a file
+command! -nargs=? Source call Sourcefile(<q-args>)
+
+" Remove EOL ^M
+command! RemoveCr call s:execute_keep_view('silent! %substitute/\r$//g | nohlsearch')
+
+" Remove EOL space
+command! RemoveEolSpace call s:execute_keep_view('silent! %substitute/ \+$//g | nohlsearch')
+
+" Remove blank line
+command! RemoveBlankLine silent! global/^$/delete | nohlsearch | normal! ``
+
+" Remove all Buffer wipeout
+command! -nargs=0 AllWipeout call s:all_buf_wipeout()
+
+" Get current file path
+command! CopyCurrentPath :call s:copy_current_path(1)
+
+" Get current directory path
+command! CopyCurrentDir :call s:copy_current_path(0)
+
+" Rename
+command! -nargs=1 -bang -bar -complete=file Rename call s:move(<q-args>, <q-bang>, expand('%:h'))
+
+" Move
+command! -nargs=1 -bang -bar -complete=file Move call s:move(<q-args>, <q-bang>, getcwd())
+
+" Quit buffer with safty
+command! -bang SafeQuit call s:safe_quit('<bang>')
+
+" View all mappings
+command! -nargs=* -complete=mapping AllMaps map <args> | map! <args> | lmap <args>
+
+" Delete hidden buffer
+command! -bar DeleteHideBuffer :call s:delete_hide_buffer()
+
+" Delete type of nofile buffer
+command! -bar DeleteNoFileBuffer :call s:delete_no_file_buffer()
+
+"}}}
+
 " Mappings: {{{1
 " It is likely to be changed by $VIM/vimrc.
 if has('vim_starting')
@@ -1490,7 +1479,9 @@ nnoremap <silent><C-_> :<C-u>call <SID>smart_foldcloser()<CR>
 nnoremap <silent> <Leader>q :<C-u>call QuitIfNameless()<CR>
 
 " Kill buffer
-nnoremap <C-x>k :call BufferWipeoutInteractive()<CR>
+"nnoremap <C-x>k :call BufferWipeoutInteractive()<CR>
+nnoremap <silent> <C-x>k :call <SID>bwipeout('')<CR>
+nnoremap <silent> <C-x>K :Bwipeout!<CR>
 
 " Move middle of current line.(not middle of screen)
 nnoremap <silent> gm :<C-u>call <SID>move_middle_line()<CR>
@@ -1672,56 +1663,6 @@ cnoremap <C-h> <BS>
 nnoremap <expr>l  foldclosed('.') != -1 ? 'zo' : 'l'
 nnoremap <expr>h col('.') == 1 && foldlevel(line('.')) > 0 ? 'zc' : 'h'
 nnoremap <silent>z0 :<C-u>set foldlevel=<C-r>=foldlevel('.')<CR><CR>
-"}}}
-
-" Commands! {{{
-
-" Show all runtimepaths
-command! -bar RTP echo substitute(&runtimepath, ',', "\n", 'g')
-
-command! -bar -bang -nargs=? -complete=file Scouter
-			\        echo Scouter(empty(<q-args>) ? $MYVIMRC : expand(<q-args>), <bang>0)
-
-command! -nargs=? -bang -bar -complete=file Delete call s:delete_with_confirm(<q-args>, <bang>0)
-command! -nargs=0 Rename call s:rename()
-command! -nargs=0 ReExt call s:re_ext()
-"command! -nargs=0 JunkFile call s:open_junk_file()
-
-command! -nargs=? Source call Sourcefile(<q-args>)
-
-" Remove ^M
-command! RemoveCr call s:execute_keep_view('silent! %substitute/\r$//g | nohlsearch')
-
-" Remove EOL space
-command! RemoveEolSpace call s:execute_keep_view('silent! %substitute/ \+$//g | nohlsearch')
-
-" Remove blank line
-command! RemoveBlankLine silent! global/^$/delete | nohlsearch | normal! ``
-
-" Remove all Buffer wipeout
-command! -nargs=0 AllWipeout call s:all_buf_wipeout()
-
-command! CopyCurrentPath :call s:copy_current_path(1)
-command! CopyCurrentDir :call s:copy_current_path(0)
-
-command! -nargs=1 -bang -bar -complete=file Rename
-			\        call s:move(<q-args>, <q-bang>, expand('%:h'))
-
-command! -nargs=1 -bang -bar -complete=file Move
-			\        call s:move(<q-args>, <q-bang>, getcwd())
-
-command! -bang SafeQuit call s:safeQuit('<bang>')
-
-command! -nargs=* -complete=mapping AllMaps map <args> | map! <args> | lmap <args>
-
-command! -bar DeleteHideBuffer :call s:delete_hide_buffer()
-
-command! -bar DeleteNoFileBuffer :call s:delete_no_file_buffer()
-
-"command! -nargs=1 -complete=file Rm call s:rm(<f-args>)
-"command! -nargs=1 -complete=file Cat call s:cat(<f-args>)
-"command! -nargs=? -bang -complete=dir Ls call s:ls(<q-args>,<q-bang>)
-
 "}}}
 
 " Useful settings {{{2
@@ -2212,6 +2153,7 @@ endif
 " }}}1
 
 " Misc: {{{1
+
 
 call s:mkdir(expand('$HOME/.vim/colors'))
 

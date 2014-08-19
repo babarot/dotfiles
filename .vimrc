@@ -13,15 +13,15 @@
 " Coding Rules {{{
 " Author:   <B4B4R07> Plz call me BABAROT.
 " Contacts: <b4b4r07@gmail.com>.
-"  Naming rules {{{2
+"  Naming rules {{{
 " - Functions
 " -- Global function => CamelCase
 " -- Local function => snake_case
 " - Mapping prefix
 " -- <Space> is vim-wise
 " -- <Leader> is plugin-wise
-"}}}2
-" - License {{{2
+"}}}
+" - License {{{
 "  The MIT License (MIT)
 "  
 "  Copyright (c) 2014 B4B4R07
@@ -43,7 +43,7 @@
 "  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 "  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 "  SOFTWARE.
-"}}}2
+"}}}
 
 "}}}
 
@@ -84,7 +84,7 @@ if getcwd() ==# expand('~/.vim/dev')
 	endif
 endif
 
-" Operating System {{{2
+" Operating System {{{
 let g:is_windows = has('win16') || has('win32') || has('win64')
 let g:is_cygwin = has('win32unix')
 let g:is_mac = !g:is_windows && !g:is_cygwin
@@ -92,7 +92,7 @@ let g:is_mac = !g:is_windows && !g:is_cygwin
 			\    (!executable('xdg-open') &&
 			\    system('uname') =~? '^darwin'))
 let g:is_unix = !g:is_mac && has('unix')
-"}}}2
+"}}}
 
 " Define neobundle runtimepath
 if g:is_windows
@@ -111,7 +111,7 @@ augroup MyAutoCmd
 	autocmd!
 augroup END
 
-" Enable/Disable {{{2
+" Enable/Disable {{{
 let s:true = 1
 let s:false = 0
 
@@ -120,9 +120,9 @@ let s:enable_eof_to_bof                = s:true
 let g:enable_auto_highlight_cursorline = s:true
 let g:enable_buftabs                   = s:true
 let s:enable_restore_cursor_position   = s:false
-"}}}2
+"}}}
 
-function! s:bundled(bundle) "{{{2
+function! s:bundled(bundle) "{{{
 	if !isdirectory($VIMBUNDLE)
 		return 0
 	endif
@@ -135,7 +135,7 @@ function! s:bundled(bundle) "{{{2
 	else
 		return neobundle#is_installed(a:bundle)
 	endif
-endfunction "}}}2
+endfunction "}}}
 "}}}1
 
 " NeoBundle: {{{1
@@ -146,7 +146,7 @@ if has('vim_starting') && isdirectory($NEOBUNDLEPATH)
 	set runtimepath+=$NEOBUNDLEPATH
 endif
 
-if s:bundled('neobundle.vim') "{{{2
+if s:bundled('neobundle.vim') "{{{
 	let g:neobundle#enable_tail_path = 1
 	let g:neobundle#default_options = {
 				\ 'same' : { 'stay_same' : 1, 'overwrite' : 0 },
@@ -241,6 +241,7 @@ if s:bundled('neobundle.vim') "{{{2
 	NeoBundle 'b4b4r07/mru.vim'
 	NeoBundle 'b4b4r07/vim-autocdls'
 	NeoBundle 'b4b4r07/vim-shellutils'
+	NeoBundle 'nathanaelkane/vim-indent-guides'
 	if !has('gui_running')
 		NeoBundle 'b4b4r07/buftabs'
 	endif
@@ -317,7 +318,7 @@ if s:bundled('neobundle.vim') "{{{2
 	if filereadable(g:plugin_vimrc)
 		execute 'source ' . g:plugin_vimrc
 	endif
-else "}}}2
+else "}}}
 	" Set neobundle rootdirectory
 	if g:is_windows
 		let s:bundle_root = expand('$HOME/AppData/Roaming/vim/bundle')
@@ -328,7 +329,7 @@ else "}}}2
 
 	" If neobundle doesn't exist
 	command! NeoBundleInit call s:neobundle_init()
-	function! s:neobundle_init() "{{{2
+	function! s:neobundle_init() "{{{
 		echon "Installing neobundle.vim..."
 		call mkdir(s:bundle_root, 'p')
 		execute 'cd' s:bundle_root
@@ -342,7 +343,7 @@ else "}}}2
 		NeoBundleInstall
 		highlight Finish cterm=underline ctermfg=red ctermfg=black gui=underline guifg=red guibg=black
 		echo "Finish!"
-	endfunction "}}}2
+	endfunction "}}}
 
 	"call s:neobundle_init()
 	if s:enable_sujest_neobundleinit == s:true
@@ -376,6 +377,16 @@ function! s:echomsg(hl, msg) "{{{
 	finally
 		echohl None
 	endtry
+endfunction "}}}
+function! s:errormsg(msg) "{{{
+	echohl ErrorMsg
+	echo 'ERROR: ' . a:msg
+	echohl None
+endfunction "}}}
+function! s:warningmsg(msg) "{{{
+	echohl WarningMsg
+	echo 'WARNING: ' . a:msg
+	echohl None
 endfunction "}}}
 function! s:confirm(msg) "{{{
 	return input(printf('%s [y/N]: ', a:msg)) =~? '^y\%[es]$'
@@ -434,17 +445,11 @@ function! s:smart_foldcloser() "{{{
 	norm! zM
 endfunction
 "}}}
-function! s:all_buf_wipeout() "{{{
-	for i in range(1, bufnr('$'))
-		if bufexists(i)
-			execute 'bwipeout ' . i
-		endif
-	endfor
-endfunction "}}}
 function! s:rename() "{{{
 	let filename = input('New filename: ', expand('%:p:h') . '/', 'file')
 	if filename != '' && filename !=# 'file'
 		execute 'file' filename
+		execute 'setlocal filetype=' . fnamemodify(filename, ':e')
 		write
 		call delete(expand('#'))
 	endif
@@ -639,15 +644,17 @@ function! s:newbuf(buf, bang) "{{{
 		silent file `=bufname`
 	endif
 endfunction "}}}
-function! ErrorMsg(msg) "{{{
-	echohl ErrorMsg
-	echo 'ERROR: ' . a:msg
-	echohl None
+function! s:toggle_option(option_name) "{{{
+	execute 'setlocal' a:option_name . '!'
+	execute 'setlocal' a:option_name . '?'
 endfunction "}}}
-function! WarningMsg(msg) "{{{
-	echohl WarningMsg
-	echo 'WARNING: ' . a:msg
-	echohl None
+function! s:toggle_variable(variable_name) "{{{
+	if eval(a:variable_name)
+		execute 'let' a:variable_name . ' = 0'
+	else
+		execute 'let' a:variable_name . ' = 1'
+	endif
+	echo printf('%s = %s', a:variable_name, eval(a:variable_name))
 endfunction "}}}
 function! S(f, ...) "{{{
 	" Ref: http://goo.gl/S4JFkn
@@ -694,17 +701,6 @@ function! S(f, ...) "{{{
 
 	return 0 <= match(func, '^\w*\s*(.*)\s*$')
 				\      ? eval(cfunc) : call(cfunc, a:000)
-endfunction "}}}
-function! Sourcefile(file) "{{{
-	let file = empty(a:file) ? expand('%') : a:file
-	try
-		execute 'source ' . file
-	catch
-		call ErrorMsg(v:exception)
-		return
-	finally
-		echo 'Success!'
-	endtry
 endfunction "}}}
 function! HomedirOrBackslash() "{{{
 	if getcmdtype() == ':' && (getcmdline() =~# '^e ' || getcmdline() =~? '^r\?!' || getcmdline() =~? '^cd ')
@@ -794,12 +790,6 @@ function! GetFileInfo() "{{{
 	endif
 	return line
 endfunction "}}}
-function! QuitIfNameless() "{{{
-	if empty(bufname('%'))
-		setlocal nomodified
-	endif
-	execute 'confirm quit'
-endfunction " }}}
 function! Scouter(file, ...) "{{{
 	" Measure fighting power of Vim!
 	" :echo len(readfile($MYVIMRC))
@@ -866,7 +856,9 @@ function! BufferWipeoutInteractive() "{{{
 		let l:selected = SelectInteractive('Buffer is unsaved. Force quit?', ['n', 'w', 'y'])
 		if l:selected == 'w'
 			if bufname(bufnr("%")) == ''
-				call ErrorMsg("This buffer is [No name]. Should do ':q!'")
+				echohl WarningMsg
+				echo "This buffer is [No name]. Should do ':q!'"
+				echohl NONE
 				return
 				"quit!
 			else
@@ -880,18 +872,6 @@ function! BufferWipeoutInteractive() "{{{
 		bwipeout
 	endif
 endfunction "}}}
-function! ToggleOption(option_name) "{{{
-	execute 'setlocal' a:option_name.'!'
-	execute 'setlocal' a:option_name.'?'
-endfunction "}}}
-function! ToggleVariable(variable_name) "{{{
-	if eval(a:variable_name)
-		execute 'let' a:variable_name.' = 0'
-	else
-		execute 'let' a:variable_name.' = 1'
-	endif
-	echo printf('%s = %s', a:variable_name, eval(a:variable_name))
-endfunction "}}}
 "}}}1
 
 " Appearance: {{{1
@@ -902,7 +882,7 @@ else
 	language mes C
 endif "}}}
 
-" Colorscheme "{{{2
+" Colorscheme "{{{
 set background=dark
 set t_Co=256
 if &t_Co < 256
@@ -925,7 +905,7 @@ else
 			colorscheme desert
 		endif
 	endif
-endif "}}}2
+endif "}}}
 
 set laststatus=2  statusline=%!MakeStatusLine()
 set showtabline=2 tabline=%!MakeTabLine()
@@ -1031,26 +1011,16 @@ augroup END
 "recalculate the trailing whitespace warning when idle, and after saving
 autocmd cursorhold,bufwritepost * unlet! b:statusline_trailing_space_warning
 
-"return '[\s]' if trailing white space is detected
-function! StatuslineTrailingSpaceWarning()
-  if !exists("b:statusline_trailing_space_warning")
-    if search('\s\+$', 'nw') != 0
-      let b:statusline_trailing_space_warning = '[SPC:' . search('\s\+$', 'nw') . ']'
-    else
-      let b:statusline_trailing_space_warning = ''
-    endif
-  endif
-  return b:statusline_trailing_space_warning
-endfunction
-
-function! StatusLineExtra() "{{{
-	let extra = ''
-	for scope in ['w:', 'b:', 't:', 'g:']
-		if exists(scope . 'statusline_extra')
-			let extra .= {scope . 'statusline_extra'}
+" Return '[\s]' if trailing white space is detected
+function! StatuslineTrailingSpaceWarning() "{{{
+	if !exists("b:statusline_trailing_space_warning")
+		if search('\s\+$', 'nw') != 0
+			let b:statusline_trailing_space_warning = '[SPC:' . search('\s\+$', 'nw') . ']'
+		else
+			let b:statusline_trailing_space_warning = ''
 		endif
-	endfor
-	return extra
+	endif
+	return b:statusline_trailing_space_warning
 endfunction "}}}
 
 function! MakeStatusLine() "{{{
@@ -1073,13 +1043,19 @@ function! MakeStatusLine() "{{{
 	"let line .= '%<'       " Truncate point.
 	let line .= '%#StatusMyColor1#'
 	let line .= '[%n] '
-	"let line .= '%{getcwd()}/'
-	let line .= '%{GetTildaPath(0)}/'
-	let line .= '%#StatusMyColor0#'
+	"let line .= '%#StatusMyColor0#'
 	let line .= '%{GetBufname("", 0)} '
+	let line .= '%m'       " Modified flag.
 	let line .= '%#StatusDefaultColor#'
 
-	let line .= '%m'       " Modified flag.
+	if has('multi_statusline') && 2 <= &statuslineheight
+		let line .= '%@'       " Separation point.
+	else
+		let line .= '%='       " Separation point.
+	endif
+
+	let line .= '%{GetTildaPath(0)} '
+	let line .= '%#StatusMyColor1#'
 	let line .= '%y'       " Filetype.
 	let line .= '%r'       " Readonly flag.
 	let line .= '%h'       " Help buffer hlag.
@@ -1089,26 +1065,9 @@ function! MakeStatusLine() "{{{
 	" File format (+ &binary and &endofline)
 	let line .= "%{&ff.(&bin?'(BIN'.(&eol?'':'-noeol').')':'')}]"
 
-	" The state of SKK.
-	let line .= "%{exists('b:skk_on')&&b:skk_on?SkkGetModeStr():''}"
-	if exists('*eskk#statusline')
-		let line .= '%{eskk#statusline()}'
-	endif
-	if exists('*SyntasticStatuslineFlag')
-		let line .= '%{SyntasticStatuslineFlag()}'
-	endif
-	let line .= '%{StatusLineExtra()}'
-	if has('multi_statusline') && 2 <= &statuslineheight
-		let line .= '%@'       " Separation point.
-	else
-		let line .= '%='       " Separation point.
-	endif
-
-	let line .= '%#StatusMyColor1#'
 	let line .= '[%{GetFileSize()}]' " Rough file size.
 	let line .= '[%{GetCharacterCode()}]' " Character code under the cursor.
-	let line .= $LANG =~# '^ja' ? ' %l/%L行 %3v桁'
-				\               : ' %l/%LL %2vC'   " Line and column.
+	let line .= ' %l/%LL %2vC'   " Line and column.
 	let line .= ' %3p%%'         " Percentage through file in lines.
 
 	"let line .= [WC=%{exists('*WordCount') ? WordCount() : []}]
@@ -1116,7 +1075,6 @@ function! MakeStatusLine() "{{{
 		let line .= ' [WC=%{WordCount()}]'
 	endif
 	let line .= ' (%{GetDate()})'
-	let line .= '%{exists("b:git_branch") && b:git_branch != "" ? "[Git:" . b:git_branch . "]" : ""}'
 
 	return line
 endfunction "}}}
@@ -1168,9 +1126,6 @@ function! MakeTabLine() "{{{
 	if exists('t:tabline_extra')
 		let info .= t:tabline_extra . sep
 	endif
-	" if s:has_plugin('cfi')
-	"   let info .= cfi#format('%s()' . sep, '')
-	" endif
 	if exists('*Uptime')
 		let info .= Uptime(2) . sep
 	endif
@@ -1389,7 +1344,36 @@ augroup END
 
 "}}}1
 
-" Commands: {{{
+" Commands: {{{1
+
+" Command group opening with a specific character code again
+" In particular effective when I am garbled in a terminal
+command! -bang -bar -complete=file -nargs=? Utf8      edit<bang> ++enc=utf-8 <args>
+command! -bang -bar -complete=file -nargs=? Iso2022jp edit<bang> ++enc=iso-2022-jp <args>
+command! -bang -bar -complete=file -nargs=? Cp932     edit<bang> ++enc=cp932 <args>
+command! -bang -bar -complete=file -nargs=? Euc       edit<bang> ++enc=euc-jp <args>
+command! -bang -bar -complete=file -nargs=? Utf16     edit<bang> ++enc=ucs-2le <args>
+command! -bang -bar -complete=file -nargs=? Utf16be   edit<bang> ++enc=ucs-2 <args>
+command! -bang -bar -complete=file -nargs=? Jis       Iso2022jp<bang> <args>
+command! -bang -bar -complete=file -nargs=? Sjis      Cp932<bang> <args>
+command! -bang -bar -complete=file -nargs=? Unicode   Utf16<bang> <args>
+
+" Tried to make a file note version
+" Don't save it because dangerous.
+command! WUtf8      setlocal fenc=utf-8
+command! WIso2022jp setlocal fenc=iso-2022-jp
+command! WCp932     setlocal fenc=cp932
+command! WEuc       setlocal fenc=euc-jp
+command! WUtf16     setlocal fenc=ucs-2le
+command! WUtf16be   setlocal fenc=ucs-2
+command! WJis       WIso2022jp
+command! WSjis      WCp932
+command! WUnicode   WUtf16
+
+" Appoint a line feed
+command! -bang -complete=file -nargs=? WUnix write<bang> ++fileformat=unix <args> | edit <args>
+command! -bang -complete=file -nargs=? WDos  write<bang> ++fileformat=dos <args>  | edit <args>
+command! -bang -complete=file -nargs=? WMac  write<bang> ++fileformat=mac <args>  | edit <args>
 
 " Open new buffer or scratch buffer with bang
 command! -bang -nargs=? -complete=file New call <SID>newbuf(<q-args>, <q-bang>)
@@ -1406,17 +1390,8 @@ command! -bar RTP echo substitute(&runtimepath, ',', "\n", 'g')
 " Measure fighting strength of Vim
 command! -bar -bang -nargs=? -complete=file Scouter echo Scouter(empty(<q-args>) ? $MYVIMRC : expand(<q-args>), <bang>0)
 
-" Rename the current editing file
-command! -nargs=0 Rename call s:rename()
-
-" Change the current editing file extention
-command! -nargs=0 ReExt call s:re_ext()
-
 " Make the notitle file called 'Junk'
 "command! -nargs=0 JunkFile call s:open_junk_file()
-
-" Source a file
-command! -nargs=? Source call Sourcefile(<q-args>)
 
 " Remove EOL ^M
 command! RemoveCr call s:execute_keep_view('silent! %substitute/\r$//g | nohlsearch')
@@ -1427,20 +1402,23 @@ command! RemoveEolSpace call s:execute_keep_view('silent! %substitute/ \+$//g | 
 " Remove blank line
 command! RemoveBlankLine silent! global/^$/delete | nohlsearch | normal! ``
 
-" Remove all Buffer wipeout
-command! -nargs=0 AllWipeout call s:all_buf_wipeout()
-
 " Get current file path
-command! CopyCurrentPath :call s:copy_current_path(1)
+command! CopyCurrentPath call s:copy_current_path(1)
 
 " Get current directory path
-command! CopyCurrentDir :call s:copy_current_path(0)
+command! CopyCurrentDir call s:copy_current_path(0)
 
 " Rename
 command! -nargs=1 -bang -bar -complete=file Rename call s:move(<q-args>, <q-bang>, expand('%:h'))
 
 " Move
 command! -nargs=1 -bang -bar -complete=file Move call s:move(<q-args>, <q-bang>, getcwd())
+
+" Rename the current editing file
+command! -nargs=0 Rename call s:rename()
+
+" Change the current editing file extention
+command! -nargs=0 ReExt call s:re_ext()
 
 " Quit buffer with safty
 command! -bang SafeQuit call s:safe_quit('<bang>')
@@ -1454,7 +1432,7 @@ command! -bar DeleteHideBuffer :call s:delete_hide_buffer()
 " Delete type of nofile buffer
 command! -bar DeleteNoFileBuffer :call s:delete_no_file_buffer()
 
-"}}}
+"}}}1
 
 " Mappings: {{{1
 " It is likely to be changed by $VIM/vimrc.
@@ -1471,7 +1449,7 @@ endif
 let mapleader = ","
 let maplocalleader = ","
 
-" function's commands {{{2
+" function's commands {{{
 " Smart folding close
 nnoremap <silent><C-_> :<C-u>call <SID>smart_foldcloser()<CR>
 
@@ -1619,37 +1597,6 @@ nnoremap <bar>  :vsp<CR>
 
 "}}}
 
-" Encoding commands {{{
-" Command group opening with a specific character code again
-" In particular effective when I am garbled in a terminal
-command! -bang -bar -complete=file -nargs=? Utf8      edit<bang> ++enc=utf-8 <args>
-command! -bang -bar -complete=file -nargs=? Iso2022jp edit<bang> ++enc=iso-2022-jp <args>
-command! -bang -bar -complete=file -nargs=? Cp932     edit<bang> ++enc=cp932 <args>
-command! -bang -bar -complete=file -nargs=? Euc       edit<bang> ++enc=euc-jp <args>
-command! -bang -bar -complete=file -nargs=? Utf16     edit<bang> ++enc=ucs-2le <args>
-command! -bang -bar -complete=file -nargs=? Utf16be   edit<bang> ++enc=ucs-2 <args>
-command! -bang -bar -complete=file -nargs=? Jis       Iso2022jp<bang> <args>
-command! -bang -bar -complete=file -nargs=? Sjis      Cp932<bang> <args>
-command! -bang -bar -complete=file -nargs=? Unicode   Utf16<bang> <args>
-
-" Tried to make a file note version
-" Don't save it because dangerous.
-command! WUtf8      setlocal fenc=utf-8
-command! WIso2022jp setlocal fenc=iso-2022-jp
-command! WCp932     setlocal fenc=cp932
-command! WEuc       setlocal fenc=euc-jp
-command! WUtf16     setlocal fenc=ucs-2le
-command! WUtf16be   setlocal fenc=ucs-2
-command! WJis       WIso2022jp
-command! WSjis      WCp932
-command! WUnicode   WUtf16
-
-" Appoint a line feed
-command! -bang -complete=file -nargs=? WUnix write<bang> ++fileformat=unix <args> | edit <args>
-command! -bang -complete=file -nargs=? WDos  write<bang> ++fileformat=dos <args>  | edit <args>
-command! -bang -complete=file -nargs=? WMac  write<bang> ++fileformat=mac <args>  | edit <args>
-"}}}
-
 " Like an Emacs {{{
 cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
@@ -1665,7 +1612,7 @@ nnoremap <expr>h col('.') == 1 && foldlevel(line('.')) > 0 ? 'zc' : 'h'
 nnoremap <silent>z0 :<C-u>set foldlevel=<C-r>=foldlevel('.')<CR><CR>
 "}}}
 
-" Useful settings {{{2
+" Useful settings {{{
 inoremap <silent> <C-CR> <Esc>:set expandtab<CR>a<CR> <Esc>:set noexpandtab<CR>a<BS>
 
 nnoremap <Leader>wc :%s/\i\+/&/gn<CR>
@@ -1690,7 +1637,7 @@ noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ?
 
 " Reset highlight searching
 nnoremap <silent> <ESC><ESC> :nohlsearch<CR>
-"}}}2
+"}}}
 
 " Go to last last changes
 nnoremap <C-g> zRg;zz
@@ -1740,7 +1687,7 @@ nnoremap <silent>B :<C-u>keepjumps normal! {<CR>
 "}}}1
 
 " Plugins: {{{1
-" mru.vim {{{2
+" mru.vim {{{
 if s:bundled('mru.vim')
 	let MRU_Use_Alt_useopen = 1         "Open MRU by line number
 	let MRU_Window_Height   = 15
@@ -1748,8 +1695,8 @@ if s:bundled('mru.vim')
 	let MRU_Use_CursorLine  = 1
 	nnoremap <silent><Space>j :MRU<CR>
 endif
-" }}}2
-" unite.vim {{{2
+" }}}
+" unite.vim {{{
 if s:bundled('unite.vim')
 	let g:unite_winwidth                   = 40
 	let g:unite_source_file_mru_limit      = 300
@@ -1765,7 +1712,7 @@ if s:bundled('unite.vim')
 	"nnoremap <silent><Space>o :Unite outline -vertical -no-quit -winwidth=40 -toggle<CR>
 endif
 " }}}
-" neocomplete.vim {{{2
+" neocomplete.vim {{{
 if s:bundled('neocomplete')
 	let g:neocomplete#enable_at_startup = 1
 	let g:neocomplete#disable_auto_complete = 0
@@ -1794,8 +1741,8 @@ highlight Pmenu      ctermbg=lightcyan ctermfg=black
 highlight PmenuSel   ctermbg=blue      ctermfg=black
 highlight PmenuSbari ctermbg=darkgray
 highlight PmenuThumb ctermbg=lightgray
-" }}}2
-" lightline.vim {{{2
+" }}}
+" lightline.vim {{{
 if s:bundled('lightline.vim')
 	let s:use_buftabs = 0
 	let g:lightline = {
@@ -1933,8 +1880,8 @@ if s:bundled('lightline.vim')
 	augroup END
 	"}}}
 endif
-" }}}2
-" buftabs.vim {{{2
+" }}}
+" buftabs.vim {{{
 if s:bundled('buftabs')
 	" MyColor {{{
 	highlight StatusMyColor1 ctermfg=black ctermbg=white cterm=none guifg=black guibg=white gui=none
@@ -1977,8 +1924,8 @@ if s:bundled('buftabs')
 	let g:buftabs_marker_modified = "+"
 	let g:buftabs_active_highlight_group = "Visual"
 endif
-" }}}2
-" splash.vim {{{2
+" }}}
+" splash.vim {{{
 if s:bundled('vim-splash')
 	"let g:loaded_splash = 1
 	let s:vim_intro = $HOME . "/.vim/bundle/vim-splash/sample/intro"
@@ -1989,8 +1936,8 @@ if s:bundled('vim-splash')
 	endif
 	let g:splash#path = expand(s:vim_intro . '/vim_intro.txt')
 endif
-" }}}2
-" vim-anzu {{{2
+" }}}
+" vim-anzu {{{
 if s:bundled('vim-anzu')
 	nmap n <Plug>(anzu-n-with-echo)zz
 	nmap N <Plug>(anzu-N-with-echo)zz
@@ -1999,8 +1946,8 @@ if s:bundled('vim-anzu')
 	"nmap n <Plug>(anzu-mode-n)
 	"nmap N <Plug>(anzu-mode-N)
 endif
-" }}}2
-" yankround.vim {{{2
+" }}}
+" yankround.vim {{{
 if s:bundled('yankround.vim')
 	nmap p <Plug>(yankround-p)
 	xmap p <Plug>(yankround-p)
@@ -2015,27 +1962,27 @@ if s:bundled('yankround.vim')
 		nnoremap <Space>p :Unite yankround -direction=botright -toggle<CR>
 	endif
 endif
-" }}}2
-" vim-gist {{{2
+" }}}
+" vim-gist {{{
 if s:bundled('gist-vim')
 	let g:github_user = 'b4b4r07'
 	let g:github_token = '0417d1aeeb1016c444c5'
 	let g:gist_curl_options = "-k"
 	let g:gist_detect_filetype = 1
 endif
-" }}}2
-" excitetranslate-vim {{{2
+" }}}
+" excitetranslate-vim {{{
 if s:bundled('excitetranslate-vim')
 	xnoremap E :ExciteTranslate<CR>
 endif
 " }}}
-" gundo.vim {{{2
+" gundo.vim {{{
 if s:bundled('gundo.vim')
 	nmap U :<C-u>GundoToggle<CR>
 	let g:gundo_auto_preview = 0
 endif
-" }}}2
-" quickrun.vim {{{2
+" }}}
+" quickrun.vim {{{
 if s:bundled('vim-quickrun')
 	let g:quickrun_config = {}
 	let g:quickrun_config.markdown = {
@@ -2046,8 +1993,8 @@ if s:bundled('vim-quickrun')
 				\ 'exec'      : '%c %o %a %s',
 				\ }
 endif
-" }}}2
-" vimshell {{{2
+" }}}
+" vimshell {{{
 if s:bundled('vimshell')
 	let g:vimshell_prompt_expr = 'getcwd()." > "'
 	let g:vimshell_prompt_pattern = '^\f\+ > '
@@ -2057,8 +2004,8 @@ if s:bundled('vimshell')
 					\ imap <expr> <buffer> <C-n> pumvisible() ? "\<C-n>" : "\<Plug>(vimshell_history_neocomplete)"
 	augroup END
 endif
-" }}}2
-" skk.vim {{{2
+" }}}
+" skk.vim {{{
 if s:bundled('skk.vim')
 	set imdisable
 	let skk_jisyo = '~/SKK_JISYO.L'
@@ -2069,8 +2016,8 @@ if s:bundled('skk.vim')
 	let skk_show_annotation = 1
 	let skk_use_face = 1
 endif
-" }}}2
-" eskk.vim {{{2
+" }}}
+" eskk.vim {{{
 if s:bundled('eskk.vim')
 	set imdisable
 	let g:eskk#directory = '~/SKK_JISYO.L'
@@ -2078,23 +2025,23 @@ if s:bundled('eskk.vim')
 	let g:eskk#large_dictionary = { 'path': "~/SKK_JISYO.L", 'sorted': 1, 'encoding': 'utf-8', }
 	let g:eskk#enable_completion = 1
 endif
-" }}}2
-" foldCC {{{2
+" }}}
+" foldCC {{{
 if s:bundled('foldCC')
 	set foldtext=foldCC#foldtext()
 	let g:foldCCtext_head = 'v:folddashes. " "'
 	let g:foldCCtext_tail = 'printf(" %s[%4d lines Lv%-2d]%s", v:folddashes, v:foldend-v:foldstart+1, v:foldlevel, v:folddashes)'
 	let g:foldCCtext_enable_autofdc_adjuster = 1
 endif
-" }}}2
-" portal.vim {{{2
+" }}}
+" portal.vim {{{
 if s:bundled('vim-portal')
 	nmap <Leader>pb <Plug>(portal-gun-blue)
 	nmap <Leader>po <Plug>(portal-gun-orange)
 	nnoremap <Leader>pr :<C-u>PortalReset<CR>
 endif
-" }}}2
-" vim-gf-user {{{2
+" }}}
+" vim-gf-user {{{
 if s:bundled('vim-gf-user')
 	function! GfUserCLAngleBracket()
 		let path = matchstr(getline("."), '\v\<\zs([^>]+)\ze\>')
@@ -2113,8 +2060,8 @@ if s:bundled('vim-gf-user')
 	endfunction
 	call gf#user#extend('GfUserCLAngleBracket', 1000)
 endif
-" }}}2
-" restart.vim {{{2
+" }}}
+" restart.vim {{{
 if s:bundled('restart.vim')
 	if has('gui_running')
 		let g:restart_sessionoptions
@@ -2126,14 +2073,14 @@ if s:bundled('restart.vim')
 					\   | Restart
 	endif
 endif
-" }}}2
-" vim-poslist {{{2
+" }}}
+" vim-poslist {{{
 if s:bundled('vim-poslist')
 	map <C-o> <Plug>(poslist-prev-pos)
 	map <C-i> <Plug>(poslist-next-pos)
 endif
-" }}}2
-" vim-autocdls {{{2
+" }}}
+" vim-autocdls {{{
 if s:bundled('vim-autocdls')
 	let g:autocdls_autols#enable = 1
 	let g:autocdls_set_cmdheight = 2
@@ -2144,18 +2091,45 @@ if s:bundled('vim-autocdls')
 	let g:autocdls_ls_highlight = 1
 	let g:autocdls_lsgrep_ignorecase = 1
 endif
-" }}}2
-" vim-shellutils {{{2
+" }}}
+" vim-shellutils {{{
 if s:bundled('vim-shellutils')
 	let g:shellutils_disable_commands = ['Ls']
 endif
-" }}}2
+" }}}
+" vim-indent-guides {{{
+if s:bundled('vim-indent-guides')
+	hi IndentGuidesOdd  ctermbg=DarkGreen
+	hi IndentGuidesEven ctermbg=Black
+	let g:indent_guides_enable_on_vim_startup = 0
+	let g:indent_guides_start_level = 1
+	let g:indent_guides_auto_colors = 0
+	let g:indent_guides_guide_size = 1
+endif
+" }}}
 " }}}1
 
 " Misc: {{{1
 
-
 call s:mkdir(expand('$HOME/.vim/colors'))
+
+command! -nargs=? RandomString call s:random_string(<q-args>)
+
+function! s:rand(n)
+	let match_end = matchend(reltimestr(reltime()), '\d\+\.') + 1
+	return reltimestr(reltime())[match_end : ] % (a:n + 1)
+endfunction
+
+function! s:random_string(n)
+	let n = a:n ==# '' ? 8 : a:n
+	let s = []
+	let chars = split('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', '\ze')
+	let max = len(chars) - 1
+	for x in range(n)
+		call add(s, (chars[s:rand(max)]))
+	endfor
+	let @+ = join(s, '')
+endfunction
 
 function! s:file_complete(A,L,P)
 	let s:lists = []
@@ -2175,7 +2149,7 @@ endfunction
 " alter letter {{{
 let s:CMapABC_Entries = []
 function! s:CMapABC_Add(original_pattern, alternate_name)
-  call add(s:CMapABC_Entries, [a:original_pattern, a:alternate_name])
+	call add(s:CMapABC_Entries, [a:original_pattern, a:alternate_name])
 endfunction
 
 cnoremap <expr> <Space>  <SID>CMapABC(1)
@@ -2380,7 +2354,5 @@ endif
 " must be written at the last.  see :help 'secure'.
 set secure
 
-" vim: foldmethod=marker
-" vim: foldcolumn=3
-" vim: foldlevel=0
+" vim:fdm=marker fdc=3 ft=vim ts=2 sw=2 sts=2:
 "}}}1

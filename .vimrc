@@ -119,7 +119,7 @@ let s:enable_sujest_neobundleinit      = s:true
 let s:enable_eof_to_bof                = s:true
 let g:enable_auto_highlight_cursorline = s:true
 let g:enable_buftabs                   = s:true
-let s:enable_restore_cursor_position   = s:false
+let s:enable_restore_cursor_position   = s:true
 "}}}
 
 function! s:bundled(bundle) "{{{
@@ -243,7 +243,8 @@ if s:bundled('neobundle.vim') "{{{
 	NeoBundle 'b4b4r07/vim-shellutils'
 	NeoBundle 'nathanaelkane/vim-indent-guides'
 	if !has('gui_running')
-		NeoBundle 'b4b4r07/buftabs'
+		"NeoBundle 'b4b4r07/buftabs'
+		NeoBundle 'b4b4r07/vim-buftabs'
 	endif
 	if has('gui_running')
 		NeoBundle 'itchyny/lightline.vim'
@@ -398,7 +399,7 @@ function! s:execute_keep_view(expr) "{{{
 endfunction "}}}
 function! s:move_middle_line() "{{{
 	let strwidth = strdisplaywidth(getline('.'))
-	let winwidth  = winwidth(0)
+	let winwidth = winwidth(0)
 
 	if strwidth < winwidth
 		call cursor(0, col('$') / 2)
@@ -429,12 +430,12 @@ function! s:auto_mkdir(dir, force) "{{{
 endfunction "}}}
 function! s:smart_foldcloser() "{{{
 	if foldlevel('.') == 0
-		norm! zM
+		normal! zM
 		return
 	endif
 
 	let foldc_lnum = foldclosed('.')
-	norm! zc
+	normal! zc
 	if foldc_lnum == -1
 		return
 	endif
@@ -442,7 +443,7 @@ function! s:smart_foldcloser() "{{{
 	if foldclosed('.') != foldc_lnum
 		return
 	endif
-	norm! zM
+	normal! zM
 endfunction
 "}}}
 function! s:rename() "{{{
@@ -458,13 +459,12 @@ function! s:re_ext() "{{{
 	let ext = input('New ext: ', '', 'filetype')
 	let filename = expand('%:p:t:r')
 	if !empty(ext)
-		let filename = filename . '.' . ext
+		let filename .= '.' . ext
 	endif
 	if filename != '' && filename !=# 'file'
 		execute 'file' filename
 		write
-		let ext = expand('%:e')
-		execute 'setlocal filetype=' . ext
+		execute 'setlocal filetype=' . expand('%:e')
 		call delete(expand('#'))
 	endif
 endfunction "}}}
@@ -569,10 +569,10 @@ function! s:load_source(path) "{{{
 		execute 'source ' . path
 	endif
 endfunction "}}}
-function! s:open(filename) "{{{
+function! s:open(file) "{{{
 	if !executable("open") | return 0 | endif
-	let filename = empty(a:filename) ? expand('%') : fnamemodify(a:filename, ':p')
-	call system(printf('%s %s &', 'open', shellescape(filename)))
+	let file = empty(a:file) ? expand('%') : fnamemodify(a:file, ':p')
+	call system(printf('%s %s &', 'open', shellescape(file)))
 	return 1
 endfunction "}}}
 function! s:bwipeout(bang) "{{{
@@ -882,6 +882,12 @@ else
 	language mes C
 endif "}}}
 
+"set laststatus=2  "statusline=%!MakeStatusLine()
+set showtabline=2 tabline=%!MakeTabLine()
+
+syntax enable
+syntax on
+
 " Colorscheme "{{{
 set background=dark
 set t_Co=256
@@ -907,8 +913,40 @@ else
 	endif
 endif "}}}
 
-set laststatus=2  statusline=%!MakeStatusLine()
-set showtabline=2 tabline=%!MakeTabLine()
+" StatusLine {{{
+set laststatus=2
+highlight BlackWhite ctermfg=black ctermbg=white cterm=none guifg=black guibg=white gui=none
+highlight WhiteBlack ctermfg=white ctermbg=black cterm=none guifg=white guibg=black gui=none
+
+set statusline=
+set statusline+=%#BlackWhite#
+set statusline+=%{pathshorten(getcwd())}/
+set statusline+=%f
+set statusline+=\ %m
+set statusline+=%#StatusLine#
+set statusline+=%=                          "Separation"
+set statusline+=%#BlackWhite#
+if exists('*StatuslineTrailingSpaceWarning')
+	set statusline+=%{StatuslineTrailingSpaceWarning()}
+endif
+set statusline+=%y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}
+set statusline+=%r
+set statusline+=%h
+set statusline+=%w
+if exists('*GetFileSize')
+	set statusline+=[%{GetFileSize()}]
+endif
+if exists('*GetCharacterCode')
+	set statusline+=[%{GetCharacterCode()}]
+endif
+set statusline+=\ %4l/%4LL,%3cC\ %3p%%
+if exists('*WordCount')
+	set statusline+=\ [WC=%{WordCount()}]
+endif
+if exists('*GetDate')
+	set statusline+=\ (%{GetDate()})
+endif
+"}}}
 
 " Cursor color on when IME ON {{{
 if has('multi_byte_ime') || has('xim')
@@ -924,7 +962,6 @@ endif "}}}
 " Display JISX0208Space {{{
 if has("syntax")
 	" the line is required for POD bug fix
-	syntax on
 	function! ActivateInvisibleIndicator()
 		syntax match InvisibleJISX0208Space "　" display containedin=ALL
 		highlight InvisibleJISX0208Space term=underline ctermbg=Blue guibg=darkgray gui=underline
@@ -1138,8 +1175,6 @@ endfunction "}}}
 "}}}1
 
 " Options: {{{1
-syntax enable
-
 set lazyredraw
 set ttyfast
 
@@ -1529,10 +1564,10 @@ nnoremap gR R
 "}}}
 
 " Buffer and Tabs {{{
-nnoremap <C-j> :bnext<CR>
-nnoremap <C-k> :bprev<CR>
-nnoremap <C-h> :tabnext<CR>
-nnoremap <C-l> :tabprev<CR>
+nnoremap <silent> <C-j> :<C-u>silent! bnext<CR>
+nnoremap <silent> <C-k> :<C-u>silent! bprev<CR>
+nnoremap <silent> <C-h> :<C-u>silent! tabnext<CR>
+nnoremap <silent> <C-l> :<C-u>silent! tabprev<CR>
 nnoremap <silent> tt  :<C-u>tabe<CR>
 "nnoremap <C-p>  gT
 "nnoremap <C-n>  gt
@@ -1881,48 +1916,71 @@ if s:bundled('lightline.vim')
 	"}}}
 endif
 " }}}
-" buftabs.vim {{{
-if s:bundled('buftabs')
-	" MyColor {{{
-	highlight StatusMyColor1 ctermfg=black ctermbg=white cterm=none guifg=black guibg=white gui=none
-	highlight StatusMyColor2 ctermfg=white ctermbg=black cterm=none guifg=white guibg=black gui=none
-	highlight link StatusDefaultColor StatusLine
-	"}}}
-
-	set laststatus=2
-	set statusline=
-	if exists('g:enable_buftabs') && g:enable_buftabs == s:true
-		set statusline+=%{buftabs}
-	else
-		set statusline+=%#StatusMyColor1#
-		"set statusline+=%{getcwd()}/
-		set statusline+=%{pathshorten(getcwd())}/
-		set statusline+=%f
-		set statusline+=\ %m
-		set statusline+=%#StatusDefaultColor#
-	endif
-	set statusline+=%=
-	set statusline+=%#StatusMyColor1#
-	set statusline+=%{StatuslineTrailingSpaceWarning()}
-	set statusline+=%y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}
-	set statusline+=%r
-	set statusline+=%h
-	set statusline+=%w
-	set statusline+=[%{GetFileSize()}]
-	set statusline+=[%{GetCharacterCode()}]
-	set statusline+=\ %4l/%4LL,%3cC\ %3p%%
-	if exists('*WordCount')
-		set statusline+=\ [WC=%{WordCount()}]
-	endif
-	set statusline+=\ (%{GetDate()})
-
+" vim-buftabs {{{
+if s:bundled('vim-buftabs')
 	let g:buftabs_in_statusline   = 1
+	let g:buftabs_in_cmdline      = 0
 	let g:buftabs_only_basename   = 1
 	let g:buftabs_marker_start    = "["
 	let g:buftabs_marker_end      = "]"
 	let g:buftabs_separator       = "#"
 	let g:buftabs_marker_modified = "+"
 	let g:buftabs_active_highlight_group = "Visual"
+	let g:buftabs_statusline_highlight_group = 'BlackWhite'
+endif
+" buftabs.vim {{{
+if s:bundled('buftabs')
+	let g:buftabs_in_statusline   = 1
+	let g:buftabs_in_cmdline      = 0
+	let g:buftabs_only_basename   = 1
+	let g:buftabs_marker_start    = "["
+	let g:buftabs_marker_end      = "]"
+	let g:buftabs_separator       = "#"
+	let g:buftabs_marker_modified = "+"
+	let g:buftabs_active_highlight_group = "Visual"
+	let g:buftabs_statusline_highlight_group = 'BlackWhite'
+	if exists('b:anan_usodesu') "{{{
+		" MyColor {{{
+		highlight StatusMyColor1 ctermfg=black ctermbg=white cterm=none guifg=black guibg=white gui=none
+		highlight StatusMyColor2 ctermfg=white ctermbg=black cterm=none guifg=white guibg=black gui=none
+		highlight link StatusDefaultColor StatusLine
+		"}}}
+	
+		set laststatus=2
+		set statusline=
+		"if exists('g:enable_buftabs') && g:enable_buftabs == s:true
+			"set statusline+=%{buftabs}
+		"else
+			set statusline+=%#StatusMyColor1#
+			"set statusline+=%{getcwd()}/
+			set statusline+=%{pathshorten(getcwd())}/
+			set statusline+=%f
+			set statusline+=\ %m
+			set statusline+=%#StatusDefaultColor#
+		"endif
+		set statusline+=%=
+		set statusline+=%#StatusMyColor1#
+		set statusline+=%{StatuslineTrailingSpaceWarning()}
+		set statusline+=%y%{'['.(&fenc!=''?&fenc:&enc).':'.&ff.']'}
+		set statusline+=%r
+		set statusline+=%h
+		set statusline+=%w
+		set statusline+=[%{GetFileSize()}]
+		set statusline+=[%{GetCharacterCode()}]
+		set statusline+=\ %4l/%4LL,%3cC\ %3p%%
+		if exists('*WordCount')
+			set statusline+=\ [WC=%{WordCount()}]
+		endif
+		set statusline+=\ (%{GetDate()})
+	
+		let g:buftabs_in_statusline   = 1
+		let g:buftabs_only_basename   = 1
+		let g:buftabs_marker_start    = "["
+		let g:buftabs_marker_end      = "]"
+		let g:buftabs_separator       = "#"
+		let g:buftabs_marker_modified = "+"
+		let g:buftabs_active_highlight_group = "Visual"
+	endif "}}}
 endif
 " }}}
 " splash.vim {{{
@@ -2110,6 +2168,7 @@ endif
 " }}}1
 
 " Misc: {{{1
+"let g:buftabs_enabled = 0
 
 call s:mkdir(expand('$HOME/.vim/colors'))
 
@@ -2142,6 +2201,31 @@ function! s:file_complete(A,L,P)
 	endfor
 	return s:lists
 endfunction
+
+function! s:get_buflists(mode)
+	if a:mode ==# 'n'
+		silent! bnext
+	endif
+	if a:mode ==# 'p'
+		silent! bprev
+	endif
+
+	let list = []
+	for buf in range(1, bufnr('$'))
+		if bufexists(buf) && buflisted(buf)
+			if bufnr('%') ==# buf
+				call add(list, "*".bufnr(buf) . "#" . fnamemodify(bufname(buf), ':t'))
+			else
+				call add(list, bufnr(buf) . "#" . fnamemodify(bufname(buf), ':t'))
+			endif
+		endif
+	endfor
+	echo list
+endfunction
+
+nnoremap <silent> <S-h> :call <SID>get_buflists('p')<CR>
+nnoremap <silent> <S-l> :call <SID>get_buflists('n')<CR>
+command! -nargs=0 BufList call s:get_buflists('')
 
 "command! -nargs=1 -complete=customlist,<SID>file_complete Edit edit<bang> <args>
 "command! -nargs=1 -complete=customlist,<SID>file_complete Cat call s:cat(<f-args>)

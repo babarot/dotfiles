@@ -112,12 +112,13 @@ augroup MyAutoCmd
 augroup END
 
 " Enable/Disable {{{
-let s:true = 1
+let s:true  = 1
 let s:false = 0
 
 let s:enable_sujest_neobundleinit      = s:true
 let s:enable_eof_to_bof                = s:true
-let g:enable_auto_highlight_cursorline = s:true
+let g:enable_auto_highlight_cursorline = s:false
+let s:enable_save_window_position      = s:false
 let g:enable_buftabs                   = s:true
 let s:enable_restore_cursor_position   = s:true
 "}}}
@@ -468,6 +469,20 @@ function! s:re_ext() "{{{
 		call delete(expand('#'))
 	endif
 endfunction "}}}
+function! s:rand(n) "{{{
+	let match_end = matchend(reltimestr(reltime()), '\d\+\.') + 1
+	return reltimestr(reltime())[match_end : ] % (a:n + 1)
+endfunction "}}}
+function! s:random_string(n) "{{{
+	let n = a:n ==# '' ? 8 : a:n
+	let s = []
+	let chars = split('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', '\ze')
+	let max = len(chars) - 1
+	for x in range(n)
+		call add(s, (chars[s:rand(max)]))
+	endfor
+	let @+ = join(s, '')
+endfunction "}}}
 function! s:move(file, bang, base) "{{{
 	let pwd = getcwd()
 	cd `=a:base`
@@ -494,7 +509,7 @@ function! s:move(file, bang, base) "{{{
 		cd `=pwd`
 	endtry
 endfunction "}}}
-function! s:open_junk_file() "{{{
+function! s:make_junkfile() "{{{
 	let junk_dir = $HOME . '/.vim/junk'. strftime('/%Y/%m/%d')
 	if !isdirectory(junk_dir)
 		call mkdir(junk_dir, 'p')
@@ -548,21 +563,6 @@ function! s:recycle_open(default_open, path) "{{{
 		execute default_action
 	endif
 endfunction "}}}
-function! s:safe_quit(bang) "{{{
-	if !(tabpagenr('$') == 1 && winnr('$') == 1)
-		execute 'quit'.a:bang
-		return
-	endif
-
-	echohl WarningMsg
-	let l:input = input('Are you sure to quit vim?[y/n]: ')
-	echohl None
-	redraw!
-
-	if l:input ==? 'y'
-		execute 'quit'.a:bang
-	endif
-endfunction "}}}
 function! s:load_source(path) "{{{
 	let path = expand(a:path)
 	if filereadable(path)
@@ -575,7 +575,7 @@ function! s:open(file) "{{{
 	call system(printf('%s %s &', 'open', shellescape(file)))
 	return 1
 endfunction "}}}
-function! s:bwipeout(bang) "{{{
+function! s:bwipeout(buf, bang) "{{{
 	setlocal hidden
 
 	" Bwipeout! all buffers
@@ -588,18 +588,20 @@ function! s:bwipeout(bang) "{{{
 		return 1
 	endif
 
-	" Priority
-	" 1. windows (LOW)
-	" 2. tabpages
-	" 3. buffers (HIGH)
-	if winnr('$') != 1
-		quit
-		return 0
-	endif
+	if a:buf == 0
+		" Priority
+		" 1. windows (LOW)
+		" 2. tabpages
+		" 3. buffers (HIGH)
+		if winnr('$') != 1
+			quit
+			return 0
+		endif
 
-	if tabpagenr('$') != 1
-		tabclose
-		return 0
+		if tabpagenr('$') != 1
+			tabclose
+			return 0
+		endif
 	endif
 
 	let bufname = empty(bufname(bufnr('%'))) ? bufnr('%') . "#" : bufname(bufnr('%'))
@@ -644,6 +646,31 @@ function! s:newbuf(buf, bang) "{{{
 		silent file `=bufname`
 	endif
 endfunction "}}}
+function! s:get_buflists(mode) "{{{
+	if a:mode ==# 'n'
+		silent bnext
+	endif
+	if a:mode ==# 'p'
+		silent bprev
+	endif
+
+	let list  = ''
+	let lists = []
+	for buf in range(1, bufnr('$'))
+		if bufexists(buf) && buflisted(buf)
+			let list  = bufnr(buf) . "#" . fnamemodify(bufname(buf), ':t')
+			let list .= getbufvar(buf, "&modified") ? '+' : ''
+			if bufnr('%') ==# buf
+				let list = "[" . list . "]"
+			else
+				let list = " " . list . " "
+			endif
+			call add(lists, list)
+		endif
+	endfor
+	echo join(lists, "")
+endfunction
+"}}}
 function! s:toggle_option(option_name) "{{{
 	execute 'setlocal' a:option_name . '!'
 	execute 'setlocal' a:option_name . '?'
@@ -1198,7 +1225,6 @@ set autowrite
 
 set switchbuf=useopen,usetab,newtab
 
-
 set nostartofline
 set tabstop=4
 set noexpandtab
@@ -1317,7 +1343,6 @@ endif
 if has('persistent_undo')
 	set undofile
 	let &undodir = $DOTVIM . '/undo'
-	"silent! call mkdir(&undodir, 'p')
 	call s:mkdir(&undodir)
 endif
 
@@ -1414,7 +1439,7 @@ command! -bang -complete=file -nargs=? WMac  write<bang> ++fileformat=mac <args>
 command! -bang -nargs=? -complete=file New call <SID>newbuf(<q-args>, <q-bang>)
 
 " Bwipeout(!) for all-purpose
-command -nargs=0 -bang Bwipeout call <SID>bwipeout(<q-bang>)
+command -nargs=0 -bang Bwipeout call <SID>bwipeout(0, <q-bang>)
 
 " Open a file.
 command! -nargs=? -complete=file Open call <SID>open(<q-args>)
@@ -1426,7 +1451,10 @@ command! -bar RTP echo substitute(&runtimepath, ',', "\n", 'g')
 command! -bar -bang -nargs=? -complete=file Scouter echo Scouter(empty(<q-args>) ? $MYVIMRC : expand(<q-args>), <bang>0)
 
 " Make the notitle file called 'Junk'
-"command! -nargs=0 JunkFile call s:open_junk_file()
+command! -nargs=0 JunkFile call s:make_junkfile()
+
+" Get buffer list like ':ls'
+command! -nargs=0 BufList call s:get_buflists('')
 
 " Remove EOL ^M
 command! RemoveCr call s:execute_keep_view('silent! %substitute/\r$//g | nohlsearch')
@@ -1443,6 +1471,9 @@ command! CopyCurrentPath call s:copy_current_path(1)
 " Get current directory path
 command! CopyCurrentDir call s:copy_current_path(0)
 
+" Make random string such as password
+command! -nargs=? RandomString call s:random_string(<q-args>)
+
 " Rename
 command! -nargs=1 -bang -bar -complete=file Rename call s:move(<q-args>, <q-bang>, expand('%:h'))
 
@@ -1454,9 +1485,6 @@ command! -nargs=0 Rename call s:rename()
 
 " Change the current editing file extention
 command! -nargs=0 ReExt call s:re_ext()
-
-" Quit buffer with safty
-command! -bang SafeQuit call s:safe_quit('<bang>')
 
 " View all mappings
 command! -nargs=* -complete=mapping AllMaps map <args> | map! <args> | lmap <args>
@@ -1492,15 +1520,16 @@ nnoremap <silent><C-_> :<C-u>call <SID>smart_foldcloser()<CR>
 nnoremap <silent> <Leader>q :<C-u>call QuitIfNameless()<CR>
 
 " Kill buffer
-"nnoremap <C-x>k :call BufferWipeoutInteractive()<CR>
-nnoremap <silent> <C-x>k :call <SID>bwipeout('')<CR>
-nnoremap <silent> <C-x>K :Bwipeout!<CR>
+nnoremap <silent> <C-x>k     :call <SID>bwipeout(0, '')<CR>
+nnoremap <silent> <C-x>K     :call <SID>bwipeout(1, 1)<CR>
+nnoremap <silent> <C-x><C-k> :call <SID>bwipeout(1, '')<CR>
 
-" Move middle of current line.(not middle of screen)
+" Move middle of current line (not middle of screen)
 nnoremap <silent> gm :<C-u>call <SID>move_middle_line()<CR>
 
 " Open vimrc with tab
-nnoremap <Space>. :call <SID>recycle_open('tabedit', $MYVIMRC)<CR>
+nnoremap <silent> <Space>. :call <SID>recycle_open('edit', $MYVIMRC)<CR>
+command! -nargs=? -complete=buffer ROT call <SID>recycle_open('tabedit', empty(<q-args>) ? expand('#') : expand(<q-args>))
 
 " Make junkfile
 "nnoremap <silent> <Space>e  :<C-u>JunkFile<CR>
@@ -1564,8 +1593,14 @@ nnoremap gR R
 "}}}
 
 " Buffer and Tabs {{{
-nnoremap <silent> <C-j> :<C-u>silent! bnext<CR>
-nnoremap <silent> <C-k> :<C-u>silent! bprev<CR>
+if s:has_plugin('vim-buftabs')
+	nnoremap <silent> <C-j> :<C-u>silent! bnext<CR>
+	nnoremap <silent> <C-k> :<C-u>silent! bprev<CR>
+else
+	nnoremap <silent> <C-j> :<C-u>call <SID>get_buflists('p')<CR>
+	nnoremap <silent> <C-k> :<C-u>call <SID>get_buflists('n')<CR>
+endif
+
 nnoremap <silent> <C-h> :<C-u>silent! tabnext<CR>
 nnoremap <silent> <C-l> :<C-u>silent! tabprev<CR>
 nnoremap <silent> tt  :<C-u>tabe<CR>
@@ -1928,6 +1963,7 @@ if s:bundled('vim-buftabs')
 	let g:buftabs_active_highlight_group = "Visual"
 	let g:buftabs_statusline_highlight_group = 'BlackWhite'
 endif
+"}}}
 " buftabs.vim {{{
 if s:bundled('buftabs')
 	let g:buftabs_in_statusline   = 1
@@ -1945,18 +1981,18 @@ if s:bundled('buftabs')
 		highlight StatusMyColor2 ctermfg=white ctermbg=black cterm=none guifg=white guibg=black gui=none
 		highlight link StatusDefaultColor StatusLine
 		"}}}
-	
+
 		set laststatus=2
 		set statusline=
 		"if exists('g:enable_buftabs') && g:enable_buftabs == s:true
-			"set statusline+=%{buftabs}
+		"set statusline+=%{buftabs}
 		"else
-			set statusline+=%#StatusMyColor1#
-			"set statusline+=%{getcwd()}/
-			set statusline+=%{pathshorten(getcwd())}/
-			set statusline+=%f
-			set statusline+=\ %m
-			set statusline+=%#StatusDefaultColor#
+		set statusline+=%#StatusMyColor1#
+		"set statusline+=%{getcwd()}/
+		set statusline+=%{pathshorten(getcwd())}/
+		set statusline+=%f
+		set statusline+=\ %m
+		set statusline+=%#StatusDefaultColor#
 		"endif
 		set statusline+=%=
 		set statusline+=%#StatusMyColor1#
@@ -1972,7 +2008,7 @@ if s:bundled('buftabs')
 			set statusline+=\ [WC=%{WordCount()}]
 		endif
 		set statusline+=\ (%{GetDate()})
-	
+
 		let g:buftabs_in_statusline   = 1
 		let g:buftabs_only_basename   = 1
 		let g:buftabs_marker_start    = "["
@@ -2168,29 +2204,10 @@ endif
 " }}}1
 
 " Misc: {{{1
-"let g:buftabs_enabled = 0
 
 call s:mkdir(expand('$HOME/.vim/colors'))
 
-command! -nargs=? RandomString call s:random_string(<q-args>)
-
-function! s:rand(n)
-	let match_end = matchend(reltimestr(reltime()), '\d\+\.') + 1
-	return reltimestr(reltime())[match_end : ] % (a:n + 1)
-endfunction
-
-function! s:random_string(n)
-	let n = a:n ==# '' ? 8 : a:n
-	let s = []
-	let chars = split('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', '\ze')
-	let max = len(chars) - 1
-	for x in range(n)
-		call add(s, (chars[s:rand(max)]))
-	endfor
-	let @+ = join(s, '')
-endfunction
-
-function! s:file_complete(A,L,P)
+function! s:file_complete(A,L,P) "{{{
 	let s:lists = []
 	let l:filelist = glob(getcwd() . "/*")
 
@@ -2201,34 +2218,9 @@ function! s:file_complete(A,L,P)
 	endfor
 	return s:lists
 endfunction
-
-function! s:get_buflists(mode)
-	if a:mode ==# 'n'
-		silent! bnext
-	endif
-	if a:mode ==# 'p'
-		silent! bprev
-	endif
-
-	let list = []
-	for buf in range(1, bufnr('$'))
-		if bufexists(buf) && buflisted(buf)
-			if bufnr('%') ==# buf
-				call add(list, "*".bufnr(buf) . "#" . fnamemodify(bufname(buf), ':t'))
-			else
-				call add(list, bufnr(buf) . "#" . fnamemodify(bufname(buf), ':t'))
-			endif
-		endif
-	endfor
-	echo list
-endfunction
-
-nnoremap <silent> <S-h> :call <SID>get_buflists('p')<CR>
-nnoremap <silent> <S-l> :call <SID>get_buflists('n')<CR>
-command! -nargs=0 BufList call s:get_buflists('')
-
 "command! -nargs=1 -complete=customlist,<SID>file_complete Edit edit<bang> <args>
 "command! -nargs=1 -complete=customlist,<SID>file_complete Cat call s:cat(<f-args>)
+"}}}
 
 " alter letter {{{
 let s:CMapABC_Entries = []
@@ -2281,6 +2273,12 @@ call s:CMapABC_Add('^cat$', 'Cat')
 "call s:CMapABC_Add('^cd', 'CD')
 "}}}
 
+augroup cursor-highlight-emphatic "{{{
+	autocmd!
+	autocmd CursorMoved,CursorMovedI,WinLeave * hi! link CursorLine CursorLine | hi! link CursorColumn CursorColumn
+	autocmd CursorHold,CursorHoldI            * hi! link CursorLine Visual     | hi! link CursorColumn Visual
+augroup END "}}}
+
 augroup vim-startup-nomodified "{{{
 	autocmd!
 	autocmd VimEnter * set nomodified
@@ -2293,7 +2291,7 @@ augroup END "}}}
 
 augroup word-count "{{{
 	autocmd!
-	autocmd BufWinEnter,InsertLeave,CursorHold * call WordCount('char')
+	autocmd BufWinEnter,InsertLeave,CursorHold * if exists('*WordCount') | call WordCount('char') | endif
 augroup END
 let s:WordCountStr = ''
 let s:WordCountDict = {'word': 2, 'char': 3, 'byte': 4}
@@ -2301,8 +2299,8 @@ let s:WordCountDict = {'word': 2, 'char': 3, 'byte': 4}
 
 augroup get-file-info "{{{
 	autocmd!
-	"autocmd CursorHold,CursorHoldI * execute "normal! 1\<C-g>"
 	autocmd CursorHold,CursorHoldI * redraw
+	autocmd CursorHold,CursorHoldI * execute "normal! 1\<C-g>"
 	autocmd CursorHold,CursorHoldI * execute "echo GetFileInfo()"
 augroup END "}}}
 
@@ -2340,8 +2338,7 @@ if executable('chmod')
 						\ || &ft =~ "\\(z\\|c\\|ba\\)\\?sh$"
 						\ && input(printf('"%s" is not perm 755. Change mode? [y/N] ', expand('%:t'))) =~? '^y\%[es]$'
 				call system("chmod 755 " . shellescape(file))
-				dcho " "
-				echo "Set permission 755!"
+				redraw | echo "Set permission 755!"
 			endif
 		endif
 	endfunction
@@ -2411,22 +2408,24 @@ set directory=~/.vim/swap
 " }}}
 
 " Automatically save and restore window size {{{
-"let g:save_window_file = expand('$HOME/.vimwinpos')
-"augroup SaveWindow
-"	autocmd!
-"	autocmd VimLeavePre * call s:save_window()
-"	function! s:save_window()
-"		let options = [
-"			\ 'set columns=' . &columns,
-"			\ 'set lines=' . &lines,
-"			\ 'winpos ' . getwinposx() . ' ' . getwinposy(),
-"			\ ]
-"		call writefile(options, g:save_window_file)
-"	endfunction
-"augroup END
-"if filereadable(g:save_window_file)
-"  execute 'source' g:save_window_file
-"endif "}}}
+augroup vim-save-window
+	autocmd!
+	autocmd VimLeavePre * call s:save_window()
+	function! s:save_window()
+		let options = [
+					\ 'set columns=' . &columns,
+					\ 'set lines=' . &lines,
+					\ 'winpos ' . getwinposx() . ' ' . getwinposy(),
+					\ ]
+		call writefile(options, g:save_window_file)
+	endfunction
+augroup END
+let g:save_window_file = expand('$HOME/.vimwinpos')
+if s:enable_save_window_position
+	if filereadable(g:save_window_file)
+		execute 'source' g:save_window_file
+	endif
+endif "}}}
 
 " Loading divided files {{{
 let g:local_vimrc = expand('~/.vimrc.local')
@@ -2439,4 +2438,4 @@ endif
 set secure
 
 " vim:fdm=marker fdc=3 ft=vim ts=2 sw=2 sts=2:
-"}}}1
+"}}}0

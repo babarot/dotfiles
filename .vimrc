@@ -11,17 +11,11 @@
 "                               \/__/         \|__|         \/__/     
 
 " Coding Rules {{{
-" Author:   <B4B4R07> Plz call me BABAROT.
-" Contacts: <b4b4r07@gmail.com>.
-"  Naming rules {{{
-" - Functions
-" -- Global function => CamelCase
-" -- Local function => snake_case
-" - Mapping prefix
-" -- <Space> is vim-wise
-" -- <Leader> is plugin-wise
-"}}}
-" - License {{{
+"==============================================================================
+" Author:   <B4B4R07> BABAROT
+" Contacts: <b4b4r07@gmail.com>
+"
+" - License
 "  The MIT License (MIT)
 "  
 "  Copyright (c) 2014 B4B4R07
@@ -45,9 +39,9 @@
 "  SOFTWARE.
 "}}}
 
-"}}}
 
 " Initial: {{{1
+"==============================================================================
 " Skip initialization for vim-tiny or vim-small
 if !1 | finish | endif
 
@@ -75,6 +69,7 @@ if has('vim_starting')
 	endif
 endif
 
+" Use another vimrc for development
 if getcwd() ==# expand('~/.vim/dev')
 	let s:devfile = fnamemodify(findfile(".vimrc.dev", getcwd().";".expand("$HOME")), ":p")
 	if filereadable(s:devfile)
@@ -84,7 +79,7 @@ if getcwd() ==# expand('~/.vim/dev')
 	endif
 endif
 
-" Operating System {{{
+" Operating System
 let g:is_windows = has('win16') || has('win32') || has('win64')
 let g:is_cygwin = has('win32unix')
 let g:is_mac = !g:is_windows && !g:is_cygwin
@@ -92,7 +87,6 @@ let g:is_mac = !g:is_windows && !g:is_cygwin
 			\    (!executable('xdg-open') &&
 			\    system('uname') =~? '^darwin'))
 let g:is_unix = !g:is_mac && has('unix')
-"}}}
 
 " Define neobundle runtimepath
 if g:is_windows
@@ -105,11 +99,6 @@ let $NEOBUNDLEPATH=$VIMBUNDLE . '/neobundle.vim'
 
 " Environment variable
 let $MYVIMRC = expand('~/.vimrc')
-
-" Initialize autocmd
-augroup MyAutoCmd
-	autocmd!
-augroup END
 
 " Enable/Disable {{{
 let s:true  = 1
@@ -140,6 +129,8 @@ endfunction "}}}
 "}}}1
 
 " NeoBundle: {{{1
+" No introduction.
+"==============================================================================
 filetype off
 
 " Add neobundle to runtimepath
@@ -310,6 +301,8 @@ if s:bundled('neobundle.vim') "{{{
 		NeoBundleDisable lightline.vim
 	endif
 	NeoBundleDisable ctrlp.vim
+	NeoBundleDisable skk.vim
+	NeoBundleDisable eskk.vim
 
 	filetype plugin indent on
 
@@ -360,6 +353,10 @@ filetype plugin indent on
 "}}}1
 
 " Utilities: {{{1
+" Functions that are described in this section is general functions.
+" It is not general, for example, functions used in a dedicated purpose
+" has been described in the setting position.
+"==============================================================================
 function! s:SID() "{{{
 	return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSID$')
 endfunction "}}}
@@ -469,6 +466,65 @@ function! s:re_ext() "{{{
 		call delete(expand('#'))
 	endif
 endfunction "}}}
+function! s:rename(new, type) "{{{
+	if a:type ==# 'file'
+		if empty(a:new)
+			let new = input('New filename: ', expand('%:p:h') . '/', 'file')
+		else
+			let new = a:new
+		endif
+	elseif a:type ==# 'ext'
+		if empty(a:new)
+			let ext = input('New extention: ', '', 'filetype')
+			let new = expand('%:p:t:r')
+			if !empty(ext)
+				let new .= '.' . ext
+			endif
+		else
+			let new = expand('%:p:t:r') . '.' . a:new
+		endif
+	endif
+
+	if filereadable(new)
+		redraw
+		echo printf("overwrite `%s'? ", new)
+		if nr2char(getchar()) ==? 'y'
+			silent call delete(new)
+		else
+			return
+		endif
+	endif
+
+	if new != '' && new !=# 'file'
+		execute 'file' new
+		execute 'setlocal filetype=' . fnamemodify(new, ':e')
+		write
+		call delete(expand('#'))
+	endif
+endfunction "}}}
+function! s:delete(bang) "{{{
+	let file = expand('%:p')
+	if filereadable(file)
+		if empty(a:bang)
+			redraw | echo 'Delete "' . file . '"? [y/N]: '
+		endif
+		if !empty(a:bang) || nr2char(getchar()) ==? 'y'
+			if delete(file) == 0
+				let bufname = bufname(fnamemodify(file, ':p'))
+				if bufexists(bufname) && buflisted(bufname)
+					execute "bwipeout" bufname
+				endif
+				echo "Deleted '" . file . "', successfully!"
+				return 1
+			endif
+			echo "Could not delete '" . file . "'"
+		else
+			echo "Do nothing."
+		endif
+	else
+		echohl WarningMsg | echo "The '" . file . "' does not exist." | echohl NONE
+	endif
+endfunction "}}}
 function! s:rand(n) "{{{
 	let match_end = matchend(reltimestr(reltime()), '\d\+\.') + 1
 	return reltimestr(reltime())[match_end : ] % (a:n + 1)
@@ -575,9 +631,7 @@ function! s:open(file) "{{{
 	call system(printf('%s %s &', 'open', shellescape(file)))
 	return 1
 endfunction "}}}
-function! s:bwipeout(buf, bang) "{{{
-	setlocal hidden
-
+function! s:smart_bwipeout(buf, bang) "{{{
 	" Bwipeout! all buffers
 	if !empty(a:bang)
 		for i in range(1, bufnr('$'))
@@ -671,6 +725,25 @@ function! s:get_buflists(mode) "{{{
 	echo join(lists, "")
 endfunction
 "}}}
+function! s:buf_enqueue(buf) "{{{
+	let buf = fnamemodify(a:buf, ':p')
+	if bufexists(buf) && buflisted(buf) "&& filereadable(buf)
+		let idx = match(s:bufqueue ,buf)
+		if idx != -1
+			call remove(s:bufqueue, idx)
+		endif
+		call add(s:bufqueue, buf)
+	endif
+endfunction "}}}
+function! s:buf_dequeue() "{{{
+	if empty(s:bufqueue)
+		echohl WarningMsg
+		echo   'No buffer to restore'
+		echohl None
+		return
+	endif
+	execute 'edit' remove(s:bufqueue, -1)
+endfunction "}}}
 function! s:toggle_option(option_name) "{{{
 	execute 'setlocal' a:option_name . '!'
 	execute 'setlocal' a:option_name . '?'
@@ -742,12 +815,8 @@ endfunction "}}}
 function! GetDocumentPosition() "{{{
 	return float2nr(str2float(line('.')) / str2float(line('$')) * 100) . "%"
 endfunction "}}}
-function! GetTildaPath(full) "{{{
-	if a:full
-		return expand('%:~')
-	else
-		return expand('%:~:h')
-	endif
+function! GetTildaPath(tail) "{{{
+	return a:tail ? expand('%:h:~') : expand('%:~')
 endfunction "}}}
 function! GetCharacterCode() "{{{
 	let str = iconv(matchstr(getline('.'), '.', col('.') - 1), &enc, &fenc)
@@ -863,55 +932,72 @@ function! GetBufInfo() "{{{
 	echo '[ fsize ]' GetFileSize()
 	echo '[ power ]' Scouter($MYVIMRC)
 endfunction "}}}
-function! SelectInteractive(question, candidates) "{{{
-	try
-		let a:candidates[0] = toupper(a:candidates[0])
-		let l:select = 0
-		while index(a:candidates, l:select, 0, 1) == -1
-			let l:select = input(a:question . ' [' . join(a:candidates, '/') . '] ')
-			if l:select == ''
-				let l:select = a:candidates[0]
-			endif
-		endwhile
-		return tolower(l:select)
-	finally
-		redraw!
-	endtry
-endfunction "}}}
-function! BufferWipeoutInteractive() "{{{
-	if &modified == 1
-		let l:selected = SelectInteractive('Buffer is unsaved. Force quit?', ['n', 'w', 'y'])
-		if l:selected == 'w'
-			if bufname(bufnr("%")) == ''
-				echohl WarningMsg
-				echo "This buffer is [No name]. Should do ':q!'"
-				echohl NONE
-				return
-				"quit!
-			else
-				write
-				bwipeout
-			endif
-		elseif l:selected == 'y'
-			bwipeout!
+function! TrailingSpaceWarning() "{{{
+	if !exists("b:trailing_space_warning")
+		if search('\s\+$', 'nw') != 0
+			let b:trailing_space_warning = '[SPC:' . search('\s\+$', 'nw') . ']'
+		else
+			let b:trailing_space_warning = ''
 		endif
-	else
-		bwipeout
 	endif
-endfunction "}}}
+	return b:trailing_space_warning
+endfunction
+" Recalculate the trailing whitespace warning when idle, and after saving
+autocmd CursorHold,BufWritePost * unlet! b:trailing_space_warning
+"}}}
 "}}}1
 
-" Appearance: {{{1
-" English interface {{{
+" Priority: {{{
+" In this section, the settings a higher priority than the setting items
+" of the other sections will be described.
+"==============================================================================
+" Restore the buffer that has been deleted {{{
+let s:bufqueue = []
+augroup buffer-queue-restore
+	autocmd!
+	autocmd BufDelete * call <SID>buf_enqueue(expand('#'))
+augroup END
+"}}}
+
+" Backup automatically {{{
+set backup
 if g:is_windows
-	language message en
+	set backupdir=$VIM/backup
+	set backupext=.bak
 else
-	language mes C
-endif "}}}
+	call s:mkdir(expand('~/.vim/backup'))
+	augroup backup-files-automatically
+		autocmd!
+		autocmd BufWritePre * call UpdateBackupFile()
+	augroup END
 
-"set laststatus=2  "statusline=%!MakeStatusLine()
-set showtabline=2 tabline=%!MakeTabLine()
+	function! UpdateBackupFile()
+		let dir = strftime("~/.backup/vim/%Y/%m/%d", localtime())
+		if !isdirectory(dir)
+			let retval = system("mkdir -p " . dir)
+			let retval = system("chown goth:staff " . dir)
+		endif
+		execute "set backupdir=" . dir
+		unlet dir
+		let ext = strftime("%H_%M_%S", localtime())
+		execute "set backupext=." . ext
+		unlet ext
+	endfunction
+endif
+" }}}
 
+" Swap settings {{{
+call s:mkdir(expand('~/.vim/swap'))
+set swapfile
+set directory=~/.vim/swap
+" }}}
+"}}}
+
+" Appearance: {{{1
+" In this section, interface of Vim, that is, colorscheme, statusline and
+" tabpages line is set.
+"==============================================================================
+" Essentials
 syntax enable
 syntax on
 
@@ -939,6 +1025,11 @@ else
 		endif
 	endif
 endif "}}}
+
+set laststatus=2
+"set statusline=%!MakeStatusLine()
+set showtabline=2
+set tabline=%!MakeTabLine()
 
 " StatusLine {{{
 set laststatus=2
@@ -974,118 +1065,6 @@ if exists('*GetDate')
 	set statusline+=\ (%{GetDate()})
 endif
 "}}}
-
-" Cursor color on when IME ON {{{
-if has('multi_byte_ime') || has('xim')
-	highlight Cursor guibg=NONE guifg=Yellow
-	highlight CursorIM guibg=NONE guifg=Red
-	set iminsert=0 imsearch=0
-	if has('xim') && has('GUI_GTK')
-		""set imactivatekey=s-space
-	endif
-	inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
-endif "}}}
-
-" Display JISX0208Space {{{
-if has("syntax")
-	" the line is required for POD bug fix
-	function! ActivateInvisibleIndicator()
-		syntax match InvisibleJISX0208Space "　" display containedin=ALL
-		highlight InvisibleJISX0208Space term=underline ctermbg=Blue guibg=darkgray gui=underline
-	endfunction
-	autocmd MyAutoCmd BufNew,BufRead * call ActivateInvisibleIndicator()
-endif
-"augroup hilightIdegraphicSpace
-"  autocmd!
-"  autocmd VimEnter,ColorScheme * highlight IdeographicSpace term=underline ctermbg=DarkGreen guibg=DarkGreen
-"  autocmd WinEnter * match IdeographicSpace /　/
-"augroup END
-"}}}
-
-" Yellow statusline at Insert mode {{{
-if !s:bundled('lightline.vim')
-	if has('syntax')
-		augroup InsertHook
-			autocmd!
-			autocmd InsertEnter * call s:StatusLine('Enter')
-			autocmd InsertLeave * call s:StatusLine('Leave')
-		augroup END
-	endif
-	"highlight StatusLine ctermfg=black ctermbg=white cterm=none guifg=black guibg=white gui=none
-
-	let g:hi_insert = 'highlight StatusLine guifg=black guibg=darkyellow gui=none ctermfg=black ctermbg=yellow cterm=none'
-	let s:slhlcmd = ''
-	function! s:StatusLine(mode)
-		if a:mode == 'Enter'
-			silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
-			silent exec g:hi_insert
-		else
-			highlight clear StatusLine
-			silent exec s:slhlcmd
-		endif
-	endfunction
-
-	function! s:GetHighlight(hi)
-		redir => hl
-		exec 'highlight '.a:hi
-		redir END
-		let hl = substitute(hl, '[\r\n]', '', 'g')
-		let hl = substitute(hl, 'xxx', '', '')
-		return hl
-	endfunction
-endif
-" }}}
-
-" Cursor {{{
-set cursorline
-"set cursorcolumn
-"set colorcolumn=80
-
-augroup vimrc-auto-cursorcolumn
-	autocmd!
-	autocmd CursorMoved,CursorMovedI * call s:auto_cursorcolumn('CursorMoved')
-	autocmd CursorHold,CursorHoldI * call s:auto_cursorcolumn('CursorHold')
-	autocmd WinEnter * call s:auto_cursorcolumn('WinEnter')
-	autocmd WinLeave * call s:auto_cursorcolumn('WinLeave')
-
-	let s:cursorcolumn_lock = 0
-	function! s:auto_cursorcolumn(event)
-		if a:event ==# 'WinEnter'
-			setlocal cursorcolumn
-			let s:cursorcolumn_lock = 2
-		elseif a:event ==# 'WinLeave'
-			setlocal nocursorcolumn
-		elseif a:event ==# 'CursorMoved'
-			if s:cursorcolumn_lock
-				if 1 < s:cursorcolumn_lock
-					let s:cursorcolumn_lock = 1
-				else
-					setlocal nocursorcolumn
-					let s:cursorcolumn_lock = 0
-				endif
-			endif
-		elseif a:event ==# 'CursorHold'
-			setlocal cursorcolumn
-			let s:cursorcolumn_lock = 1
-		endif
-	endfunction
-augroup END
-"}}}
-
-"recalculate the trailing whitespace warning when idle, and after saving
-autocmd cursorhold,bufwritepost * unlet! b:statusline_trailing_space_warning
-
-" Return '[\s]' if trailing white space is detected
-function! StatuslineTrailingSpaceWarning() "{{{
-	if !exists("b:statusline_trailing_space_warning")
-		if search('\s\+$', 'nw') != 0
-			let b:statusline_trailing_space_warning = '[SPC:' . search('\s\+$', 'nw') . ']'
-		else
-			let b:statusline_trailing_space_warning = ''
-		endif
-	endif
-	return b:statusline_trailing_space_warning
-endfunction "}}}
 
 function! MakeStatusLine() "{{{
 	" There are three patterns
@@ -1151,18 +1130,18 @@ function! s:tabpage_label(n) "{{{
 	let hi = n == tabpagenr() ? 'TabLineSel' : 'TabLine'
 
 	let label = ''
-	if getbufvar(curbufnr, '&filetype') =~# '^lingr-'
-		" lingr-vim
-		let unread = lingr#unread_count()
-		let status = lingr#status()
+	"if getbufvar(curbufnr, '&filetype') =~# '^lingr-'
+	"	" lingr-vim
+	"	let unread = lingr#unread_count()
+	"	let status = lingr#status()
 
-		let label .= '%#' . hi . '#'
-		let label .= 'lingr - ' . status
-		if unread != 0
-			let label .= '(' . unread . ')'
-		endif
+	"	let label .= '%#' . hi . '#'
+	"	let label .= 'lingr - ' . status
+	"	if unread != 0
+	"		let label .= '(' . unread . ')'
+	"	endif
 
-	else
+	"else
 		let no = len(bufnrs)
 		if no == 1
 			let no = ''
@@ -1175,8 +1154,9 @@ function! s:tabpage_label(n) "{{{
 			let label .= '%#' . hi . 'Number#' . no
 		endif
 		let label .= '%#' . hi . '#'
-		let label .= mod . sp . fname
-	endif
+		"let label .= mod . sp . fname
+		let label .= fname . sp . mod
+	"endif
 
 	return '%' . a:n . 'T' . label . '%T%#TabLineFill#'
 endfunction "}}}
@@ -1187,32 +1167,151 @@ function! MakeTabLine() "{{{
 
 	let tabs = join(titles, sep) . sep . '%#TabLineFill#%T'
 	let info = '%#TabLine#'
-	if exists('t:tabline_extra')
-		let info .= t:tabline_extra . sep
-	endif
+	"if exists('t:tabline_extra')
+	"	let info .= t:tabline_extra . sep
+	"endif
 	if exists('*Uptime')
 		let info .= Uptime(2) . sep
 	endif
-	if s:has_plugin('reanimate') && reanimate#is_saved()
-		let info .= reanimate#last_point() . sep
-	endif
-	let info .= fnamemodify(getcwd(), ":~") . ' '
+	"if s:has_plugin('reanimate') && reanimate#is_saved()
+	"	let info .= reanimate#last_point() . sep
+	"endif
+	let info .= fnamemodify(getcwd(), ':~') . ' '
 	return tabs . '%=' . info
 endfunction "}}}
+
+" Emphasize statusline in the insert mode {{{
+if !s:has_plugin('lightline.vim')
+	if has('syntax')
+		augroup InsertHook
+			autocmd!
+			autocmd InsertEnter * call s:StatusLine('Enter')
+			autocmd InsertLeave * call s:StatusLine('Leave')
+		augroup END
+	endif
+	"highlight StatusLine ctermfg=black ctermbg=white cterm=none guifg=black guibg=white gui=none
+
+	let g:hi_insert = 'highlight StatusLine guifg=black guibg=darkyellow gui=none ctermfg=black ctermbg=yellow cterm=none'
+	let s:slhlcmd = ''
+	function! s:StatusLine(mode)
+		if a:mode == 'Enter'
+			silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
+			silent exec g:hi_insert
+		else
+			highlight clear StatusLine
+			silent exec s:slhlcmd
+		endif
+	endfunction
+
+	function! s:GetHighlight(hi)
+		redir => hl
+		exec 'highlight '.a:hi
+		redir END
+		let hl = substitute(hl, '[\r\n]', '', 'g')
+		let hl = substitute(hl, 'xxx', '', '')
+		return hl
+	endfunction
+endif
+" }}}
+
+" Cursor line/column {{{
+set cursorline
+"set cursorcolumn
+"set colorcolumn=80
+
+augroup auto-cursorcolumn-emphasis
+	autocmd!
+	autocmd CursorMoved,CursorMovedI * call s:auto_cursorcolumn('CursorMoved')
+	autocmd CursorHold,CursorHoldI * call s:auto_cursorcolumn('CursorHold')
+	autocmd WinEnter * call s:auto_cursorcolumn('WinEnter')
+	autocmd WinLeave * call s:auto_cursorcolumn('WinLeave')
+
+	let s:cursorcolumn_lock = 0
+	function! s:auto_cursorcolumn(event)
+		if a:event ==# 'WinEnter'
+			setlocal cursorcolumn
+			let s:cursorcolumn_lock = 2
+		elseif a:event ==# 'WinLeave'
+			setlocal nocursorcolumn
+		elseif a:event ==# 'CursorMoved'
+			if s:cursorcolumn_lock
+				if 1 < s:cursorcolumn_lock
+					let s:cursorcolumn_lock = 1
+				else
+					setlocal nocursorcolumn
+					let s:cursorcolumn_lock = 0
+				endif
+			endif
+		elseif a:event ==# 'CursorHold'
+			setlocal cursorcolumn
+			let s:cursorcolumn_lock = 1
+		endif
+	endfunction
+augroup END
+"}}}
+
+" GUI IME Cursor colors {{{
+if has('multi_byte_ime') || has('xim')
+	highlight Cursor guibg=NONE guifg=Yellow
+	highlight CursorIM guibg=NONE guifg=Red
+	set iminsert=0 imsearch=0
+	if has('xim') && has('GUI_GTK')
+		""set imactivatekey=s-space
+	endif
+	inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
+endif "}}}
+
+" Display JISX0208Space {{{
+if has("syntax")
+	" the line is required for POD bug fix
+	function! ActivateInvisibleIndicator()
+		syntax match InvisibleJISX0208Space "　" display containedin=ALL
+		highlight InvisibleJISX0208Space term=underline ctermbg=Blue guibg=darkgray gui=underline
+	endfunction
+	augroup highlight-zenkaku-space
+		autocmd!
+		autocmd BufNew,BufRead * call ActivateInvisibleIndicator()
+	augroup END
+endif
+"augroup hilightIdegraphicSpace
+"  autocmd!
+"  autocmd VimEnter,ColorScheme * highlight IdeographicSpace term=underline ctermbg=DarkGreen guibg=DarkGreen
+"  autocmd WinEnter * match IdeographicSpace /　/
+"augroup END
+"}}}
 "}}}1
 
 " Options: {{{1
+" SEE ALSO :help 'option-list'
+"==============================================================================
+" Not redraw
 set lazyredraw
+
+" Fast terminal connection
 set ttyfast
 
+" Enable the mode line
 set modeline
-set modelines=4
-set keywordprg=:help " Open Vim internal help by K command
+
+" The length of the mode line
+set modelines=5
+
+" Vim internal help with the command K
+set keywordprg=:help
+
+" Language help
 set helplang& helplang=ja
 
+" Ignore case
 set ignorecase
+
+" Smart ignore case
 set smartcase
+
+" Enable the incremental search
 set incsearch
+
+" Emphasize the search pattern
 set hlsearch
 
 " Have Vim automatically reload changed files on disk. Very useful when using
@@ -1223,20 +1322,42 @@ set autoread
 " buffer as a result of :next, :make, etc. See :h autowrite.
 set autowrite
 
+" Behavior when you switch buffers
 set switchbuf=useopen,usetab,newtab
 
+" Moves the cursor to the same column when cursor move
 set nostartofline
+
+" The length of the tab
 set tabstop=4
+
+" Do not convert tabs to spaces
 set noexpandtab
+
+" When starting a new line, indent in automatic
 set autoindent
+
+" The function of the backspace
 set backspace=indent,eol,start
+
+" When the search is finished, search again from the BOF
 set wrapscan
+
+" Emphasize the matching parenthesis
 set showmatch
+
+" Emphasize time
 set matchtime=1
+
+" Increase the corresponding pairs
 set matchpairs+=<:>
 
+" Extend the command line completion
 set wildmenu
+
+" Wildmenu mode
 set wildmode=longest,full
+
 set wildignore=.git,.hg,.svn
 set wildignore+=*.jpg,*.jpeg,*.bmp,*.gif,*.png
 set wildignore+=*.o,*.obj,*.exe,*.dll,*.manifest,*.so,*.out,*.class
@@ -1317,15 +1438,13 @@ endif
 
 set fileencodings=iso-2022-jp,cp932,sjis,euc-jp,utf-8
 
-" Foldings {{{
 set foldenable
 "set foldmethod=marker
 "set foldopen=all
 "set foldclose=all
 set foldlevel=0
-set foldnestmax=2
+"set foldnestmax=2
 set foldcolumn=2
-"}}}
 
 " IM settings
 " IM off when starting up
@@ -1371,75 +1490,18 @@ set guioptions-=L
 set guioptions-=b
 "}}}
 
-" Always only one window when opening files
-augroup file-only
-	autocmd!
-	autocmd BufRead * execute ":only"
-augroup END
-
-"Move current working directory automatically
-augroup cd-filepath
-	autocmd!
-	"autocmd BufRead,BufEnter * lcd %:p:h
-	autocmd BufRead,BufEnter * execute ":lcd " . expand("%:p:h")
-augroup END
-
-" Display a path in commandline when opening
-augroup echo-file-path
-	autocmd!
-	autocmd WinEnter * execute "normal! 1\<C-g>"
-augroup END
-
-"Do not insert comment when inputing newline
-augroup no-comment
-	autocmd!
-	autocmd FileType * setlocal formatoptions-=ro
-augroup END
-
-augroup gvim-window-siz
-	autocmd!
-	autocmd GUIEnter * setlocal lines=50
-	autocmd GUIEnter * setlocal columns=160
-augroup END
-
 "}}}1
 
 " Commands: {{{1
-
-" Command group opening with a specific character code again
-" In particular effective when I am garbled in a terminal
-command! -bang -bar -complete=file -nargs=? Utf8      edit<bang> ++enc=utf-8 <args>
-command! -bang -bar -complete=file -nargs=? Iso2022jp edit<bang> ++enc=iso-2022-jp <args>
-command! -bang -bar -complete=file -nargs=? Cp932     edit<bang> ++enc=cp932 <args>
-command! -bang -bar -complete=file -nargs=? Euc       edit<bang> ++enc=euc-jp <args>
-command! -bang -bar -complete=file -nargs=? Utf16     edit<bang> ++enc=ucs-2le <args>
-command! -bang -bar -complete=file -nargs=? Utf16be   edit<bang> ++enc=ucs-2 <args>
-command! -bang -bar -complete=file -nargs=? Jis       Iso2022jp<bang> <args>
-command! -bang -bar -complete=file -nargs=? Sjis      Cp932<bang> <args>
-command! -bang -bar -complete=file -nargs=? Unicode   Utf16<bang> <args>
-
-" Tried to make a file note version
-" Don't save it because dangerous.
-command! WUtf8      setlocal fenc=utf-8
-command! WIso2022jp setlocal fenc=iso-2022-jp
-command! WCp932     setlocal fenc=cp932
-command! WEuc       setlocal fenc=euc-jp
-command! WUtf16     setlocal fenc=ucs-2le
-command! WUtf16be   setlocal fenc=ucs-2
-command! WJis       WIso2022jp
-command! WSjis      WCp932
-command! WUnicode   WUtf16
-
-" Appoint a line feed
-command! -bang -complete=file -nargs=? WUnix write<bang> ++fileformat=unix <args> | edit <args>
-command! -bang -complete=file -nargs=? WDos  write<bang> ++fileformat=dos <args>  | edit <args>
-command! -bang -complete=file -nargs=? WMac  write<bang> ++fileformat=mac <args>  | edit <args>
-
+"==============================================================================
 " Open new buffer or scratch buffer with bang
-command! -bang -nargs=? -complete=file New call <SID>newbuf(<q-args>, <q-bang>)
+command! -bang -nargs=? -complete=file BufNew call <SID>newbuf(<q-args>, <q-bang>)
 
 " Bwipeout(!) for all-purpose
-command -nargs=0 -bang Bwipeout call <SID>bwipeout(0, <q-bang>)
+command -nargs=0 -bang Bwipeout call <SID>smart_bwipeout(0, <q-bang>)
+
+" Delete the current buffer and the file
+command! -bang -nargs=0 -complete=buffer Delete call s:delete(<bang>0)
 
 " Open a file.
 command! -nargs=? -complete=file Open call <SID>open(<q-args>)
@@ -1452,6 +1514,11 @@ command! -bar -bang -nargs=? -complete=file Scouter echo Scouter(empty(<q-args>)
 
 " Make the notitle file called 'Junk'
 command! -nargs=0 JunkFile call s:make_junkfile()
+
+" Get buffer queue list for restore
+command! -nargs=0 BufQueue echo len(s:bufqueue)
+			\ ? reverse(split(substitute(join(s:bufqueue, ' '), $HOME, '~', 'g')))
+			\ : "No buffers in 's:bufqueue'."
 
 " Get buffer list like ':ls'
 command! -nargs=0 BufList call s:get_buflists('')
@@ -1481,10 +1548,10 @@ command! -nargs=1 -bang -bar -complete=file Rename call s:move(<q-args>, <q-bang
 command! -nargs=1 -bang -bar -complete=file Move call s:move(<q-args>, <q-bang>, getcwd())
 
 " Rename the current editing file
-command! -nargs=0 Rename call s:rename()
+command! -nargs=? -complete=file     Rename call s:rename(<q-args>, 'file')
 
 " Change the current editing file extention
-command! -nargs=0 ReExt call s:re_ext()
+command! -nargs=? -complete=filetype ReExt  call s:rename(<q-args>, 'ext')
 
 " View all mappings
 command! -nargs=* -complete=mapping AllMaps map <args> | map! <args> | lmap <args>
@@ -1495,20 +1562,51 @@ command! -bar DeleteHideBuffer :call s:delete_hide_buffer()
 " Delete type of nofile buffer
 command! -bar DeleteNoFileBuffer :call s:delete_no_file_buffer()
 
+" Command group opening with a specific character code again
+" In particular effective when I am garbled in a terminal
+command! -bang -bar -complete=file -nargs=? Utf8      edit<bang> ++enc=utf-8 <args>
+command! -bang -bar -complete=file -nargs=? Iso2022jp edit<bang> ++enc=iso-2022-jp <args>
+command! -bang -bar -complete=file -nargs=? Cp932     edit<bang> ++enc=cp932 <args>
+command! -bang -bar -complete=file -nargs=? Euc       edit<bang> ++enc=euc-jp <args>
+command! -bang -bar -complete=file -nargs=? Utf16     edit<bang> ++enc=ucs-2le <args>
+command! -bang -bar -complete=file -nargs=? Utf16be   edit<bang> ++enc=ucs-2 <args>
+command! -bang -bar -complete=file -nargs=? Jis       Iso2022jp<bang> <args>
+command! -bang -bar -complete=file -nargs=? Sjis      Cp932<bang> <args>
+command! -bang -bar -complete=file -nargs=? Unicode   Utf16<bang> <args>
+
+" Tried to make a file note version
+" Don't save it because dangerous.
+command! WUtf8      setlocal fenc=utf-8
+command! WIso2022jp setlocal fenc=iso-2022-jp
+command! WCp932     setlocal fenc=cp932
+command! WEuc       setlocal fenc=euc-jp
+command! WUtf16     setlocal fenc=ucs-2le
+command! WUtf16be   setlocal fenc=ucs-2
+command! WJis       WIso2022jp
+command! WSjis      WCp932
+command! WUnicode   WUtf16
+
+" Appoint a line feed
+command! -bang -complete=file -nargs=? WUnix write<bang> ++fileformat=unix <args> | edit <args>
+command! -bang -complete=file -nargs=? WDos  write<bang> ++fileformat=dos <args>  | edit <args>
+command! -bang -complete=file -nargs=? WMac  write<bang> ++fileformat=mac <args>  | edit <args>
 "}}}1
 
 " Mappings: {{{1
+"==============================================================================
 " It is likely to be changed by $VIM/vimrc.
 if has('vim_starting')
 	mapclear
 	mapclear!
 endif
 
+" Use backslash
 if g:is_mac
 	noremap ¥ \
 	noremap \ ¥
 endif
 
+" Define mapleader
 let mapleader = ","
 let maplocalleader = ","
 
@@ -1516,23 +1614,25 @@ let maplocalleader = ","
 " Smart folding close
 nnoremap <silent><C-_> :<C-u>call <SID>smart_foldcloser()<CR>
 
-" Use ,q to quit nameless buffers without confirmation or !
-nnoremap <silent> <Leader>q :<C-u>call QuitIfNameless()<CR>
-
 " Kill buffer
-nnoremap <silent> <C-x>k     :call <SID>bwipeout(0, '')<CR>
-nnoremap <silent> <C-x>K     :call <SID>bwipeout(1, 1)<CR>
-nnoremap <silent> <C-x><C-k> :call <SID>bwipeout(1, '')<CR>
+nnoremap <silent> <C-x>k     :call <SID>smart_bwipeout(0, '')<CR>
+nnoremap <silent> <C-x>K     :call <SID>smart_bwipeout(1, 1)<CR>
+nnoremap <silent> <C-x><C-k> :call <SID>smart_bwipeout(1, '')<CR>
+
+" Restore buffers
+nnoremap <silent> <C-x>u :<C-u>call <SID>buf_dequeue()<CR>
 
 " Move middle of current line (not middle of screen)
 nnoremap <silent> gm :<C-u>call <SID>move_middle_line()<CR>
 
 " Open vimrc with tab
 nnoremap <silent> <Space>. :call <SID>recycle_open('edit', $MYVIMRC)<CR>
+
+" Open the buffer again with tabpages
 command! -nargs=? -complete=buffer ROT call <SID>recycle_open('tabedit', empty(<q-args>) ? expand('#') : expand(<q-args>))
 
 " Make junkfile
-"nnoremap <silent> <Space>e  :<C-u>JunkFile<CR>
+nnoremap <silent> <Space>e  :<C-u>JunkFile<CR>
 
 " Easy typing tilda insted of backslash
 cnoremap <expr> <Bslash> HomedirOrBackslash()
@@ -1565,9 +1665,7 @@ nnoremap gj j
 nnoremap gk k
 vnoremap gj j
 vnoremap gk k
-"}}}
 
-" Warp EOF to BOF {{{
 if s:enable_eof_to_bof == s:true
 	function! Up(key)
 		if line(".") == 1
@@ -1604,8 +1702,6 @@ endif
 nnoremap <silent> <C-h> :<C-u>silent! tabnext<CR>
 nnoremap <silent> <C-l> :<C-u>silent! tabprev<CR>
 nnoremap <silent> tt  :<C-u>tabe<CR>
-"nnoremap <C-p>  gT
-"nnoremap <C-n>  gt
 "}}}
 
 " Auto pair {{{
@@ -1639,7 +1735,7 @@ nnoremap + <C-a>
 nnoremap - <C-x>
 "}}}
 
-" Disable features {{{
+" Nop features {{{
 nnoremap q: <Nop>
 nnoremap q/ <Nop>
 nnoremap q? <Nop>
@@ -1677,7 +1773,7 @@ cnoremap <C-h> <BS>
 "}}}
 
 " Folding {{{
-nnoremap <expr>l  foldclosed('.') != -1 ? 'zo' : 'l'
+nnoremap <expr>l foldclosed('.') != -1 ? 'zo' : 'l'
 nnoremap <expr>h col('.') == 1 && foldlevel(line('.')) > 0 ? 'zc' : 'h'
 nnoremap <silent>z0 :<C-u>set foldlevel=<C-r>=foldlevel('.')<CR><CR>
 "}}}
@@ -1707,7 +1803,6 @@ noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ?
 
 " Reset highlight searching
 nnoremap <silent> <ESC><ESC> :nohlsearch<CR>
-"}}}
 
 " Go to last last changes
 nnoremap <C-g> zRg;zz
@@ -1736,7 +1831,7 @@ nnoremap g# g#zz
 
 nnoremap <C-g> 1<C-g>
 noremap g<CR> g;
-nnoremap <CR> :<C-u>w<CR>
+nnoremap <silent><CR> :<C-u>silent w<CR>
 
 " swap gf and gF
 noremap gf gF
@@ -1754,9 +1849,11 @@ nnoremap Q gq
 
 nnoremap <silent>W :<C-u>keepjumps normal! }<CR>
 nnoremap <silent>B :<C-u>keepjumps normal! {<CR>
+"}}}
 "}}}1
 
 " Plugins: {{{1
+"==============================================================================
 " mru.vim {{{
 if s:bundled('mru.vim')
 	let MRU_Use_Alt_useopen = 1         "Open MRU by line number
@@ -2072,7 +2169,7 @@ endif
 " }}}
 " gundo.vim {{{
 if s:bundled('gundo.vim')
-	nmap U :<C-u>GundoToggle<CR>
+	nmap <Leader>U :<C-u>GundoToggle<CR>
 	let g:gundo_auto_preview = 0
 endif
 " }}}
@@ -2204,8 +2301,14 @@ endif
 " }}}1
 
 " Misc: {{{1
+" Experimental setup and settings that do not belong to any section
+" will be described in this section.
+"==============================================================================
 
 call s:mkdir(expand('$HOME/.vim/colors'))
+
+"hi Folded gui=bold term=standout ctermbg=LightGrey ctermfg=DarkBlue guibg=Grey30 guifg=Grey80
+"hi FoldColumn gui=bold term=standout ctermbg=LightGrey ctermfg=DarkBlue guibg=Grey guifg=DarkBlue
 
 function! s:file_complete(A,L,P) "{{{
 	let s:lists = []
@@ -2220,57 +2323,6 @@ function! s:file_complete(A,L,P) "{{{
 endfunction
 "command! -nargs=1 -complete=customlist,<SID>file_complete Edit edit<bang> <args>
 "command! -nargs=1 -complete=customlist,<SID>file_complete Cat call s:cat(<f-args>)
-"}}}
-
-" alter letter {{{
-let s:CMapABC_Entries = []
-function! s:CMapABC_Add(original_pattern, alternate_name)
-	call add(s:CMapABC_Entries, [a:original_pattern, a:alternate_name])
-endfunction
-
-cnoremap <expr> <Space>  <SID>CMapABC(1)
-"cnoremap <expr> <CR>     <SID>CMapABC(0)
-
-function! s:CMapABC(arg)
-	let cmdline = getcmdline()
-	for [original_pattern, alternate_name] in s:CMapABC_Entries
-		if cmdline =~# original_pattern
-			return a:arg ? "\<C-u>" . alternate_name . ' ' : "\<C-u>" . alternate_name . "\<CR>"
-		endif
-	endfor
-	return a:arg ? ' ' : "\<CR>"
-endfunction
-
-"call s:CMapABC_Add('^e$', 'Edit')
-call s:CMapABC_Add('^cat$', 'Cat')
-"call s:CMapABC_Add('^ls$', 'Ls')
-"}}}
-
-" CD {{{
-"command! -complete=customlist,<SID>CommandComplete_cdpath -nargs=1
-"       \ CD  cd <args>
-"
-"function! s:CommandComplete_cdpath(arglead, cmdline, cursorpos)
-"  return  split(globpath(&cdpath, a:arglead . '*/'), "\n")
-"endfunction
-"
-"let s:CMapABC_Entries = []
-"function! s:CMapABC_Add(original_pattern, alternate_name)
-"  call add(s:CMapABC_Entries, [a:original_pattern, a:alternate_name])
-"endfunction
-"
-"cnoremap <expr> <Space>  <SID>CMapABC()
-"function! s:CMapABC()
-"  let cmdline = getcmdline()
-"  for [original_pattern, alternate_name] in s:CMapABC_Entries
-"    if cmdline =~# original_pattern
-"      return "\<C-u>" . alternate_name . ' '
-"    endif
-"  endfor
-"  return ' '
-"endfunction
-"
-"call s:CMapABC_Add('^cd', 'CD')
 "}}}
 
 augroup cursor-highlight-emphatic "{{{
@@ -2316,6 +2368,42 @@ augroup vimrc-auto-mkdir "{{{
 	endfunction
 augroup END "}}}
 
+" Always only one window when opening files
+augroup file-only-window
+	autocmd!
+	autocmd BufRead * execute ":only"
+augroup END
+
+" Move current working directory automatically
+augroup cd-file-parentdir
+	autocmd!
+	"autocmd BufRead,BufEnter * lcd %:p:h
+	autocmd BufRead,BufEnter * execute ":lcd " . expand("%:p:h")
+augroup END
+
+" Display a path in commandline when opening
+augroup echo-file-path
+	autocmd!
+	autocmd WinEnter * execute "normal! 1\<C-g>"
+augroup END
+
+"Do not insert comment when inputing newline
+augroup no-comment
+	autocmd!
+	autocmd FileType * setlocal formatoptions-=ro
+augroup END
+
+augroup gvim-window-siz
+	autocmd!
+	autocmd GUIEnter * setlocal lines=50
+	autocmd GUIEnter * setlocal columns=160
+augroup END
+
+augroup only-window-help 
+	autocmd!
+	"autocmd BufEnter *.jax only
+	autocmd Filetype help only
+augroup END
 " Launched with -b option {{{
 if has('vim_starting') && &binary
 	augroup vimrc-xxd
@@ -2366,46 +2454,15 @@ set viewoptions+=slash,unix
 augroup vimrc-view
 	autocmd!
 	autocmd BufLeave * if expand('%') !=# '' && &buftype ==# ''
-				\    |   mkview
-				\    | endif
+				\ | mkview
+				\ | endif
 	autocmd BufReadPost * if !exists('b:view_loaded') &&
-				\           expand('%') !=# '' && &buftype ==# ''
-				\       |   silent! loadview
-				\       |   let b:view_loaded = 1
-				\       | endif
-	autocmd VimLeave * call map(split(glob(&viewdir . '/*'), "\n"),
-				\                           'delete(v:val)')
+				\   expand('%') !=# '' && &buftype ==# ''
+				\ | silent! loadview
+				\ | let b:view_loaded = 1
+				\ | endif
+	autocmd VimLeave * call map(split(glob(&viewdir . '/*'), "\n"), 'delete(v:val)')
 augroup END "}}}
-
-" Backup automatically {{{
-set backup
-if g:is_windows
-	set backupdir=$VIM/backup
-	set backupext=.bak
-else
-	call s:mkdir(expand('~/.vim/backup'))
-	autocmd BufWritePre * call UpdateBackupFile()
-
-	function! UpdateBackupFile()
-		let dir = strftime("~/.backup/vim/%Y/%m/%d", localtime())
-		if !isdirectory(dir)
-			let retval = system("mkdir -p " . dir)
-			let retval = system("chown goth:staff " . dir)
-		endif
-		execute "set backupdir=" . dir
-		unlet dir
-		let ext = strftime("%H_%M_%S", localtime())
-		execute "set backupext=." . ext
-		unlet ext
-	endfunction
-endif
-" }}}
-
-" Swap settings {{{
-call s:mkdir(expand('~/.vim/swap'))
-set swapfile
-set directory=~/.vim/swap
-" }}}
 
 " Automatically save and restore window size {{{
 augroup vim-save-window

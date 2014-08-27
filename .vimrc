@@ -41,6 +41,7 @@
 
 " Initial: {{{1
 "==============================================================================
+
 " Skip initialization for vim-tiny or vim-small
 if !1 | finish | endif
 
@@ -386,9 +387,9 @@ function! s:b4b4r07() "{{{
 	execute 'syntax match Directory display ' . '"'. '^\s\+\U\+$'. '"'
 	setlocal nomodifiable
 	redraw
-  let char = getchar()
+	let char = getchar()
 	silent enew
-  call feedkeys(type(char) == type(0) ? nr2char(char) : char)
+	call feedkeys(type(char) == type(0) ? nr2char(char) : char)
 endfunction "}}}
 function! s:SID() "{{{
 	return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSID$')
@@ -401,6 +402,24 @@ function! s:has_plugin(name) "{{{
 				\   || globpath(&rtp, nosuffix, 1) != ''
 				\   || globpath(&rtp, 'autoload/' . suffix, 1) != ''
 				\   || globpath(&rtp, 'autoload/' . tolower(suffix), 1) != ''
+endfunction "}}}
+function! s:escape_filename(fname) "{{{
+	let esc_filename_chars = ' *?[{`$%#"|!<>();&' . "'\t\n"
+	if exists("*fnameescape")
+		return fnameescape(a:fname)
+	else
+		return escape(a:fname, esc_filename_chars)
+	endif
+endfunction "}}}
+function! s:is_exist(path) "{{{
+	let path = glob(simplify(a:path))
+	if exists("*s:escape_filename")
+		let path = s:escape_filename(path)
+	endif
+	return empty(path) ? 0 : 1
+endfunction "}}}
+function! s:get_dir_separator() "{{{
+  return fnamemodify('.', ':p')[-1 :]
 endfunction "}}}
 function! s:echomsg(hl, msg) "{{{
 	execute 'echohl' a:hl
@@ -477,28 +496,6 @@ function! s:smart_foldcloser() "{{{
 	normal! zM
 endfunction
 "}}}
-function! s:rename() "{{{
-	let filename = input('New filename: ', expand('%:p:h') . '/', 'file')
-	if filename != '' && filename !=# 'file'
-		execute 'file' filename
-		execute 'setlocal filetype=' . fnamemodify(filename, ':e')
-		write
-		call delete(expand('#'))
-	endif
-endfunction "}}}
-function! s:re_ext() "{{{
-	let ext = input('New ext: ', '', 'filetype')
-	let filename = expand('%:p:t:r')
-	if !empty(ext)
-		let filename .= '.' . ext
-	endif
-	if filename != '' && filename !=# 'file'
-		execute 'file' filename
-		write
-		execute 'setlocal filetype=' . expand('%:e')
-		call delete(expand('#'))
-	endif
-endfunction "}}}
 function! s:rename(new, type) "{{{
 	if a:type ==# 'file'
 		if empty(a:new)
@@ -571,6 +568,7 @@ function! s:random_string(n) "{{{
 		call add(s, (chars[s:rand(max)]))
 	endfor
 	let @+ = join(s, '')
+	echo join(s, '')
 endfunction "}}}
 function! s:move(file, bang, base) "{{{
 	let pwd = getcwd()
@@ -763,7 +761,7 @@ endfunction
 "}}}
 function! s:buf_enqueue(buf) "{{{
 	let buf = fnamemodify(a:buf, ':p')
-	if bufexists(buf) && buflisted(buf) "&& filereadable(buf)
+	if bufexists(buf) && buflisted(buf) && filereadable(buf)
 		let idx = match(s:bufqueue ,buf)
 		if idx != -1
 			call remove(s:bufqueue, idx)
@@ -771,14 +769,25 @@ function! s:buf_enqueue(buf) "{{{
 		call add(s:bufqueue, buf)
 	endif
 endfunction "}}}
-function! s:buf_dequeue() "{{{
+function! s:buf_dequeue(buf) "{{{
 	if empty(s:bufqueue)
-		echohl WarningMsg
-		echo   'No buffer to restore'
-		echohl None
-		return
+		throw 'bufqueue: Empty queue.'
 	endif
-	execute 'edit' remove(s:bufqueue, -1)
+
+	if a:buf =~# '\d\+'
+		return remove(s:bufqueue, a:buf)
+	else
+		return remove(s:bufqueue, index(s:bufqueue, a:buf))
+	endif
+endfunction "}}}
+function! s:buf_restore() "{{{
+	try
+		execute 'edit' s:buf_dequeue(-1)
+	catch /^bufqueue:/
+		echohl ErrorMsg
+		echomsg v:exception
+		echohl None
+	endtry
 endfunction "}}}
 function! s:toggle_option(option_name) "{{{
 	execute 'setlocal' a:option_name . '!'
@@ -987,6 +996,11 @@ autocmd CursorHold,BufWritePost * unlet! b:trailing_space_warning
 " In this section, the settings a higher priority than the setting items
 " of the other sections will be described.
 "==============================================================================
+if !s:has_plugin('neobundle.vim')
+	command! B4B4R07 call s:b4b4r07()
+	autocmd VimEnter * call s:b4b4r07()
+endif
+
 " Restore the buffer that has been deleted {{{
 let s:bufqueue = []
 augroup buffer-queue-restore
@@ -1033,6 +1047,7 @@ set directory=~/.vim/swap
 " In this section, interface of Vim, that is, colorscheme, statusline and
 " tabpages line is set.
 "==============================================================================
+
 " Essentials
 syntax enable
 syntax on
@@ -1102,82 +1117,14 @@ if exists('*GetDate')
 endif
 "}}}
 
-function! MakeStatusLine() "{{{
-	" There are three patterns
-	" 1. If buftabs.vim doesn't exist
-	" 2. If buftabs.vim exists [*]
-	" 3. buftabs.vim exists, but if it is disabled
-	" (1) is MakeStatusLine
-	" (2) is buftabs.vim (g:enable_buftabs == s:true)
-	" (3) is buftabs.vim (g:enable_buftabs == s:false)
-
-	" MyColor {{{
-	highlight StatusMyColor0 ctermfg=black ctermbg=white cterm=bold guifg=black guibg=white gui=none
-	highlight StatusMyColor1 ctermfg=black ctermbg=white cterm=none guifg=black guibg=white gui=none
-	highlight StatusMyColor2 ctermfg=white ctermbg=black cterm=none guifg=white guibg=black gui=none
-	highlight link StatusDefaultColor StatusLine
-	"}}}
-
-	let line = ''
-	"let line .= '%<'       " Truncate point.
-	let line .= '%#StatusMyColor1#'
-	let line .= '[%n] '
-	"let line .= '%#StatusMyColor0#'
-	let line .= '%{GetBufname("", 0)} '
-	let line .= '%m'       " Modified flag.
-	let line .= '%#StatusDefaultColor#'
-
-	if has('multi_statusline') && 2 <= &statuslineheight
-		let line .= '%@'       " Separation point.
-	else
-		let line .= '%='       " Separation point.
-	endif
-
-	let line .= '%{GetTildaPath(0)} '
-	let line .= '%#StatusMyColor1#'
-	let line .= '%y'       " Filetype.
-	let line .= '%r'       " Readonly flag.
-	let line .= '%h'       " Help buffer hlag.
-	let line .= '%w'       " Preview window flag.
-	" Character encoding
-	let line .= "[%{(&fenc!=#''?&fenc:&enc).(&bomb?'(BOM)':'')}:"
-	" File format (+ &binary and &endofline)
-	let line .= "%{&ff.(&bin?'(BIN'.(&eol?'':'-noeol').')':'')}]"
-
-	let line .= '[%{GetFileSize()}]' " Rough file size.
-	let line .= '[%{GetCharacterCode()}]' " Character code under the cursor.
-	let line .= ' %l/%LL %2vC'   " Line and column.
-	let line .= ' %3p%%'         " Percentage through file in lines.
-
-	"let line .= [WC=%{exists('*WordCount') ? WordCount() : []}]
-	if exists('*WordCount')
-		let line .= ' [WC=%{WordCount()}]'
-	endif
-	let line .= ' (%{GetDate()})'
-
-	return line
-endfunction "}}}
-
 function! s:tabpage_label(n) "{{{
 	let n = a:n
 	let bufnrs = tabpagebuflist(n)
-	let curbufnr = bufnrs[tabpagewinnr(n) - 1]  " first window, first appears
+	let curbufnr = bufnrs[tabpagewinnr(n) - 1]
 
 	let hi = n == tabpagenr() ? 'TabLineSel' : 'TabLine'
 
 	let label = ''
-	"if getbufvar(curbufnr, '&filetype') =~# '^lingr-'
-	"	" lingr-vim
-	"	let unread = lingr#unread_count()
-	"	let status = lingr#status()
-
-	"	let label .= '%#' . hi . '#'
-	"	let label .= 'lingr - ' . status
-	"	if unread != 0
-	"		let label .= '(' . unread . ')'
-	"	endif
-
-	"else
 	let no = len(bufnrs)
 	if no == 1
 		let no = ''
@@ -1190,9 +1137,7 @@ function! s:tabpage_label(n) "{{{
 		let label .= '%#' . hi . 'Number#' . no
 	endif
 	let label .= '%#' . hi . '#'
-	"let label .= mod . sp . fname
 	let label .= fname . sp . mod
-	"endif
 
 	return '%' . a:n . 'T' . label . '%T%#TabLineFill#'
 endfunction "}}}
@@ -1200,18 +1145,10 @@ endfunction "}}}
 function! MakeTabLine() "{{{
 	let titles = map(range(1, tabpagenr('$')), 's:tabpage_label(v:val)')
 	let sep = ' | '
-
 	let tabs = join(titles, sep) . sep . '%#TabLineFill#%T'
-	let info = '%#TabLine#'
-	"if exists('t:tabline_extra')
-	"	let info .= t:tabline_extra . sep
-	"endif
-	if exists('*Uptime')
-		let info .= Uptime(2) . sep
-	endif
-	"if s:has_plugin('reanimate') && reanimate#is_saved()
-	"	let info .= reanimate#last_point() . sep
-	"endif
+
+	hi TabLinePwd ctermfg=white
+	let info = '%#TabLinePwd#'
 	let info .= fnamemodify(getcwd(), ':~') . ' '
 	return tabs . '%=' . info
 endfunction "}}}
@@ -1221,17 +1158,16 @@ if !s:has_plugin('lightline.vim')
 	if has('syntax')
 		augroup InsertHook
 			autocmd!
-			autocmd InsertEnter * call s:StatusLine('Enter')
-			autocmd InsertLeave * call s:StatusLine('Leave')
+			autocmd InsertEnter * call s:colorize_statusline_insert('Enter')
+			autocmd InsertLeave * call s:colorize_statusline_insert('Leave')
 		augroup END
 	endif
-	"highlight StatusLine ctermfg=black ctermbg=white cterm=none guifg=black guibg=white gui=none
 
-	let g:hi_insert = 'highlight StatusLine guifg=black guibg=darkyellow gui=none ctermfg=black ctermbg=yellow cterm=none'
+	let g:hi_insert = 'highlight StatusLine guifg=black guibg=darkyellow gui=none ctermfg=black ctermbg=darkyellow cterm=none'
 	let s:slhlcmd = ''
-	function! s:StatusLine(mode)
+	function! s:colorize_statusline_insert(mode)
 		if a:mode == 'Enter'
-			silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
+			silent! let s:slhlcmd = 'highlight ' . s:get_statusline_highlight('StatusLine')
 			silent exec g:hi_insert
 		else
 			highlight clear StatusLine
@@ -1239,7 +1175,7 @@ if !s:has_plugin('lightline.vim')
 		endif
 	endfunction
 
-	function! s:GetHighlight(hi)
+	function! s:get_statusline_highlight(hi)
 		redir => hl
 		exec 'highlight '.a:hi
 		redir END
@@ -1297,30 +1233,19 @@ if has('multi_byte_ime') || has('xim')
 	inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
 endif "}}}
 
-" Display JISX0208Space {{{
-if has("syntax")
-	" the line is required for POD bug fix
-	function! ActivateInvisibleIndicator()
-		syntax match InvisibleJISX0208Space "　" display containedin=ALL
-		highlight InvisibleJISX0208Space term=underline ctermbg=Blue guibg=darkgray gui=underline
-	endfunction
-	augroup highlight-zenkaku-space
-		autocmd!
-		autocmd BufNew,BufRead * call ActivateInvisibleIndicator()
-	augroup END
-endif
-"augroup hilightIdegraphicSpace
-"  autocmd!
-"  autocmd VimEnter,ColorScheme * highlight IdeographicSpace term=underline ctermbg=DarkGreen guibg=DarkGreen
-"  autocmd WinEnter * match IdeographicSpace /　/
-"augroup END
-"}}}
+" Display zenkaku-space {{{
+augroup hilight-idegraphic-space
+	autocmd!
+	autocmd VimEnter,ColorScheme * highlight IdeographicSpace term=underline ctermbg=DarkGreen guibg=DarkGreen
+	autocmd WinEnter * match IdeographicSpace /　/
+augroup END "}}}
 "}}}1
 
 " Options: {{{1
 " SEE ALSO :help 'option-list'
 "==============================================================================
-" Not redraw
+
+" No redraw
 set lazyredraw
 
 " Fast terminal connection
@@ -1530,6 +1455,11 @@ set guioptions-=b
 
 " Commands: {{{1
 "==============================================================================
+
+command! -bar EchoRTP       echo substitute(&runtimepath, ',', '\n', 'g')
+"command! -bar EchoHighlight echo synIDattr(synID(line('.'),col('.'),0),'name') synIDattr(synIDtrans(synID(line('.'),col('.'),1)),'name')
+command! -bar EchoBufKind   setlocal bufhidden? buftype? swapfile? buflisted?
+
 " Open new buffer or scratch buffer with bang
 command! -bang -nargs=? -complete=file BufNew call <SID>newbuf(<q-args>, <q-bang>)
 
@@ -1630,6 +1560,7 @@ command! -bang -complete=file -nargs=? WMac  write<bang> ++fileformat=mac <args>
 
 " Mappings: {{{1
 "==============================================================================
+
 " It is likely to be changed by $VIM/vimrc.
 if has('vim_starting')
 	mapclear
@@ -1650,13 +1581,18 @@ let maplocalleader = ","
 " Smart folding close
 nnoremap <silent><C-_> :<C-u>call <SID>smart_foldcloser()<CR>
 
+"map <C-k> <Nop>
+"map! <C-k> <Nop>
+nnoremap <C-k> <C-k><C-a>
+
 " Kill buffer
 nnoremap <silent> <C-x>k     :call <SID>smart_bwipeout(0, '')<CR>
 nnoremap <silent> <C-x>K     :call <SID>smart_bwipeout(1, 1)<CR>
 nnoremap <silent> <C-x><C-k> :call <SID>smart_bwipeout(1, '')<CR>
 
 " Restore buffers
-nnoremap <silent> <C-x>u :<C-u>call <SID>buf_dequeue()<CR>
+"nnoremap <silent> <C-x>u :<C-u>call <SID>buf_dequeue()<CR>
+nnoremap <silent> <C-x>u :<C-u>call <SID>buf_restore()<CR>
 
 " Move middle of current line (not middle of screen)
 nnoremap <silent> gm :<C-u>call <SID>move_middle_line()<CR>
@@ -1890,6 +1826,7 @@ nnoremap <silent>B :<C-u>keepjumps normal! {<CR>
 
 " Plugins: {{{1
 "==============================================================================
+
 " mru.vim {{{
 if s:bundled('mru.vim')
 	let MRU_Use_Alt_useopen = 1         "Open MRU by line number
@@ -2268,26 +2205,6 @@ if s:bundled('vim-portal')
 	nnoremap <Leader>pr :<C-u>PortalReset<CR>
 endif
 " }}}
-" vim-gf-user {{{
-if s:bundled('vim-gf-user')
-	function! GfUserCLAngleBracket()
-		let path = matchstr(getline("."), '\v\<\zs([^>]+)\ze\>')
-		let path = fnamemodify(path, '%:p')
-		let [whole, path, linecol; rest] = matchlist(path, '\v^([^"]+)(".+)?$')
-		if path == ''
-			return 0
-		endif
-		let path = split(expand(path), '\n')[0]
-		if linecol =~ ','
-			let [whole, line, column; rest] = matchlist(linecol, '\v^"(.+),(.+)$')
-			return {'path': path, 'line': str2nr(line), 'col': str2nr(column)}
-		else
-			return {'path': path, 'line': str2nr(linecol[1:]), 'col': 0}
-		endif
-	endfunction
-	call gf#user#extend('GfUserCLAngleBracket', 1000)
-endif
-" }}}
 " restart.vim {{{
 if s:bundled('restart.vim')
 	if has('gui_running')
@@ -2340,26 +2257,60 @@ endif
 " Experimental setup and settings that do not belong to any section
 " will be described in this section.
 "==============================================================================
-if !s:has_plugin('neobundle.vim')
-	command! B4B4R07 call s:b4b4r07()
-	autocmd VimEnter * call s:b4b4r07()
-endif
 
 call s:mkdir(expand('$HOME/.vim/colors'))
 
-"hi Folded gui=bold term=standout ctermbg=LightGrey ctermfg=DarkBlue guibg=Grey30 guifg=Grey80
-"hi FoldColumn gui=bold term=standout ctermbg=LightGrey ctermfg=DarkBlue guibg=Grey guifg=DarkBlue
+nnoremap <silent> ciy ciw<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
+nnoremap <silent> cy   ce<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
 
-function! s:file_complete(A,L,P) "{{{
-	let s:lists = []
-	let l:filelist = glob(getcwd() . "/*")
+function! s:tabdrop(target)
+	let target = empty(a:target) ? expand('%:p') : bufname(a:target + 0)
+	if !empty(target) && bufexists(target) && buflisted(target)
+		execute 'tabedit' target
+	else
+		echohl WarningMsg | echo "Could not tabedit" | echohl None
+	endif
+endfunction
+command! -nargs=? Tab call s:tabdrop(<q-args>)
 
-	for file in split(l:filelist, "\n")
+function! s:to_fullpath(filename)
+	let name = substitute(fnamemodify(a:filename, ":p"), '\', '/', "g")
+	if filereadable(name)
+		return name
+	else
+		return a:filename
+	endif
+endfunction
+
+function! s:remove_swapfile() "{{{
+	let save_wilfignore = &wildignore
+	setlocal wildignore=
+	let target = &directory
+	let list = split(glob(target."**/*.sw{p,o}"), '\n')
+	for file in list
+		call delete(file)
+		echo file
+	endfor
+	let &wildignore = save_wilfignore
+endfunction "}}}
+command! RemoveSwapfile call <SID>remove_swapfile()
+
+function! s:mkdir(dir)
+	if !isdirectory(a:dir)
+		call mkdir(a:dir, "p")
+	endif
+endfunction
+
+function! s:file_complete(A, L, P) "{{{
+	let lists = []
+	let filelist = glob(getcwd() . "/*")
+
+	for file in split(filelist, "\n")
 		if !isdirectory(file)
-			call add(s:lists, fnamemodify(file, ":t"))
+			call add(lists, fnamemodify(file, ":t"))
 		endif
 	endfor
-	return s:lists
+	return lists
 endfunction
 "command! -nargs=1 -complete=customlist,<SID>file_complete Edit edit<bang> <args>
 "command! -nargs=1 -complete=customlist,<SID>file_complete Cat call s:cat(<f-args>)
@@ -2370,17 +2321,14 @@ augroup cursor-highlight-emphatic "{{{
 	autocmd CursorMoved,CursorMovedI,WinLeave * hi! link CursorLine CursorLine | hi! link CursorColumn CursorColumn
 	autocmd CursorHold,CursorHoldI            * hi! link CursorLine Visual     | hi! link CursorColumn Visual
 augroup END "}}}
-
 augroup vim-startup-nomodified "{{{
 	autocmd!
 	autocmd VimEnter * set nomodified
 augroup END "}}}
-
 augroup auto-make-directory "{{{
 	autocmd!
 	autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
 augroup END "}}}
-
 augroup word-count "{{{
 	autocmd!
 	autocmd BufWinEnter,InsertLeave,CursorHold * if exists('*WordCount') | call WordCount('char') | endif
@@ -2388,14 +2336,12 @@ augroup END
 let s:WordCountStr = ''
 let s:WordCountDict = {'word': 2, 'char': 3, 'byte': 4}
 "}}}
-
 augroup ctrl-g-information "{{{
 	autocmd!
 	"autocmd CursorHold,CursorHoldI * redraw
 	"autocmd CursorHold,CursorHoldI * execute "normal! 1\<C-g>"
 	"autocmd CursorHold,CursorHoldI * execute "echo GetFileInfo()"
 augroup END "}}}
-
 augroup vimrc-auto-mkdir "{{{
 	autocmd!
 	autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
@@ -2407,41 +2353,33 @@ augroup vimrc-auto-mkdir "{{{
 		endif
 	endfunction
 augroup END "}}}
-
 augroup file-only-window "{{{
 	autocmd!
 	autocmd BufRead * execute ":only"
 augroup END "}}}
-
-augroup cd-file-parentdir
+augroup cd-file-parentdir "{{{
 	autocmd!
 	"autocmd BufRead,BufEnter * lcd %:p:h
 	autocmd BufRead,BufEnter * execute ":lcd " . expand("%:p:h")
-augroup END
-
-" Display a path in commandline when opening
-augroup echo-file-path
+augroup END "}}}
+augroup echo-file-path "{{{
 	autocmd!
 	autocmd WinEnter * execute "normal! 1\<C-g>"
-augroup END
-
-"Do not insert comment when inputing newline
-augroup no-comment
+augroup END "}}}
+augroup no-comment "{{{
 	autocmd!
 	autocmd FileType * setlocal formatoptions-=ro
-augroup END
-
-augroup gvim-window-siz
+augroup END "}}}
+augroup gvim-window-siz "{{{
 	autocmd!
 	autocmd GUIEnter * setlocal lines=50
 	autocmd GUIEnter * setlocal columns=160
-augroup END
-
-augroup only-window-help 
+augroup END "}}}
+augroup only-window-help "{{{
 	autocmd!
 	"autocmd BufEnter *.jax only
 	autocmd Filetype help only
-augroup END
+augroup END "}}}
 
 " Launched with -b option {{{
 if has('vim_starting') && &binary
@@ -2523,267 +2461,233 @@ if s:enable_save_window_position
 	endif
 endif "}}}
 
+" MRU {{{
 if !s:has_plugin('mru.vim')
-" MRU START {{{
-" MRU configuration variables {{{
-if !exists('s:MRU_File')
-	if has('unix') || has('macunix')
-		let s:MRU_File = $HOME . '/.vim_mru_files'
-	else
-		let s:MRU_File = $VIM . '/_vim_mru_files'
-		if has('win32')
-			if $USERPROFILE != ''
-				let s:MRU_File = $USERPROFILE . '\_vim_mru_files'
+	" MRU configuration variables {{{
+	if !exists('s:MRU_File')
+		if has('unix') || has('macunix')
+			let s:MRU_File = $HOME . '/.vim_mru_files'
+		else
+			let s:MRU_File = $VIM . '/_vim_mru_files'
+			if has('win32')
+				if $USERPROFILE != ''
+					let s:MRU_File = $USERPROFILE . '\_vim_mru_files'
+				endif
 			endif
 		endif
 	endif
-endif
-
-if !exists('s:MRU_Max_Entries')
-	let s:MRU_Max_Entries = 100
-endif
-
-if !exists('s:MRU_Window_Height')
-	let s:MRU_Window_Height = &lines / 3
-endif
-
-if !exists('s:MRU_Auto_Remove_Deadfiles')
-	let s:MRU_Auto_Remove_Deadfiles = 1
-endif
-"}}}
-function! s:MRU_LoadList() "{{{
-	if filereadable(s:MRU_File)
-		let s:MRU_files = readfile(s:MRU_File)
-		if s:MRU_files[0] =~# '^\s*" Most recently edited files in Vim'
-			let s:MRU_files = []
-			call remove(s:MRU_files, 0)
-		elseif s:MRU_files[0] =~# '^#'
-			call remove(s:MRU_files, 0)
+	"}}}
+	function! s:MRU_LoadList() "{{{
+		if filereadable(s:MRU_File)
+			let s:MRU_files = readfile(s:MRU_File)
+			if s:MRU_files[0] =~# '^#'
+				call remove(s:MRU_files, 0)
+			else
+				let s:MRU_files = []
+			endif
 		else
 			let s:MRU_files = []
 		endif
-	else
-		let s:MRU_files = []
-	endif
-endfunction
-"}}}
-function! s:MRU_SaveList() "{{{
-	let l = []
-	call add(l, '# Most recently edited files in Vim (version 3.0)')
-	call extend(l, s:MRU_files)
-	call writefile(l, s:MRU_File)
-endfunction "}}}
-function! s:MRU_AddList(buf) "{{{
-	if s:mru_list_locked
-		return
-	endif
-
-	let fname = fnamemodify(bufname(a:buf + 0), ':p')
-	if fname == ''
-		return
-	endif
-
-	if &buftype != ''
-		return
-	endif
-
-	let idx = index(s:MRU_files, fname)
-	if idx == -1
-		if !filereadable(fname)
+	endfunction
+	"}}}
+	function! s:MRU_SaveList() "{{{
+		let l = []
+		call add(l, '# Most recently used files list')
+		call extend(l, s:MRU_files)
+		call writefile(l, s:MRU_File)
+	endfunction "}}}
+	function! s:MRU_AddList(buf) "{{{
+		if s:mru_list_locked
 			return
 		endif
-	endif
 
-	call s:MRU_LoadList()
-	call filter(s:MRU_files, 'v:val !=# fname')
-	call insert(s:MRU_files, fname, 0)
-
-	if len(s:MRU_files) > s:MRU_Max_Entries
-		call remove(s:MRU_files, s:MRU_Max_Entries, -1)
-	endif
-
-	call s:MRU_SaveList()
-
-	let bname = '__MRU_Files__'
-	let winnum = bufwinnr(bname)
-	if winnum != -1
-		let cur_winnr = winnr()
-		call s:MRU_Create_Window()
-		if winnr() != cur_winnr
-			exe cur_winnr . 'wincmd w'
+		let fname = fnamemodify(bufname(a:buf + 0), ':p')
+		if fname == ''
+			return
 		endif
-	endif
-endfunction "}}}
-function! s:MRU_RemoveList(...) "{{{
-	call s:MRU_LoadList()
-	let lnum = line('.')
-	if a:0
+
+		if &buftype != ''
+			return
+		endif
+
+		if index(s:MRU_files, fname) == -1
+			if !filereadable(fname)
+				return
+			endif
+		endif
+
+		call s:MRU_LoadList()
+		call filter(s:MRU_files, 'v:val !=# fname')
+		call insert(s:MRU_files, fname, 0)
+
+		"let s:MRU_Max_Entries = 100
+		"if len(s:MRU_files) > s:MRU_Max_Entries
+		"	call remove(s:MRU_files, s:MRU_Max_Entries, -1)
+		"endif
+
+		call s:MRU_SaveList()
+
+		let bname = '__MRU_Files__'
+		let winnum = bufwinnr(bname)
+		if winnum != -1
+			let cur_winnr = winnr()
+			call s:MRU_Create_Window()
+			if winnr() != cur_winnr
+				exe cur_winnr . 'wincmd w'
+			endif
+		endif
+	endfunction "}}}
+	function! s:MRU_RemoveList() "{{{
+		call s:MRU_LoadList()
+		let lnum = line('.')
 		call remove(s:MRU_files, line('.')-1)
-	else
-		let idx = 0
-		for file in s:MRU_files
-			if !filereadable(file)
-				call remove(s:MRU_files, idx)
+		call s:MRU_SaveList()
+		close
+		call s:MRU_Create_Window()
+		call cursor(lnum, 1)
+	endfunction "}}}
+	function! s:MRU_Open_File() range "{{{
+		for f in getline(a:firstline, a:lastline)
+			if f == ''
 				continue
 			endif
-			let idx += 1
+
+			let file = substitute(f, '^.*| ','','')
+			let winnum = bufwinnr('^' . file . '$')
+			if winnum != -1
+				exe winnum . 'wincmd w'
+			else
+				silent! close
+			endif
+			exe 'edit ' . fnameescape(substitute(file, '\\', '/', 'g'))
 		endfor
-	endif
-	if s:MRU_files == []
-		let s:mlist = ['']
-		close
-		MRU
-		return
-	endif
-	call s:MRU_SaveList()
-	close
-	MRU
-	call cursor(lnum, 1)
-	redraw |echo 'MRU : Remove dead files from MRU'
-endfunction "}}}
-function! s:MRU_Open_File() range "{{{
-	let fnames = getline(a:firstline, a:lastline)
-
-	for f in fnames
-		if f == ''
-			continue
+	endfunction "}}}
+	function! s:MRU_Create_Window() "{{{
+		if &filetype == 'mru' && bufname("%") ==# '__MRU_Files__'
+			quit
+			return
 		endif
 
-		let file = substitute(f, '^.*| ','','')
-		let winnum = bufwinnr('^' . file . '$')
-		if winnum != -1
-			exe winnum . 'wincmd w'
-		else
-			silent! close
-		endif
-		exe 'edit ' . fnameescape(substitute(file, '\\', '/', 'g'))
-	endfor
-endfunction "}}}
-function! s:MRU_Create_Window() "{{{
-	if &filetype == 'mru'
-		quit
-		return
-	endif
-
-	call s:MRU_LoadList()
-	if empty(s:MRU_files)
-		echohl WarningMsg | echo 'MRU file list is empty' | echohl None
-		return
-	endif
-
-	let bname = '__MRU_Files__'
-	" If the window is already open, jump to it
-	let winnum = bufwinnr(bname)
-	if winnum != -1
-		if winnr() != winnum
-			" If not already in the window, jump to it
-			exe winnum . 'wincmd w'
+		call s:MRU_LoadList()
+		if empty(s:MRU_files)
+			echohl WarningMsg | echo 'MRU file list is empty' | echohl None
+			return
 		endif
 
-		setlocal modifiable
-		" Delete the contents of the buffer to the black-hole register
-		silent! %delete _
-	else
+		let bname = '__MRU_Files__'
+		"let winnum = bufwinnr(bname)
+		"if winnum != -1
+		"	if winnr() != winnum
+		"		exe winnum . 'wincmd w'
+		"	endif
+
+		"	setlocal modifiable
+		"	" Delete the contents of the buffer to the black-hole register
+		"	silent! %delete _
+		"else
 		" If the __MRU_Files__ buffer exists, then reuse it. Otherwise open
 		" a new buffer
 		let bufnum = bufnr(bname)
-		if bufnum == -1
-			let wcmd = bname
-		else
-			let wcmd = '+buffer' . bufnum
-		endif
+		"if bufnum == -1
+		"	let wcmd = bname
+		"else
+		"	let wcmd = '+buffer' . bufnum
+		"endif
+		let wcmd = bufnum == -1 ? bname : '+buffer' . bufnum
+		let s:MRU_Window_Height = &lines / 3
 		exe 'silent! botright ' . s:MRU_Window_Height . 'split ' . wcmd
-	endif
+		"endif
 
-	" Mark the buffer as scratch
-	setlocal buftype=nofile
-	setlocal bufhidden=delete
-	setlocal noswapfile
-	setlocal nowrap
-	setlocal nobuflisted
-	setlocal filetype=mru
-	setlocal winfixheight
-	setlocal modifiable
+		" Mark the buffer as scratch
+		setlocal buftype=nofile
+		setlocal bufhidden=delete
+		setlocal noswapfile
+		setlocal nowrap
+		setlocal nobuflisted
+		setlocal filetype=mru
+		setlocal winfixheight
+		setlocal modifiable
 
-	let old_cpoptions = &cpoptions
-	set cpoptions&vim
+		let old_cpoptions = &cpoptions
+		set cpoptions&vim
 
-	" Create mappings to select and edit a file from the MRU list
-	nnoremap <buffer> <silent> <CR> :call <SID>MRU_Open_File()<CR>
-	vnoremap <buffer> <silent> <CR> :call <SID>MRU_Open_File()<CR>
-	nnoremap <buffer> <silent> q    :close<CR>
-	nnoremap <buffer> <silent> R    :call <SID>MRU_RemoveList()<CR>
-	nnoremap <buffer> <silent> K    :call <SID>MRU_RemoveList('force')<CR>
-	nnoremap <buffer> <silent> S    :setlocal modifiable<CR>:sort<CR>:setlocal nomodifiable<CR>
-	nnoremap <buffer> <silent> U    :MRU<CR>
+		" Create mappings to select and edit a file from the MRU list
+		nnoremap <buffer> <silent> <CR> :call <SID>MRU_Open_File()<CR>
+		vnoremap <buffer> <silent> <CR> :call <SID>MRU_Open_File()<CR>
+		"nnoremap <buffer> <silent> q    :close<CR>
+		"nnoremap <buffer> <silent> R    :call <SID>MRU_RemoveList()<CR>
+		"nnoremap <buffer> <silent> K    :call <SID>MRU_RemoveList('force')<CR>
+		nnoremap <buffer> <silent> K    :call <SID>MRU_RemoveList()<CR>
+		nnoremap <buffer> <silent> S    :setlocal modifiable<CR>:sort<CR>:setlocal nomodifiable<CR>
 
-	" Restore the previous cpoptions settings
-	let &cpoptions = old_cpoptions
+		" Restore the previous cpoptions settings
+		let &cpoptions = old_cpoptions
 
-	let output = copy(s:MRU_files)
+		let output = copy(s:MRU_files)
 
-	if s:MRU_Auto_Remove_Deadfiles
-		let idx = 0
-		for file in output
-			if !filereadable(file)
-				call remove(output, idx)
-				continue
-			endif
-			let idx += 1
-		endfor
-	endif
-
-	silent! 0put =output
-
-	" Delete the empty line at the end of the buffer
-	silent! $delete _
-	let glist = getline(1, '$')
-	let max = 0
-	let max_h = 0
-	for idx in range(0, len(glist)-1)
-		if strlen(fnamemodify(glist[idx], ':t')) > max
-			let max = strlen(fnamemodify(glist[idx], ':t'))
+		let s:MRU_Auto_Remove_Deadfiles = 1
+		if s:MRU_Auto_Remove_Deadfiles
+			let idx = 0
+			for file in output
+				if !filereadable(file)
+					call remove(output, idx)
+					continue
+				endif
+				let idx += 1
+			endfor
 		endif
-		if strlen(substitute(fnamemodify(glist[idx], ':p:h'), '^.*\/', '', '')) > max_h
-			let max_h = strlen(substitute(fnamemodify(glist[idx], ':p:h'), '^.*\/', '', ''))
-		endif
-	endfor
-	for idx in range(0, len(glist)-1)
-		let glist[idx] = printf("%-" . max .  "s | %-" . max_h . "s | %s" ,
-					\ fnamemodify(glist[idx], ':t'), substitute(fnamemodify(glist[idx], ':p:h'), '^.*\/', '', ''), glist[idx])
-	endfor
-	silent! %delete _
-	call setline(1, glist)
-	if glist[idx] == '| '
+
+		silent! 0put =output
+
+		" Delete the empty line at the end of the buffer
 		silent! $delete _
-	endif
+		let glist = getline(1, '$')
+		let max = 0
+		let max_h = 0
+		for idx in range(0, len(glist)-1)
+			if strlen(fnamemodify(glist[idx], ':t')) > max
+				let max = strlen(fnamemodify(glist[idx], ':t'))
+			endif
+			if strlen(substitute(fnamemodify(glist[idx], ':p:h'), '^.*\/', '', '')) > max_h
+				let max_h = strlen(substitute(fnamemodify(glist[idx], ':p:h'), '^.*\/', '', ''))
+			endif
+		endfor
+		for idx in range(0, len(glist)-1)
+			let glist[idx] = printf("%-" . max .  "s | %-" . max_h . "s | %s" ,
+						\ fnamemodify(glist[idx], ':t'), substitute(fnamemodify(glist[idx], ':p:h'), '^.*\/', '', ''), glist[idx])
+		endfor
+		silent! %delete _
+		call setline(1, glist)
+		if glist[idx] == '| '
+			silent! $delete _
+		endif
 
-	exe 'syntax match Directory display ' . '"'. '|\zs[^|]*\ze|'. '"'
-	exe 'syntax match Constant  display ' . '"' . '[^|]*[\/]' . '"'
+		exe 'syntax match Directory display ' . '"'. '|\zs[^|]*\ze|'. '"'
+		exe 'syntax match Constant  display ' . '"' . '[^|]*[\/]' . '"'
 
-	setlocal nonumber
-	setlocal cursorline
+		setlocal nonumber
+		setlocal cursorline
 
-	" Move the cursor to the beginning of the file
-	normal! gg
+		" Move the cursor to the beginning of the file
+		normal! gg
 
-	setlocal nomodifiable
-endfunction "}}}
-" MRU Essentials {{{
-nnoremap <silent><Space>j :MRU<CR>
-let s:mru_list_locked = 0
-" Load the MRU list on plugin startup
-call s:MRU_LoadList()
-command! -nargs=0 MRU call s:MRU_Create_Window()
-
-autocmd BufRead      * call s:MRU_AddList(expand('<abuf>'))
-autocmd BufNewFile   * call s:MRU_AddList(expand('<abuf>'))
-autocmd BufWritePost * call s:MRU_AddList(expand('<abuf>'))
-autocmd QuickFixCmdPre  *grep* let s:mru_list_locked = 1
-autocmd QuickFixCmdPost *grep* let s:mru_list_locked = 0
-"}}}
-" MRU END }}}
+		setlocal nomodifiable
+	endfunction "}}}
+	" MRU Essentials {{{
+	nnoremap <silent><Space>j :MRU<CR>
+	let s:mru_list_locked = 0
+	" Load the MRU list on plugin startup
+	"call s:MRU_LoadList()
+	command! -nargs=0 MRU call s:MRU_Create_Window()
+	autocmd VimEnter     * call s:MRU_LoadList()
+	autocmd BufRead      * call s:MRU_AddList(expand('<abuf>'))
+	autocmd BufNewFile   * call s:MRU_AddList(expand('<abuf>'))
+	autocmd BufWritePost * call s:MRU_AddList(expand('<abuf>'))
+	autocmd QuickFixCmdPre  *grep* let s:mru_list_locked = 1
+	autocmd QuickFixCmdPost *grep* let s:mru_list_locked = 0
+	"}}}
 endif
+"}}}
 
 " Loading divided files {{{
 let g:local_vimrc = expand('~/.vimrc.local')
@@ -2792,7 +2696,7 @@ if filereadable(g:local_vimrc)
 endif
 "}}}
 
-" must be written at the last.  see :help 'secure'.
+" Must be written at the last.  see :help 'secure'.
 set secure
 
 " vim:fdm=marker fdc=3 ft=vim ts=2 sw=2 sts=2:

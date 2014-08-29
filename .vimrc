@@ -86,7 +86,7 @@ let g:is_mac = !g:is_windows && !g:is_cygwin
 			\ && (has('mac') || has('macunix') || has('gui_macvim') ||
 			\    (!executable('xdg-open') &&
 			\    system('uname') =~? '^darwin'))
-let g:is_unix = !g:is_mac && has('unix')
+let g:is_linux = !g:is_mac && has('unix')
 
 " Define neobundle runtimepath
 if g:is_windows
@@ -97,8 +97,9 @@ endif
 let $VIMBUNDLE=$DOTVIM . '/bundle'
 let $NEOBUNDLEPATH=$VIMBUNDLE . '/neobundle.vim'
 
-" Environment variable
-let $MYVIMRC = expand('~/.vimrc')
+" Vimrc
+let s:vimrc = expand("<sfile>:p")
+let $MYVIMRC = s:vimrc
 
 " Enable/Disable {{{
 let s:true  = 1
@@ -131,7 +132,6 @@ endfunction "}}}
 " NeoBundle: {{{1
 " No introduction.
 "==============================================================================
-filetype off
 
 " Add neobundle to runtimepath
 if has('vim_starting') && isdirectory($NEOBUNDLEPATH)
@@ -316,37 +316,52 @@ if s:bundled('neobundle.vim') "{{{
 	endif
 	"}}}
 else "{{{
-	" Set neobundle rootdirectory
-	if g:is_windows
-		let s:bundle_root = expand('$HOME/AppData/Roaming/vim/bundle')
-	else
-		let s:bundle_root = expand('~/.vim/bundle')
-	endif
-	let s:neobundle_root = s:bundle_root . '/neobundle.vim'
 
 	" If neobundle doesn't exist
-	command! NeoBundleInit call s:neobundle_init()
-	function! s:neobundle_init() "{{{
-		echon "Installing neobundle.vim..."
-		call mkdir(s:bundle_root, 'p')
-		execute 'cd' s:bundle_root
+	command! NeoBundleInit try | call s:neobundle_init()
+					\| catch /^neobundleinit:/
+					\| echohl ErrorMsg
+					\| echomsg v:exception
+					\| echohl None
+					\| endtry
+
+	function! s:neobundle_init()
+		redraw | echo "Installing neobundle.vim..."
+		if !isdirectory($VIMBUNDLE)
+			call mkdir($VIMBUNDLE, 'p')
+			sleep 1 | echo printf("Creating '%s'.", $VIMBUNDLE)
+		endif
+		cd $VIMBUNDLE
+
 		call system('git clone git://github.com/Shougo/neobundle.vim')
 		if v:shell_error
-			echoerr "neobundle.vim installation has failed!"
-			finish
+			throw 'neobundleinit: Git error.'
 		endif
-		execute 'set runtimepath+=' . s:bundle_root . '/neobundle.vim'
-		call neobundle#rc(s:bundle_root)
-		NeoBundleInstall
-		highlight Finish cterm=underline ctermfg=red ctermfg=black gui=underline guifg=red guibg=black
-		echo "Finish!"
-	endfunction "}}}
 
-	"call s:neobundle_init()
+		set runtimepath+=$NEOBUNDLEPATH
+		call neobundle#rc($VIMBUNDLE)
+		try
+			echo printf("Reloading '%s'", $MYVIMRC)
+			source $MYVIMRC
+		catch
+			echohl ErrorMsg
+			echomsg 'neobundleinit: $MYVIMRC: could not source.'
+			echohl None
+			return 0
+		finally
+			echomsg 'Installed neobundle.vim'
+		endtry
+
+		echo 'Finish!'
+	endfunction
+
 	if s:enable_sujest_neobundleinit == s:true
-		autocmd! VimEnter * echohl WarningMsg
+		autocmd! VimEnter * redraw
+					\ | echohl WarningMsg
 					\ | echo "You should do ':NeoBundleInit' at first!"
 					\ | echohl None
+	else
+		NeoBundleInit
 	endif
 endif "}}}
 
@@ -419,7 +434,7 @@ function! s:is_exist(path) "{{{
 	return empty(path) ? 0 : 1
 endfunction "}}}
 function! s:get_dir_separator() "{{{
-  return fnamemodify('.', ':p')[-1 :]
+	return fnamemodify('.', ':p')[-1 :]
 endfunction "}}}
 function! s:echomsg(hl, msg) "{{{
 	execute 'echohl' a:hl
@@ -446,16 +461,6 @@ function! s:execute_keep_view(expr) "{{{
 	let wininfo = winsaveview()
 	execute a:expr
 	call winrestview(wininfo)
-endfunction "}}}
-function! s:move_middle_line() "{{{
-	let strwidth = strdisplaywidth(getline('.'))
-	let winwidth = winwidth(0)
-
-	if strwidth < winwidth
-		call cursor(0, col('$') / 2)
-	else
-		normal! gm
-	endif
 endfunction "}}}
 function! s:check_flag(flag) "{{{
 	if exists('b:' . a:flag)
@@ -722,6 +727,30 @@ function! s:smart_bwipeout(buf, bang) "{{{
 		call s:get_buflists('')
 	endif
 endfunction "}}}
+function! s:smart_bchange(mode) "{{{
+	let mode = a:mode
+
+	" Get all buffer numbers in tabpages
+	let tablist = []
+	for i in range(tabpagenr('$'))
+		call add(tablist, tabpagebuflist(i + 1))
+	endfor
+
+	" Get buffer number
+	execute 'silent' mode ==? 'n' ? 'bnext' : 'bprevious'
+	let bufnr = bufnr('%')
+	execute 'silent' mode ==? 'n' ? 'bprevious' : 'bnext'
+
+	" Check next/prev buffer number if exists in l:tablist
+	let nextbuf = []
+	call add(nextbuf, bufnr)
+	if index(tablist, nextbuf) >= 0
+		execute 'silent tabnext' index(tablist, nextbuf) + 1
+	else
+		" Normal bnext/bprev
+		execute 'silent' mode ==? 'n' ? 'bnext' : 'bprevious'
+	endif
+endfunction "}}}
 function! s:newbuf(buf, bang) "{{{
 	let buf = empty(a:buf) ? '' : a:buf
 	execute "new" buf | only
@@ -788,6 +817,84 @@ function! s:buf_restore() "{{{
 		echomsg v:exception
 		echohl None
 	endtry
+endfunction "}}}
+function! s:tabdrop(target) "{{{
+	let target = empty(a:target) ? expand('%:p') : bufname(a:target + 0)
+	if !empty(target) && bufexists(target) && buflisted(target)
+		execute 'tabedit' target
+	else
+		echohl WarningMsg | echo "Could not tabedit" | echohl None
+	endif
+endfunction "}}}
+function! s:join_next_tabpage() "{{{
+  let wincount = winnr('$')
+  if wincount != 1
+    return
+  endif
+  let filename = expand('%')
+  quit
+  execute 'vsplit ' . filename
+endfunction "}}}
+function! s:create_noname_tabpages(num) "{{{
+	let num = empty(a:num) ? 1 : a:num
+	for i in range(1, num)
+		tabnew
+	endfor
+endfunction "}}}
+function! s:move_tabpage(dir) "{{{
+  if a:dir == "right"
+    let num = tabpagenr()
+  elseif a:dir == "left"
+    let num = tabpagenr() - 2
+  endif
+  if num >= 0
+    execute "tabmove" num
+  endif
+endfunction "}}}
+function! s:close_all_right_tabpages() "{{{
+  let current_tabnr = tabpagenr()
+  let last_tabnr = tabpagenr("$")
+  let num_close = last_tabnr - current_tabnr
+  let i = 0
+  while i < num_close
+    execute "tabclose " . (current_tabnr + 1)
+    let i = i + 1
+  endwhile
+endfunction "}}}
+function! s:close_all_left_tabpages() "{{{
+  let current_tabnr = tabpagenr()
+  let num_close = current_tabnr - 1
+  let i = 0
+  while i < num_close
+    execute "tabclose 1"
+    let i = i + 1
+  endwhile
+endfunction "}}}
+function! s:move_left_center_right(...) "{{{
+  let curr_pos = getpos('.')
+  let curr_line_len = len(getline('.'))
+  let curr_pos[3] = 0
+  let c = curr_pos[2]
+  if 0 <= c && c < (curr_line_len / 3 * 1)
+    if a:0 > 0
+      let curr_pos[2] = curr_line_len
+    else
+      let curr_pos[2] = curr_line_len / 2
+    endif
+  elseif (curr_line_len / 3 * 1) <= c && c < (curr_line_len / 3 * 2)
+    if a:0 > 0
+      let curr_pos[2] = 0
+    else
+      let curr_pos[2] = curr_line_len
+    endif
+  else
+    if a:0 > 0
+      let curr_pos[2] = curr_line_len / 2
+    else
+      let curr_pos[2] = 0
+    endif
+  endif
+  call setpos('.',curr_pos)
 endfunction "}}}
 function! s:toggle_option(option_name) "{{{
 	execute 'setlocal' a:option_name . '!'
@@ -1060,16 +1167,16 @@ if &t_Co < 256
 else
 	if has('gui_running') && !g:is_windows
 		" For MacVim, only
-		if s:bundled('solarized.vim')
+		if s:has_plugin('solarized.vim')
 			colorscheme solarized
 		endif
 	else
 		" Vim for CUI
-		if s:bundled('solarized.vim')
+		if s:has_plugin('solarized.vim')
 			colorscheme solarized
-		elseif s:bundled('vim-hybrid')
+		elseif s:has_plugin('vim-hybrid')
 			colorscheme hybrid
-		elseif s:bundled('jellybeans.vim')
+		elseif s:has_plugin('jellybeans.vim')
 			colorscheme jellybeans
 		else
 			colorscheme desert
@@ -1155,34 +1262,32 @@ endfunction "}}}
 
 " Emphasize statusline in the insert mode {{{
 if !s:has_plugin('lightline.vim')
-	if has('syntax')
-		augroup InsertHook
-			autocmd!
-			autocmd InsertEnter * call s:colorize_statusline_insert('Enter')
-			autocmd InsertLeave * call s:colorize_statusline_insert('Leave')
-		augroup END
-	endif
-
-	let g:hi_insert = 'highlight StatusLine guifg=black guibg=darkyellow gui=none ctermfg=black ctermbg=darkyellow cterm=none'
-	let s:slhlcmd = ''
-	function! s:colorize_statusline_insert(mode)
-		if a:mode == 'Enter'
-			silent! let s:slhlcmd = 'highlight ' . s:get_statusline_highlight('StatusLine')
-			silent exec g:hi_insert
-		else
-			highlight clear StatusLine
-			silent exec s:slhlcmd
-		endif
-	endfunction
-
-	function! s:get_statusline_highlight(hi)
-		redir => hl
-		exec 'highlight '.a:hi
-		redir END
-		let hl = substitute(hl, '[\r\n]', '', 'g')
-		let hl = substitute(hl, 'xxx', '', '')
-		return hl
-	endfunction
+"		augroup emphasize-statusline-insert
+"			autocmd!
+"			autocmd InsertEnter * call s:colorize_statusline_insert('Enter')
+"			autocmd InsertLeave * call s:colorize_statusline_insert('Leave')
+"		augroup END
+"
+"	let g:hi_insert = 'highlight StatusLine guifg=black guibg=darkyellow gui=none ctermfg=black ctermbg=darkyellow cterm=none'
+"	let s:slhlcmd = ''
+"	function! s:colorize_statusline_insert(mode)
+"		if a:mode == 'Enter'
+"			silent! let s:slhlcmd = 'highlight ' . s:get_statusline_highlight('StatusLine')
+"			silent exec g:hi_insert
+"		else
+"			highlight clear StatusLine
+"			silent exec s:slhlcmd
+"		endif
+"	endfunction
+"
+"	function! s:get_statusline_highlight(hi)
+"		redir => hl
+"		exec 'highlight '.a:hi
+"		redir END
+"		let hl = substitute(hl, '[\r\n]', '', 'g')
+"		let hl = substitute(hl, 'xxx', '', '')
+"		return hl
+"	endfunction
 endif
 " }}}
 
@@ -1344,6 +1449,7 @@ set number
 
 " Show line and column number
 set ruler
+set rulerformat=%m%r%=%l/%L
 
 set list
 set listchars=tab:>-,trail:-,nbsp:%,extends:>,precedes:<,eol:<
@@ -1379,7 +1485,7 @@ set notitle
 set lines=50
 set columns=160
 set previewheight=10
-set helpheight=999
+"set helpheight=999
 set mousehide
 set virtualedit=block
 set virtualedit& virtualedit+=block
@@ -1456,15 +1562,30 @@ set guioptions-=b
 " Commands: {{{1
 "==============================================================================
 
+" Join tabpages
+command! TabJoin call s:join_next_tabpage()
+
+" Make tabpages
+command! -nargs=? TabNew call s:create_noname_tabpages(<q-args>)
+
+"Open again with tabpages
+command! -nargs=? Tab call s:tabdrop(<q-args>)
+
+" Open the buffer again with tabpages
+command! -nargs=? -complete=buffer ROT call <SID>recycle_open('tabedit', empty(<q-args>) ? expand('#') : expand(<q-args>))
+
+" Smart bnext/bprev
+command! Bnext call s:smart_bchange('n')
+command! Bprev call s:smart_bchange('p')
+
 command! -bar EchoRTP       echo substitute(&runtimepath, ',', '\n', 'g')
-"command! -bar EchoHighlight echo synIDattr(synID(line('.'),col('.'),0),'name') synIDattr(synIDtrans(synID(line('.'),col('.'),1)),'name')
 command! -bar EchoBufKind   setlocal bufhidden? buftype? swapfile? buflisted?
 
 " Open new buffer or scratch buffer with bang
 command! -bang -nargs=? -complete=file BufNew call <SID>newbuf(<q-args>, <q-bang>)
 
 " Bwipeout(!) for all-purpose
-command -nargs=0 -bang Bwipeout call <SID>smart_bwipeout(0, <q-bang>)
+command! -nargs=0 -bang Bwipeout call <SID>smart_bwipeout(0, <q-bang>)
 
 " Delete the current buffer and the file
 command! -bang -nargs=0 -complete=buffer Delete call s:delete(<bang>0)
@@ -1577,6 +1698,8 @@ endif
 let mapleader = ","
 let maplocalleader = ","
 
+cnoremap <expr> <ESC> "\<C-u>\<BS>\<ESC>"
+
 " function's commands {{{
 " Smart folding close
 nnoremap <silent><C-_> :<C-u>call <SID>smart_foldcloser()<CR>
@@ -1594,14 +1717,23 @@ nnoremap <silent> <C-x><C-k> :call <SID>smart_bwipeout(1, '')<CR>
 "nnoremap <silent> <C-x>u :<C-u>call <SID>buf_dequeue()<CR>
 nnoremap <silent> <C-x>u :<C-u>call <SID>buf_restore()<CR>
 
-" Move middle of current line (not middle of screen)
-nnoremap <silent> gm :<C-u>call <SID>move_middle_line()<CR>
+" Delete buffers
+nnoremap <silent> <C-x>d     :call <SID>delete('')<CR>
+nnoremap <silent> <C-x><C-d> :call <SID>delete(1)<CR>
+
+" Tabpages mappings
+nnoremap <silent> <C-t>J  :<C-u>call <SID>join_next_tabpage()<CR>
+nnoremap <silent> <C-t>L  :<C-u>call <SID>move_tabpage("right")<CR>
+nnoremap <silent> <C-t>H  :<C-u>call <SID>move_tabpage("left")<CR>
+nnoremap <silent> <C-t>dh :<C-u>call <SID>close_all_left_tabpages()<CR>
+nnoremap <silent> <C-t>dl :<C-u>call <SID>close_all_right_tabpages()<CR>
+
+" Move cursor between beginning of line and end of line
+nnoremap <silent><Tab>   :<C-u>call <SID>move_left_center_right()<CR>
+nnoremap <silent><S-Tab> :<C-u>call <SID>move_left_center_right(1)<CR>
 
 " Open vimrc with tab
 nnoremap <silent> <Space>. :call <SID>recycle_open('edit', $MYVIMRC)<CR>
-
-" Open the buffer again with tabpages
-command! -nargs=? -complete=buffer ROT call <SID>recycle_open('tabedit', empty(<q-args>) ? expand('#') : expand(<q-args>))
 
 " Make junkfile
 nnoremap <silent> <Space>e  :<C-u>JunkFile<CR>
@@ -1664,11 +1796,13 @@ nnoremap gR R
 
 " Buffer and Tabs {{{
 if s:has_plugin('vim-buftabs')
-	nnoremap <silent> <C-j> :<C-u>silent! bnext<CR>
-	nnoremap <silent> <C-k> :<C-u>silent! bprev<CR>
+	"nnoremap <silent> <C-j> :<C-u>silent! bnext<CR>
+	"nnoremap <silent> <C-k> :<C-u>silent! bprev<CR>
+	nnoremap <silent> <C-j> :<C-u>call <SID>smart_bchange('n')<CR>
+	nnoremap <silent> <C-k> :<C-u>call <SID>smart_bchange('p')<CR>
 else
-	nnoremap <silent> <C-j> :<C-u>call <SID>get_buflists('p')<CR>
-	nnoremap <silent> <C-k> :<C-u>call <SID>get_buflists('n')<CR>
+	nnoremap <silent> <C-j> :<C-u>call <SID>get_buflists('n')<CR>
+	nnoremap <silent> <C-k> :<C-u>call <SID>get_buflists('p')<CR>
 endif
 
 nnoremap <silent> <C-h> :<C-u>silent! tabnext<CR>
@@ -1688,7 +1822,7 @@ inoremap ` ``<LEFT>
 inoremap <C-h> <Backspace>
 inoremap <C-d> <Delete>
 inoremap <C-m> <Return>
-inoremap <C-i> <Tab>
+"inoremap <C-i> <Tab>
 cnoremap <C-k> <UP>
 cnoremap <C-j> <DOWN>
 cnoremap <C-l> <RIGHT>
@@ -1765,7 +1899,7 @@ nnoremap <silent> <Leader>r :<C-u>set relativenumber!<CR>
 nnoremap <silent> <Leader>s :<C-u>set spell!<CR>
 
 " Goto {num} row like a {num}gg, {num}G and :{num}<CR>
-nnoremap <expr><Tab> v:count !=0 ? "G" : "\<Tab>"
+"nnoremap <expr><Tab> v:count !=0 ? "G" : "\<Tab>"
 
 nnoremap <silent>~ :let &tabstop = (&tabstop * 2 > 16) ? 2 : &tabstop * 2<CR>:echo 'tabstop:' &tabstop<CR>
 
@@ -1874,8 +2008,8 @@ elseif s:bundled('neocomplcache')
 	let g:neocomplcache_enable_camel_case_completion = 1
 	let g:neocomplcache_enable_underbar_completion = 1
 endif
-inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<S-TAB>"
+"inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+"inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<S-TAB>"
 
 highlight Pmenu      ctermbg=lightcyan ctermfg=black
 highlight PmenuSel   ctermbg=blue      ctermfg=black
@@ -2220,8 +2354,8 @@ endif
 " }}}
 " vim-poslist {{{
 if s:bundled('vim-poslist')
-	map <C-o> <Plug>(poslist-prev-pos)
-	map <C-i> <Plug>(poslist-next-pos)
+	"map <C-o> <Plug>(poslist-prev-pos)
+	"map <C-i> <Plug>(poslist-next-pos)
 endif
 " }}}
 " vim-autocdls {{{
@@ -2258,29 +2392,22 @@ endif
 " will be described in this section.
 "==============================================================================
 
+"autocmd BufReadCmd * drop tab expand('%')
+
+function! s:help_opened() "{{{
+	only
+  nnoremap <buffer> <nowait> q :bwipeout<CR>
+endfunction "}}}
+autocmd FileType help call s:help_opened()
+
 call s:mkdir(expand('$HOME/.vim/colors'))
 
 nnoremap <silent> ciy ciw<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
 nnoremap <silent> cy   ce<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
+nnoremap <Leader>y :<C-u>%y<CR>
+nnoremap <Leader>Y :<C-u>%y<CR>
 
-function! s:tabdrop(target)
-	let target = empty(a:target) ? expand('%:p') : bufname(a:target + 0)
-	if !empty(target) && bufexists(target) && buflisted(target)
-		execute 'tabedit' target
-	else
-		echohl WarningMsg | echo "Could not tabedit" | echohl None
-	endif
-endfunction
-command! -nargs=? Tab call s:tabdrop(<q-args>)
-
-function! s:to_fullpath(filename)
-	let name = substitute(fnamemodify(a:filename, ":p"), '\', '/', "g")
-	if filereadable(name)
-		return name
-	else
-		return a:filename
-	endif
-endfunction
+nnoremap <Space>, :<C-u>call <SID>echomsg('Visual', "spc")<CR>
 
 function! s:remove_swapfile() "{{{
 	let save_wilfignore = &wildignore
@@ -2295,11 +2422,11 @@ function! s:remove_swapfile() "{{{
 endfunction "}}}
 command! RemoveSwapfile call <SID>remove_swapfile()
 
-function! s:mkdir(dir)
+function! s:mkdir(dir) "{{{
 	if !isdirectory(a:dir)
 		call mkdir(a:dir, "p")
 	endif
-endfunction
+endfunction "}}}
 
 function! s:file_complete(A, L, P) "{{{
 	let lists = []
@@ -2378,7 +2505,7 @@ augroup END "}}}
 augroup only-window-help "{{{
 	autocmd!
 	"autocmd BufEnter *.jax only
-	autocmd Filetype help only
+	"autocmd Filetype help only
 augroup END "}}}
 
 " Launched with -b option {{{
@@ -2410,7 +2537,7 @@ if executable('chmod')
 endif "}}}
 
 " Restore cursor position {{{
-function! s:RestoreCursorPostion()
+function! s:restore_cursor_postion()
 	if line("'\"") <= line("$")
 		normal! g`"
 		return 1
@@ -2419,7 +2546,7 @@ endfunction
 if s:enable_restore_cursor_position == s:true
 	augroup restore-cursor-position
 		autocmd!
-		autocmd BufWinEnter * call s:RestoreCursorPostion()
+		autocmd BufWinEnter * call s:restore_cursor_postion()
 	augroup END
 endif "}}}
 

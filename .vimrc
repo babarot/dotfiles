@@ -106,6 +106,7 @@ let $MYVIMRC = s:vimrc
 let s:true  = 1
 let s:false = 0
 
+let s:vimrc_plugin_on               = s:true
 let s:vimrc_suggest_neobundleinit   = s:true
 let s:vimrc_goback_to_eof2bof       = s:true
 let s:vimrc_save_window_position    = s:false
@@ -139,8 +140,11 @@ endfunction "}}}
 "==============================================================================
 
 " Add neobundle to runtimepath.
+set runtimepath&
 if has('vim_starting') && isdirectory($NEOBUNDLEPATH)
-  set runtimepath+=$NEOBUNDLEPATH
+  if s:vimrc_plugin_on == s:true
+    set runtimepath+=$NEOBUNDLEPATH
+  endif
 endif
 
 if s:bundled('neobundle.vim') "{{{
@@ -592,14 +596,14 @@ function! s:make_junkfile() "{{{
   endif
   execute 'edit ' . filename
 endfunction "}}}
-function! s:copy_current_path(file) "{{{
-  let l:path = a:file ? expand('%:p') : expand('%:p:h')
+function! s:copy_current_path(...) "{{{
+  let path = a:0 ? expand('%:p:h') : expand('%:p')
   if s:is_windows
-    let @* = substitute(l:path, '\\/', '\\', 'g')
+    let @* = substitute(path, '\\/', '\\', 'g')
   else
-    let @* = l:path
+    let @* = path
   endif
-  echon l:path
+  echo path
 endfunction "}}}
 function! s:find_tabnr(bufnr) "{{{
   for tabnr in range(1, tabpagenr("$"))
@@ -1062,6 +1066,8 @@ autocmd CursorHold,BufWritePost * unlet! b:trailing_space_warning
 " In this section, the settings a higher priority than the setting items
 " of the other sections will be described.
 "==============================================================================
+
+" Display B4B4R07 start-up
 if !s:has_plugin('neobundle.vim')
   command! B4B4R07 call s:b4b4r07()
   autocmd VimEnter * call s:b4b4r07()
@@ -1410,43 +1416,6 @@ if s:vimrc_statusline_manually == s:true
   endif
 endif
 "}}}
-
-function! s:tabpage_label(n) "{{{
-  let n = a:n
-  let bufnrs = tabpagebuflist(n)
-  let curbufnr = bufnrs[tabpagewinnr(n) - 1]
-
-  let hi = n == tabpagenr() ? 'TabLineSel' : 'TabLine'
-
-  let label = ''
-  let no = len(bufnrs)
-  if no == 1
-    let no = ''
-  endif
-  let mod = len(filter(bufnrs, 'getbufvar(v:val, "&modified")')) ? '+' : ''
-  let sp = (no . mod) ==# '' ? '' : ' '
-  let fname = GetBufname(curbufnr, 't')
-
-  if no !=# ''
-    let label .= '%#' . hi . 'Number#' . no
-  endif
-  let label .= '%#' . hi . '#'
-  let label .= fname . sp . mod
-
-  return '%' . a:n . 'T' . label . '%T%#TabLineFill#'
-endfunction "}}}
-
-function! MakeTabLine() "{{{
-  let titles = map(range(1, tabpagenr('$')), 's:tabpage_label(v:val)')
-  let sep = ' | '
-  let tabs = join(titles, sep) . sep . '%#TabLineFill#%T'
-
-  hi TabLinePwd ctermfg=white
-  let info = '%#TabLinePwd#'
-  let info .= fnamemodify(getcwd(), ':~') . ' '
-  return tabs . '%=' . info
-endfunction "}}}
-
 " Emphasize statusline in the insert mode {{{
 if !s:has_plugin('lightline.vim')
   augroup emphasize-statusline-insert
@@ -1478,15 +1447,48 @@ if !s:has_plugin('lightline.vim')
 endif
 "}}}
 
+function! s:tabpage_label(n) "{{{
+  let n = a:n
+  let bufnrs = tabpagebuflist(n)
+  let curbufnr = bufnrs[tabpagewinnr(n) - 1]
+
+  let hi = n == tabpagenr() ? 'TabLineSel' : 'TabLine'
+
+  let label = ''
+  let no = len(bufnrs)
+  if no == 1
+    let no = ''
+  endif
+  let mod = len(filter(bufnrs, 'getbufvar(v:val, "&modified")')) ? '+' : ''
+  let sp = (no . mod) ==# '' ? '' : ' '
+  let fname = GetBufname(curbufnr, 't')
+
+  if no !=# ''
+    let label .= '%#' . hi . 'Number#' . no
+  endif
+  let label .= '%#' . hi . '#'
+  let label .= fname . sp . mod
+
+  return '%' . a:n . 'T' . label . '%T%#TabLineFill#'
+endfunction "}}}
+function! MakeTabLine() "{{{
+  let titles = map(range(1, tabpagenr('$')), 's:tabpage_label(v:val)')
+  let sep = ' | '
+  let tabs = join(titles, sep) . sep . '%#TabLineFill#%T'
+
+  hi TabLinePwd ctermfg=white
+  let info = '%#TabLinePwd#'
+  let info .= fnamemodify(getcwd(), ':~') . ' '
+  return tabs . '%=' . info
+endfunction "}}}
+
 " Cursor line/column {{{
 set cursorline
-"set cursorcolumn
-"set colorcolumn=80
 
 augroup auto-cursorcolumn-advent
   autocmd!
   autocmd CursorMoved,CursorMovedI * call s:auto_cursorcolumn('CursorMoved')
-  autocmd CursorHold,CursorHoldI * call s:auto_cursorcolumn('CursorHold')
+  autocmd CursorHold,CursorHoldI   * call s:auto_cursorcolumn('CursorHold')
   autocmd WinEnter * call s:auto_cursorcolumn('WinEnter')
   autocmd WinLeave * call s:auto_cursorcolumn('WinLeave')
 
@@ -1512,8 +1514,9 @@ augroup auto-cursorcolumn-advent
     endif
   endfunction
 augroup END
-"}}}
 
+"set colorcolumn=80
+"}}}
 " GUI IME Cursor colors {{{
 if has('multi_byte_ime') || has('xim')
   highlight Cursor guibg=NONE guifg=Yellow
@@ -1768,7 +1771,7 @@ command! Bnext call s:smart_bchange('n')
 command! Bprev call s:smart_bchange('p')
 
 " Show buffer kind.
-command! -bar EchoBufKind   setlocal bufhidden? buftype? swapfile? buflisted?
+command! -bar EchoBufKind setlocal bufhidden? buftype? swapfile? buflisted?
 
 " Open new buffer or scratch buffer with bang.
 command! -bang -nargs=? -complete=file BufNew call <SID>bufnew(<q-args>, <q-bang>)
@@ -1809,10 +1812,10 @@ command! RemoveEolSpace call s:smart_execute('silent! %substitute/ \+$//g | nohl
 command! RemoveBlankLine silent! global/^$/delete | nohlsearch | normal! ``
 
 " Get current file path
-command! CopyCurrentPath call s:copy_current_path(1)
+command! CopyCurrentPath call s:copy_current_path()
 
 " Get current directory path
-command! CopyCurrentDir call s:copy_current_path(0)
+command! CopyCurrentDir call s:copy_current_path(1)
 
 " Make random string such as password
 command! -nargs=? RandomString call s:random_string(<q-args>)
@@ -1826,13 +1829,6 @@ command! -nargs=? -complete=filetype ReExt  call s:rename(<q-args>, 'ext')
 " View all mappings
 command! -nargs=* -complete=mapping AllMaps map <args> | map! <args> | lmap <args>
 
-" Delete hidden buffer
-command! -bar DeleteHideBuffer call s:delete_hide_buffer()
-
-" Delete type of nofile buffer
-command! -bar DeleteNoFileBuffer call s:delete_no_file_buffer()
-
-" Command group opening with a specific character code again
 " In particular effective when I am garbled in a terminal
 command! -bang -bar -complete=file -nargs=? Utf8      edit<bang> ++enc=utf-8 <args>
 command! -bang -bar -complete=file -nargs=? Iso2022jp edit<bang> ++enc=iso-2022-jp <args>
@@ -2530,14 +2526,20 @@ endif
 "==============================================================================
 
 " Experimental. {{{
-"autocmd WinEnter * setlocal cursorline
-"autocmd WinLeave * setlocal nocursorline nocursorcolumn
+augroup multi-window-toggle-cursorline8column
+  autocmd!
+  autocmd WinEnter * setlocal cursorline
+  autocmd WinLeave * setlocal nocursorline nocursorcolumn
+augroup END
 
 function! s:help_opened() "{{{
   only
   nnoremap <buffer> <nowait> q :bwipeout<CR>
 endfunction "}}}
-autocmd FileType help call s:help_opened()
+augroup when-help-opened
+  autocmd!
+  autocmd FileType help call s:help_opened()
+augroup END
 
 call s:mkdir(expand('$HOME/.vim/colors'))
 

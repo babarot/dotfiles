@@ -102,6 +102,10 @@ let $NEOBUNDLEPATH=$VIMBUNDLE . '/neobundle.vim'
 let s:vimrc = expand("<sfile>:p")
 let $MYVIMRC = s:vimrc
 
+" Script local variables.
+let s:is_tabpage = (&showtabline == 1 && tabpagenr('$') >= 2)
+      \ || (&showtabline == 2 && tabpagenr('$') >= 1)
+
 " Vimrc management variables {{{
 let s:true  = 1
 let s:false = 0
@@ -276,6 +280,7 @@ if s:bundled('neobundle.vim') "{{{
         \     'BenchVimrc'
         \   ]},
         \ }
+  NeoBundle 'haya14busa/eew.vim'
   NeoBundle 'vim-scripts/Align'
   NeoBundle 'vim-scripts/FavEx'
   NeoBundleLazy 'DirDiff.vim', { 'autoload' : {
@@ -312,7 +317,7 @@ if s:bundled('neobundle.vim') "{{{
   NeoBundleDisable ctrlp.vim
   NeoBundleDisable skk.vim
   NeoBundleDisable eskk.vim
-  NeoBundleDisable mru.vim
+  "NeoBundleDisable mru.vim
 
   " Check.
   NeoBundleCheck
@@ -382,6 +387,18 @@ filetype plugin indent on
 " It is not general, for example, functions used in a dedicated purpose
 " has been described in the setting position.
 "==============================================================================
+function! s:SID() "{{{
+  return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSID$')
+endfunction "}}}
+function! s:has_plugin(name) "{{{
+  let nosuffix = a:name =~? '\.vim$' ? a:name[:-5] : a:name
+  let suffix   = a:name =~? '\.vim$' ? a:name      : a:name . '.vim'
+  return &rtp =~# '\c\<' . nosuffix . '\>'
+        \   || globpath(&rtp, suffix, 1) != ''
+        \   || globpath(&rtp, nosuffix, 1) != ''
+        \   || globpath(&rtp, 'autoload/' . suffix, 1) != ''
+        \   || globpath(&rtp, 'autoload/' . tolower(suffix), 1) != ''
+endfunction "}}}
 function! s:b4b4r07() "{{{
   hide enew
   setlocal buftype=nofile nowrap nolist nonumber bufhidden=wipe
@@ -413,18 +430,6 @@ function! s:b4b4r07() "{{{
   let char = getchar()
   silent enew
   call feedkeys(type(char) == type(0) ? nr2char(char) : char)
-endfunction "}}}
-function! s:SID() "{{{
-  return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSID$')
-endfunction "}}}
-function! s:has_plugin(name) "{{{
-  let nosuffix = a:name =~? '\.vim$' ? a:name[:-5] : a:name
-  let suffix   = a:name =~? '\.vim$' ? a:name      : a:name . '.vim'
-  return &rtp =~# '\c\<' . nosuffix . '\>'
-        \   || globpath(&rtp, suffix, 1) != ''
-        \   || globpath(&rtp, nosuffix, 1) != ''
-        \   || globpath(&rtp, 'autoload/' . suffix, 1) != ''
-        \   || globpath(&rtp, 'autoload/' . tolower(suffix), 1) != ''
 endfunction "}}}
 function! s:escape_filename(fname) "{{{
   let esc_filename_chars = ' *?[{`$%#"|!<>();&' . "'\t\n"
@@ -649,8 +654,8 @@ function! s:open(file) "{{{
   call system(printf('%s %s &', 'open', shellescape(file)))
   return 1
 endfunction "}}}
-function! s:smart_bwipeout(buf, bang) "{{{
-  " Bwipeout! all buffers
+function! s:smart_bwipeout_OLD(buf, bang) "{{{
+  " Bwipeout! all buffers except current buffer.
   if !empty(a:bang)
     for i in range(1, bufnr('$'))
       if bufexists(i)
@@ -679,7 +684,7 @@ function! s:smart_bwipeout(buf, bang) "{{{
 
   let bufname = empty(bufname(bufnr('%'))) ? bufnr('%') . "#" : bufname(bufnr('%'))
   if &modified
-    echo printf("'%s' is unsaved. Quit!? [y/N/w] ", bufname)
+    echo printf("'%s' is unsaved. Quit!? [y(f)/N/w] ", bufname)
     let c = nr2char(getchar())
 
     if c ==? 'w'
@@ -696,15 +701,71 @@ function! s:smart_bwipeout(buf, bang) "{{{
     endif
 
     redraw
-    if c ==? 'y'
+    if c ==? 'y' || c ==? 'f'
       echo "Bwipeout! " . bufname
       bwipeout!
     else
       echo "Do nothing"
     endif
   else
-    echo "Bwipeout " . bufname
-    bwipeout
+    if bufname('%') !=# ''
+      echo "Bwipeout " . bufname
+      bwipeout
+    endif
+  endif
+endfunction "}}}
+function! s:smart_bwipeout(buf) "{{{
+  " Bwipeout! all buffers except current buffer.
+  if a:buf == 1
+    for i in range(1, bufnr('$'))
+      if bufexists(i)
+        if bufnr('%') ==# i | continue | endif
+        execute 'bwipeout! ' . i
+      endif
+    endfor
+    return
+  endif
+
+  if a:buf == 0
+    if winnr('$') != 1
+      quit
+      return
+    elseif tabpagenr('$') != 1
+      tabclose
+      return
+    endif
+  endif
+
+  let bufname = empty(bufname(bufnr('%'))) ? bufnr('%') . "#" : bufname(bufnr('%'))
+  if &modified
+    echo printf("'%s' is unsaved. Quit!? [y(f)/N/w] ", bufname)
+    let c = nr2char(getchar())
+
+    if c ==? 'w'
+      let filename = ''
+      if bufname(bufnr("%")) ==# filename
+        redraw
+        while empty(filename)
+          let filename = input('Tell me filename: ')
+        endwhile
+      endif
+      execute "write " . filename
+      bwipeout!
+      return
+    endif
+
+    redraw
+    if c ==? 'y' || c ==? 'f'
+      echo "Bwipeout! " . bufname
+      bwipeout!
+    else
+      echo "Do nothing"
+    endif
+  else
+    if bufname('%') !=# ''
+      echo "Bwipeout " . bufname
+      bwipeout
+    endif
   endif
 endfunction "}}}
 function! s:smart_bchange(mode) "{{{
@@ -1067,7 +1128,7 @@ autocmd CursorHold,BufWritePost * unlet! b:trailing_space_warning
 " of the other sections will be described.
 "==============================================================================
 
-" Display B4B4R07 start-up
+" Display B4B4R07 logo start-up
 if !s:has_plugin('neobundle.vim')
   command! B4B4R07 call s:b4b4r07()
   autocmd VimEnter * call s:b4b4r07()
@@ -1158,6 +1219,36 @@ if !s:has_plugin('mru.vim')
     call s:MRU_Create_Window()
     call cursor(lnum, 1)
   endfunction "}}}
+  function! s:MRU_Open_File_Tab() range "{{{
+    for f in getline(a:firstline, a:lastline)
+      if f == ''
+        continue
+      endie
+
+      let file = substitute(f, '^.*| ','','')
+      if bufwinnr('^' . fnamemodify(file, ':t') . '$') == -1
+        let tabnum = -1
+        let i = 1
+        let bnum = bufnr('^' . fname . '$')
+        while i <= tabpagenr('$')
+          if index(tabpagebuflist(i), bnum) != -1
+            let tabnum = i
+            break
+          endif
+          let i += 1
+        endwhile
+
+      endif
+
+      if tabnum != -1
+        " Goto the tab containing the file
+        exe 'tabnext ' . i
+      else
+        " Open a new tab as the last tab page
+        exe '999tabnew ' . fnameescape(substitute(file, '\\', '/', 'g'))
+      endif
+    endfor
+  endfunction "}}}
   function! s:MRU_Open_File() range "{{{
     for f in getline(a:firstline, a:lastline)
       if f == ''
@@ -1165,12 +1256,15 @@ if !s:has_plugin('mru.vim')
       endif
 
       let file = substitute(f, '^.*| ','','')
+
+
       let winnum = bufwinnr('^' . file . '$')
       if winnum != -1
         exe winnum . 'wincmd w'
       else
         silent! close
       endif
+
       exe 'edit ' . fnameescape(substitute(file, '\\', '/', 'g'))
     endfor
   endfunction "}}}
@@ -1226,6 +1320,8 @@ if !s:has_plugin('mru.vim')
     " Create mappings to select and edit a file from the MRU list
     nnoremap <buffer> <silent> <CR> :call <SID>MRU_Open_File()<CR>
     vnoremap <buffer> <silent> <CR> :call <SID>MRU_Open_File()<CR>
+    nnoremap <buffer> <silent> <S-CR> :call <SID>MRU_Open_File_Tab()<CR>
+    vnoremap <buffer> <silent> <S-CR> :call <SID>MRU_Open_File_Tab()<CR>
     "nnoremap <buffer> <silent> q    :close<CR>
     "nnoremap <buffer> <silent> R    :call <SID>MRU_RemoveList()<CR>
     "nnoremap <buffer> <silent> K    :call <SID>MRU_RemoveList('force')<CR>
@@ -1476,8 +1572,8 @@ function! MakeTabLine() "{{{
   let sep = ' | '
   let tabs = join(titles, sep) . sep . '%#TabLineFill#%T'
 
-  hi TabLinePwd ctermfg=white
-  let info = '%#TabLinePwd#'
+  hi TabLine ctermfg=white
+  let info = '%#TabLine#'
   let info .= fnamemodify(getcwd(), ':~') . ' '
   return tabs . '%=' . info
 endfunction "}}}
@@ -1817,6 +1913,8 @@ command! CopyCurrentPath call s:copy_current_path()
 " Get current directory path
 command! CopyCurrentDir call s:copy_current_path(1)
 
+command! CopyPath CopyCurrentPath
+
 " Make random string such as password
 command! -nargs=? RandomString call s:random_string(<q-args>)
 
@@ -1893,12 +1991,11 @@ nnoremap <silent> <C-_> :<C-u>call <SID>smart_foldcloser()<CR>
 nnoremap <C-k> <C-k><C-a>
 
 " Kill buffer
-nnoremap <silent> <C-x>k     :call <SID>smart_bwipeout(0, '')<CR>
-nnoremap <silent> <C-x>K     :call <SID>smart_bwipeout(1, 1)<CR>
-nnoremap <silent> <C-x><C-k> :call <SID>smart_bwipeout(1, '')<CR>
+nnoremap <silent> <C-x>k     :<C-u>call <SID>smart_bwipeout(0)<CR>
+nnoremap <silent> <C-x>K     :<C-u>call <SID>smart_bwipeout(1)<CR>
+nnoremap <silent> <C-x><C-k> :<C-u>call <SID>smart_bwipeout(2)<CR>
 
 " Restore buffers
-"nnoremap <silent> <C-x>u :<C-u>call <SID>buf_dequeue()<CR>
 nnoremap <silent> <C-x>u :<C-u>call <SID>buf_restore()<CR>
 
 " Delete buffers
@@ -2524,6 +2621,8 @@ endif
 " Experimental setup and settings that do not belong to any section
 " will be described in this section.
 "==============================================================================
+
+nnoremap <silent> Q :execute filereadable(expand('%')) ? 'bdelete' : 'bdelete!'<CR>
 
 " Experimental. {{{
 augroup multi-window-toggle-cursorline8column

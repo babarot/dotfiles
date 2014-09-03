@@ -323,19 +323,12 @@ if s:bundled('neobundle.vim') "{{{
   if !has('gui_running')
     NeoBundleDisable lightline.vim
   endif
-  "NeoBundleDisable ctrlp.vim
   NeoBundleDisable skk.vim
   NeoBundleDisable eskk.vim
   "NeoBundleDisable mru.vim
 
   " Check.
   NeoBundleCheck
-
-  " Source plugin file for NeoBundle
-  let s:plugin_vimrc = expand('~/.vimrc.plugin')
-  if filereadable(s:plugin_vimrc)
-    execute 'source' s:plugin_vimrc
-  endif
   "}}}
 else "{{{
 
@@ -396,9 +389,6 @@ filetype plugin indent on
 " It is not general, for example, functions used in a dedicated purpose
 " has been described in the setting position.
 "==============================================================================
-function! s:SID() "{{{
-  return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSID$')
-endfunction "}}}
 function! s:has_plugin(name) "{{{
   " Check {name} plugin whether there is in the runtime path
 
@@ -665,7 +655,7 @@ function! s:open(file) "{{{
   call system(printf('%s %s &', 'open', shellescape(file)))
   return 1
 endfunction "}}}
-function! s:count_buffers()
+function! s:count_buffers() "{{{
   let l:count = 0
   for i in range(1, bufnr('$'))
     if bufexists(i) && buflisted(i)
@@ -673,7 +663,7 @@ function! s:count_buffers()
     endif
   endfor
   return l:count
-endfunction
+endfunction "}}}
 function! s:get_buflists(...) "{{{
   if a:0 && a:1 ==# 'n'
     silent bnext
@@ -757,9 +747,10 @@ function! s:smart_bchange(mode) "{{{
   if winnr('$') != 1
     " Normal bnext/bprev
     execute 'silent' mode ==? 'n' ? 'bnext' : 'bprevious'
-    "if winnr('$') != 1 | call s:get_buflists() | endif
-    if exists("*s:get_buflists") && s:count_buffers() > 1
-      call s:get_buflists()
+    if exists("*s:get_buflists") && exists("*s:count_buffers")
+      if s:count_buffers() > 1
+        call s:get_buflists()
+      endif
     endif
     return
   endif
@@ -904,8 +895,10 @@ function! s:move_left_center_right(...) "{{{
   call setpos('.',curr_pos)
 endfunction "}}}
 function! s:toggle_option(option_name) "{{{
-  execute 'setlocal' a:option_name . '!'
-  execute 'setlocal' a:option_name . '?'
+  if exists('&' . a:option_name)
+    execute 'setlocal' a:option_name . '!'
+    execute 'setlocal' a:option_name . '?'
+  endif
 endfunction "}}}
 function! s:toggle_variable(variable_name) "{{{
   if eval(a:variable_name)
@@ -1104,7 +1097,10 @@ autocmd CursorHold,BufWritePost * unlet! b:trailing_space_warning
 " Display B4B4R07 logo start-up
 if !s:has_plugin('neobundle.vim')
   command! B4B4R07 call s:b4b4r07()
-  autocmd VimEnter * call s:b4b4r07()
+  augroup vimrc-without-plugin
+    autocmd!
+    autocmd VimEnter * call s:b4b4r07()
+  augroup END
 endif
 
 " MRU {{{
@@ -1393,12 +1389,12 @@ else
   function! s:backup_files()
     let dir = strftime("~/.backup/vim/%Y/%m/%d", localtime())
     if !isdirectory(dir)
-      let retval = system("mkdir -p " . dir)
-      let retval = system("chown goth:staff " . dir)
+      call system("mkdir -p " . dir)
+      call system("chown goth:staff " . dir)
     endif
     execute "set backupdir=" . dir
-    let ext = strftime("%H_%M_%S", localtime())
-    execute "set backupext=." . ext
+    "let ext = strftime("%H_%M_%S", localtime())
+    execute "set backupext=." . strftime("%H_%M_%S", localtime())
   endfunction
 endif
 "}}}
@@ -1419,8 +1415,12 @@ set directory=~/.vim/swap
 syntax enable
 syntax on
 
-" Colorscheme "{{{
-set background=dark
+set number
+set lines=50
+set columns=160
+
+" Colorscheme
+set background=dark "{{{
 set t_Co=256
 if &t_Co < 256
   colorscheme default
@@ -1444,9 +1444,45 @@ else
   endif
 endif "}}}
 
+" Tabpages
 set showtabline=2
 set tabline=%!MakeTabLine()
+function! s:tabpage_label(n) "{{{
+  let n = a:n
+  let bufnrs = tabpagebuflist(n)
+  let curbufnr = bufnrs[tabpagewinnr(n) - 1]
 
+  let hi = n == tabpagenr() ? 'TabLineSel' : 'TabLine'
+
+  let label = ''
+  let no = len(bufnrs)
+  if no == 1
+    let no = ''
+  endif
+  let mod = len(filter(bufnrs, 'getbufvar(v:val, "&modified")')) ? '+' : ''
+  let sp = (no . mod) ==# '' ? '' : ' '
+  let fname = GetBufname(curbufnr, 't')
+
+  if no !=# ''
+    let label .= '%#' . hi . 'Number#' . no
+  endif
+  let label .= '%#' . hi . '#'
+  let label .= fname . sp . mod
+
+  return '%' . a:n . 'T' . label . '%T%#TabLineFill#'
+endfunction "}}}
+function! MakeTabLine() "{{{
+  let titles = map(range(1, tabpagenr('$')), 's:tabpage_label(v:val)')
+  let sep = ' | '
+  let tabs = join(titles, sep) . sep . '%#TabLineFill#%T'
+
+  hi TabLineFill ctermfg=white
+  let info = '%#TabLineFill#'
+  let info .= fnamemodify(getcwd(), ':~') . ' '
+  return tabs . '%=' . info
+endfunction "}}}
+
+" Status-line
 " StatusLine {{{
 set laststatus=2
 
@@ -1457,20 +1493,23 @@ function! MakeStatusLine()
   let line = ''
   let line .= '%#BlackWhite#'
   let line .= '[%n] '
+  "let line .= '%{pathshorten(getcwd())}/'
+  let line .= '%f'
+  let line .= ' %m'
   let line .= '%<'
-  let line .= '%f '
-  let line .= '%m'
   let line .= '%#StatusLine#'
+
   let line .= '%='
   let line .= '%#BlackWhite#'
+  let line .= '%y'
   let line .= "[%{(&fenc!=#''?&fenc:&enc).(&bomb?'(BOM)':'')}:"
   let line .= "%{&ff.(&bin?'(BIN'.(&eol?'':'-noeol').')':'')}]"
-  let line .= '%y'
   let line .= '%r'
   let line .= '%h'
   let line .= '%w'
   let line .= ' %l/%LL %2vC'
   let line .= ' %3p%%'
+
   if s:vimrc_statusline_manually == s:true
     return line
   endif
@@ -1479,9 +1518,8 @@ endfunction
 
 augroup minimal-statusline
   autocmd!
-  autocmd WinEnter,WinLeave,CursorMoved * if winnr('$') != 1 | set statusline=%!MakeStatusLine() | endif
-  autocmd WinEnter,WinLeave             * if winnr('$') == 1 | let &statusline = s:save_sl       | endif
-  "autocmd WinEnter,WinLeave * if winnr('$') == 1 | call MakeBigStatusLine() | endif
+  autocmd WinEnter,WinLeave * if winwidth('.') < &columns | set statusline=%!MakeStatusLine() | endif
+  autocmd WinEnter,WinLeave * if winnr('$') == 1          | let &statusline = s:save_sl       | endif
 augroup END
 
 function! MakeBigStatusLine()
@@ -1554,45 +1592,10 @@ if !s:has_plugin('lightline.vim') "&& s:vimrc_statusline_insert_emphasis == s:tr
 endif
 "}}}
 
-function! s:tabpage_label(n) "{{{
-  let n = a:n
-  let bufnrs = tabpagebuflist(n)
-  let curbufnr = bufnrs[tabpagewinnr(n) - 1]
-
-  let hi = n == tabpagenr() ? 'TabLineSel' : 'TabLine'
-
-  let label = ''
-  let no = len(bufnrs)
-  if no == 1
-    let no = ''
-  endif
-  let mod = len(filter(bufnrs, 'getbufvar(v:val, "&modified")')) ? '+' : ''
-  let sp = (no . mod) ==# '' ? '' : ' '
-  let fname = GetBufname(curbufnr, 't')
-
-  if no !=# ''
-    let label .= '%#' . hi . 'Number#' . no
-  endif
-  let label .= '%#' . hi . '#'
-  let label .= fname . sp . mod
-
-  return '%' . a:n . 'T' . label . '%T%#TabLineFill#'
-endfunction "}}}
-function! MakeTabLine() "{{{
-  let titles = map(range(1, tabpagenr('$')), 's:tabpage_label(v:val)')
-  let sep = ' | '
-  let tabs = join(titles, sep) . sep . '%#TabLineFill#%T'
-
-  hi TabLineFill ctermfg=white
-  let info = '%#TabLineFill#'
-  let info .= fnamemodify(getcwd(), ':~') . ' '
-  return tabs . '%=' . info
-endfunction "}}}
-
+" Cursor
 " Cursor line/column {{{
 set cursorline
-
-augroup auto-cursorcolumn-advent
+augroup auto-cursorcolumn-appear
   autocmd!
   autocmd CursorMoved,CursorMovedI * call s:auto_cursorcolumn('CursorMoved')
   autocmd CursorHold,CursorHoldI   * call s:auto_cursorcolumn('CursorHold')
@@ -1621,8 +1624,6 @@ augroup auto-cursorcolumn-advent
     endif
   endfunction
 augroup END
-
-"set colorcolumn=80
 "}}}
 " GUI IME Cursor colors {{{
 if has('multi_byte_ime') || has('xim')
@@ -1644,11 +1645,11 @@ augroup END "}}}
 "}}}
 
 " Options: {{{
-" Set options (boolean, number, string).
+" Set options (boolean, number, string). General vim behavior.
 " For more information about options, see :help 'option-list'.
 "==============================================================================
 
-" No redraw
+" Don't redraw while executing macros
 set lazyredraw
 
 " Fast terminal connection
@@ -1692,10 +1693,7 @@ set switchbuf=useopen,usetab,newtab
 " Moves the cursor to the same column when cursor move
 set nostartofline
 
-" The length of the tab
-set tabstop=4
-
-" Do not convert tabs to spaces
+" Use tabs instead of spaces
 set noexpandtab
 
 " When starting a new line, indent in automatic
@@ -1710,7 +1708,7 @@ set wrapscan
 " Emphasize the matching parenthesis
 set showmatch
 
-" Emphasize time
+" Blink on matching brackets
 set matchtime=1
 
 " Increase the corresponding pairs
@@ -1722,6 +1720,7 @@ set wildmenu
 " Wildmenu mode
 set wildmode=longest,full
 
+" Ignore compiled files
 set wildignore&
 set wildignore=.git,.hg,.svn
 set wildignore+=*.jpg,*.jpeg,*.bmp,*.gif,*.png
@@ -1729,40 +1728,13 @@ set wildignore+=*.o,*.obj,*.exe,*.dll,*.manifest,*.so,*.out,*.class
 set wildignore+=*.swp,*.swo,*.swn
 set wildignore+=*.DS_Store
 
-set shiftwidth=4
-set smartindent
-set smarttab
-set whichwrap=b,s,h,l,<,>,[,]
-
-" Hide buffers instead of unloading them
-set hidden
-
-set textwidth=0
-set formatoptions&
-set formatoptions-=t
-set formatoptions-=c
-set formatoptions-=r
-set formatoptions-=o
-set formatoptions-=v
-set formatoptions+=l
-set number
-
 " Show line and column number
 set ruler
 set rulerformat=%m%r%=%l/%L
 
-set list
-set listchars=tab:>-,trail:-,nbsp:%,extends:>,precedes:<,eol:<
-set listchars=eol:<,tab:>.
-set t_Co=256
-set nrformats=alpha,hex
-set winaltkeys=no
-set visualbell
-set vb t_vb=
-set noequalalways
-set history=10000
-
-set wrap
+" 1 tab == 4 spaces
+set shiftwidth=4
+set tabstop=4
 
 " String to put at the start of lines that have been wrapped.
 let &showbreak = '+++ '
@@ -1782,9 +1754,36 @@ set showcmd
 " Lets vim set the title of the console
 set notitle
 
-set lines=50
-set columns=160
-set previewheight=10
+" koko made
+
+set smartindent
+set smarttab
+set whichwrap=b,s,h,l,<,>,[,]
+
+" Hide buffers instead of unloading them
+set hidden
+
+set textwidth=0
+set formatoptions&
+set formatoptions-=t
+set formatoptions-=c
+set formatoptions-=r
+set formatoptions-=o
+set formatoptions-=v
+set formatoptions+=l
+
+set list
+set listchars=tab:>-,trail:-,nbsp:%,extends:>,precedes:<,eol:<
+set listchars=eol:<,tab:>.
+set t_Co=256
+set nrformats=alpha,hex
+set winaltkeys=no
+set visualbell
+set vb t_vb=
+set noequalalways
+set history=10000
+set wrap
+
 "set helpheight=999
 set mousehide
 set virtualedit=block
@@ -2038,7 +2037,7 @@ nnoremap <silent> <Space>e  :<C-u>call <SID>make_junkfile()<CR>
 " Easy typing tilda insted of backslash
 cnoremap <expr> <Bslash> HomedirOrBackslash()
 "}}}
-" swap ; and : {{{
+" Swap semicolon for colon {{{
 nnoremap ; :
 vnoremap ; :
 nnoremap q; q:
@@ -2046,7 +2045,7 @@ vnoremap q; q:
 nnoremap : ;
 vnoremap : ;
 "}}}
-" Easy escaping jj {{{
+" Make less complex to escaping {{{
 inoremap jj <ESC>
 cnoremap <expr> j getcmdline()[getcmdpos()-2] ==# 'j' ? "\<BS>\<C-c>" : 'j'
 vnoremap <C-j><C-j> <ESC>
@@ -2054,7 +2053,7 @@ onoremap jj <ESC>
 inoremap j<Space> j
 onoremap j<Space> j
 "}}}
-" Replace j,k with gj,gk {{{
+" Swap jk for gjgk {{{
 nnoremap j gj
 nnoremap k gk
 vnoremap j gj
@@ -2082,26 +2081,19 @@ if s:vimrc_goback_to_eof2bof == s:true
   nnoremap <expr><silent> k <SID>up("gk")
   nnoremap <expr><silent> j <SID>down("gj")
 endif "}}}
-" virtual replace mode {{{
-nnoremap R gR
-nnoremap gR R
-"}}}
-" The buffers and the tabpages {{{
+" Buffers and tabpages {{{
 if s:has_plugin('vim-buftabs')
   nnoremap <silent> <C-j> :<C-u>call <SID>smart_bchange('n')<CR>
   nnoremap <silent> <C-k> :<C-u>call <SID>smart_bchange('p')<CR>
 else
-  "nnoremap <silent> <C-j> :<C-u>call <SID>get_buflists('n')<CR>
-  "nnoremap <silent> <C-k> :<C-u>call <SID>get_buflists('p')<CR>
   nnoremap <silent> <C-j> :<C-u>call <SID>smart_bchange('n')<CR>:<C-u>call <SID>get_buflists()<CR>
   nnoremap <silent> <C-k> :<C-u>call <SID>smart_bchange('p')<CR>:<C-u>call <SID>get_buflists()<CR>
 endif
 
 nnoremap <silent> <C-l> :<C-u>silent! tabnext<CR>
 nnoremap <silent> <C-h> :<C-u>silent! tabprev<CR>
-"nnoremap <silent> tt  :<C-u>tabedit<CR>
 "}}}
-" Auto pair {{{
+" Inser matching bracket automatically {{{
 inoremap [ []<LEFT>
 inoremap ( ()<LEFT>
 inoremap " ""<LEFT>
@@ -2112,7 +2104,8 @@ inoremap ` ``<LEFT>
 inoremap <C-h> <Backspace>
 inoremap <C-d> <Delete>
 inoremap <C-m> <Return>
-"inoremap <C-i> <Tab>
+inoremap <C-i> <Tab>
+
 cnoremap <C-k> <UP>
 cnoremap <C-j> <DOWN>
 cnoremap <C-l> <RIGHT>
@@ -2131,6 +2124,7 @@ cnoremap <C-b> <Left>
 cnoremap <C-f> <Right>
 cnoremap <C-d> <Del>
 cnoremap <C-h> <BS>
+
 nnoremap <C-a> ^
 nnoremap <C-e> $
 nnoremap + <C-a>
@@ -2163,44 +2157,26 @@ nnoremap sj <C-w>j
 nnoremap sk <C-w>k
 nnoremap sl <C-w>l
 nnoremap sh <C-w>h
-" _ : Quick horizontal splits
-nnoremap _  :sp<CR>
-" | : Quick vertical splits
-nnoremap <bar>  :vsp<CR>
 "}}}
 " Folding (see :h usr_28.txt){{{
 nnoremap <expr>l foldclosed('.') != -1 ? 'zo' : 'l'
 nnoremap <expr>h col('.') == 1 && foldlevel(line('.')) > 0 ? 'zc' : 'h'
 nnoremap <silent>z0 :<C-u>set foldlevel=<C-r>=foldlevel('.')<CR><CR>
 "}}}
-" Useful settings {{{
-inoremap <silent> <C-CR> <Esc>:set expandtab<CR>a<CR> <Esc>:set noexpandtab<CR>a<BS>
-
-nnoremap <Leader>wc :%s/\i\+/&/gn<CR>
-vnoremap <Leader>wc :s/\i\+/&/gn<CR>
-nnoremap gs :<C-u>%s///g<Left><Left><Left>
-vnoremap gs :s///g<Left><Left><Left>
-
+" Misc mappings {{{
 " Add a relative number toggle
 nnoremap <silent> <Leader>r :<C-u>set relativenumber!<CR>
 
 " Add a spell check toggle
 nnoremap <silent> <Leader>s :<C-u>set spell!<CR>
 
-" Goto {num} row like a {num}gg, {num}G and :{num}<CR>
-"nnoremap <expr><Tab> v:count !=0 ? "G" : "\<Tab>"
+nnoremap <silent> ~ :let &tabstop = (&tabstop * 2 > 16) ? 2 : &tabstop * 2<CR>:echo 'tabstop:' &tabstop<CR>
 
-nnoremap <silent>~ :let &tabstop = (&tabstop * 2 > 16) ? 2 : &tabstop * 2<CR>:echo 'tabstop:' &tabstop<CR>
-
-" Move to top/center/bottom
-noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ?
-      \ 'zt' : (winline() == 1)? 'zb' : 'zz'
+" Toggle top/center/bottom 
+noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ?  'zt' : (winline() == 1)? 'zb' : 'zz'
 
 " Reset highlight searching
 nnoremap <silent> <ESC><ESC> :nohlsearch<CR>
-
-" Go to last last changes
-nnoremap <C-g> zRg;zz
 
 " key map ^,$ to <Space>h,l. Because ^ and $ is difficult to type and damage little finger!!!
 noremap <Space>h ^
@@ -2209,42 +2185,35 @@ noremap <Space>l $
 " Type 'v', select end of line in visual mode
 vnoremap v $h
 
+" Yank begin with cursor and extend to the end of the line
 nnoremap Y y$
+
+" Do 'zz' after next candidates for search words
 nnoremap n nzz
 nnoremap N Nzz
 
-nnoremap <Space>/  *<C-o>
-nnoremap g<Space>/ g*<C-o>
+" Search word under cursor
 nnoremap S *zz
 nnoremap * *zz
 nnoremap # #zz
 nnoremap g* g*zz
 nnoremap g# g#zz
 
-"noremap <Space>O  :<C-u>for i in range(v:count1) \| call append(line('.'), '') \| endfor<CR>
-"nnoremap <Space>O  :<C-u>for i in range(v:count1) \| call append(line('.')-1, '') \| endfor<CR>
-
+" View file information
 nnoremap <C-g> 1<C-g>
-noremap g<CR> g;
-nnoremap <silent><CR> :<C-u>silent w<CR>
 
-" swap gf and gF
+" Write only when the buffer has been modified
+nnoremap <silent><CR> :<C-u>silent update<CR>
+
+" Goto file under cursor
 noremap gf gF
 noremap gF gf
 
-" IM off when breaking insert-mode
-inoremap <ESC> <ESC>
-inoremap <C-[> <ESC>
-
-" Don't use Ex mode, use Q for formatting
-nnoremap Q gq
-
-" Insert null line
-"nnoremap <silent><CR> :<C-u>call append(expand('.'), '')<CR>j
-
+" Jump a next blank line
 nnoremap <silent>W :<C-u>keepjumps normal! }<CR>
 nnoremap <silent>B :<C-u>keepjumps normal! {<CR>
 
+" Save word and exchange it under cursor
 nnoremap <silent> ciy ciw<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
 nnoremap <silent> cy   ce<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
 

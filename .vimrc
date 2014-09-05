@@ -124,6 +124,7 @@ let s:vimrc_goback_to_eof2bof       = get(g:, 'vimrc_goback_to_eof2bof',       s
 let s:vimrc_save_window_position    = get(g:, 'vimrc_save_window_position',    s:false)
 let s:vimrc_restore_cursor_position = get(g:, 'vimrc_restore_cursor_position', s:true)
 let s:vimrc_statusline_manually     = get(g:, 'vimrc_statusline_manually',     s:true)
+let s:vimrc_add_execute_perm        = get(g:, 's:vimrc_add_execute_perm',      s:false)
 "}}}
 
 " A function to check whether the plugin exists
@@ -441,7 +442,10 @@ function! s:escape_filename(fname) "{{{
   endif
 endfunction "}}}
 function! s:is_exist(path) "{{{
+  let save_wildignore = &wildignore
+  setlocal wildignore=
   let path = glob(simplify(a:path))
+  let &wildignore = save_wildignore
   if exists("*s:escape_filename")
     let path = s:escape_filename(path)
   endif
@@ -558,6 +562,7 @@ function! s:delete(bang) "{{{
       redraw | echo 'Delete "' . file . '"? [y/N]: '
     endif
     if !empty(a:bang) || nr2char(getchar()) ==? 'y'
+      silent! update
       if delete(file) == 0
         let bufname = bufname(fnamemodify(file, ':p'))
         if bufexists(bufname) && buflisted(bufname)
@@ -1393,7 +1398,6 @@ else
       call system("chown goth:staff " . dir)
     endif
     execute "set backupdir=" . dir
-    "let ext = strftime("%H_%M_%S", localtime())
     execute "set backupext=." . strftime("%H_%M_%S", localtime())
   endfunction
 endif
@@ -1434,10 +1438,10 @@ else
     " Vim for CUI
     if s:has_plugin('solarized.vim')
       colorscheme solarized
-    elseif s:has_plugin('vim-hybrid')
-      colorscheme hybrid
     elseif s:has_plugin('jellybeans.vim')
       colorscheme jellybeans
+    elseif s:has_plugin('vim-hybrid')
+      colorscheme hybrid
     else
       colorscheme desert
     endif
@@ -1476,7 +1480,7 @@ function! MakeTabLine() "{{{
   let sep = ' | '
   let tabs = join(titles, sep) . sep . '%#TabLineFill#%T'
 
-  hi TabLineFill ctermfg=white
+  "hi TabLineFill ctermfg=white
   let info = '%#TabLineFill#'
   let info .= fnamemodify(getcwd(), ':~') . ' '
   return tabs . '%=' . info
@@ -2697,7 +2701,7 @@ augroup when-help-opened
 augroup END
 
 function! s:remove_swapfile() "{{{
-  let save_wilfignore = &wildignore
+  let save_wildignore = &wildignore
   setlocal wildignore=
   let target = &directory
   let list = split(glob(target."**/*.sw{p,o}"), '\n')
@@ -2705,7 +2709,7 @@ function! s:remove_swapfile() "{{{
     call delete(file)
     echo file
   endfor
-  let &wildignore = save_wilfignore
+  let &wildignore = save_wildignore
 endfunction "}}}
 command! RemoveSwapfile call <SID>remove_swapfile()
 
@@ -2742,6 +2746,19 @@ if !s:has_plugin('vim-buftabs')
     autocmd BufEnter,BufAdd,BufWinEnter * call <SID>get_buflists()
   augroup END
 endif "}}}
+
+" quicklook for mac
+if executable("qlmanage")
+  command! -nargs=? -complete=file QuickLook call s:quicklook(<f-args>)
+  function! s:quicklook(...)
+    let file = a:0 ? expand(a:1) : expand('%:p')
+    if !s:is_exist(file)
+      echo printf('%s: No such file or directory', file)
+      return 0
+    endif
+    call system(printf('qlmanage -p %s >& /dev/null', shellescape(file)))
+  endfunction
+endif
 
 "------------------------------------------------------------------------------
 
@@ -2824,6 +2841,7 @@ if has('vim_starting') && &binary
 endif "}}}
 
 " Add execute permission {{{
+if s:vimrc_add_execute_perm == s:true
 if executable('chmod')
   augroup vimrc-autoexecutable
     autocmd!
@@ -2841,6 +2859,7 @@ if executable('chmod')
       endif
     endif
   endfunction
+endif
 endif "}}}
 
 " Restore cursor position {{{

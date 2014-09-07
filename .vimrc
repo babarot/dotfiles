@@ -526,6 +526,63 @@ function! s:smart_foldcloser() "{{{
   normal! zM
 endfunction
 "}}}
+function! s:rand(n) "{{{
+  let match_end = matchend(reltimestr(reltime()), '\d\+\.') + 1
+  return reltimestr(reltime())[match_end : ] % (a:n + 1)
+endfunction "}}}
+function! s:random_string(n) "{{{
+  let n = a:n ==# '' ? 8 : a:n
+  let s = []
+  let chars = split('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', '\ze')
+  let max = len(chars) - 1
+  for x in range(n)
+    call add(s, (chars[s:rand(max)]))
+  endfor
+  let @+ = join(s, '')
+  echo join(s, '')
+endfunction "}}}
+function! s:move_left_center_right(...) "{{{
+  let curr_pos = getpos('.')
+  let curr_line_len = len(getline('.'))
+  let curr_pos[3] = 0
+  let c = curr_pos[2]
+  if 0 <= c && c < (curr_line_len / 3 * 1)
+    if a:0 > 0
+      let curr_pos[2] = curr_line_len
+    else
+      let curr_pos[2] = curr_line_len / 2
+    endif
+  elseif (curr_line_len / 3 * 1) <= c && c < (curr_line_len / 3 * 2)
+    if a:0 > 0
+      let curr_pos[2] = 0
+    else
+      let curr_pos[2] = curr_line_len
+    endif
+  else
+    if a:0 > 0
+      let curr_pos[2] = curr_line_len / 2
+    else
+      let curr_pos[2] = 0
+    endif
+  endif
+  call setpos('.',curr_pos)
+endfunction "}}}
+function! s:toggle_option(option_name) "{{{
+  if exists('&' . a:option_name)
+    execute 'setlocal' a:option_name . '!'
+    execute 'setlocal' a:option_name . '?'
+  endif
+endfunction "}}}
+function! s:toggle_variable(variable_name) "{{{
+  if eval(a:variable_name)
+    execute 'let' a:variable_name . ' = 0'
+  else
+    execute 'let' a:variable_name . ' = 1'
+  endif
+  echo printf('%s = %s', a:variable_name, eval(a:variable_name))
+endfunction "}}}
+
+" Handle files.
 function! s:rename(new, type) "{{{
   if a:type ==# 'file'
     if empty(a:new)
@@ -561,45 +618,6 @@ function! s:rename(new, type) "{{{
     write
     call delete(expand('#'))
   endif
-endfunction "}}}
-function! s:delete(bang) "{{{
-  let file = fnamemodify(expand('%'), ':p')
-  if filereadable(file)
-    if empty(a:bang)
-      redraw | echo 'Delete "' . file . '"? [y/N]: '
-    endif
-    if !empty(a:bang) || nr2char(getchar()) ==? 'y'
-      silent! update
-      if delete(file) == 0
-        let bufname = bufname(fnamemodify(file, ':p'))
-        if bufexists(bufname) && buflisted(bufname)
-          execute "bwipeout" bufname
-        endif
-        echo "Deleted '" . file . "', successfully!"
-        return 1
-      endif
-      echo "Could not delete '" . file . "'"
-    else
-      echo "Do nothing."
-    endif
-  else
-    echohl WarningMsg | echo "The '" . file . "' does not exist." | echohl NONE
-  endif
-endfunction "}}}
-function! s:rand(n) "{{{
-  let match_end = matchend(reltimestr(reltime()), '\d\+\.') + 1
-  return reltimestr(reltime())[match_end : ] % (a:n + 1)
-endfunction "}}}
-function! s:random_string(n) "{{{
-  let n = a:n ==# '' ? 8 : a:n
-  let s = []
-  let chars = split('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', '\ze')
-  let max = len(chars) - 1
-  for x in range(n)
-    call add(s, (chars[s:rand(max)]))
-  endfor
-  let @+ = join(s, '')
-  echo join(s, '')
 endfunction "}}}
 function! s:make_junkfile() "{{{
   let junk_dir = $HOME . '/.vim/junk'. strftime('/%Y/%m/%d')
@@ -700,22 +718,32 @@ function! s:ls(path, bang) "{{{
   endfor
   return 1
 endfunction "}}}
-function! s:toggle_option(option_name) "{{{
-  if exists('&' . a:option_name)
-    execute 'setlocal' a:option_name . '!'
-    execute 'setlocal' a:option_name . '?'
-  endif
-endfunction "}}}
-function! s:toggle_variable(variable_name) "{{{
-  if eval(a:variable_name)
-    execute 'let' a:variable_name . ' = 0'
-  else
-    execute 'let' a:variable_name . ' = 1'
-  endif
-  echo printf('%s = %s', a:variable_name, eval(a:variable_name))
-endfunction "}}}
 
 " Handle buffers.
+function! s:buf_delete(bang) "{{{
+  let file = fnamemodify(expand('%'), ':p')
+  if filereadable(file)
+    if empty(a:bang)
+      redraw | echo 'Delete "' . file . '"? [y/N]: '
+    endif
+    if !empty(a:bang) || nr2char(getchar()) ==? 'y'
+      silent! update
+      if delete(file) == 0
+        let bufname = bufname(fnamemodify(file, ':p'))
+        if bufexists(bufname) && buflisted(bufname)
+          execute "bwipeout" bufname
+        endif
+        echo "Deleted '" . file . "', successfully!"
+        return 1
+      endif
+      echo "Could not delete '" . file . "'"
+    else
+      echo "Do nothing."
+    endif
+  else
+    echohl WarningMsg | echo "The '" . file . "' does not exist." | echohl NONE
+  endif
+endfunction "}}}
 function! s:count_buffers() "{{{
   let l:count = 0
   for i in range(1, bufnr('$'))
@@ -772,7 +800,7 @@ function! s:smart_bwipeout(mode) "{{{
   endif
 
   let bufname = empty(bufname(bufnr('%'))) ? bufnr('%') . "#" : bufname(bufnr('%'))
-  if &modified
+  if &modified == 1
     echo printf("'%s' is unsaved. Quit!? [y(f)/N/w] ", bufname)
     let c = nr2char(getchar())
 
@@ -786,22 +814,21 @@ function! s:smart_bwipeout(mode) "{{{
       endif
       execute "write " . filename
       silent bwipeout!
-      return
-    endif
 
-    redraw
-    if c ==? 'y' || c ==? 'f'
-      echo "Bwipeout! " . bufname
+    elseif c ==? 'y' || c ==? 'f'
       silent bwipeout!
     else
+      redraw
       echo "Do nothing"
+      return
     endif
   else
-    echo "Bwipeout " . bufname
     silent bwipeout
   endif
 
-  if !s:has_plugin("vim-buftabs")
+  if s:has_plugin("vim-buftabs")
+    echo "Bwipeout " . bufname
+  else
     redraw
     call <SID>get_buflists()
   endif
@@ -892,7 +919,7 @@ function! s:all_buffers_bwipeout() "{{{
   endfor
 endfunction "}}}
 
-" Handle tabpages
+" Handle tabpages.
 function! s:tabdrop(target) "{{{
   let target = empty(a:target) ? expand('%:p') : bufname(a:target + 0)
   if !empty(target) && bufexists(target) && buflisted(target)
@@ -935,32 +962,6 @@ function! s:close_all_left_tabpages() "{{{
     execute "tabclose 1"
     let i = i + 1
   endwhile
-endfunction "}}}
-function! s:move_left_center_right(...) "{{{
-  let curr_pos = getpos('.')
-  let curr_line_len = len(getline('.'))
-  let curr_pos[3] = 0
-  let c = curr_pos[2]
-  if 0 <= c && c < (curr_line_len / 3 * 1)
-    if a:0 > 0
-      let curr_pos[2] = curr_line_len
-    else
-      let curr_pos[2] = curr_line_len / 2
-    endif
-  elseif (curr_line_len / 3 * 1) <= c && c < (curr_line_len / 3 * 2)
-    if a:0 > 0
-      let curr_pos[2] = 0
-    else
-      let curr_pos[2] = curr_line_len
-    endif
-  else
-    if a:0 > 0
-      let curr_pos[2] = curr_line_len / 2
-    else
-      let curr_pos[2] = 0
-    endif
-  endif
-  call setpos('.',curr_pos)
 endfunction "}}}
 function! s:find_tabnr(bufnr) "{{{
   for tabnr in range(1, tabpagenr("$"))
@@ -1634,6 +1635,7 @@ function! MakeBigStatusLine()
   if s:vimrc_statusline_manually == s:true
     set statusline=
     set statusline+=%#BlackWhite#
+    set statusline+=[%n]:
     set statusline+=%{pathshorten(getcwd())}/
     set statusline+=%f
     set statusline+=\ %m
@@ -2026,7 +2028,7 @@ command! -bang -nargs=? -complete=file BufNew call <SID>bufnew(<q-args>, <q-bang
 command! -nargs=0 -bang Bwipeout call <SID>smart_bwipeout(0, <q-bang>)
 
 " Delete the current buffer and the file.
-command! -bang -nargs=0 -complete=buffer Delete call s:delete(<bang>0)
+command! -bang -nargs=0 -complete=buffer Delete call s:buf_delete(<bang>0)
 "}}}
 " Handle tabpages.{{{
 " Make tabpages
@@ -2727,8 +2729,8 @@ endif
 " will be described in this section.
 "==============================================================================
 
-nnoremap <silent> jkjk :<C-u>call <SID>get_buflists()<CR>
-nnoremap <silent> kjkj :<C-u>call <SID>get_buflists()<CR>
+""nnoremap <silent> jkjk :<C-u>call <SID>get_buflists()<CR>
+""nnoremap <silent> kjkj :<C-u>call <SID>get_buflists()<CR>
 
 " Experimental. {{{
 

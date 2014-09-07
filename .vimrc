@@ -19,17 +19,17 @@
 " - License
 "  The MIT License (MIT)
 "  Copyright (c) 2014 B4B4R07
-"  
+"
 "  Permission is hereby granted, free of charge, to any person obtaining a copy of
 "  this software and associated documentation files (the "Software"), to deal in
 "  the Software without restriction, including without limitation the rights to
 "  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
 "  of the Software, and to permit persons to whom the Software is furnished to do
 "  so, subject to the following conditions:
-"  
+"
 "  The above copyright notice and this permission notice shall be included in all
 "  copies or substantial portions of the Software.
-"  
+"
 "  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 "  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 "  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -71,9 +71,8 @@ if has('vim_starting') "{{{
 endif "}}}
 
 if exists("g:loaded_vimrc")
-  "set all&
-  "set runtimepath+=$NEOBUNDLEPATH
-  "finish
+  set all&
+  finish
 endif
 let g:loaded_vimrc = 1
 
@@ -118,13 +117,14 @@ let s:is_tabpage = (&showtabline == 1 && tabpagenr('$') >= 2)
 let s:true  = 1
 let s:false = 0
 
-let s:vimrc_plugin_on               = get(g:, 'vimrc_plugin_on',               s:true)
-let s:vimrc_suggest_neobundleinit   = get(g:, 'vimrc_suggest_neobundleinit',   s:true)
-let s:vimrc_goback_to_eof2bof       = get(g:, 'vimrc_goback_to_eof2bof',       s:true)
-let s:vimrc_save_window_position    = get(g:, 'vimrc_save_window_position',    s:false)
-let s:vimrc_restore_cursor_position = get(g:, 'vimrc_restore_cursor_position', s:true)
-let s:vimrc_statusline_manually     = get(g:, 'vimrc_statusline_manually',     s:true)
-let s:vimrc_add_execute_perm        = get(g:, 's:vimrc_add_execute_perm',      s:false)
+let s:vimrc_plugin_on                  = get(g:, 'vimrc_plugin_on',                  s:false)
+let s:vimrc_suggest_neobundleinit      = get(g:, 'vimrc_suggest_neobundleinit',      s:true)
+let s:vimrc_goback_to_eof2bof          = get(g:, 'vimrc_goback_to_eof2bof',          s:true)
+let s:vimrc_save_window_position       = get(g:, 'vimrc_save_window_position',       s:false)
+let s:vimrc_restore_cursor_position    = get(g:, 'vimrc_restore_cursor_position',    s:true)
+let s:vimrc_statusline_manually        = get(g:, 'vimrc_statusline_manually',        s:true)
+let s:vimrc_add_execute_perm           = get(g:, 'vimrc_add_execute_perm',           s:false)
+let s:vimrc_colorize_statusline_insert = get(g:, 'vimrc_colorize_statusline_insert', s:true)
 "}}}
 
 " A function to check whether the plugin exists
@@ -182,18 +182,22 @@ if s:bundled('neobundle.vim') "{{{
         \ 'unix': 'make -f make_unix.mak',
         \ }}
   NeoBundle has('lua') ? 'Shougo/neocomplete' : 'Shougo/neocomplcache'
-  NeoBundleLazy 'Shougo/vimshell', {
-        \ 'autoload' : { 'commands' : [ 'VimShell', "VimShellPop", "VimShellInteractive" ] }
-        \}
+  "call neobundle#config('neocomplcache', {
+  "      \ 'lazy' : 1,
+  "      \ 'autoload' : {
+  "      \   'insert' : 1,
+  "      \ }})
   NeoBundleLazy 'Shougo/unite-outline', {
         \ 'depends' : 'Shougo/unite.vim',
         \ 'autoload' : {
         \   'unite_sources' : 'outline' },
         \ }
-  NeoBundleLazy 'Shougo/unite-help', { 'autoload' : {
+  NeoBundleLazy 'Shougo/unite-help', {
+        \ 'autoload' : {
         \ 'unite_sources' : 'help'
         \ }}
-  NeoBundleLazy 'Shougo/neomru.vim', { 'autoload' : {
+  NeoBundleLazy 'Shougo/neomru.vim', {
+        \ 'autoload' : {
         \ 'unite_sources' : 'file_mru',
         \ }}
   NeoBundle 'Shougo/vimfiler'
@@ -218,59 +222,70 @@ if s:bundled('neobundle.vim') "{{{
         \                 'VimShellTerminal', 'VimShellPop'],
         \   'mappings' : ['<Plug>(vimshell_switch)']
         \ }})
-  NeoBundleLazy 'glidenote/memolist.vim', { 'autoload' : {
+  NeoBundleLazy 'Shougo/vimshell', {
+        \ 'autoload' : {
+        \   'commands' : [ 'VimShell', "VimShellPop", "VimShellInteractive" ] }
+        \}
+  NeoBundleLazy 'glidenote/memolist.vim', {
+        \ 'autoload' : {
         \ 'commands' : ['MemoNew', 'MemoGrep']
         \ }}
-  NeoBundleLazy 'thinca/vim-scouter', '', 'same', { 'autoload' : {
+  NeoBundleLazy 'thinca/vim-scouter', {
+        \ 'autoload' : {
         \ 'commands' : 'Scouter'
         \ }}
-  NeoBundleLazy 'thinca/vim-ref', { 'autoload' : {
+  NeoBundleLazy 'thinca/vim-ref', {
+        \ 'autoload' : {
         \ 'commands' : 'Ref'
         \ }}
   NeoBundle 'thinca/vim-quickrun'
-  NeoBundle 'thinca/vim-unite-history', '', 'same'
+  NeoBundle 'thinca/vim-unite-history'
   NeoBundle 'thinca/vim-splash'
   NeoBundle 'thinca/vim-portal'
   NeoBundle 'thinca/vim-poslist'
-  NeoBundleLazy 'thinca/vim-qfreplace', '', 'same', { 'autoload' : {
+  NeoBundleLazy 'thinca/vim-qfreplace', {
+        \ 'autoload' : {
         \ 'filetypes' : ['unite', 'quickfix'],
         \ }}
   NeoBundle 'tyru/nextfile.vim'
   NeoBundle 'tyru/skk.vim'
-  NeoBundleLazy 'tyru/eskk.vim', { 'autoload' : {
+  NeoBundleLazy 'tyru/eskk.vim', {
+        \ 'autoload' : {
         \ 'mappings' : [['i', '<Plug>(eskk:toggle)']],
         \ }}
-  NeoBundleLazy 'tyru/open-browser.vim', '', 'same', { 'autoload' : {
+  NeoBundleLazy 'tyru/open-browser.vim', {
+        \ 'autoload' : {
         \ 'mappings' : '<Plug>(open-browser-wwwsearch)',
         \ }}
-  NeoBundleLazy 'tyru/restart.vim', '', 'same', {
+  NeoBundleLazy 'tyru/restart.vim', {
         \ 'gui' : 1,
         \ 'autoload' : {
         \  'commands' : 'Restart'
         \ }}
-  NeoBundleLazy 'sjl/gundo.vim', '', 'same', { 'autoload' : {
+  NeoBundleLazy 'sjl/gundo.vim', {
+        \ 'autoload' : {
         \ 'commands' : 'GundoToggle'
         \ }}
   NeoBundle 'ujihisa/neco-look'
-  NeoBundleLazy 'ujihisa/unite-colorscheme', '', 'same'
+  NeoBundle 'ujihisa/unite-colorscheme'
   NeoBundle 'b4b4r07/mru.vim'
   NeoBundle 'b4b4r07/vim-autocdls'
   NeoBundle 'b4b4r07/vim-shellutils'
   NeoBundle 'nathanaelkane/vim-indent-guides'
-  if !has('gui_running')
-    "NeoBundle 'b4b4r07/buftabs'
-    NeoBundle 'b4b4r07/vim-buftabs'
-  endif
-  if has('gui_running')
-    NeoBundle 'itchyny/lightline.vim'
-  endif
+  NeoBundle has('gui_running') ? 'itchyny/lightline.vim' : 'b4b4r07/vim-buftabs'
   NeoBundle 'itchyny/calendar.vim'
   NeoBundle 'scrooloose/syntastic'
+  NeoBundleLazy 'scrooloose/nerdtree', {
+        \ 'autoload' : {
+        \ 'commands' : 'NERDTreeToggle'
+        \ }}
   NeoBundle 'tpope/vim-surround'
   NeoBundle 'tpope/vim-repeat'
-  NeoBundleLazy 'tpope/vim-markdown', { 'autoload' : {
+  NeoBundleLazy 'tpope/vim-markdown', {
+        \ 'autoload' : {
         \ 'filetypes' : ['markdown'] }}
-  NeoBundleLazy 'tpope/vim-fugitive', { 'autoload': {
+  NeoBundleLazy 'tpope/vim-fugitive', {
+        \ 'autoload': {
         \ 'commands': ['Gcommit', 'Gblame', 'Ggrep', 'Gdiff'] }}
   NeoBundle 'osyo-manga/vim-anzu'
   NeoBundle 'LeafCage/yankround.vim'
@@ -280,36 +295,35 @@ if s:bundled('neobundle.vim') "{{{
   NeoBundleLazy 'mattn/gist-vim', {
         \ 'depends': ['mattn/webapi-vim' ],
         \ 'autoload' : {
-        \   'commands' : 'Gist' }}
+        \ 'commands' : 'Gist' }}
   NeoBundleLazy 'mattn/webapi-vim', {
         \ 'autoload' : {
-        \   'function_prefix': 'webapi'
+        \ 'function_prefix': 'webapi'
         \ }}
   NeoBundleLazy 'mattn/benchvimrc-vim', {
         \ 'autoload' : {
-        \   'commands' : [
-        \     'BenchVimrc'
-        \   ]},
-        \ }
+        \ 'commands' : 'BenchVimrc'
+        \ }}
   NeoBundle 'vim-scripts/Align'
-  NeoBundle 'vim-scripts/FavEx'
-  NeoBundleLazy 'DirDiff.vim', { 'autoload' : {
+  NeoBundleLazy 'DirDiff.vim', {
+        \ 'autoload' : {
         \ 'commands' : 'DirDiff'
         \ }}
   NeoBundleLazy 'mattn/excitetranslate-vim', {
         \ 'depends': 'mattn/webapi-vim',
-        \ 'autoload' : { 'commands': ['ExciteTranslate']}
+        \ 'autoload' : { 'commands': ['ExciteTranslate'] }
         \ }
-  NeoBundleLazy 'jnwhiteh/vim-golang',{
-        \ "autoload" : {"filetypes" : ["go"]}
+  NeoBundleLazy 'fatih/vim-go', {
+        \ "autoload" : { "filetypes" : ["go"] }
         \}
-  NeoBundleLazy 'basyura/TweetVim', { 
-        \'depends' : ['basyura/twibill.vim', 'tyru/open-browser.vim'],
+  NeoBundleLazy 'jnwhiteh/vim-golang', {
+        \ "autoload" : {"filetypes" : ["go"] }
+        \}
+  NeoBundleLazy 'basyura/TweetVim', {
+        \ 'depends' : ['basyura/twibill.vim', 'tyru/open-browser.vim'],
         \ 'autoload' : { 'commands' : 'TweetVimHomeTimeline' }
         \ }
-  NeoBundle 'kana/vim-gf-user'
   NeoBundle 'yomi322/unite-tweetvim'
-  "NeoBundle 'kien/ctrlp.vim'
 
   " Japanese help
   NeoBundle 'vim-jp/vimdoc-ja'
@@ -322,11 +336,11 @@ if s:bundled('neobundle.vim') "{{{
 
   " Disable plugins
   if !has('gui_running')
-    NeoBundleDisable lightline.vim
+    NeoBundleDisable 'lightline.vim'
   endif
-  NeoBundleDisable skk.vim
-  NeoBundleDisable eskk.vim
-  "NeoBundleDisable mru.vim
+  NeoBundleDisable 'skk.vim'
+  NeoBundleDisable 'eskk.vim'
+  NeoBundleDisable 'vim-buftabs'
 
   " Check.
   NeoBundleCheck
@@ -336,9 +350,9 @@ else "{{{
   " If the NeoBundle doesn't exist.
   command! NeoBundleInit try | call s:neobundle_init()
         \| catch /^neobundleinit:/
-          \| echohl ErrorMsg
-          \| echomsg v:exception
-          \| echohl None
+          \|   echohl ErrorMsg
+          \|   echomsg v:exception
+          \|   echohl None
           \| endtry
 
   function! s:neobundle_init()
@@ -390,6 +404,8 @@ filetype plugin indent on
 " It is not general, for example, functions used in a dedicated purpose
 " has been described in the setting position.
 "==============================================================================
+
+" Some utilities.
 function! s:has_plugin(name) "{{{
   " Check {name} plugin whether there is in the runtime path
 
@@ -479,15 +495,6 @@ function! s:smart_execute(expr) "{{{
   let wininfo = winsaveview()
   execute a:expr
   call winrestview(wininfo)
-endfunction "}}}
-function! s:check_flag(flag) "{{{
-  if exists('b:' . a:flag)
-    return b:{a:flag}
-  endif
-  if exists('g:' . a:flag)
-    return g:{a:flag}
-  endif
-  return 0
 endfunction "}}}
 function! s:mkdir(file, ...) "{{{
   let f = a:0 ? fnamemodify(a:file, a:1) : a:file
@@ -616,38 +623,6 @@ function! s:copy_current_path(...) "{{{
   endif
   echo path
 endfunction "}}}
-function! s:find_tabnr(bufnr) "{{{
-  for tabnr in range(1, tabpagenr("$"))
-    if index(tabpagebuflist(tabnr), a:bufnr) !=# -1
-      return tabnr
-    endif
-  endfor
-  return -1
-endfunction "}}}
-function! s:find_winnr(bufnr) "{{{
-  for winnr in range(1, winnr("$"))
-    if a:bufnr ==# winbufnr(winnr)
-      return winnr
-    endif
-  endfor
-  return 1
-endfunction "}}}
-function! s:recycle_open(default_open, path) "{{{
-  let default_action = a:default_open . ' ' . a:path
-  if bufexists(a:path)
-    let bufnr = bufnr(a:path)
-    let tabnr = s:find_tabnr(bufnr)
-    if tabnr ==# -1
-      execute default_action
-      return
-    endif
-    execute 'tabnext ' . tabnr
-    let winnr = s:find_winnr(bufnr)
-    execute winnr . 'wincmd w'
-  else
-    execute default_action
-  endif
-endfunction "}}}
 function! s:load_source(path) "{{{
   let path = expand(a:path)
   if filereadable(path)
@@ -660,6 +635,87 @@ function! s:open(file) "{{{
   call system(printf('%s %s &', 'open', shellescape(file)))
   return 1
 endfunction "}}}
+function! s:ls(path, bang) "{{{
+  let path = empty(a:path) ? getcwd() : expand(a:path)
+  if filereadable(path)
+    if executable("ls")
+      echo system("ls -l " . path)
+    else
+      call s:warningmsg('ls: command not found')
+    endif
+    return 1
+  endif
+  if !isdirectory(path)
+    echohl ErrorMsg | echo path . ": No such file or directory" | echohl NONE
+    return 0
+  endif
+
+  let save_ignore = &wildignore
+  set wildignore=
+  let filelist = glob(path . "/*")
+  if !empty(a:bang)
+    let filelist .= glob(path . "/.??*")
+  endif
+  let &wildignore = save_ignore
+  let filelist = substitute(filelist, '', '^M', 'g')
+
+  if empty(filelist)
+    echo "no file"
+    return 0
+  endif
+
+  let lists = []
+  for file in split(filelist, "\n")
+    if isdirectory(file)
+      call add(lists, fnamemodify(file, ":t") . "/")
+    else
+      if executable(file)
+        call add(lists, fnamemodify(file, ":t") . "*")
+      elseif getftype(file) == 'link'
+        call add(lists, fnamemodify(file, ":t") . "@")
+      else
+        call add(lists, fnamemodify(file, ":t"))
+      endif
+    endif
+  endfor
+
+  echohl WarningMsg | echon len(lists) . ":\t" | echohl None
+  highlight LsDirectory  cterm=bold ctermfg=NONE ctermfg=26        gui=bold guifg=#0096FF   guibg=NONE
+  highlight LsExecutable cterm=NONE ctermfg=NONE ctermfg=Green     gui=NONE guifg=Green     guibg=NONE
+  highlight LsSymbolick  cterm=NONE ctermfg=NONE ctermfg=LightBlue gui=NONE guifg=LightBlue guibg=NONE
+
+  for item in lists
+    if item =~ '/'
+      echohl LsDirectory | echon item[:-2] | echohl NONE
+      echon item[-1:-1] . " "
+    elseif item =~ '*'
+      echohl LsExecutable | echon item[:-2] | echohl NONE
+      echon item[-1:-1] . " "
+    elseif item =~ '@'
+      echohl LsSymbolick | echon item[:-2] | echohl NONE
+      echon item[-1:-1] . " "
+    else
+      echon item . " "
+    endif
+  endfor
+  return 1
+endfunction "}}}
+function! s:toggle_option(option_name) "{{{
+  if exists('&' . a:option_name)
+    execute 'setlocal' a:option_name . '!'
+    execute 'setlocal' a:option_name . '?'
+  endif
+endfunction "}}}
+function! s:toggle_variable(variable_name) "{{{
+  if eval(a:variable_name)
+    execute 'let' a:variable_name . ' = 0'
+  else
+    execute 'let' a:variable_name . ' = 1'
+  endif
+  echo printf('%s = %s', a:variable_name, eval(a:variable_name))
+endfunction "}}}
+
+" Handle buffers.
 function! s:count_buffers() "{{{
   let l:count = 0
   for i in range(1, bufnr('$'))
@@ -699,7 +755,7 @@ function! s:smart_bwipeout(mode) "{{{
     for i in range(1, bufnr('$'))
       if bufexists(i)
         if bufnr('%') ==# i | continue | endif
-        execute 'bwipeout! ' . i
+        execute 'silent bwipeout! ' . i
       endif
     endfor
     return
@@ -729,20 +785,25 @@ function! s:smart_bwipeout(mode) "{{{
         endwhile
       endif
       execute "write " . filename
-      bwipeout!
+      silent bwipeout!
       return
     endif
 
     redraw
     if c ==? 'y' || c ==? 'f'
       echo "Bwipeout! " . bufname
-      bwipeout!
+      silent bwipeout!
     else
       echo "Do nothing"
     endif
   else
     echo "Bwipeout " . bufname
-    bwipeout
+    silent bwipeout
+  endif
+
+  if !s:has_plugin("vim-buftabs")
+    redraw
+    call <SID>get_buflists()
   endif
 endfunction "}}}
 function! s:smart_bchange(mode) "{{{
@@ -830,6 +891,8 @@ function! s:all_buffers_bwipeout() "{{{
     endif
   endfor
 endfunction "}}}
+
+" Handle tabpages
 function! s:tabdrop(target) "{{{
   let target = empty(a:target) ? expand('%:p') : bufname(a:target + 0)
   if !empty(target) && bufexists(target) && buflisted(target)
@@ -899,20 +962,40 @@ function! s:move_left_center_right(...) "{{{
   endif
   call setpos('.',curr_pos)
 endfunction "}}}
-function! s:toggle_option(option_name) "{{{
-  if exists('&' . a:option_name)
-    execute 'setlocal' a:option_name . '!'
-    execute 'setlocal' a:option_name . '?'
-  endif
+function! s:find_tabnr(bufnr) "{{{
+  for tabnr in range(1, tabpagenr("$"))
+    if index(tabpagebuflist(tabnr), a:bufnr) !=# -1
+      return tabnr
+    endif
+  endfor
+  return -1
 endfunction "}}}
-function! s:toggle_variable(variable_name) "{{{
-  if eval(a:variable_name)
-    execute 'let' a:variable_name . ' = 0'
+function! s:find_winnr(bufnr) "{{{
+  for winnr in range(1, winnr("$"))
+    if a:bufnr ==# winbufnr(winnr)
+      return winnr
+    endif
+  endfor
+  return 1
+endfunction "}}}
+function! s:recycle_open(default_open, path) "{{{
+  let default_action = a:default_open . ' ' . a:path
+  if bufexists(a:path)
+    let bufnr = bufnr(a:path)
+    let tabnr = s:find_tabnr(bufnr)
+    if tabnr ==# -1
+      execute default_action
+      return
+    endif
+    execute 'tabnext ' . tabnr
+    let winnr = s:find_winnr(bufnr)
+    execute winnr . 'wincmd w'
   else
-    execute 'let' a:variable_name . ' = 1'
+    execute default_action
   endif
-  echo printf('%s = %s', a:variable_name, eval(a:variable_name))
 endfunction "}}}
+
+" Global functions.
 function! S(f, ...) "{{{
   " Ref: http://goo.gl/S4JFkn
   " Call a script local function.
@@ -1040,7 +1123,7 @@ function! GetFileInfo() "{{{
 endfunction "}}}
 function! GetHighlight(hi) "{{{
   redir => hl
-  silent exec 'highlight ' . a:hi
+  silent execute 'highlight ' . a:hi
   redir END
   return substitute(hl, '.*xxx ', '', '')
 endfunction "}}}
@@ -1193,36 +1276,6 @@ if !s:has_plugin('mru.vim')
     call s:MRU_Create_Window()
     call cursor(lnum, 1)
   endfunction "}}}
-  function! s:MRU_Open_File_Tab() range "{{{
-    for f in getline(a:firstline, a:lastline)
-      if f == ''
-        continue
-      endie
-
-      let file = substitute(f, '^.*| ','','')
-      if bufwinnr('^' . fnamemodify(file, ':t') . '$') == -1
-        let tabnum = -1
-        let i = 1
-        let bnum = bufnr('^' . fname . '$')
-        while i <= tabpagenr('$')
-          if index(tabpagebuflist(i), bnum) != -1
-            let tabnum = i
-            break
-          endif
-          let i += 1
-        endwhile
-
-      endif
-
-      if tabnum != -1
-        " Goto the tab containing the file
-        exe 'tabnext ' . i
-      else
-        " Open a new tab as the last tab page
-        exe '999tabnew ' . fnameescape(substitute(file, '\\', '/', 'g'))
-      endif
-    endfor
-  endfunction "}}}
   function! s:MRU_Open_File() range "{{{
     for f in getline(a:firstline, a:lastline)
       if f == ''
@@ -1292,32 +1345,25 @@ if !s:has_plugin('mru.vim')
     set cpoptions&vim
 
     " Create mappings to select and edit a file from the MRU list
-    nnoremap <buffer> <silent> <CR> :call <SID>MRU_Open_File()<CR>
-    vnoremap <buffer> <silent> <CR> :call <SID>MRU_Open_File()<CR>
+    nnoremap <buffer> <silent> <CR>   :call <SID>MRU_Open_File()<CR>
+    vnoremap <buffer> <silent> <CR>   :call <SID>MRU_Open_File()<CR>
     nnoremap <buffer> <silent> <S-CR> :call <SID>MRU_Open_File_Tab()<CR>
     vnoremap <buffer> <silent> <S-CR> :call <SID>MRU_Open_File_Tab()<CR>
-    "nnoremap <buffer> <silent> q    :close<CR>
-    "nnoremap <buffer> <silent> R    :call <SID>MRU_RemoveList()<CR>
-    "nnoremap <buffer> <silent> K    :call <SID>MRU_RemoveList('force')<CR>
-    nnoremap <buffer> <silent> K    :call <SID>MRU_RemoveList()<CR>
-    nnoremap <buffer> <silent> S    :setlocal modifiable<CR>:sort<CR>:setlocal nomodifiable<CR>
+    nnoremap <buffer> <silent> K      :call <SID>MRU_RemoveList()<CR>
+    nnoremap <buffer> <silent> S      :setlocal modifiable<CR>:sort<CR>:setlocal nomodifiable<CR>
 
     " Restore the previous cpoptions settings
     let &cpoptions = old_cpoptions
 
     let output = copy(s:MRU_files)
-
-    let s:MRU_Auto_Remove_Deadfiles = 1
-    if s:MRU_Auto_Remove_Deadfiles
-      let idx = 0
-      for file in output
-        if !filereadable(file)
-          call remove(output, idx)
-          continue
-        endif
-        let idx += 1
-      endfor
-    endif
+    let idx = 0
+    for file in output
+      if !filereadable(file)
+        call remove(output, idx)
+        continue
+      endif
+      let idx += 1
+    endfor
 
     silent! 0put =output
 
@@ -1347,13 +1393,10 @@ if !s:has_plugin('mru.vim')
     exe 'syntax match Directory display ' . '"'. '|\zs[^|]*\ze|'. '"'
     exe 'syntax match Constant  display ' . '"' . '[^|]*[\/]' . '"'
 
-    setlocal nonumber
-    setlocal cursorline
-
     " Move the cursor to the beginning of the file
     normal! gg
 
-    setlocal nomodifiable
+    setlocal nonumber cursorline nomodifiable
   endfunction "}}}
   " MRU Essentials {{{
   let s:mru_list_locked = 0
@@ -1371,6 +1414,50 @@ if !s:has_plugin('mru.vim')
 endif
 "}}}
 
+" Add execute permission {{{
+if s:vimrc_add_execute_perm == s:true
+  if executable('chmod')
+    augroup vimrc-autoexecutable
+      autocmd!
+      autocmd BufWritePost * call s:add_permission_x()
+    augroup END
+
+    function! s:add_permission_x()
+      let file = expand('%:p')
+      if !executable(file)
+        if getline(1) =~# '^#!'
+              \ || &ft =~ "\\(z\\|c\\|ba\\)\\?sh$"
+              \ && input(printf('"%s" is not perm 755. Change mode? [y/N] ', expand('%:t'))) =~? '^y\%[es]$'
+          call system("chmod 755 " . shellescape(file))
+          redraw | echo "Set permission 755!"
+        endif
+      endif
+    endfunction
+  endif
+endif "}}}
+
+" Restore cursor position {{{
+function! s:restore_cursor_postion()
+  if line("'\"") <= line("$")
+    normal! g`"
+    return 1
+  endif
+endfunction
+if s:vimrc_restore_cursor_position == s:true
+  augroup restore-cursor-position
+    autocmd!
+    autocmd BufWinEnter * call s:restore_cursor_postion()
+  augroup END
+endif "}}}
+
+" Automatically get buffer list {{{
+if !s:has_plugin('vim-buftabs')
+  augroup bufenter-get-buffer-list
+    autocmd!
+    autocmd BufEnter,BufAdd,BufWinEnter * call <SID>get_buflists()
+  augroup END
+endif "}}}
+
 " Restore the buffer that has been deleted {{{
 let s:bufqueue = []
 augroup buffer-queue-restore
@@ -1378,6 +1465,19 @@ augroup buffer-queue-restore
   autocmd BufDelete * call <SID>buf_enqueue(expand('#'))
 augroup END
 "}}}
+
+" QuickLook for mac {{{
+if executable("qlmanage")
+  command! -nargs=? -complete=file QuickLook call s:quicklook(<f-args>)
+  function! s:quicklook(...)
+    let file = a:0 ? expand(a:1) : expand('%:p')
+    if !s:is_exist(file)
+      echo printf('%s: No such file or directory', file)
+      return 0
+    endif
+    call system(printf('qlmanage -p %s >& /dev/null', shellescape(file)))
+  endfunction
+endif "}}}
 
 " Backup automatically {{{
 set backup
@@ -1494,14 +1594,16 @@ highlight BlackWhite ctermfg=black ctermbg=white cterm=none guifg=black guibg=wh
 highlight WhiteBlack ctermfg=white ctermbg=black cterm=none guifg=white guibg=black gui=none
 
 function! MakeStatusLine()
+  "highlight StatusLine ctermbg=DarkGray ctermfg=Black
+
   let line = ''
-  let line .= '%#BlackWhite#'
+  "let line .= '%#BlackWhite#'
   let line .= '[%n] '
-  "let line .= '%{pathshorten(getcwd())}/'
+  let line .= '%{pathshorten(getcwd())}/'
   let line .= '%f'
   let line .= ' %m'
   let line .= '%<'
-  let line .= '%#StatusLine#'
+  "let line .= '%#StatusLine#'
 
   let line .= '%='
   let line .= '%#BlackWhite#'
@@ -1523,6 +1625,8 @@ endfunction
 augroup minimal-statusline
   autocmd!
   autocmd WinEnter,WinLeave * if winwidth('.') < &columns | set statusline=%!MakeStatusLine() | endif
+  "autocmd WinEnter,WinLeave * if winwidth('.') < &columns | set statusline&                   | endif
+  "autocmd WinEnter,WinLeave * if winwidth('.') < &columns | set statusline&                   | endif
   autocmd WinEnter,WinLeave * if winnr('$') == 1          | let &statusline = s:save_sl       | endif
 augroup END
 
@@ -1566,33 +1670,37 @@ if has('vim_starting')
 endif
 "}}}
 " Emphasize statusline in the insert mode {{{
-if !s:has_plugin('lightline.vim') "&& s:vimrc_statusline_insert_emphasis == s:true
-  augroup emphasize-statusline-insert
-    autocmd!
-    autocmd InsertEnter * call s:colorize_statusline_insert('Enter')
-    autocmd InsertLeave * call s:colorize_statusline_insert('Leave')
-  augroup END
+if s:vimrc_colorize_statusline_insert == s:true
+  if !s:has_plugin('lightline.vim')
+    augroup colorize-statusline-insert
+      autocmd!
+      autocmd InsertEnter * call s:colorize_statusline_insert('Enter')
+      autocmd InsertLeave * call s:colorize_statusline_insert('Leave')
+    augroup END
 
-  let g:hi_insert = 'highlight StatusLine guifg=black guibg=darkyellow gui=none ctermfg=black ctermbg=darkyellow cterm=none'
-  let s:slhlcmd = ''
-  function! s:colorize_statusline_insert(mode)
-    if a:mode == 'Enter'
-      silent! let s:slhlcmd = 'highlight ' . s:get_statusline_highlight('StatusLine')
-      silent exec g:hi_insert
-    else
-      highlight clear StatusLine
-      silent exec s:slhlcmd
-    endif
-  endfunction
+    function! ReverseHighlight(hi)
+      let hl = a:hi
+      let hl = substitute(hl, 'fg', 'swp', 'g')
+      let hl = substitute(hl, 'bg', 'fg',  'g')
+      let hl = substitute(hl, 'swp', 'bg', 'g')
+      return hl
+    endfunction
 
-  function! s:get_statusline_highlight(hi)
-    redir => hl
-    exec 'highlight '.a:hi
-    redir END
-    let hl = substitute(hl, '[\r\n]', '', 'g')
-    let hl = substitute(hl, 'xxx', '', '')
-    return hl
-  endfunction
+    let s:hi_insert = 'highlight StatusLine ' . ReverseHighlight(GetHighlight('ModeMsg'))
+    let s:slhlcmd = ''
+
+    function! s:colorize_statusline_insert(mode)
+      if a:mode == 'Enter'
+        let s:slhlcmd = 'highlight StatusLine ' . GetHighlight('StatusLine')
+        silent execute s:hi_insert
+
+      elseif a:mode == 'Leave'
+        highlight clear StatusLine
+        silent execute s:slhlcmd
+      endif
+
+    endfunction
+  endif
 endif
 "}}}
 
@@ -1629,6 +1737,16 @@ augroup auto-cursorcolumn-appear
   endfunction
 augroup END
 "}}}
+augroup multi-window-toggle-cursorline8column "{{{
+  autocmd!
+  autocmd WinEnter * setlocal cursorline
+  autocmd WinLeave * setlocal nocursorline nocursorcolumn
+augroup END "}}}
+augroup cursor-highlight-emphasis "{{{
+  autocmd!
+  autocmd CursorMoved,CursorMovedI,WinLeave * hi! link CursorLine CursorLine | hi! link CursorColumn CursorColumn
+  autocmd CursorHold,CursorHoldI            * hi! link CursorLine Visual     | hi! link CursorColumn Visual
+augroup END "}}}
 " GUI IME Cursor colors {{{
 if has('multi_byte_ime') || has('xim')
   highlight Cursor guibg=NONE guifg=Yellow
@@ -1866,17 +1984,33 @@ set guioptions-=b
 " User defined commands section.
 "==============================================================================
 
+" Some utilities. {{{
+" Measure fighting strength of Vim.
+command! -bar -bang -nargs=? -complete=file Scouter echo Scouter(empty(<q-args>) ? $MYVIMRC : expand(<q-args>), <bang>0)
+
+" Ls like a shell-ls
+command! -nargs=? -bang -complete=file Ls call s:ls(<q-args>, <q-bang>)
+
+" Show all runtimepaths.
+command! -bar RTP echo substitute(&runtimepath, ',', "\n", 'g')
+
+" Make random string such as password
+command! -nargs=? RandomString call s:random_string(<q-args>)
+
+" View all mappings
+command! -nargs=* -complete=mapping AllMaps map <args> | map! <args> | lmap <args>
+"}}}
+"Handle buffers. {{{
 " Wipeout all buffers
 command! -nargs=0 AllBwipeout call s:all_buffers_bwipeout()
 
-" Make tabpages
-command! -nargs=? TabNew call s:tabnew(<q-args>)
+" Get buffer queue list for restore.
+command! -nargs=0 BufQueue echo len(s:bufqueue)
+      \ ? reverse(split(substitute(join(s:bufqueue, ' '), $HOME, '~', 'g')))
+      \ : "No buffers in 's:bufqueue'."
 
-"Open again with tabpages
-command! -nargs=? Tab call s:tabdrop(<q-args>)
-
-" Open the buffer again with tabpages
-command! -nargs=? -complete=buffer ROT call <SID>recycle_open('tabedit', empty(<q-args>) ? expand('#') : expand(<q-args>))
+" Get buffer list like ':ls'
+command! -nargs=0 BufList call s:get_buflists()
 
 " Smart bnext/bprev
 command! Bnext call s:smart_bchange('n')
@@ -1893,26 +2027,28 @@ command! -nargs=0 -bang Bwipeout call <SID>smart_bwipeout(0, <q-bang>)
 
 " Delete the current buffer and the file.
 command! -bang -nargs=0 -complete=buffer Delete call s:delete(<bang>0)
+"}}}
+" Handle tabpages.{{{
+" Make tabpages
+command! -nargs=? TabNew call s:tabnew(<q-args>)
 
+"Open again with tabpages
+command! -nargs=? Tab call s:tabdrop(<q-args>)
+
+" Open the buffer again with tabpages
+command! -nargs=? -complete=buffer ROT call <SID>recycle_open('tabedit', empty(<q-args>) ? expand('#') : expand(<q-args>))
+"}}}
+" Handle files {{{
 " Open a file.
 command! -nargs=? -complete=file Open call <SID>open(<q-args>)
 
-" Show all runtimepaths.
-command! -bar RTP echo substitute(&runtimepath, ',', "\n", 'g')
+" Get current file path
+command! CopyCurrentPath call s:copy_current_path()
 
-" Measure fighting strength of Vim.
-command! -bar -bang -nargs=? -complete=file Scouter echo Scouter(empty(<q-args>) ? $MYVIMRC : expand(<q-args>), <bang>0)
+" Get current directory path
+command! CopyCurrentDir call s:copy_current_path(1)
 
-" Make the notitle file called 'Junk'.
-command! -nargs=0 JunkFile call s:make_junkfile()
-
-" Get buffer queue list for restore.
-command! -nargs=0 BufQueue echo len(s:bufqueue)
-      \ ? reverse(split(substitute(join(s:bufqueue, ' '), $HOME, '~', 'g')))
-      \ : "No buffers in 's:bufqueue'."
-
-" Get buffer list like ':ls'
-command! -nargs=0 BufList call s:get_buflists()
+command! CopyPath CopyCurrentPath
 
 " Remove EOL ^M
 command! RemoveCr call s:smart_execute('silent! %substitute/\r$//g | nohlsearch')
@@ -1923,26 +2059,16 @@ command! RemoveEolSpace call s:smart_execute('silent! %substitute/ \+$//g | nohl
 " Remove blank line
 command! RemoveBlankLine silent! global/^$/delete | nohlsearch | normal! ``
 
-" Get current file path
-command! CopyCurrentPath call s:copy_current_path()
-
-" Get current directory path
-command! CopyCurrentDir call s:copy_current_path(1)
-
-command! CopyPath CopyCurrentPath
-
-" Make random string such as password
-command! -nargs=? RandomString call s:random_string(<q-args>)
-
 " Rename the current editing file
 command! -nargs=? -complete=file Rename call s:rename(<q-args>, 'file')
 
 " Change the current editing file extention
 command! -nargs=? -complete=filetype ReExt  call s:rename(<q-args>, 'ext')
 
-" View all mappings
-command! -nargs=* -complete=mapping AllMaps map <args> | map! <args> | lmap <args>
-
+" Make the notitle file called 'Junk'.
+command! -nargs=0 JunkFile call s:make_junkfile()
+"}}}
+" Handle encodings. {{{
 " In particular effective when I am garbled in a terminal
 command! -bang -bar -complete=file -nargs=? Utf8      edit<bang> ++enc=utf-8 <args>
 command! -bang -bar -complete=file -nargs=? Iso2022jp edit<bang> ++enc=iso-2022-jp <args>
@@ -1971,11 +2097,13 @@ command! -bang -complete=file -nargs=? WUnix write<bang> ++fileformat=unix <args
 command! -bang -complete=file -nargs=? WDos  write<bang> ++fileformat=dos <args>  | edit <args>
 command! -bang -complete=file -nargs=? WMac  write<bang> ++fileformat=mac <args>  | edit <args>
 "}}}
+"}}}
 
 " Mappings: {{{
 " Mapping section.
 "==============================================================================
 
+" Essentials. {{{
 " It is likely to be changed by $VIM/vimrc.
 if has('vim_starting')
   mapclear
@@ -1991,9 +2119,7 @@ endif
 " Define mapleader
 let mapleader = ","
 let maplocalleader = ","
-
-cnoremap <expr> <ESC> "\<C-u>\<BS>\<ESC>"
-
+"}}}
 " Function's commands {{{
 
 " MRU in vimrc
@@ -2010,9 +2136,14 @@ if s:has_plugin('vim-buftabs')
   nnoremap <silent> <C-x>K     :<C-u>call <SID>smart_bwipeout(1)<CR>
   nnoremap <silent> <C-x><C-k> :<C-u>call <SID>smart_bwipeout(2)<CR>
 else
-  nnoremap <silent> <C-x>k     :<C-u>silent call <SID>smart_bwipeout(0)<CR>:<C-u>call <SID>get_buflists()<CR> 
-  nnoremap <silent> <C-x>K     :<C-u>silent call <SID>smart_bwipeout(1)<CR>:<C-u>call <SID>get_buflists()<CR> 
-  nnoremap <silent> <C-x><C-k> :<C-u>silent call <SID>smart_bwipeout(2)<CR>:<C-u>call <SID>get_buflists()<CR> 
+  autocmd BufUnload,BufLeave,BufDelete,BufWipeout * call <SID>get_buflists()
+
+  nnoremap <silent> <C-x>k     :<C-u>call <SID>smart_bwipeout(0)<CR>
+  nnoremap <silent> <C-x>K     :<C-u>call <SID>smart_bwipeout(1)<CR>
+  nnoremap <silent> <C-x><C-k> :<C-u>call <SID>smart_bwipeout(2)<CR>
+  "nnoremap <silent> <C-x>k     :<C-u>silent call <SID>smart_bwipeout(0)<CR>:<C-u>call <SID>get_buflists()<CR>
+  "nnoremap <silent> <C-x>K     :<C-u>silent call <SID>smart_bwipeout(1)<CR>:<C-u>call <SID>get_buflists()<CR>
+  "nnoremap <silent> <C-x><C-k> :<C-u>silent call <SID>smart_bwipeout(2)<CR>:<C-u>call <SID>get_buflists()<CR>
 endif
 
 " Restore buffers
@@ -2168,15 +2299,20 @@ nnoremap <expr>h col('.') == 1 && foldlevel(line('.')) > 0 ? 'zc' : 'h'
 nnoremap <silent>z0 :<C-u>set foldlevel=<C-r>=foldlevel('.')<CR><CR>
 "}}}
 " Misc mappings {{{
+
+" Clear cmd-line
+cnoremap <expr> <ESC> "\<C-u>\<BS>\<ESC>"
+
 " Add a relative number toggle
-nnoremap <silent> <Leader>r :<C-u>set relativenumber!<CR>
+nnoremap <silent> <Leader>r :<C-u>call <SID>toggle_option('relativenumber')<CR>
 
 " Add a spell check toggle
-nnoremap <silent> <Leader>s :<C-u>set spell!<CR>
+nnoremap <silent> <Leader>s :<C-u>call <SID>toggle_option('spell')<CR>
 
+" Tabs Increase
 nnoremap <silent> ~ :let &tabstop = (&tabstop * 2 > 16) ? 2 : &tabstop * 2<CR>:echo 'tabstop:' &tabstop<CR>
 
-" Toggle top/center/bottom 
+" Toggle top/center/bottom
 noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ?  'zt' : (winline() == 1)? 'zb' : 'zz'
 
 " Reset highlight searching
@@ -2232,17 +2368,15 @@ nnoremap <Leader>Y :<C-u>%y<CR>
 "==============================================================================
 
 if has('vim_starting')
-  " mru.vim {{{
-  if s:bundled('mru.vim')
+  if s:bundled('mru.vim') "{{{
     let MRU_Use_Alt_useopen = 1         "Open MRU by line number
-    let MRU_Window_Height   = 15
+    let MRU_Window_Height   = &lines / 2
     let MRU_Max_Entries     = 100
     let MRU_Use_CursorLine  = 1
     nnoremap <silent><Space>j :MRU<CR>
   endif
   "}}}
-  " unite.vim {{{
-  if s:bundled('unite.vim')
+  if s:bundled('unite.vim') "{{{
     let g:unite_winwidth                   = 40
     let g:unite_source_file_mru_limit      = 300
     let g:unite_enable_start_insert        = 0            "off is zero
@@ -2257,8 +2391,7 @@ if has('vim_starting')
     "nnoremap <silent><Space>o :Unite outline -vertical -no-quit -winwidth=40 -toggle<CR>
   endif
   "}}}
-  " neocomplete.vim {{{
-  if s:bundled('neocomplete')
+  if s:bundled('neocomplete') "{{{
     let g:neocomplete#enable_at_startup = 1
     let g:neocomplete#disable_auto_complete = 0
     let g:neocomplete#enable_ignore_case = 1
@@ -2287,8 +2420,7 @@ if has('vim_starting')
   highlight PmenuSbari ctermbg=darkgray
   highlight PmenuThumb ctermbg=lightgray
   "}}}
-  " lightline.vim {{{
-  if s:bundled('lightline.vim')
+  if s:bundled('lightline.vim') "{{{
     let s:use_buftabs = 0
     let g:lightline = {
           \ 'colorscheme': 'solarized',
@@ -2426,8 +2558,7 @@ if has('vim_starting')
     "}}}
   endif
   "}}}
-  " vim-buftabs {{{
-  if s:bundled('vim-buftabs')
+  if s:bundled('vim-buftabs') "{{{
     let g:buftabs_in_statusline   = 1
     let g:buftabs_in_cmdline      = 0
     let g:buftabs_only_basename   = 1
@@ -2439,21 +2570,7 @@ if has('vim_starting')
     let g:buftabs_statusline_highlight_group = 'BlackWhite'
   endif
   "}}}
-  " buftabs.vim {{{
-  if s:bundled('buftabs')
-    let g:buftabs_in_statusline   = 1
-    let g:buftabs_in_cmdline      = 0
-    let g:buftabs_only_basename   = 1
-    let g:buftabs_marker_start    = "["
-    let g:buftabs_marker_end      = "]"
-    let g:buftabs_separator       = "#"
-    let g:buftabs_marker_modified = "+"
-    let g:buftabs_active_highlight_group = "Visual"
-    let g:buftabs_statusline_highlight_group = 'BlackWhite'
-  endif
-  "}}}
-  " splash.vim {{{
-  if s:bundled('vim-splash')
+  if s:bundled('vim-splash') "{{{
     "let g:loaded_splash = 1
     let s:vim_intro = $HOME . "/.vim/bundle/vim-splash/sample/intro"
     if !isdirectory(s:vim_intro)
@@ -2464,8 +2581,7 @@ if has('vim_starting')
     let g:splash#path = expand(s:vim_intro . '/vim_intro.txt')
   endif
   "}}}
-  " vim-anzu {{{
-  if s:bundled('vim-anzu')
+  if s:bundled('vim-anzu') "{{{
     nmap n <Plug>(anzu-n-with-echo)zz
     nmap N <Plug>(anzu-N-with-echo)zz
     nmap * <Plug>(anzu-star-with-echo)zz
@@ -2474,8 +2590,7 @@ if has('vim_starting')
     "nmap N <Plug>(anzu-mode-N)
   endif
   "}}}
-  " yankround.vim {{{
-  if s:bundled('yankround.vim')
+  if s:bundled('yankround.vim') "{{{
     nmap p <Plug>(yankround-p)
     xmap p <Plug>(yankround-p)
     nmap P <Plug>(yankround-P)
@@ -2490,27 +2605,23 @@ if has('vim_starting')
     endif
   endif
   "}}}
-  " vim-gist {{{
-  if s:bundled('gist-vim')
+  if s:bundled('gist-vim') "{{{
     let g:github_user = 'b4b4r07'
     let g:github_token = '0417d1aeeb1016c444c5'
     let g:gist_curl_options = "-k"
     let g:gist_detect_filetype = 1
   endif
   "}}}
-  " excitetranslate-vim {{{
-  if s:bundled('excitetranslate-vim')
+  if s:bundled('excitetranslate-vim') "{{{
     xnoremap E :ExciteTranslate<CR>
   endif
   "}}}
-  " gundo.vim {{{
-  if s:bundled('gundo.vim')
+  if s:bundled('gundo.vim') "{{{
     nmap <Leader>U :<C-u>GundoToggle<CR>
     let g:gundo_auto_preview = 0
   endif
   "}}}
-  " quickrun.vim {{{
-  if s:bundled('vim-quickrun')
+  if s:bundled('vim-quickrun') "{{{
     let g:quickrun_config = {}
     let g:quickrun_config.markdown = {
           \ 'outputter' : 'null',
@@ -2521,8 +2632,7 @@ if has('vim_starting')
           \ }
   endif
   "}}}
-  " vimshell {{{
-  if s:bundled('vimshell')
+  if s:bundled('vimshell') "{{{
     let g:vimshell_prompt_expr = 'getcwd()." > "'
     let g:vimshell_prompt_pattern = '^\f\+ > '
     augroup my-vimshell
@@ -2532,8 +2642,7 @@ if has('vim_starting')
     augroup END
   endif
   "}}}
-  " skk.vim {{{
-  if s:bundled('skk.vim')
+  if s:bundled('skk.vim') "{{{
     set imdisable
     let skk_jisyo = '~/SKK_JISYO.L'
     let skk_large_jisyo = '~/SKK_JISYO.L'
@@ -2544,8 +2653,7 @@ if has('vim_starting')
     let skk_use_face = 1
   endif
   "}}}
-  " eskk.vim {{{
-  if s:bundled('eskk.vim')
+  if s:bundled('eskk.vim') "{{{
     set imdisable
     let g:eskk#directory = '~/SKK_JISYO.L'
     let g:eskk#dictionary = { 'path': "~/SKK_JISYO.L", 'sorted': 0, 'encoding': 'utf-8', }
@@ -2553,23 +2661,20 @@ if has('vim_starting')
     let g:eskk#enable_completion = 1
   endif
   "}}}
-  " foldCC {{{
-  if s:bundled('foldCC')
+  if s:bundled('foldCC') "{{{
     set foldtext=foldCC#foldtext()
     let g:foldCCtext_head = 'v:folddashes. " "'
     let g:foldCCtext_tail = 'printf(" %s[%4d lines Lv%-2d]%s", v:folddashes, v:foldend-v:foldstart+1, v:foldlevel, v:folddashes)'
     let g:foldCCtext_enable_autofdc_adjuster = 1
   endif
   "}}}
-  " portal.vim {{{
-  if s:bundled('vim-portal')
+  if s:bundled('vim-portal') "{{{
     nmap <Leader>pb <Plug>(portal-gun-blue)
     nmap <Leader>po <Plug>(portal-gun-orange)
     nnoremap <Leader>pr :<C-u>PortalReset<CR>
   endif
   "}}}
-  " restart.vim {{{
-  if s:bundled('restart.vim')
+  if s:bundled('restart.vim') "{{{
     if has('gui_running')
       let g:restart_sessionoptions
             \ = 'blank,buffers,curdir,folds,help,localoptions,tabpages'
@@ -2581,14 +2686,12 @@ if has('vim_starting')
     endif
   endif
   "}}}
-  " vim-poslist {{{
-  if s:bundled('vim-poslist')
+  if s:bundled('vim-poslist') "{{{
     "map <C-o> <Plug>(poslist-prev-pos)
     "map <C-i> <Plug>(poslist-next-pos)
   endif
   "}}}
-  " vim-autocdls {{{
-  if s:bundled('vim-autocdls')
+  if s:bundled('vim-autocdls') "{{{
     let g:autocdls_autols#enable = 1
     let g:autocdls_set_cmdheight = 2
     let g:autocdls_show_filecounter = 1
@@ -2599,19 +2702,21 @@ if has('vim_starting')
     let g:autocdls_lsgrep_ignorecase = 1
   endif
   "}}}
-  " vim-shellutils {{{
-  if s:bundled('vim-shellutils')
+  if s:bundled('vim-shellutils') "{{{
     let g:shellutils_disable_commands = ['Ls']
   endif
   "}}}
-  " vim-indent-guides {{{
-  if s:bundled('vim-indent-guides')
+  if s:bundled('vim-indent-guides') "{{{
     hi IndentGuidesOdd  ctermbg=DarkGreen
     hi IndentGuidesEven ctermbg=Black
     let g:indent_guides_enable_on_vim_startup = 0
     let g:indent_guides_start_level = 1
     let g:indent_guides_auto_colors = 0
     let g:indent_guides_guide_size = 1
+  endif
+  "}}}
+  if s:bundled('nerdtree') "{{{
+    nnoremap <Space>n :<C-u>NERDTreeToggle<CR>
   endif
   "}}}
 endif
@@ -2622,72 +2727,8 @@ endif
 " will be described in this section.
 "==============================================================================
 
-function! s:ls(path, bang) "{{{
-  let path = empty(a:path) ? getcwd() : expand(a:path)
-  if filereadable(path)
-    if executable("ls")
-      echo system("ls -l " . path)
-    else
-      call s:warningmsg('ls: command not found')
-    endif
-    return 1
-  endif
-  if !isdirectory(path)
-    echohl ErrorMsg | echo path . ": No such file or directory" | echohl NONE
-    return 0
-  endif
-
-  let save_ignore = &wildignore
-  set wildignore=
-  let filelist = glob(path . "/*")
-  if !empty(a:bang)
-    let filelist .= glob(path . "/.??*")
-  endif
-  let &wildignore = save_ignore
-  let filelist = substitute(filelist, '', '^M', 'g')
-
-  if empty(filelist)
-    echo "no file"
-    return 0
-  endif
-
-  let lists = []
-  for file in split(filelist, "\n")
-    if isdirectory(file)
-      call add(lists, fnamemodify(file, ":t") . "/")
-    else
-      if executable(file)
-        call add(lists, fnamemodify(file, ":t") . "*")
-      elseif getftype(file) == 'link'
-        call add(lists, fnamemodify(file, ":t") . "@")
-      else
-        call add(lists, fnamemodify(file, ":t"))
-      endif
-    endif
-  endfor
-
-  echohl WarningMsg | echon len(lists) . ":\t" | echohl None
-  highlight LsDirectory  cterm=bold ctermfg=NONE ctermfg=26        gui=bold guifg=#0096FF   guibg=NONE
-  highlight LsExecutable cterm=NONE ctermfg=NONE ctermfg=Green     gui=NONE guifg=Green     guibg=NONE
-  highlight LsSymbolick  cterm=NONE ctermfg=NONE ctermfg=LightBlue gui=NONE guifg=LightBlue guibg=NONE
-
-  for item in lists
-    if item =~ '/'
-      echohl LsDirectory | echon item[:-2] | echohl NONE
-      echon item[-1:-1] . " "
-    elseif item =~ '*'
-      echohl LsExecutable | echon item[:-2] | echohl NONE
-      echon item[-1:-1] . " "
-    elseif item =~ '@'
-      echohl LsSymbolick | echon item[:-2] | echohl NONE
-      echon item[-1:-1] . " "
-    else
-      echon item . " "
-    endif
-  endfor
-  return 1
-endfunction "}}}
-command! -nargs=? -bang -complete=file Ls call s:ls(<q-args>, <q-bang>)
+nnoremap <silent> jkjk :<C-u>call <SID>get_buflists()<CR>
+nnoremap <silent> kjkj :<C-u>call <SID>get_buflists()<CR>
 
 " Experimental. {{{
 
@@ -2739,39 +2780,8 @@ nnoremap <Space>, :<C-u>call <SID>echomsg('Visual', "spc")<CR>
 
 call s:mkdir(expand('$HOME/.vim/colors'))
 
-" Automatically get buffer list {{{
-if !s:has_plugin('vim-buftabs')
-  augroup bufenter-get-buffer-list
-    autocmd!
-    autocmd BufEnter,BufAdd,BufWinEnter * call <SID>get_buflists()
-  augroup END
-endif "}}}
-
-" quicklook for mac
-if executable("qlmanage")
-  command! -nargs=? -complete=file QuickLook call s:quicklook(<f-args>)
-  function! s:quicklook(...)
-    let file = a:0 ? expand(a:1) : expand('%:p')
-    if !s:is_exist(file)
-      echo printf('%s: No such file or directory', file)
-      return 0
-    endif
-    call system(printf('qlmanage -p %s >& /dev/null', shellescape(file)))
-  endfunction
-endif
-
 "------------------------------------------------------------------------------
 
-augroup multi-window-toggle-cursorline8column "{{{
-  autocmd!
-  autocmd WinEnter * setlocal cursorline
-  autocmd WinLeave * setlocal nocursorline nocursorcolumn
-augroup END "}}}
-augroup cursor-highlight-emphasis "{{{
-  autocmd!
-  autocmd CursorMoved,CursorMovedI,WinLeave * hi! link CursorLine CursorLine | hi! link CursorColumn CursorColumn
-  autocmd CursorHold,CursorHoldI            * hi! link CursorLine Visual     | hi! link CursorColumn Visual
-augroup END "}}}
 augroup vim-startup-nomodified "{{{
   autocmd!
   autocmd VimEnter * set nomodified
@@ -2806,7 +2816,7 @@ augroup vimrc-auto-mkdir "{{{
 augroup END "}}}
 augroup file-only-window "{{{
   autocmd!
-  autocmd BufRead * execute ":only"
+  "autocmd BufRead * execute ":only"
 augroup END "}}}
 augroup cd-file-parentdir "{{{
   autocmd!
@@ -2837,42 +2847,6 @@ if has('vim_starting') && &binary
   augroup vimrc-xxd
     autocmd!
     autocmd BufReadPost * if &l:binary | setlocal filetype=xxd | endif
-  augroup END
-endif "}}}
-
-" Add execute permission {{{
-if s:vimrc_add_execute_perm == s:true
-if executable('chmod')
-  augroup vimrc-autoexecutable
-    autocmd!
-    autocmd BufWritePost * call s:add_permission_x()
-  augroup END
-
-  function! s:add_permission_x()
-    let file = expand('%:p')
-    if !executable(file)
-      if getline(1) =~# '^#!'
-            \ || &ft =~ "\\(z\\|c\\|ba\\)\\?sh$"
-            \ && input(printf('"%s" is not perm 755. Change mode? [y/N] ', expand('%:t'))) =~? '^y\%[es]$'
-        call system("chmod 755 " . shellescape(file))
-        redraw | echo "Set permission 755!"
-      endif
-    endif
-  endfunction
-endif
-endif "}}}
-
-" Restore cursor position {{{
-function! s:restore_cursor_postion()
-  if line("'\"") <= line("$")
-    normal! g`"
-    return 1
-  endif
-endfunction
-if s:vimrc_restore_cursor_position == s:true
-  augroup restore-cursor-position
-    autocmd!
-    autocmd BufWinEnter * call s:restore_cursor_postion()
   augroup END
 endif "}}}
 

@@ -10,36 +10,9 @@
 "    ~~~~         \/__/         /:/  /       |:|  |        \:\__\     
 "                               \/__/         \|__|         \/__/     
 
-" Vimrc Rules: {{{
-"==============================================================================
-"
-" Author:   <B4B4R07> BABAROT
-" Contacts: <b4b4r07@gmail.com>
-"
-" - License
-"  The MIT License (MIT)
-"  Copyright (c) 2014 B4B4R07
-"
-"  Permission is hereby granted, free of charge, to any person obtaining a copy of
-"  this software and associated documentation files (the "Software"), to deal in
-"  the Software without restriction, including without limitation the rights to
-"  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-"  of the Software, and to permit persons to whom the Software is furnished to do
-"  so, subject to the following conditions:
-"
-"  The above copyright notice and this permission notice shall be included in all
-"  copies or substantial portions of the Software.
-"
-"  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-"  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-"  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-"  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-"  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-"  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-"  SOFTWARE.
-"}}}
-
 " Initial: {{{
+" Author.....<B4B4R07> BABAROT
+" Contacts...<b4b4r07@gmail.com>
 " Initialize variables.
 "==============================================================================
 
@@ -53,12 +26,14 @@ if exists('$SUDO_USER') || exists('$GIT_DIR')
   finish
 endif
 
-" Only once execution when starting vim
-if has('vim_starting') "{{{
+" Starting Vim. {{{
+if has('vim_starting')
   " Necesary for lots of cool vim things
   set nocompatible
   " Define the entire vimrc encoding
   scriptencoding utf-8
+  " Initialize runtimepath
+  set runtimepath&
 
   " Vim starting time
   if has('reltime')
@@ -68,24 +43,10 @@ if has('vim_starting') "{{{
             \ | echomsg 'startuptime: ' . reltimestr(g:startuptime)
     augroup END
   endif
-endif "}}}
-
-if exists("g:loaded_vimrc")
-  set all&
-  finish
 endif
-let g:loaded_vimrc = 1
+"}}}
 
-" Use another vimrc for development {{{
-if getcwd() ==# expand('~/.vim/dev')
-  let s:devfile = fnamemodify(findfile(".vimrc.dev", getcwd().";".expand("$HOME")), ":p")
-  if filereadable(s:devfile)
-    autocmd! VimEnter * execute 'source ' . s:devfile
-          \ | echomsg "source '" . s:devfile . "'!"
-    finish
-  endif
-endif "}}}
-
+" Variables {{{
 " Operating System.
 let s:is_windows = has('win16') || has('win32') || has('win64')
 let s:is_cygwin = has('win32unix')
@@ -95,29 +56,28 @@ let s:is_mac = !s:is_windows && !s:is_cygwin
       \    system('uname') =~? '^darwin'))
 let s:is_linux = !s:is_mac && has('unix')
 
-" Define neobundle runtimepath.
-if s:is_windows
-  let $DOTVIM=expand('~/vimfiles')
-else
-  let $DOTVIM=expand('~/.vim')
-endif
-let $VIMBUNDLE=$DOTVIM . '/bundle'
-let $NEOBUNDLEPATH=$VIMBUNDLE . '/neobundle.vim'
-
-" Variables {{{
 " Vimrc.
 let s:vimrc = expand("<sfile>:p")
 let $MYVIMRC = s:vimrc
+
+" Define neobundle runtimepath.
+if s:is_windows
+  let $DOTVIM = expand('~/vimfiles')
+else
+  let $DOTVIM = expand('~/.vim')
+endif
+let $VIMBUNDLE = $DOTVIM . '/bundle'
+let $NEOBUNDLEPATH = $VIMBUNDLE . '/neobundle.vim'
 
 " Script local variables.
 let s:is_tabpage = (&showtabline == 1 && tabpagenr('$') >= 2)
       \ || (&showtabline == 2 && tabpagenr('$') >= 1)
 
-" Vimrc management variables
+" Vimrc management variables.
 let s:true  = 1
 let s:false = 0
 
-let s:vimrc_plugin_on                  = get(g:, 'vimrc_plugin_on',                  s:false)
+let s:vimrc_plugin_on                  = get(g:, 'vimrc_plugin_on',                  s:true)
 let s:vimrc_suggest_neobundleinit      = get(g:, 'vimrc_suggest_neobundleinit',      s:true)
 let s:vimrc_goback_to_eof2bof          = get(g:, 'vimrc_goback_to_eof2bof',          s:true)
 let s:vimrc_save_window_position       = get(g:, 'vimrc_save_window_position',       s:false)
@@ -125,7 +85,26 @@ let s:vimrc_restore_cursor_position    = get(g:, 'vimrc_restore_cursor_position'
 let s:vimrc_statusline_manually        = get(g:, 'vimrc_statusline_manually',        s:true)
 let s:vimrc_add_execute_perm           = get(g:, 'vimrc_add_execute_perm',           s:false)
 let s:vimrc_colorize_statusline_insert = get(g:, 'vimrc_colorize_statusline_insert', s:true)
+let s:vimrc_manage_rtp_manualy         = get(g:, 's:vimrc_manage_rtp_manualy',       s:false)
+
+" HOW TO USE:
+" if exists('s:vimrc_nil_dummy_variables')
+"   execute ...
+" This variable is used to disable the feature intentionally.
+unlet! s:vimrc_nil_dummy_variables
+
+" If s:vimrc_manage_rtp_manualy is s:true, s:vimrc_plugin_on is disabled.
+let s:vimrc_plugin_on = s:vimrc_manage_rtp_manualy == s:true ? s:false : s:vimrc_plugin_on
 "}}}
+
+if has('vim_starting')
+  if isdirectory($VIMBUNDLE) && s:vimrc_manage_rtp_manualy == s:true
+    set runtimepath&
+    for plug in split(glob($VIMBUNDLE . "/*"), '\n')
+      execute 'set runtimepath+=' . plug
+    endfor
+  endif
+endif
 
 " A function to check whether the plugin exists
 " dedicated to NeoBundle.
@@ -143,7 +122,6 @@ function! s:bundled(bundle) "{{{
     return neobundle#is_installed(a:bundle)
   endif
 endfunction "}}}
-
 "}}}
 
 " NeoBundle: {{{
@@ -154,7 +132,6 @@ endfunction "}}}
 "==============================================================================
 
 " Add neobundle to runtimepath.
-"set runtimepath&
 if has('vim_starting') && isdirectory($NEOBUNDLEPATH)
   if s:vimrc_plugin_on == s:true
     set runtimepath+=$NEOBUNDLEPATH
@@ -269,6 +246,7 @@ if s:bundled('neobundle.vim') "{{{
   NeoBundle 'ujihisa/neco-look'
   NeoBundle 'ujihisa/unite-colorscheme'
   NeoBundle 'b4b4r07/mru.vim'
+  "NeoBundle 'vim-mru', {'type' : 'nosync', 'base' : '~/.vim/manual'}
   NeoBundle 'b4b4r07/vim-autocdls'
   NeoBundle 'b4b4r07/vim-shellutils'
   NeoBundle 'nathanaelkane/vim-indent-guides'
@@ -324,9 +302,11 @@ if s:bundled('neobundle.vim') "{{{
         \ 'autoload' : { 'commands' : 'TweetVimHomeTimeline' }
         \ }
   NeoBundle 'yomi322/unite-tweetvim'
+  NeoBundle 'tsukkee/lingr-vim'
 
   " Japanese help
   NeoBundle 'vim-jp/vimdoc-ja'
+  NeoBundle 'vim-jp/vital.vim'
 
   " Colorscheme plugins
   NeoBundle 'b4b4r07/solarized.vim', { "base" : $HOME."/.vim/colors" }
@@ -336,11 +316,11 @@ if s:bundled('neobundle.vim') "{{{
 
   " Disable plugins
   if !has('gui_running')
-    NeoBundleDisable 'lightline.vim'
+    NeoBundleDisable lightline.vim
   endif
-  NeoBundleDisable 'skk.vim'
-  NeoBundleDisable 'eskk.vim'
-  NeoBundleDisable 'vim-buftabs'
+  NeoBundleDisable skk.vim
+  NeoBundleDisable eskk.vim
+  "NeoBundleDisable vim-buftabs
 
   " Check.
   NeoBundleCheck
@@ -368,7 +348,7 @@ else "{{{
       throw 'neobundleinit: Git error.'
     endif
 
-    set runtimepath+=$NEOBUNDLEPATH
+    set runtimepath& runtimepath+=$NEOBUNDLEPATH
     call neobundle#rc($VIMBUNDLE)
     try
       echo printf("Reloading '%s'", $MYVIMRC)
@@ -478,23 +458,18 @@ function! s:echomsg(hl, msg) "{{{
     echohl None
   endtry
 endfunction "}}}
-function! s:errormsg(msg) "{{{
+function! s:error(msg) "{{{
   echohl ErrorMsg
   echo 'ERROR: ' . a:msg
   echohl None
 endfunction "}}}
-function! s:warningmsg(msg) "{{{
+function! s:warning(msg) "{{{
   echohl WarningMsg
   echo 'WARNING: ' . a:msg
   echohl None
 endfunction "}}}
 function! s:confirm(msg) "{{{
   return input(printf('%s [y/N]: ', a:msg)) =~? '^y\%[es]$'
-endfunction "}}}
-function! s:smart_execute(expr) "{{{
-  let wininfo = winsaveview()
-  execute a:expr
-  call winrestview(wininfo)
 endfunction "}}}
 function! s:mkdir(file, ...) "{{{
   let f = a:0 ? fnamemodify(a:file, a:1) : a:file
@@ -526,6 +501,11 @@ function! s:smart_foldcloser() "{{{
   normal! zM
 endfunction
 "}}}
+function! s:smart_execute(expr) "{{{
+  let wininfo = winsaveview()
+  execute a:expr
+  call winrestview(wininfo)
+endfunction "}}}
 function! s:rand(n) "{{{
   let match_end = matchend(reltimestr(reltime()), '\d\+\.') + 1
   return reltimestr(reltime())[match_end : ] % (a:n + 1)
@@ -648,7 +628,10 @@ function! s:load_source(path) "{{{
   endif
 endfunction "}}}
 function! s:open(file) "{{{
-  if !executable("open") | return 0 | endif
+  if !executable('open')
+    call s:error('open: your platform is not supported.')
+    return 0
+  endif
   let file = empty(a:file) ? expand('%') : fnamemodify(a:file, ':p')
   call system(printf('%s %s &', 'open', shellescape(file)))
   return 1
@@ -659,7 +642,7 @@ function! s:ls(path, bang) "{{{
     if executable("ls")
       echo system("ls -l " . path)
     else
-      call s:warningmsg('ls: command not found')
+      call s:warning('ls: command not found')
     endif
     return 1
   endif
@@ -920,6 +903,145 @@ function! s:all_buffers_bwipeout() "{{{
 endfunction "}}}
 
 " Handle tabpages.
+function! s:win_tab_switcher(...) "{{{
+  let minus = 0
+  if &laststatus == 1 && winnr('$') != 1
+    let minus += 1
+  elseif &laststatus == 2
+    let minus += 1
+  endif
+  let minus += &cmdheight
+  if &showtabline == 1 && tabpagenr('$') != 1
+    let minus += 1
+  elseif &showtabline == 2
+    let minus += 1
+  endif
+
+  let is_split   = winheight(0) != &lines - minus
+  let is_vsplit  = winwidth(0)  != &columns
+  let is_tabpage = tabpagenr('$') >= 2
+
+  let buffer_switcher = get(g:, 'buffer_switcher', 0)
+  if a:0 && a:1 ==# 'l'
+    if is_tabpage
+      if tabpagenr() == tabpagenr('$')
+        if !is_split && !is_vsplit
+          if buffer_switcher
+            silent bnext
+          else
+            echohl WarningMsg
+            echo 'Last tabpages'
+            echohl None
+          endif
+        endif
+        if (is_split || is_vsplit) && winnr() == winnr('$')
+          if buffer_switcher
+            silent bnext
+          else
+            echohl WarningMsg
+            echo 'Last tabpages'
+            echohl None
+          endif
+        elseif (is_split || is_vsplit) && winnr() != winnr('$')
+          silent wincmd w
+        endif
+      else
+        if !is_split && !is_vsplit
+          silent tabnext
+        endif
+        if (is_split || is_vsplit) && winnr() == winnr('$')
+          silent tabnext
+        elseif (is_split || is_vsplit) && winnr() != winnr('$')
+          silent wincmd w
+        endif
+      endif
+    else
+      if !is_split && !is_vsplit
+        if buffer_switcher
+          silent bnext
+        else
+          echohl WarningMsg
+          echo 'Last tabpages'
+          echohl None
+        endif
+      endif
+      if (is_split || is_vsplit) && winnr() == winnr('$')
+        if buffer_switcher
+          silent bnext
+        else
+          echohl WarningMsg
+          echo 'Last tabpages'
+          echohl None
+        endif
+      else
+        silent wincmd w
+      endif
+    endif
+  endif
+  if a:0 && a:1 ==# 'h'
+    if is_tabpage
+      if tabpagenr() == 1
+        if !is_split && !is_vsplit
+          if buffer_switcher
+            silent bprevious
+          else
+            echohl WarningMsg
+            echo 'First tabpages'
+            echohl None
+          endif
+        endif
+        if (is_split || is_vsplit) && winnr() == 1
+          if buffer_switcher
+            silent bprevious
+          else
+            echohl WarningMsg
+            echo 'First tabpages'
+            echohl None
+          endif
+        elseif (is_split || is_vsplit) && winnr() != 1
+          silent wincmd W
+        endif
+      else
+        if !is_split && !is_vsplit
+          silent tabprevious
+        endif
+        if (is_split || is_vsplit) && winnr() == 1
+          silent tabprevious
+        elseif (is_split || is_vsplit) && winnr() != 1
+          silent wincmd W
+        endif
+      endif
+    else
+      if !is_split && !is_vsplit
+        if buffer_switcher
+          silent bprevious
+        else
+          echohl WarningMsg
+          echo 'First tabpages'
+          echohl None
+        endif
+      endif
+      if (is_split || is_vsplit) && winnr() == 1
+        if buffer_switcher
+          silent bprevious
+        else
+          echohl WarningMsg
+          echo 'First tabpages'
+          echohl None
+        endif
+      else
+        silent wincmd W
+      endif
+    endif
+  endif
+
+  if s:has_plugin("vim-buftabs")
+
+  else
+    redraw
+    call <SID>get_buflists()
+  endif
+endfunction "}}}
 function! s:tabdrop(target) "{{{
   let target = empty(a:target) ? expand('%:p') : bufname(a:target + 0)
   if !empty(target) && bufexists(target) && buflisted(target)
@@ -1140,7 +1262,10 @@ function! Scouter(file, ...) "{{{
 endfunction "}}}
 function! WordCount(...) "{{{
   if a:0 == 0
-    return s:WordCountStr
+    if exists("s:WordCountStr")
+      return s:WordCountStr
+    endif
+    return
   endif
   let cidx = 3
   silent! let cidx = s:WordCountDict[a:1]
@@ -1183,14 +1308,14 @@ autocmd CursorHold,BufWritePost * unlet! b:trailing_space_warning
 " of the other sections will be described.
 "==============================================================================
 
-" Display B4B4R07 logo start-up
+" Display B4B4R07 logo start-up. {{{
 if !s:has_plugin('neobundle.vim')
   command! B4B4R07 call s:b4b4r07()
   augroup vimrc-without-plugin
     autocmd!
-    autocmd VimEnter * call s:b4b4r07()
+    autocmd VimEnter * if !argc() | call s:b4b4r07() | endif
   augroup END
-endif
+endif "}}}
 
 " MRU {{{
 if !s:has_plugin('mru.vim')
@@ -1285,12 +1410,14 @@ if !s:has_plugin('mru.vim')
 
       let file = substitute(f, '^.*| ','','')
 
-
       let winnum = bufwinnr('^' . file . '$')
+      silent quit
       if winnum != -1
-        exe winnum . 'wincmd w'
+        return
       else
-        silent! close
+        if &filetype ==# 'mru'
+          silent quit
+        endif
       endif
 
       exe 'edit ' . fnameescape(substitute(file, '\\', '/', 'g'))
@@ -1309,28 +1436,28 @@ if !s:has_plugin('mru.vim')
     endif
 
     let bname = '__MRU_Files__'
-    "let winnum = bufwinnr(bname)
-    "if winnum != -1
-    " if winnr() != winnum
-    "   exe winnum . 'wincmd w'
-    " endif
+    let winnum = bufwinnr(bname)
+    if winnum != -1
+      if winnr() != winnum
+        exe winnum . 'wincmd w'
+      endif
 
-    " setlocal modifiable
-    " " Delete the contents of the buffer to the black-hole register
-    " silent! %delete _
-    "else
-    " If the __MRU_Files__ buffer exists, then reuse it. Otherwise open
-    " a new buffer
-    let bufnum = bufnr(bname)
-    "if bufnum == -1
-    " let wcmd = bname
-    "else
-    " let wcmd = '+buffer' . bufnum
-    "endif
-    let wcmd = bufnum == -1 ? bname : '+buffer' . bufnum
-    let s:MRU_Window_Height = &lines / 3
-    exe 'silent! botright ' . s:MRU_Window_Height . 'split ' . wcmd
-    "endif
+      setlocal modifiable
+      " Delete the contents of the buffer to the black-hole register
+      silent! %delete _
+    else
+      " If the __MRU_Files__ buffer exists, then reuse it. Otherwise open
+      " a new buffer
+      let bufnum = bufnr(bname)
+      if bufnum == -1
+        let wcmd = bname
+      else
+        let wcmd = '+buffer' . bufnum
+      endif
+      let wcmd = bufnum == -1 ? bname : '+buffer' . bufnum
+      let s:MRU_Window_Height = &lines / 3
+      exe 'silent! botright ' . s:MRU_Window_Height . 'split ' . wcmd
+    endif
 
     " Mark the buffer as scratch
     setlocal buftype=nofile
@@ -1506,7 +1633,7 @@ endif
 
 " Swap settings {{{
 call s:mkdir(expand('~/.vim/swap'))
-set swapfile
+set noswapfile
 set directory=~/.vim/swap
 "}}}
 "}}}
@@ -1600,7 +1727,6 @@ function! MakeStatusLine()
   let line = ''
   "let line .= '%#BlackWhite#'
   let line .= '[%n] '
-  let line .= '%{pathshorten(getcwd())}/'
   let line .= '%f'
   let line .= ' %m'
   let line .= '%<'
@@ -1623,26 +1749,29 @@ function! MakeStatusLine()
   return ''
 endfunction
 
-augroup minimal-statusline
-  autocmd!
-  autocmd WinEnter,WinLeave * if winwidth('.') < &columns | set statusline=%!MakeStatusLine() | endif
-  "autocmd WinEnter,WinLeave * if winwidth('.') < &columns | set statusline&                   | endif
-  "autocmd WinEnter,WinLeave * if winwidth('.') < &columns | set statusline&                   | endif
-  autocmd WinEnter,WinLeave * if winnr('$') == 1          | let &statusline = s:save_sl       | endif
-augroup END
+function! s:minimal_stat()
+  let now = winnr()
+  for stl in range(1, winnr('$'))
+    exe stl . 'wincmd w'
+    set statusline&
+  endfor
+  execute now . 'wincmd w'
+endfunction
+command! Mini call <SID>minimal_stat()
 
-function! MakeBigStatusLine()
-  if s:vimrc_statusline_manually == s:true
-    set statusline=
-    set statusline+=%#BlackWhite#
-    set statusline+=[%n]:
-    set statusline+=%{pathshorten(getcwd())}/
-    set statusline+=%f
-    set statusline+=\ %m
-    set statusline+=%#StatusLine#
+"function! MakeBigStatusLine()
+if s:vimrc_statusline_manually == s:true
+  set statusline=
+  set statusline+=%#BlackWhite#
+  set statusline+=[%n]:
+  set statusline+=%{pathshorten(getcwd())}/
+  set statusline+=%f
+  set statusline+=\ %m
+  set statusline+=%#StatusLine#
 
-    set statusline+=%=
-    set statusline+=%#BlackWhite#
+  set statusline+=%=
+  set statusline+=%#BlackWhite#
+  if winwidth(0) == &columns
     if exists('*TrailingSpaceWarning')
       "set statusline+=%{TrailingSpaceWarning()}
     endif
@@ -1664,8 +1793,15 @@ function! MakeBigStatusLine()
       set statusline+=\ (%{GetDate()})
     endif
   endif
-endfunction
-call MakeBigStatusLine()
+endif
+"endfunction
+"call MakeBigStatusLine()
+
+augroup minimal-statusline
+  autocmd!
+  "autocmd WinEnter,WinLeave * if winwidth('.') < &columns | set statusline=%!MakeStatusLine() | endif
+  "autocmd WinEnter * if winwidth(0) < &columns | let &statusline=substitute(&statusline, '%=.*', '', 'g') | endif
+augroup END
 
 if has('vim_starting')
   let s:save_sl = &statusline
@@ -1739,7 +1875,7 @@ augroup auto-cursorcolumn-appear
   endfunction
 augroup END
 "}}}
-augroup multi-window-toggle-cursorline8column "{{{
+augroup multi-window-toggle-cursor"{{{
   autocmd!
   autocmd WinEnter * setlocal cursorline
   autocmd WinLeave * setlocal nocursorline nocursorcolumn
@@ -1987,6 +2123,10 @@ set guioptions-=b
 "==============================================================================
 
 " Some utilities. {{{
+
+" Source file
+command! -nargs=? Source call <SID>load_source(empty(<q-args>) ? expand('%:p') : <q-args>)
+
 " Measure fighting strength of Vim.
 command! -bar -bang -nargs=? -complete=file Scouter echo Scouter(empty(<q-args>) ? $MYVIMRC : expand(<q-args>), <bang>0)
 
@@ -2002,7 +2142,7 @@ command! -nargs=? RandomString call s:random_string(<q-args>)
 " View all mappings
 command! -nargs=* -complete=mapping AllMaps map <args> | map! <args> | lmap <args>
 "}}}
-"Handle buffers. {{{
+" Handle buffers. {{{
 " Wipeout all buffers
 command! -nargs=0 AllBwipeout call s:all_buffers_bwipeout()
 
@@ -2219,16 +2359,19 @@ if s:vimrc_goback_to_eof2bof == s:true
   nnoremap <expr><silent> j <SID>down("gj")
 endif "}}}
 " Buffers and tabpages {{{
+"nnoremap <silent> <C-j> :<C-u>call <SID>get_buflists('n')<CR>
+"nnoremap <silent> <C-k> :<C-u>call <SID>get_buflists('p')<CR>
 if s:has_plugin('vim-buftabs')
-  nnoremap <silent> <C-j> :<C-u>call <SID>smart_bchange('n')<CR>
-  nnoremap <silent> <C-k> :<C-u>call <SID>smart_bchange('p')<CR>
+  nnoremap <silent> <C-j> :<C-u>silent bnext<CR>
+  nnoremap <silent> <C-k> :<C-u>silent bprev<CR>
 else
-  nnoremap <silent> <C-j> :<C-u>call <SID>smart_bchange('n')<CR>:<C-u>call <SID>get_buflists()<CR>
-  nnoremap <silent> <C-k> :<C-u>call <SID>smart_bchange('p')<CR>:<C-u>call <SID>get_buflists()<CR>
+  nnoremap <silent> <C-j> :<C-u>silent bnext<CR>:<C-u>call <SID>get_buflists()<CR>
+  nnoremap <silent> <C-k> :<C-u>silent bprev<CR>:<C-u>call <SID>get_buflists()<CR>
 endif
-
-nnoremap <silent> <C-l> :<C-u>silent! tabnext<CR>
-nnoremap <silent> <C-h> :<C-u>silent! tabprev<CR>
+"nnoremap <silent> <C-l> :<C-u>silent! tabnext<CR>
+"nnoremap <silent> <C-h> :<C-u>silent! tabprev<CR>
+nnoremap <silent> <C-l> :<C-u>call <SID>win_tab_switcher('l')<CR>
+nnoremap <silent> <C-h> :<C-u>call <SID>win_tab_switcher('h')<CR>
 "}}}
 " Inser matching bracket automatically {{{
 inoremap [ []<LEFT>
@@ -2237,11 +2380,10 @@ inoremap " ""<LEFT>
 inoremap ' ''<LEFT>
 inoremap ` ``<LEFT>
 "}}}
-" Cursor like Emacs {{{
+" Make cursor-moving useful {{{
 inoremap <C-h> <Backspace>
 inoremap <C-d> <Delete>
 inoremap <C-m> <Return>
-inoremap <C-i> <Tab>
 
 cnoremap <C-k> <UP>
 cnoremap <C-j> <DOWN>
@@ -2302,8 +2444,11 @@ nnoremap <silent>z0 :<C-u>set foldlevel=<C-r>=foldlevel('.')<CR><CR>
 "}}}
 " Misc mappings {{{
 
-" Clear cmd-line
-cnoremap <expr> <ESC> "\<C-u>\<BS>\<ESC>"
+" CursorLine
+nnoremap <silent> <Leader>l :<C-u>call <SID>toggle_option('cursorline')<CR>
+
+" CursorColumn
+nnoremap <silent> <Leader>c :<C-u>call <SID>toggle_option('cursorcolumn')<CR>
 
 " Add a relative number toggle
 nnoremap <silent> <Leader>r :<C-u>call <SID>toggle_option('relativenumber')<CR>
@@ -2327,7 +2472,7 @@ noremap <Space>l $
 " Type 'v', select end of line in visual mode
 vnoremap v $h
 
-" Yank begin with cursor and extend to the end of the line
+" Make Y behave like other capitals
 nnoremap Y y$
 
 " Do 'zz' after next candidates for search words
@@ -2729,9 +2874,6 @@ endif
 " will be described in this section.
 "==============================================================================
 
-""nnoremap <silent> jkjk :<C-u>call <SID>get_buflists()<CR>
-""nnoremap <silent> kjkj :<C-u>call <SID>get_buflists()<CR>
-
 " Experimental. {{{
 
 function! s:help_opened() "{{{
@@ -2761,7 +2903,6 @@ function! s:mkdir(dir) "{{{
     call mkdir(a:dir, "p")
   endif
 endfunction "}}}
-
 function! s:file_complete(A, L, P) "{{{
   let lists = []
   let filelist = glob(getcwd() . "/*")
@@ -2776,8 +2917,6 @@ endfunction
 "command! -nargs=1 -complete=customlist,<SID>file_complete Edit edit<bang> <args>
 "command! -nargs=1 -complete=customlist,<SID>file_complete Cat call s:cat(<f-args>)
 "}}}
-
-nnoremap <Space>, :<C-u>call <SID>echomsg('Visual', "spc")<CR>
 "}}}
 
 call s:mkdir(expand('$HOME/.vim/colors'))
@@ -2823,7 +2962,8 @@ augroup END "}}}
 augroup cd-file-parentdir "{{{
   autocmd!
   "autocmd BufRead,BufEnter * lcd %:p:h
-  autocmd BufRead,BufEnter * execute ":lcd " . expand("%:p:h")
+  "autocmd BufRead,BufEnter * execute ":lcd " . expand("%:p:h")
+  autocmd BufWinEnter * execute ":lcd " . expand("%:p:h")
 augroup END "}}}
 augroup echo-file-path "{{{
   autocmd!

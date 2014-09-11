@@ -45,7 +45,7 @@ update:
 	git pull origin master
 
 install:
-@for x in init/*.sh ; do sh $$x; done
+	@for x in init/*.sh ; do sh $$x; done
 ifeq "$(PLATFORM)" "Darwin"
 	@for x in osx/*.sh ; do sh $$x; done
 endif

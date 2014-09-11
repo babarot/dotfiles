@@ -2,6 +2,7 @@
 
 trap "echo; exit 1" INT
 
+exit 0
 function build_vim_from_source()
 {
 	INSTALL_DIR=/usr/local/bin/vim.new

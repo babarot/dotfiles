@@ -2,6 +2,7 @@
 
 trap "echo; exit 1" INT
 
+exit 0
 read -p "Power-up your OS X by defaults commands (y/n) " -n 1
 echo ""
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then

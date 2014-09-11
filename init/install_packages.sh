@@ -2,6 +2,7 @@
 
 trap "echo; exit 1" INT
 
+exit 0
 if [ $(uname -s) == 'Darwin' ]; then
 	# use brew bundle
 	exit

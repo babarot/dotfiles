@@ -61,5 +61,3 @@ if check_vim_type && test -n "$Huge"; then
 		fi
 	fi
 fi
-exit 0
-

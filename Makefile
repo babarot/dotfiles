@@ -1,10 +1,5 @@
 RSYNC_OPTS = --exclude ".git/" --exclude ".DS_Store" --exclude "README.md" --exclude="Makefile" -avh --no-perms
 DOTFILES   = $(PWD)
-# First figure out the platform if not specified, so we can use it in the
-# rest of this file.  Currently defined values: Darwin
-ifeq "$(PLATFORM)" ""
-PLATFORM := $(shell uname)
-endif
 
 all: help
 
@@ -45,7 +40,7 @@ update:
 	git pull origin master
 
 install:
-ifeq ($(PLATFORM),Darwin)
+ifeq ($(shell uname -s),Darwin)
 	@for x in osx/*.sh ; do sh $$x; done
 endif
 	@for x in init/*.sh ; do sh $$x; done

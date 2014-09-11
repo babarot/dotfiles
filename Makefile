@@ -40,10 +40,8 @@ update:
 	git pull origin master
 
 install:
-	#@for x in init/*.sh ; do sh $$x; done
-ifeq ($(shell uname),Darwin)
-	@for x in {osx,init}/*.sh ; do sh $$x; done
-endif
+	@for x in init/*.sh ; do sh $$x; done
+	@for x in osx/*.sh ; do sh $$x; done
 
 clean:
 	@echo "rm -rf files..."

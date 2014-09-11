@@ -85,7 +85,8 @@ let s:vimrc_restore_cursor_position    = get(g:, 'vimrc_restore_cursor_position'
 let s:vimrc_statusline_manually        = get(g:, 'vimrc_statusline_manually',        s:true)
 let s:vimrc_add_execute_perm           = get(g:, 'vimrc_add_execute_perm',           s:false)
 let s:vimrc_colorize_statusline_insert = get(g:, 'vimrc_colorize_statusline_insert', s:true)
-let s:vimrc_manage_rtp_manualy         = get(g:, 's:vimrc_manage_rtp_manualy',       s:false)
+let s:vimrc_manage_rtp_manually        = get(g:, 's:vimrc_manage_rtp_manually',      s:false)
+let s:vimrc_auto_cd_file_parentdir     = get(g:, 's:vimrc_auto_cd_file_parentdir',   s:false)
 
 " HOW TO USE:
 " if exists('s:vimrc_nil_dummy_variables')
@@ -93,12 +94,12 @@ let s:vimrc_manage_rtp_manualy         = get(g:, 's:vimrc_manage_rtp_manualy',  
 " This variable is used to disable the feature intentionally.
 unlet! s:vimrc_nil_dummy_variables
 
-" If s:vimrc_manage_rtp_manualy is s:true, s:vimrc_plugin_on is disabled.
-let s:vimrc_plugin_on = s:vimrc_manage_rtp_manualy == s:true ? s:false : s:vimrc_plugin_on
+" If s:vimrc_manage_rtp_manually is s:true, s:vimrc_plugin_on is disabled.
+let s:vimrc_plugin_on = s:vimrc_manage_rtp_manually == s:true ? s:false : s:vimrc_plugin_on
 "}}}
 
 if has('vim_starting')
-  if isdirectory($VIMBUNDLE) && s:vimrc_manage_rtp_manualy == s:true
+  if isdirectory($VIMBUNDLE) && s:vimrc_manage_rtp_manually == s:true
     set runtimepath&
     for plug in split(glob($VIMBUNDLE . "/*"), '\n')
       execute 'set runtimepath+=' . plug
@@ -177,9 +178,7 @@ if s:bundled('neobundle.vim') "{{{
         \ 'autoload' : {
         \ 'unite_sources' : 'file_mru',
         \ }}
-  NeoBundle 'Shougo/vimfiler'
-  call neobundle#config('vimfiler', {
-        \ 'lazy' : 1,
+  NeoBundle 'Shougo/vimfiler', {
         \ 'depends' : 'Shougo/unite.vim',
         \ 'autoload' : {
         \    'commands' : [{ 'name' : 'VimFiler',
@@ -187,18 +186,15 @@ if s:bundled('neobundle.vim') "{{{
         \                  'VimFilerExplorer',
         \                  'Edit', 'Read', 'Source', 'Write'],
         \    'mappings' : ['<Plug>(vimfiler_switch)']
-        \ }
-        \ })
-  NeoBundle 'Shougo/vimshell'
-  call neobundle#config('vimshell', {
-        \ 'lazy' : 1,
+        \ }}
+  NeoBundle 'Shougo/vimshell', {
         \ 'autoload' : {
         \   'commands' : [{ 'name' : 'VimShell',
         \                   'complete' : 'customlist,vimshell#complete'},
         \                 'VimShellExecute', 'VimShellInteractive',
         \                 'VimShellTerminal', 'VimShellPop'],
         \   'mappings' : ['<Plug>(vimshell_switch)']
-        \ }})
+        \ }}
   NeoBundleLazy 'Shougo/vimshell', {
         \ 'autoload' : {
         \   'commands' : [ 'VimShell', "VimShellPop", "VimShellInteractive" ] }
@@ -246,7 +242,6 @@ if s:bundled('neobundle.vim') "{{{
   NeoBundle 'ujihisa/neco-look'
   NeoBundle 'ujihisa/unite-colorscheme'
   NeoBundle 'b4b4r07/mru.vim'
-  "NeoBundle 'vim-mru', {'type' : 'nosync', 'base' : '~/.vim/manual'}
   NeoBundle 'b4b4r07/vim-autocdls'
   NeoBundle 'b4b4r07/vim-shellutils'
   NeoBundle 'nathanaelkane/vim-indent-guides'
@@ -306,6 +301,7 @@ if s:bundled('neobundle.vim') "{{{
 
   " Japanese help
   NeoBundle 'vim-jp/vimdoc-ja'
+  " Vital
   NeoBundle 'vim-jp/vital.vim'
 
   " Colorscheme plugins
@@ -321,6 +317,9 @@ if s:bundled('neobundle.vim') "{{{
   NeoBundleDisable skk.vim
   NeoBundleDisable eskk.vim
   "NeoBundleDisable vim-buftabs
+
+  " Manually manage rtp
+  "NeoBundle 'vim-mru', {'type' : 'nosync', 'base' : '~/.vim/manual'}
 
   " Check.
   NeoBundleCheck
@@ -1554,7 +1553,7 @@ if s:vimrc_add_execute_perm == s:true
       let file = expand('%:p')
       if !executable(file)
         if getline(1) =~# '^#!'
-              \ || &ft =~ "\\(z\\|c\\|ba\\)\\?sh$"
+              \ || &filetype =~ "\\(z\\|c\\|ba\\)\\?sh$"
               \ && input(printf('"%s" is not perm 755. Change mode? [y/N] ', expand('%:t'))) =~? '^y\%[es]$'
           call system("chmod 755 " . shellescape(file))
           redraw | echo "Set permission 755!"
@@ -1563,20 +1562,26 @@ if s:vimrc_add_execute_perm == s:true
     endfunction
   endif
 endif "}}}
-
 " Restore cursor position {{{
+if s:vimrc_restore_cursor_position == s:true
 function! s:restore_cursor_postion()
   if line("'\"") <= line("$")
     normal! g`"
     return 1
   endif
 endfunction
-if s:vimrc_restore_cursor_position == s:true
   augroup restore-cursor-position
     autocmd!
     autocmd BufWinEnter * call s:restore_cursor_postion()
   augroup END
 endif "}}}
+" Restore the buffer that has been deleted {{{
+let s:bufqueue = []
+augroup buffer-queue-restore
+  autocmd!
+  autocmd BufDelete * call <SID>buf_enqueue(expand('#'))
+augroup END
+"}}}
 
 " Automatically get buffer list {{{
 if !s:has_plugin('vim-buftabs')
@@ -1586,16 +1591,8 @@ if !s:has_plugin('vim-buftabs')
   augroup END
 endif "}}}
 
-" Restore the buffer that has been deleted {{{
-let s:bufqueue = []
-augroup buffer-queue-restore
-  autocmd!
-  autocmd BufDelete * call <SID>buf_enqueue(expand('#'))
-augroup END
-"}}}
-
 " QuickLook for mac {{{
-if executable("qlmanage")
+if s:is_mac && executable("qlmanage")
   command! -nargs=? -complete=file QuickLook call s:quicklook(<f-args>)
   function! s:quicklook(...)
     let file = a:0 ? expand(a:1) : expand('%:p')
@@ -1608,11 +1605,10 @@ if executable("qlmanage")
 endif "}}}
 
 " Backup automatically {{{
-set backup
 if s:is_windows
-  set backupdir=$VIM/backup
-  set backupext=.bak
+  set nobackup
 else
+  set backup
   call s:mkdir(expand('~/.vim/backup'))
   augroup backup-files-automatically
     autocmd!
@@ -1630,7 +1626,6 @@ else
   endfunction
 endif
 "}}}
-
 " Swap settings {{{
 call s:mkdir(expand('~/.vim/swap'))
 set noswapfile
@@ -1671,7 +1666,11 @@ else
     elseif s:has_plugin('vim-hybrid')
       colorscheme hybrid
     else
-      colorscheme desert
+      if s:is_windows
+        colorscheme default
+      else
+        colorscheme desert
+      endif
     endif
   endif
 endif "}}}
@@ -1722,8 +1721,6 @@ highlight BlackWhite ctermfg=black ctermbg=white cterm=none guifg=black guibg=wh
 highlight WhiteBlack ctermfg=white ctermbg=black cterm=none guifg=white guibg=black gui=none
 
 function! MakeStatusLine()
-  "highlight StatusLine ctermbg=DarkGray ctermfg=Black
-
   let line = ''
   "let line .= '%#BlackWhite#'
   let line .= '[%n] '
@@ -1745,33 +1742,23 @@ function! MakeStatusLine()
 
   if s:vimrc_statusline_manually == s:true
     return line
+  else
+    return ''
   endif
-  return ''
 endfunction
 
-function! s:minimal_stat()
-  let now = winnr()
-  for stl in range(1, winnr('$'))
-    exe stl . 'wincmd w'
-    set statusline&
-  endfor
-  execute now . 'wincmd w'
-endfunction
-command! Mini call <SID>minimal_stat()
+function! MakeBigStatusLine()
+  if s:vimrc_statusline_manually == s:true
+    set statusline=
+    set statusline+=%#BlackWhite#
+    set statusline+=[%n]:
+    set statusline+=%{pathshorten(getcwd())}/
+    set statusline+=%f
+    set statusline+=\ %m
+    set statusline+=%#StatusLine#
 
-"function! MakeBigStatusLine()
-if s:vimrc_statusline_manually == s:true
-  set statusline=
-  set statusline+=%#BlackWhite#
-  set statusline+=[%n]:
-  set statusline+=%{pathshorten(getcwd())}/
-  set statusline+=%f
-  set statusline+=\ %m
-  set statusline+=%#StatusLine#
-
-  set statusline+=%=
-  set statusline+=%#BlackWhite#
-  if winwidth(0) == &columns
+    set statusline+=%=
+    set statusline+=%#BlackWhite#
     if exists('*TrailingSpaceWarning')
       "set statusline+=%{TrailingSpaceWarning()}
     endif
@@ -1793,14 +1780,13 @@ if s:vimrc_statusline_manually == s:true
       set statusline+=\ (%{GetDate()})
     endif
   endif
-endif
-"endfunction
-"call MakeBigStatusLine()
+endfunction
+call MakeBigStatusLine()
 
 augroup minimal-statusline
   autocmd!
-  "autocmd WinEnter,WinLeave * if winwidth('.') < &columns | set statusline=%!MakeStatusLine() | endif
-  "autocmd WinEnter * if winwidth(0) < &columns | let &statusline=substitute(&statusline, '%=.*', '', 'g') | endif
+  autocmd WinEnter,CursorMoved * if winwidth(0) <  &columns | set statusline=%!MakeStatusLine() | endif
+  autocmd WinEnter * if winwidth(0) == &columns | call MakeBigStatusLine() | endif
 augroup END
 
 if has('vim_starting')
@@ -1896,6 +1882,7 @@ if has('multi_byte_ime') || has('xim')
   inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
 endif "}}}
 
+" ZEN-KAKU
 " Display zenkaku-space {{{
 augroup hilight-idegraphic-space
   autocmd!
@@ -2292,8 +2279,10 @@ endif
 nnoremap <silent> <C-x>u :<C-u>call <SID>buf_restore()<CR>
 
 " Delete buffers
-nnoremap <silent> <C-x>d     :call <SID>delete('')<CR>
-nnoremap <silent> <C-x><C-d> :call <SID>delete(1)<CR>
+"nnoremap <silent> <C-x>d     :call <SID>buf_delete('')<CR>
+"nnoremap <silent> <C-x><C-d> :call <SID>buf_delete(1)<CR>
+nnoremap <silent> <C-x>d     :Delete<CR>
+nnoremap <silent> <C-x><C-d> :Delete!<CR>
 
 " Tabpages mappings
 nnoremap <silent> <C-t>L  :<C-u>call <SID>move_tabpage("right")<CR>
@@ -2406,8 +2395,8 @@ cnoremap <C-h> <BS>
 
 nnoremap <C-a> ^
 nnoremap <C-e> $
-nnoremap + <C-a>
-nnoremap - <C-x>
+"nnoremap + <C-a>
+"nnoremap - <C-x>
 "}}}
 " Nop features {{{
 nnoremap q: <Nop>
@@ -2923,6 +2912,17 @@ call s:mkdir(expand('$HOME/.vim/colors'))
 
 "------------------------------------------------------------------------------
 
+function! s:cd_file_parentdir()
+  execute ":lcd " . expand("%:p:h")
+endfunction
+command! Cdfile call <SID>cd_file_parentdir()
+if s:vimrc_auto_cd_file_parentdir == s:true
+  augroup cd-file-parentdir
+    autocmd!
+    autocmd BufRead,BufEnter * call <SID>cd_file_parentdir()
+  augroup END
+endif
+
 augroup vim-startup-nomodified "{{{
   autocmd!
   autocmd VimEnter * set nomodified
@@ -2954,16 +2954,6 @@ augroup vimrc-auto-mkdir "{{{
       call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
     endif
   endfunction
-augroup END "}}}
-augroup file-only-window "{{{
-  autocmd!
-  "autocmd BufRead * execute ":only"
-augroup END "}}}
-augroup cd-file-parentdir "{{{
-  autocmd!
-  "autocmd BufRead,BufEnter * lcd %:p:h
-  "autocmd BufRead,BufEnter * execute ":lcd " . expand("%:p:h")
-  autocmd BufWinEnter * execute ":lcd " . expand("%:p:h")
 augroup END "}}}
 augroup echo-file-path "{{{
   autocmd!

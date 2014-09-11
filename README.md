@@ -1,6 +1,6 @@
 # [B4B4R07](https://twitter.com/b4b4r07)の dotfiles
 
-このリポジトリが目的とすることは、新しく環境構築することを容易にするためです。このリポジトリをクローンすると、いつも使っている環境を簡単に再現できます（以下の参考写真参照）。そのためにあなたがするべきことは、以下のことだけです。この README ファイルでは長々と説明を書き連ねているので、最速で環境再構築するのに必要な情報は[これ](#<oneliner>)だけです。
+このリポジトリが目的とすることは、新しく環境構築することを容易にするためです。このリポジトリをクローンすると、いつも使っている環境を簡単に再現できます（以下の参考写真参照）。そのためにあなたがするべきことは、以下のことだけです。この README ファイルでは長々と説明を書き連ねているので、最速で環境再構築するのに必要な情報は[これ](#oneliner)だけです。
 
 ![dotfiles](http://cl.ly/image/3A3e0i1L0v0J/environment.png "vim-on-tmux")
 
@@ -79,7 +79,7 @@
 
 =========================================================================================
 
-<a name="<oneliner>">ONELINER:</a>
+<a name="oneliner">ONELINER:</a>
 
 	curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh && read -n 1 -p 'Install? ' && if [ "$REPLY" == "y" ]; then make install; fi && echo -e "\n\033[31mFINISH\033[m" && /bin/bash
 

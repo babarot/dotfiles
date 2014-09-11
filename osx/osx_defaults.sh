@@ -65,5 +65,3 @@ defaults write com.apple.finder QLHidePanelOnDeactivate -bool true
 killall Finder
 killall Dock
 killall SystemUIServer
-
-exit 0

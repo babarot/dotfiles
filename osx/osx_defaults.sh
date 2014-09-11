@@ -1,6 +1,6 @@
 #!/bin/bash
 
-trap "exit 0" INT EXIT ERR TREM KILL
+trap "exit 0" INT EXIT ERR TERM KILL
 
 read -p "Power-up your OS X by defaults commands (y/n) " -n 1
 echo ""

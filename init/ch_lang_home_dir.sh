@@ -1,6 +1,6 @@
 #!/bin/bash
 
-trap "echo; exit 1" INT
+trap "exit 0" INT EXIT
 
 exit 0
 read -p "Changes to English notation home directory? (y/n) " -n 1

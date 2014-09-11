@@ -1,8 +1,7 @@
 #!/bin/sh
 
-trap "echo; exit 1" INT
+trap "exit 0" INT EXIT
 
-exit 0
 read -p "Install some commands under Homebrew (y/n) " -n 1
 echo ""
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then

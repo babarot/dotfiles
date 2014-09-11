@@ -1,12 +1,11 @@
 #!/bin/bash
 
-trap "echo; exit 1" INT
+trap "exit 0" INT EXIT
 
-exit 0
 read -p "Power-up your OS X by defaults commands (y/n) " -n 1
 echo ""
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-	exit
+	exit 0
 fi
 
 # Show Hidden Files
@@ -66,3 +65,5 @@ defaults write com.apple.finder QLHidePanelOnDeactivate -bool true
 killall Finder
 killall Dock
 killall SystemUIServer
+
+exit 0

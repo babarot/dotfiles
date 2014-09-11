@@ -1,8 +1,7 @@
 #!/bin/bash
 
-trap "echo; exit 1" INT
+trap "exit 0" INT EXIT
 
-exit 0
 function build_vim_from_source()
 {
 	INSTALL_DIR=/usr/local/bin/vim.new
@@ -62,4 +61,5 @@ if check_vim_type && test -n "$Huge"; then
 		fi
 	fi
 fi
+exit 0
 

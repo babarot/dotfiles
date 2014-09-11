@@ -1,5 +1,7 @@
 #!/bin/bash
 
+trap "echo; exit 1" INT
+
 function build_vim_from_source()
 {
 	INSTALL_DIR=/usr/local/bin/vim.new
@@ -42,6 +44,8 @@ function check_vim_type()
 }
 
 if check_vim_type && test -n "$Huge"; then
+	unset Huge
+
 	read -p "Build vim from source (y/n) " -n 1
 	echo ""
 	if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -53,7 +57,8 @@ if check_vim_type && test -n "$Huge"; then
 		echo ""
 		if [[ $REPLY =~ ^[Yy]$ ]]; then
 			# same as vim -c "NeoBundleInit"
-			vim +"NeoBundleInit"
+			vim +NeoBundleInit +qall
 		fi
 	fi
 fi
+

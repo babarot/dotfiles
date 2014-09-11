@@ -1,6 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
-read -p "Powerup your OSX by defaults (y/n) " -n 1
+trap "echo; exit 1" INT
+
+read -p "Power-up your OS X by defaults commands (y/n) " -n 1
 echo ""
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 	exit

@@ -1,92 +1,72 @@
-# [B4B4R07](https://twitter.com/b4b4r07)'s dotfiles
+# [B4B4R07](https://twitter.com/b4b4r07)の dotfiles
 
-This repository makes installation easier on us in all environment. By the cloning it, you can build the same environment everywhere. All you have to do is in accordance with the following. **So I'll start.**
+このリポジトリが目的とすることは、新しく環境構築することを容易にするためです。このリポジトリをクローンすると、いつも使っている環境を簡単に再現できます（以下の参考写真参照）。そのためにあなたがするべきことは、以下のことだけです。この README ファイルでは長々と説明を書き連ねているので、最速で環境再構築するのに必要な情報は[これ](#<oneliner>)だけです。
 
-![dotfiles](http://cl.ly/image/3A3e0i1L0v0J/environment.png "sample-env")
+![dotfiles](http://cl.ly/image/3A3e0i1L0v0J/environment.png "vim-on-tmux")
 
-## Implementation
+## アウトライン
 
-To downland and install it, just execute the following command:
+* `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)`
+* `cd ~/.dotfiles && make install`
+
+## #1; 環境構築
+
+このリポジトリのクローンと、dotfiles のインストール（各設定ファイルを `$HOME` しかるべき所にデプロイすることなど）は以下を実行することで一括で行われます。
+
 
 	sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)
-or
+
+または
 
 	sh -c "`curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh`"
+
+記述はさまざまありますが、以上２つのどちらかがお勧めです。
 	
-**Alternate spellings**:
+他の方法:
 
 	curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh
 	
-is not recommended.
+もありますが、あまり推奨されません。この方法では、`bootstrap.sh` スクリプトが行うはずであった3番目の項目の「bash の再起動」が行われないからです。しかし、逆を返すと、再起動したくない場合にこの方法はお勧めです。
 
-When you select *wget(1)* as a downloader, the `curl -L {URL}` replaces `wget -q -O - {URL}`.
+ダウンローダに `curl` でなく、`wget` を使用する場合は、`curl -L {URL}` を `wget -q -O - {URL}` に書き換えてください。
 
-**IF YOU DO THIS:**
-
-1. git clone b4b4r07/dotfiles.git
-2. make deploy
-3. source ~/.bash_profile
-
-By executing `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)`, automatically clone git-repo by git and `make deploy`. Lastly, reload `~/.bash_profile`.
-
-`make deploy` is
-	
-	deploy:
-		@echo "Start deploy dotfiles current directory."
-		@echo "If this is \"dotdir\", curretly it is ignored and copy your hand."
-		@echo ""
-		@for f in .??* ; do \
-			test "$${f}" = .git -o "$${f}" = .git/ && continue ; \
-			test "$${f}" = .DS_Store  && continue ; \
-			echo "$${f}" | grep -q 'minimal' && continue ; \
-			ln -sfnv "$(PWD)/$${f}" "$(HOME)/$${f}" ; \
-		done ; true
-
-that create symbolic links to your home directory.
-
-To update later on, just run that command again:
+このリポジトリのクローンが昔に行われ、変更を取得しアップデートする際は、
 
 	make update
 
-## Things to do next
+でいいです。
 
-The processing of `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)` is completed, it is necessary to execute following as soon as possible.
+### `bootstrap.sh` がする処理について
 
-1. cd ~/.dotfiles
-2. make install
+1. `git clone b4b4r07/dotfiles.git`
+2. `make deploy`
+3. `source ~/.bash_profile`
 
-	`make install` is
-	
-		install:
-			@for x in init/*.sh; do sh $$x; done
-		ifeq ($(shell uname),Darwin)
-			@for x in osx/*.sh; do sh $$x; done
-		endif
-	
-	Execute all of the files within `init/`. In addition, in the case of OS X, execute all of the files within `osx/`. 
-	
-	Events are mainly executed are follows.
-	
-	* Install some commands under the Package Management System (*nix only, except OS X)
-	* Set language of `$HOME` Japanese to English and vice versa
-	* Execute vim with  `-c "NeoBundleInit"`. (Only type of vim is **normal** or **[more](http://www.drchip.org/astronaut/vim/vimfeat.html)**)
-	
-	**Only OS X**
-	
-	* Install some commands from Brewfile
-	* Setting up OS X defaults
-	
-	Also, you should do this:
-	
-		brew bundle osx/Brewfile
-	
-	You can install native applications via Homebrew without browsing each websites.
+推奨された方法で `curl` などのダウンローダを通して、`bootstrap.sh` の実行を行うと、dotfiles リポジトリがクローンされ(1)、各設定ファイルが所定の箇所にデプロイされ(2)、bash が再起動(3)されます。
 
-3. Create `~/.vital` (like `~/.local`) file.
+## #2; `make deploy` のあとにやるべきこと
 
-	If `~/.vital` exists, it will be sourced along with the other files. You can use this to add a few custom commands without the need to fork this entire repository, or to add commands you don’t want to commit to a public repository.
-	
-	My `~/.vital` looks something like this:
+\#1; が終わり、あなたがその環境を恒久的に使用する場合はこの項を読み、実行するべきです。
+
+	cd ~/.dotfiles && make install
+
+`make install` は環境設定をします。具体的な処理内容としては、`init/` ディレクトリ以下にあるスクリプトファイルの実行です。以下に列挙します。
+
+- vim のインストール。多くの場合、デフォルトでインストールされている vim は便利な機能が欠如していることが多いです。それのリインストールです。
+- ホームディレクトリの英語化
+- OSX の場合、homebrew の初期化
+- OSX の場合、`defauls` コマンド群の実行
+- パッケージのインストール(`wget` など)
+
+## #3; 好みの設定
+* エディタの設定
+
+	エディタは vim です。環境構築が終わりたての vim はプラグインなどもないまっさらな Vim です。初回起動時は引数に `-c "NeoBundleInit"` を指定して起動するといいです。たちまちに多くのプラグインがインストールされます。ただし、vim の種類は ノーマルかそれ[以上](http://www.drchip.org/astronaut/vim/vimfeat.html)であることが必須です。また、当然ながら `git` を必須とします。
+
+* Git の設定
+
+	個人用の設定ファイルを作成するといいでしょう。
+	個人用設定ファイル `~/.bashrc.local` は以下のようにするといいでしょう:
 
 		GIT_AUTHOR_NAME="B4B4R07"
 		GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
@@ -95,120 +75,13 @@ The processing of `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/b
 		GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 		git config --global user.email "$GIT_AUTHOR_EMAIL"
 
-## Description
+環境構築と設定は以上で終了です。
 
-Many files are named by following the convention in the past, but explain to pick up a certain file because the files that were originally developed with the extension is located. All of the rcfiles within `dotfiles/` are maintained beneath `it`. the other files such as some binary and original command scripts are maintained within and beneath `dotfiles/.bash.d/` called `$MASTERD`.
+=========================================================================================
 
-### dotfiles/.??* and *
+<a name="<oneliner>">ONELINER:</a>
 
-* [.bash.d/](./.bash.d/)
-> See the [following clause](#bashd).
-
-* [.bash_profile](./.bash_profile)
-* [.bashrc](./.bashrc)
-* [.bashrc.mac](./.bashrc.mac)
-> Bashrc for mac. For example, op() function is `open` command of OS X Limited. Also, some aliases such as `alias ls='ls -GF'` are written here.
-
-* [.bashrc.unix](./.bashrc.unix)
-> Bashrc for unix. Mainly, write here the settings that you do not do in mac. For example, `ls -F --color=auto --show-control-chars`, `eval $(dircolors -b ~/.dir_colors)` and all are written here.
-
-* [.dir_colors](./.dir_colors)
-> The file and dir color which displayed by ls command is described in the file. Program `ls (1)`, by using the environment variable `LS_COLORS`, will be determined by what color you want to display the file name. This environment variable is set by using a command like this usually.
->
->		eval `dircolors some_path/dir_colors`
->
-> The file used here is usually `/etc/DIR_COLORS`, but will be overridden by `.dir_colors` in your home directory.
-> 
-
-* [.gitconfig](./.gitconfig)
-* [.gitignore](./.gitignore)
-* [.gvimrc](./.gvimrc)
-* [.inputrc](./.inputrc)
-> Life on the command line will enrich if you set `~/.inputrc` that is the configuration file about `readline`.
-
-* [.vimrc](./.vimrc)
-* [.vimrc.bundle](./.vimrc.bundle)
-> Initialization setting of NeoBundle is described in this file.
-
-* [.vimrc.plugin](./.vimrc.plugin)
-> Detailed settings for vim-plugin is described in this file.
-
-* [Makefile](./Makefile)
-* README.md
-
-### <a name="bashd"> dotfiles/.bash.d/.??* and * </a>
-
-Only the files that have unexecute permissions(644) on the directory `${MASTERD:=~/.bash.d}`, load at startup and reload `~/.bashrc`.
-
-**Part of the bashrc:**
-
-	...
-	if [ -d "$MASTERD" ] ; then
-		echo -en "\n"
-		for f in "$MASTERD"/*.sh ; do
-			[ ! -x "$f" ] && . "$f" && echo load "$f"
-		done
-		echo -en "\n"
-		unset f
-	fi
-	...
-
-The directory `~/.bash.d` called `$MASTERD` in **dotfiles** has some executable files such as the following:
-
-* [alias.sh](./.bash.d/alias.sh)
-* [autofetch.sh](./.bash.d/autofetch.sh)
-> For more information about this script, access [b4b4r07/autofetch](https://github.com/b4b4r07/autofetch).
-
-* [bashmark.sh](./.bash.d/bashmark.sh)
-> For more information about this script, access [b4b4r07/bashmark](https://github.com/b4b4r07/bashmark).
-
-* [cdhist.sh](./.bash.d/cdhist.sh)
-> For more information about this script, access [b4b4r07/cdhist](https://github.com/b4b4r07/cdhist).
-
-* [favdir.sh](./.bash.d/favdir.sh)
-> For more information about this script, access [b4b4r07/favdir](https://github.com/b4b4r07/favdir).
-
-* [function.sh](./.bash.d/function.sh)
-* [myhistory.sh](./.bash.d/myhistory.sh)
-> Apart from the `~/.bash_history`, this is a self-made script that provides a rich history.
-
-* [prompt.sh](./.bash.d/prompt.sh)
-* [queue.sh](./.bash.d/queue.sh)
-* [stack.sh](./.bash.d/stack.sh)
-
-File with an asterisk at the end of the file name is not executed.
-
-## Case of temporary use
-
-**Copy all file**:
-
-	make sync
-
-Use the `rsync` command to create simple copy files instead of the symbolic links.
-
-**Copy a particular file**:
-
-	make mini
-
-Build an environment with minimum configuration. To be specific, `.bashrc.minimal` and `.vimrc.minimal` are copied. It is written that only the minimum necessary.
-
-## Finishing
-
-Delete all rcfiles despite link in your home directory.
-
-	make clean
-
-`make clean` is
-
-	clean:
-		@echo "rm -rf files..."
-		@for f in .??* ; do \
-			rm -v -rf ~/"$${f}" ; \
-		done ; true
-		rm -rf $(DOTFILES)
-
-Finally, remove `~/.dotfiles` directory that contains all rcfiles and all the symbolic link
-s that `Makefile` creates.
+	curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh && read -n 1 -p 'Install? ' && if [ "$REPLY" == "y" ]; then make install; fi && echo -e "\n\033[31mFINISH\033[m" && /bin/bash
 
 ## Credits
 

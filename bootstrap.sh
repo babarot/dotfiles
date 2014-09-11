@@ -40,7 +40,7 @@ EOF
 
 echo "$msg";
 if [[ "$0" =~ "bootstrap.sh" ]]; then
-	echo "That this file is started directly is not recommended"
+	echo -e "\033[33mThat this file is started directly is not recommended\033[m"
 else
 	doIt;
 fi

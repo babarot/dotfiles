@@ -1,11 +1,11 @@
 #!/bin/bash
 
-case ${OSTYPE} in
-	darwin*)
-		echo "try 'brew bundle osx/Brewfile'"
-	    exit
-		;;
-esac
+trap "echo; exit 1" INT
+
+if [ $(uname -s) == 'Darwin' ]; then
+	# use brew bundle
+	exit
+fi
 
 if type yum >/dev/null 2>&1; then
 	PACMAN='yum'

@@ -81,7 +81,7 @@
 
 <a name="oneliner">ONELINER:</a>
 
-	curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh && read -n 1 -p 'Install? ' && if [ "$REPLY" == "y" ]; then make install; fi && echo -e "\n\033[31mFINISH\033[m" && /bin/bash
+	curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh && read -n 1 -p 'Install? ' && if [ "$REPLY" == "y" ]; then cd ~/.dotfiles && make install; fi && echo -e "\n\033[31mFINISH\033[m" && /bin/bash
 
 ## Credits
 

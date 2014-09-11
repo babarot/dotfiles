@@ -919,7 +919,7 @@ if $(is_exist '__git_ps1'); then
 
 	#PS1+="${PS_USER}@${PS_HOST}:${PS_WORK}${PS_GIT}"
 	#PS1+='$ '
-	PS1+=">>> \V\n${PS_GIT} "
+	PS1+=">>> "$(show_exit $?)"\n${PS_GIT} "
 else
 	PS1+="[${PS_USER}${PS_ATODE}@${PS_HOST}${PS_SCREEN}${PS_SSH}:${PS_WORK}]\[\033[01;32m\]"
 	PS1+='$(if git status &>/dev/null;then echo git[branch:$(git branch | cut -d" "  -f2-) change:$(git status -s |wc -l)];fi)\[\033[00m\]'

@@ -1,73 +1,65 @@
-# [B4B4R07](https://twitter.com/b4b4r07)の dotfiles
+# The [B4B4R07](https://twitter.com/b4b4r07)'s dotfiles
 
-このリポジトリが目的とすることは、新しく環境構築することを容易にするためです。このリポジトリをクローンすると、いつも使っている環境を簡単に再現できます（以下の参考写真参照）。そのためにあなたがするべきことは、以下のことだけです。この README ファイルでは長々と説明を書き連ねているので、最速で環境再構築するのに必要な情報は[これ](#oneliner)だけです。
+The purpose of this repository is to it easy to build environment again. When you clone the repository, (reference see photo below), you can easily reproduce the environment that I always use. According to this README file, you will succeed in building environment. However, the description of the construction environment has been written verbosely in this file. If you want to know how you can set in the shortest, then we recommend that you read the [following](#oneliner).
 
 ![dotfiles](http://cl.ly/image/3A3e0i1L0v0J/environment.png "vim-on-tmux")
 
-## アウトライン
+## #1; Installations
 
-* `sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)`
-* `cd ~/.dotfiles && make install`
-
-## #1; 環境構築
-
-このリポジトリのクローンと、dotfiles のインストール（各設定ファイルを `$HOME` しかるべき所にデプロイすることなど）は以下を実行することで一括で行われます。
-
+Please execute the following command to complete the installation of the dot file. It means that you get(**git clone**) all configuration files from the GitHub repository and deploy them to the appropriate place in your home directory.
 
 	sh <(curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)
 
-または
+or
 
 	sh -c "`curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh`"
 
-記述はさまざまありますが、以上２つのどちらかがお勧めです。
+There are various descriptions, but either of the two described above is recommended.
 	
-他の方法:
+Other method:
 
 	curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh
-	
-もありますが、あまり推奨されません。この方法では、`bootstrap.sh` スクリプトが行うはずであった3番目の項目の「bash の再起動」が行われないからです。しかし、逆を返すと、再起動したくない場合にこの方法はお勧めです。
 
-ダウンローダに `curl` でなく、`wget` を使用する場合は、`curl -L {URL}` を `wget -q -O - {URL}` に書き換えてください。
+This is not recommended very much. In this way, this is because the third item "Restarting the bash" that the `bootstrap.sh` script should be executed does not executed. Conversely, this method is recommended if you do not want to restart it.
 
-このリポジトリのクローンが昔に行われ、変更を取得しアップデートする際は、
+If you want to use `wget` instead of `curl` as a downloader, please replace `curl -L {URL}` with `wget -q -O - {URL}`.
+
+When a clone of this repository is carried out in the old days, to update to fetch the changes,
 
 	make update
 
-でいいです。
-
-### `bootstrap.sh` がする処理について
+### The identity of `bootstrap.sh`
 
 1. `git clone b4b4r07/dotfiles.git`
 2. `make deploy`
 3. `source ~/.bash_profile`
 
-推奨された方法で `curl` などのダウンローダを通して、`bootstrap.sh` の実行を行うと、dotfiles リポジトリがクローンされ(1)、各設定ファイルが所定の箇所にデプロイされ(2)、bash が再起動(3)されます。
+When you run the script by using the method that has been recommended, **(1)***the repository is cloned*, **(2)***all configuration files is deployed*, and **(3)***the bash will be restarted*.
 
-## #2; `make deploy` のあとにやるべきこと
+## #2; Things to do after the "bootstrap.sh"
 
-\#1; が終わり、あなたがその環境を恒久的に使用する場合はこの項を読み、実行するべきです。
+Processing of `#1` is completed, If you use permanently this environment, this section would be meaningful to you.
 
 	cd ~/.dotfiles && make install
 
-`make install` は環境設定をします。具体的な処理内容としては、`init/` ディレクトリ以下にあるスクリプトファイルの実行です。以下に列挙します。
+Then, `make install` runs all shell scripts from `init/` directory. In addition, in the case of Mac, `osx/` directory is also the same. To be more specific, then run the following environment settings.
 
-- vim のインストール。多くの場合、デフォルトでインストールされている vim は便利な機能が欠如していることが多いです。それのリインストールです。
-- ホームディレクトリの英語化
-- OSX の場合、homebrew の初期化
-- OSX の場合、`defauls` コマンド群の実行
-- パッケージのインストール(`wget` など)
+- Build the vim with "huge". In many cases, Vim, which is installed by default is "small(*tiny*) Vim".
+- Anglify(translate into English) the home directory
+- **If OS X**: Initialize Homebrew with `osx/Brewfile`
+- **If OS X**: Runs `defaults` command that access the Mac OS X user defaults system
+- Install packages (e.g. `wget`...)
 
-## #3; 好みの設定
-* エディタの設定
+## #3; Manually set
 
-	エディタは vim です。環境構築が終わりたての vim はプラグインなどもないまっさらな Vim です。初回起動時は引数に `-c "NeoBundleInit"` を指定して起動するといいです。たちまちに多くのプラグインがインストールされます。ただし、vim の種類は ノーマルかそれ[以上](http://www.drchip.org/astronaut/vim/vimfeat.html)であることが必須です。また、当然ながら `git` を必須とします。
+* Set the editor
 
-* Git の設定
+	I use vim to the editor. At this stage, the plugins are not installed in Vim. When you start Vim for the first time, it is recommended that it is of specifying the `-c 'NeoBundleInit'` as the argument. By doing so, many plugins will be installed quickly. To effectively use the plugin, that the type of vim is normal or [more]((http://www.drchip.org/astronaut/vim/vimfeat.html) is desired. Of course, `git` is required.
 
-	個人用の設定ファイルを作成するといいでしょう。
-	個人用設定ファイル `~/.bashrc.local` は以下のようにするといいでしょう:
+* Set the Git
 
+	Make the configuration file for personal use. Copy and paste the following to personal configuration file `~/.bashrc.local`.
+	
 		GIT_AUTHOR_NAME="B4B4R07"
 		GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
 		git config --global user.name "$GIT_AUTHOR_NAME"
@@ -75,13 +67,14 @@
 		GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 		git config --global user.email "$GIT_AUTHOR_EMAIL"
 
-環境構築と設定は以上で終了です。
-
 =========================================================================================
 
 <a name="oneliner">ONELINER:</a>
 
 	curl -L https://raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh | sh && read -n 1 -p 'Install? ' && if [ "$REPLY" == "y" ]; then cd ~/.dotfiles && make install; fi; echo -e "\n\033[31mFINISH\033[m"; /bin/bash
+
+You have reached the end of the preferences.
+
 
 ## Credits
 

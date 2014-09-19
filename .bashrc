@@ -1010,11 +1010,22 @@ alias untemp="command cd $HOME && rm ~/temporary && ls"
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
+
 # Use if colordiff exists
-alias diff='diff -u'
 if $(is_exist 'colordiff'); then
 	alias diff='colordiff -u'
+else
+	if [ -f ~/.bin/colordiff ]; then
+		alias diff='~/.bin/colordiff -u'
+	else
+		alias diff='diff -u'
+	fi
 fi
+
+if [ -f ~/.bin/saferm.sh ]; then
+	alias rm='~/.bin/saferm.sh'
+fi
+
 # Use plain vim.
 alias nvim='vim -N -u NONE -i NONE'
 

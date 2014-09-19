@@ -13,6 +13,7 @@
 " Initial: {{{
 " Author.....<B4B4R07> BABAROT
 " Contacts...<b4b4r07@gmail.com>
+"
 " Initialize variables.
 "==============================================================================
 
@@ -79,7 +80,7 @@ let s:false = 0
 
 let s:vimrc_plugin_on                  = get(g:, 'vimrc_plugin_on',                  s:true)
 let s:vimrc_suggest_neobundleinit      = get(g:, 'vimrc_suggest_neobundleinit',      s:true)
-let s:vimrc_goback_to_eof2bof          = get(g:, 'vimrc_goback_to_eof2bof',          s:true)
+let s:vimrc_goback_to_eof2bof          = get(g:, 'vimrc_goback_to_eof2bof',          s:false)
 let s:vimrc_save_window_position       = get(g:, 'vimrc_save_window_position',       s:false)
 let s:vimrc_restore_cursor_position    = get(g:, 'vimrc_restore_cursor_position',    s:true)
 let s:vimrc_statusline_manually        = get(g:, 'vimrc_statusline_manually',        s:true)
@@ -316,6 +317,7 @@ if s:bundled('neobundle.vim') "{{{
   endif
   NeoBundleDisable skk.vim
   NeoBundleDisable eskk.vim
+  NeoBundleDisable mru.vim
   "NeoBundleDisable vim-buftabs
 
   " Manually manage rtp
@@ -1224,8 +1226,12 @@ function! GetBufname(bufnr, ...) "{{{
   if buftype ==# 'nofile' || buftype ==# 'acwrite'
     return bufname
   endif
-  if a:0
+  if a:0 && a:1 ==# 't'
     return fnamemodify(bufname, ':t')
+  elseif a:0 && a:1 ==# 'f'
+    return (fnamemodify(bufname, ':~:p'))
+  elseif a:0 && a:1 ==# 's'
+    return pathshorten(fnamemodify(bufname, ':~:h')).'/'.fnamemodify(bufname, ':t')
   endif
   return bufname
 endfunction "}}}
@@ -1528,7 +1534,7 @@ if !s:has_plugin('mru.vim')
   " MRU Essentials {{{
   let s:mru_list_locked = 0
   call s:MRU_LoadList()
-  command! MRU call s:MRU_Create_Window()
+  command! MRU2 call s:MRU_Create_Window()
   augroup vimrc-mru-files
     autocmd!
     autocmd BufRead      * call s:MRU_AddList(expand('<abuf>'))
@@ -1564,12 +1570,12 @@ if s:vimrc_add_execute_perm == s:true
 endif "}}}
 " Restore cursor position {{{
 if s:vimrc_restore_cursor_position == s:true
-function! s:restore_cursor_postion()
-  if line("'\"") <= line("$")
-    normal! g`"
-    return 1
-  endif
-endfunction
+  function! s:restore_cursor_postion()
+    if line("'\"") <= line("$")
+      normal! g`"
+      return 1
+    endif
+  endfunction
   augroup restore-cursor-position
     autocmd!
     autocmd BufWinEnter * call s:restore_cursor_postion()
@@ -1590,6 +1596,19 @@ if !s:has_plugin('vim-buftabs')
     autocmd BufEnter,BufAdd,BufWinEnter * call <SID>get_buflists()
   augroup END
 endif "}}}
+" Automatically cd parent directory when opening the file {{{
+function! s:cd_file_parentdir()
+  execute ":lcd " . expand("%:p:h")
+endfunction
+command! Cdcd call <SID>cd_file_parentdir()
+
+if s:vimrc_auto_cd_file_parentdir == s:true
+  augroup cd-file-parentdir
+    autocmd!
+    autocmd BufRead,BufEnter * call <SID>cd_file_parentdir()
+  augroup END
+endif
+"}}}
 
 " QuickLook for mac {{{
 if s:is_mac && executable("qlmanage")
@@ -1692,7 +1711,7 @@ function! s:tabpage_label(n) "{{{
   endif
   let mod = len(filter(bufnrs, 'getbufvar(v:val, "&modified")')) ? '+' : ''
   let sp = (no . mod) ==# '' ? '' : ' '
-  let fname = GetBufname(curbufnr, 't')
+  let fname = GetBufname(curbufnr, 's')
 
   if no !=# ''
     let label .= '%#' . hi . 'Number#' . no
@@ -1752,8 +1771,11 @@ function! MakeBigStatusLine()
     set statusline=
     set statusline+=%#BlackWhite#
     set statusline+=[%n]:
-    set statusline+=%{pathshorten(getcwd())}/
-    set statusline+=%f
+    if filereadable(expand('%'))
+      set statusline+=%{GetBufname(bufnr('%'),'s')}
+    else
+      set statusline+=%F
+    endif
     set statusline+=\ %m
     set statusline+=%#StatusLine#
 
@@ -1781,7 +1803,14 @@ function! MakeBigStatusLine()
     endif
   endif
 endfunction
+
 call MakeBigStatusLine()
+if s:vimrc_statusline_manually == s:true
+  augroup automatically-statusline
+    autocmd!
+    autocmd BufEnter * call MakeBigStatusLine()
+  augroup END
+endif
 
 augroup minimal-statusline
   autocmd!
@@ -2170,6 +2199,8 @@ command! -nargs=? -complete=buffer ROT call <SID>recycle_open('tabedit', empty(<
 " Handle files {{{
 " Open a file.
 command! -nargs=? -complete=file Open call <SID>open(<q-args>)
+command! -nargs=0                Op   call <SID>open('.')
+"command! Op :Open .
 
 " Get current file path
 command! CopyCurrentPath call s:copy_current_path()
@@ -2251,9 +2282,11 @@ let maplocalleader = ","
 "}}}
 " Function's commands {{{
 
-" MRU in vimrc
-if !s:has_plugin('mru.vim')
-  nnoremap <silent> <Space>j :<C-u>call <SID>MRU_Create_Window()<CR>
+" MRU within the vimrc
+if !s:has_plugin('mru.vim') 
+  if exists(':MRU2')
+    nnoremap <silent> <Space>j :MRU2<CR>
+  endif
 endif
 
 " Smart folding close
@@ -2379,7 +2412,6 @@ cnoremap <C-j> <DOWN>
 cnoremap <C-l> <RIGHT>
 cnoremap <C-h> <LEFT>
 cnoremap <C-d> <DELETE>
-cnoremap <C-m> <CR>
 cnoremap <C-p> <UP>
 cnoremap <C-n> <DOWN>
 cnoremap <C-f> <RIGHT>
@@ -2504,12 +2536,12 @@ nnoremap <Leader>Y :<C-u>%y<CR>
 "==============================================================================
 
 if has('vim_starting')
-  if s:bundled('mru.vim') "{{{
+  if s:has_plugin('mru.vim') "{{{
     let MRU_Use_Alt_useopen = 1         "Open MRU by line number
     let MRU_Window_Height   = &lines / 2
     let MRU_Max_Entries     = 100
     let MRU_Use_CursorLine  = 1
-    nnoremap <silent><Space>j :MRU<CR>
+    nnoremap <silent> <Space>j :MRU<CR>
   endif
   "}}}
   if s:bundled('unite.vim') "{{{
@@ -2828,7 +2860,7 @@ if has('vim_starting')
   endif
   "}}}
   if s:bundled('vim-autocdls') "{{{
-    let g:autocdls_autols#enable = 1
+    let g:autocdls_autols_enabled = 1
     let g:autocdls_set_cmdheight = 2
     let g:autocdls_show_filecounter = 1
     let g:autocdls_show_pwd = 0
@@ -2853,6 +2885,12 @@ if has('vim_starting')
   "}}}
   if s:bundled('nerdtree') "{{{
     nnoremap <Space>n :<C-u>NERDTreeToggle<CR>
+  endif
+  "}}}
+  if s:bundled('vimfiler') "{{{
+    let vimfiler_safe_mode_by_default = 0
+    nnoremap <buffer> <nowait> <Space> <Plug>(vimfiler_toggle_mark_current_line)
+    nnoremap <Space>w :<C-u>VimFiler -split -simple -toggle -winwidth=40 -no-quit<CR>
   endif
   "}}}
 endif
@@ -2912,17 +2950,6 @@ call s:mkdir(expand('$HOME/.vim/colors'))
 
 "------------------------------------------------------------------------------
 
-function! s:cd_file_parentdir()
-  execute ":lcd " . expand("%:p:h")
-endfunction
-command! Cdfile call <SID>cd_file_parentdir()
-if s:vimrc_auto_cd_file_parentdir == s:true
-  augroup cd-file-parentdir
-    autocmd!
-    autocmd BufRead,BufEnter * call <SID>cd_file_parentdir()
-  augroup END
-endif
-
 augroup vim-startup-nomodified "{{{
   autocmd!
   autocmd VimEnter * set nomodified
@@ -2981,7 +3008,6 @@ if has('vim_starting') && &binary
     autocmd BufReadPost * if &l:binary | setlocal filetype=xxd | endif
   augroup END
 endif "}}}
-
 " View directory {{{
 call s:mkdir(expand('$HOME/.vim/view'))
 set viewdir=~/.vim/view
@@ -2999,7 +3025,6 @@ augroup vimrc-view
         \ | endif
   autocmd VimLeave * call map(split(glob(&viewdir . '/*'), "\n"), 'delete(v:val)')
 augroup END "}}}
-
 " Automatically save and restore window size {{{
 augroup vim-save-window
   autocmd!

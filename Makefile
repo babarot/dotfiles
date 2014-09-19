@@ -36,15 +36,12 @@ mini:
 	done ; true
 
 update:
-	#git fetch && git merge origin/master
 	git pull origin master
 
 install:
+	@for x in init/*.sh ; do sh $$x; done; true
 ifeq ($(shell uname),Darwin)
-	@for x in osx/*.sh ; do sh $$x; done
-	@for x in init/*.sh ; do sh $$x; done
-else
-	@for x in init/*.sh ; do sh $$x; done
+	@for x in osx/*.sh ; do sh $$x; done; true
 endif
 
 clean:

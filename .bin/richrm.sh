@@ -4,7 +4,6 @@ myrm_log="$HOME/.myrm/log"
 myrm_box="$HOME/.myrm/$(date '+%Y')/$(date '+%m')/$(date '+%d')"
 #echo "$(date '+%Y/%m/%d')"
 #echo "$(date '+%H_%M_%S')"
-
 #echo "$(date '+%Y/%m/%d')"
 
 function richrm()

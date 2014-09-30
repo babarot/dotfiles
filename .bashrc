@@ -28,7 +28,7 @@
 #  Tailor it to your needs.
 # =============================================================== #
 
-# Initial. {{{
+# Initial. {{{1
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -160,7 +160,7 @@ fi
 
 export DISPLAY
 
-# Coloring variables {{{
+# Coloring variables {{{2
 #-------------------------------------------------------------
 # Greeting, motd etc. ...
 #-------------------------------------------------------------
@@ -246,7 +246,7 @@ fi
 
 date
 
-# Show fortune instead of nowon {{{
+# Show fortune instead of nowon
 # Makes our day a bit more fun.... :-)
 # if nowon does not exist, ...
 # execute handler:
@@ -256,10 +256,8 @@ if [ "$nowon_on"x == 'x' ]; then
 		`which fortune` -s
 	fi
 fi
-#}}}
-#}}}
 
-# Utilities. {{{
+# Utilities. {{{1
 #-------------------------------------------------------------
 # File & strings related functions:
 #-------------------------------------------------------------
@@ -410,14 +408,14 @@ function richpager()
 		if (( ${#List[@]} > 0 )) ; then
 			File=$( for i in "${List[@]}" ; do echo "$i"; done )
 
-			# No argument, no pipe.
+		# No argument, no pipe.
 		elif [[ -t 0 ]] ; then
 			echo "error: No argument." 1>&2
 			return 1
 
-			# Pipe detected.
-			# Cannot use pygmentize even if it exists.
-			# See also pygmentize -h (help file).
+		# Pipe detected.
+		# Cannot use pygmentize even if it exists.
+		# See also pygmentize -h (help file).
 		else
 			File=$( cat - )
 		fi
@@ -745,11 +743,10 @@ function corename()   # Get name of app that created a corefile.
         echo -n $file : ; gdb --core=$file --batch | head -1
     done
 }
-#}}}
 
-# Priority. {{{
+# Priority. {{{1
 
-# history {{{
+# history {{{2
 #-------------------------------------------------------------
 # Enrich your history file. The ~/.bash_history is default.
 #-------------------------------------------------------------
@@ -812,9 +809,8 @@ if [ ! -f $BIN/cdhist.sh ]; then
 		builtin cd "$@" && ls;
 	}
 fi
-#}}}
 
-# Appearance. {{{
+# Appearance. {{{1
 #-------------------------------------------------------------
 # Shell Prompt - for many examples, see:
 #       http://www.debian-administration.org/articles/205
@@ -917,24 +913,24 @@ if $(is_exist '__git_ps1'); then
 	GIT_PS1_SHOWUPSTREAM=auto
 	PS_GIT="${Red}"'$(__git_ps1)'"${NC}"
 
-	#PS1+="${PS_USER}@${PS_HOST}:${PS_WORK}${PS_GIT}"
-	#PS1+='$ '
-	PS1+=">>> "$(show_exit $?)"\n${PS_GIT} "
+	PS1+="${PS_USER}@${PS_HOST}:${PS_WORK}${PS_GIT}"
+	PS1+='$ '
+	#PS1+=">>> "$(show_exit $?)"\n${PS_GIT} "
 else
 	PS1+="[${PS_USER}${PS_ATODE}@${PS_HOST}${PS_SCREEN}${PS_SSH}:${PS_WORK}]\[\033[01;32m\]"
 	PS1+='$(if git status &>/dev/null;then echo git[branch:$(git branch | cut -d" "  -f2-) change:$(git status -s |wc -l)];fi)\[\033[00m\]'
 	PS1+='$ '
 fi
 
-PCT="\`if [[ \$EUID -eq 0 ]]; then T='$LIGHTRED' ; else T='$LIGHTBLUE'; fi; 
-echo \$T \`"
-PS1+="\`if [[ \$EUID -eq 0 ]]; then PCT='$LIGHTRED';
-else PCT='${LIGHTBLUE}'; fi; 
-	echo '$GREEN[\w] \n$DARKGRAY('\$PCT'\t$DARKGRAY)-('\$PCT'\u$DARKGRAY)-('\$PCT'\h$DARKGRAY)$YELLOW-> $NC'\`"
-export PS1;
-#}}}
+#PCT="\`if [[ \$EUID -eq 0 ]]; then T='$LIGHTRED' ; else T='$LIGHTBLUE'; fi; 
+#echo \$T \`"
+#PS1+="\`if [[ \$EUID -eq 0 ]]; then PCT='$LIGHTRED';
+#else PCT='${LIGHTBLUE}'; fi; 
+#	echo '$GREEN[\w] \n$DARKGRAY('\$PCT'\t$DARKGRAY)-('\$PCT'\u$DARKGRAY)-('\$PCT'\h$DARKGRAY)$YELLOW-> $NC'\`"
 
-# Options. {{{
+export PS1;
+
+# Options. {{{1
 #-------------------------------------------------------------
 # Some settings
 #-------------------------------------------------------------
@@ -963,9 +959,8 @@ shopt -s extglob       # Necessary for programmable completion.
 # Disable options:
 shopt -u mailwarn
 unset MAILCHECK        # Don't want my shell to warn me of incoming mail.
-#}}}
 
-# Aliases. {{{
+# Aliases. {{{1
 #============================================================
 
 alias vi="$EDITOR"
@@ -1045,9 +1040,8 @@ alias sudo='sudo '
 # Pretty-print of some PATH variables:
 
 alias path='echo -e ${PATH//:/\\n}'
-#}}}
 
-# Misc. {{{
+# Misc. {{{1
 #=========================================================================
 #  PROGRAMMABLE COMPLETION SECTION
 #  Most are taken from the bash 2.05 documentation and from Ian McDonald's

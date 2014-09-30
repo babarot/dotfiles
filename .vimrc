@@ -125,23 +125,6 @@ if has('vim_starting')
     endfor
   endif
 endif
-
-" A function to check whether the plugin exists
-" dedicated to NeoBundle.
-function! s:bundled(bundle) "{{{
-  if !isdirectory($VIMBUNDLE)
-    return 0
-  endif
-  if stridx(&runtimepath, $NEOBUNDLEPATH) == -1
-    return 0
-  endif
-
-  if a:bundle ==# 'neobundle.vim'
-    return 1
-  else
-    return neobundle#is_installed(a:bundle)
-  endif
-endfunction "}}}
 "}}}
 
 " NeoBundle: {{{
@@ -158,7 +141,7 @@ if has('vim_starting') && isdirectory($NEOBUNDLEPATH)
   endif
 endif
 
-if s:bundled('neobundle.vim') "{{{
+if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   let g:neobundle#enable_tail_path = 1
   let g:neobundle#default_options = {
         \ 'same' : { 'stay_same' : 1, 'overwrite' : 0 },
@@ -179,11 +162,6 @@ if s:bundled('neobundle.vim') "{{{
         \ 'unix': 'make -f make_unix.mak',
         \ }}
   NeoBundle has('lua') ? 'Shougo/neocomplete' : 'Shougo/neocomplcache'
-  "call neobundle#config('neocomplcache', {
-  "      \ 'lazy' : 1,
-  "      \ 'autoload' : {
-  "      \   'insert' : 1,
-  "      \ }})
   NeoBundleLazy 'Shougo/unite-outline', {
         \ 'depends' : 'Shougo/unite.vim',
         \ 'autoload' : {
@@ -235,9 +213,16 @@ if s:bundled('neobundle.vim') "{{{
   NeoBundle 'thinca/vim-splash'
   NeoBundle 'thinca/vim-portal'
   NeoBundle 'thinca/vim-poslist'
+  NeoBundle 'thinca/vim-tabrecent'
   NeoBundleLazy 'thinca/vim-qfreplace', {
         \ 'autoload' : {
         \ 'filetypes' : ['unite', 'quickfix'],
+        \ }}
+  NeoBundleLazy 'thinca/vim-ref', {
+        \ 'autoload' : {
+        \   'commands' : [{ 'name' : 'Ref',
+        \                   'complete' : 'customlist,ref#complete'}],
+        \   'unite_sources' : ['ref'],
         \ }}
   NeoBundle 'tyru/nextfile.vim'
   NeoBundle 'tyru/skk.vim'
@@ -2562,7 +2547,7 @@ if has('vim_starting')
     nnoremap <silent> <Space>j :MRU<CR>
   endif
   "}}}
-  if s:bundled('unite.vim') "{{{
+  if s:has_plugin('unite.vim') "{{{
     let g:unite_winwidth                   = 40
     let g:unite_source_file_mru_limit      = 300
     let g:unite_enable_start_insert        = 0            "off is zero
@@ -2577,7 +2562,7 @@ if has('vim_starting')
     "nnoremap <silent><Space>o :Unite outline -vertical -no-quit -winwidth=40 -toggle<CR>
   endif
   "}}}
-  if s:bundled('neocomplete') "{{{
+  if s:has_plugin('neocomplete') "{{{
     let g:neocomplete#enable_at_startup = 1
     let g:neocomplete#disable_auto_complete = 0
     let g:neocomplete#enable_ignore_case = 1
@@ -2586,7 +2571,7 @@ if has('vim_starting')
       let g:neocomplete#keyword_patterns = {}
     endif
     let g:neocomplete#keyword_patterns._ = '\h\w*'
-  elseif s:bundled('neocomplcache')
+  elseif s:has_plugin('neocomplcache')
     let g:neocomplcache_enable_at_startup = 1
     let g:Neocomplcache_disable_auto_complete = 0
     let g:neocomplcache_enable_ignore_case = 1
@@ -2606,14 +2591,13 @@ if has('vim_starting')
   highlight PmenuSbari ctermbg=darkgray
   highlight PmenuThumb ctermbg=lightgray
   "}}}
-  if s:bundled('lightline.vim') "{{{
-    let s:use_buftabs = 0
+  if s:has_plugin('lightline.vim') "{{{
     let g:lightline = {
           \ 'colorscheme': 'solarized',
           \ 'mode_map': {'c': 'NORMAL'},
           \ 'active': {
-          \   'left':  [ [ 'mode', 'paste' ], [ 'fugitive', 'filepath'], [ 'filename' ] ],
-          \   'right' : [ [ 'date' ], [ 'lineinfo', 'percent' ], [ 'filetype', 'fileencoding', 'fileformat' ] ],
+          \   'left':  [ [ 'mode', 'paste' ], [ 'fugitive' ], [ 'filename' ] ],
+          \   'right' : [ [ 'date' ], [ 'filetype', 'fileencoding', 'fileformat', 'lineinfo', 'percent' ], [ 'filepath' ] ],
           \ },
           \ 'component_function': {
           \   'modified': 'MyModified',
@@ -2642,8 +2626,7 @@ if has('vim_starting')
     endfunction
 
     function! MyFilepath()
-      "return expand('%:p:h')
-      return expand('%:~:h') . "/"
+      return substitute(getcwd(), $HOME, '~', '')
     endfunction
 
     function! MyFilename()
@@ -2651,7 +2634,7 @@ if has('vim_starting')
             \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
             \  &ft == 'unite' ? unite#get_status_string() :
             \  &ft == 'vimshell' ? vimshell#get_status_string() :
-            \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
+            \ '' != expand('%:p:~') ? expand('%:p:~') : '[No Name]') .
             \ ('' != MyModified() ? ' ' . MyModified() : '')
     endfunction
 
@@ -2680,71 +2663,9 @@ if has('vim_starting')
     function! MyMode()
       return winwidth(0) > 60 ? lightline#mode() : ''
     endfunction
-
-    " http://ac-mopp.blogspot.jp/2014/03/lightlinevim.html {{{
-    let g:mline_bufhist_queue = []
-    let g:mline_bufhist_limit = 4
-    let g:mline_bufhist_exclution_pat = '^$\|.jax$\|vimfiler:\|\[unite\]\|tagbar'
-    let g:mline_bufhist_enable = 1
-    command! Btoggle :let g:mline_bufhist_enable = g:mline_bufhist_enable ? 0 : 1 | :redrawstatus!
-
-    function! Mline_buflist()
-      if &filetype =~? 'unite\|vimfiler\|tagbar' || !&modifiable || len(g:mline_bufhist_queue) == 0 || g:mline_bufhist_enable == 0
-        return ''
-      endif
-
-      let current_buf_nr = bufnr('%')
-      let buf_names_str = ''
-      let last = g:mline_bufhist_queue[-1]
-      for i in g:mline_bufhist_queue
-        let t = fnamemodify(i, ':t')
-        let n = bufnr(t)
-
-        if n != current_buf_nr
-          let buf_names_str .= printf('[%d]:%s' . (i == last ? '' : ' | '), n, t)
-        endif
-      endfor
-
-      return buf_names_str
-    endfunction
-
-    function! s:update_recent_buflist(file)
-      if a:file =~? g:mline_bufhist_exclution_pat
-        " exclusion from queue
-        return
-      endif
-
-      if len(g:mline_bufhist_queue) == 0
-        " init
-        for i in range(min( [ bufnr('$'), g:mline_bufhist_limit + 1 ] ))
-          let t = bufname(i)
-          if bufexists(i) && t !~? g:mline_bufhist_exclution_pat
-            call add(g:mline_bufhist_queue, fnamemodify(t, ':p'))
-          endif
-        endfor
-      endif
-
-      " update exist buffer
-      let idx = index(g:mline_bufhist_queue, a:file)
-      if 0 <= idx
-        call remove(g:mline_bufhist_queue, idx)
-      endif
-
-      call insert(g:mline_bufhist_queue, a:file)
-
-      if g:mline_bufhist_limit + 1 < len(g:mline_bufhist_queue)
-        call remove(g:mline_bufhist_queue, -1)
-      endif
-    endfunction
-
-    augroup general
-      autocmd!
-      autocmd TabEnter,BufWinEnter * call s:update_recent_buflist(expand('<amatch>'))
-    augroup END
-    "}}}
   endif
   "}}}
-  if s:bundled('vim-buftabs') "{{{
+  if s:has_plugin('vim-buftabs') "{{{
     let g:buftabs_in_statusline   = 1
     let g:buftabs_in_cmdline      = 0
     let g:buftabs_only_basename   = 1
@@ -2756,7 +2677,7 @@ if has('vim_starting')
     let g:buftabs_statusline_highlight_group = 'BlackWhite'
   endif
   "}}}
-  if s:bundled('vim-splash') "{{{
+  if s:has_plugin('vim-splash') "{{{
     "let g:loaded_splash = 1
     let s:vim_intro = $HOME . "/.vim/bundle/vim-splash/sample/intro"
     if !isdirectory(s:vim_intro)
@@ -2767,7 +2688,7 @@ if has('vim_starting')
     let g:splash#path = expand(s:vim_intro . '/vim_intro.txt')
   endif
   "}}}
-  if s:bundled('vim-anzu') "{{{
+  if s:has_plugin('vim-anzu') "{{{
     nmap n <Plug>(anzu-n-with-echo)zz
     nmap N <Plug>(anzu-N-with-echo)zz
     nmap * <Plug>(anzu-star-with-echo)zz
@@ -2776,7 +2697,7 @@ if has('vim_starting')
     "nmap N <Plug>(anzu-mode-N)
   endif
   "}}}
-  if s:bundled('yankround.vim') "{{{
+  if s:has_plugin('yankround.vim') "{{{
     nmap p <Plug>(yankround-p)
     xmap p <Plug>(yankround-p)
     nmap P <Plug>(yankround-P)
@@ -2786,28 +2707,28 @@ if has('vim_starting')
     nmap <C-p> <Plug>(yankround-prev)
     nmap <C-n> <Plug>(yankround-next)
     let g:yankround_max_history = 100
-    if s:bundled('unite.vim')
+    if s:has_plugin('unite.vim')
       nnoremap <Space>p :Unite yankround -direction=botright -toggle<CR>
     endif
   endif
   "}}}
-  if s:bundled('gist-vim') "{{{
+  if s:has_plugin('gist-vim') "{{{
     let g:github_user = 'b4b4r07'
     let g:github_token = '0417d1aeeb1016c444c5'
     let g:gist_curl_options = "-k"
     let g:gist_detect_filetype = 1
   endif
   "}}}
-  if s:bundled('excitetranslate-vim') "{{{
+  if s:has_plugin('excitetranslate-vim') "{{{
     xnoremap E :ExciteTranslate<CR>
   endif
   "}}}
-  if s:bundled('gundo.vim') "{{{
+  if s:has_plugin('gundo.vim') "{{{
     nmap <Leader>U :<C-u>GundoToggle<CR>
     let g:gundo_auto_preview = 0
   endif
   "}}}
-  if s:bundled('vim-quickrun') "{{{
+  if s:has_plugin('vim-quickrun') "{{{
     let g:quickrun_config = {}
     let g:quickrun_config.markdown = {
           \ 'outputter' : 'null',
@@ -2818,7 +2739,7 @@ if has('vim_starting')
           \ }
   endif
   "}}}
-  if s:bundled('vimshell') "{{{
+  if s:has_plugin('vimshell') "{{{
     let g:vimshell_prompt_expr = 'getcwd()." > "'
     let g:vimshell_prompt_pattern = '^\f\+ > '
     augroup my-vimshell
@@ -2828,7 +2749,7 @@ if has('vim_starting')
     augroup END
   endif
   "}}}
-  if s:bundled('skk.vim') "{{{
+  if s:has_plugin('skk.vim') "{{{
     set imdisable
     let skk_jisyo = '~/SKK_JISYO.L'
     let skk_large_jisyo = '~/SKK_JISYO.L'
@@ -2839,7 +2760,7 @@ if has('vim_starting')
     let skk_use_face = 1
   endif
   "}}}
-  if s:bundled('eskk.vim') "{{{
+  if s:has_plugin('eskk.vim') "{{{
     set imdisable
     let g:eskk#directory = '~/SKK_JISYO.L'
     let g:eskk#dictionary = { 'path': "~/SKK_JISYO.L", 'sorted': 0, 'encoding': 'utf-8', }
@@ -2847,20 +2768,20 @@ if has('vim_starting')
     let g:eskk#enable_completion = 1
   endif
   "}}}
-  if s:bundled('foldCC') "{{{
+  if s:has_plugin('foldCC') "{{{
     set foldtext=foldCC#foldtext()
     let g:foldCCtext_head = 'v:folddashes. " "'
     let g:foldCCtext_tail = 'printf(" %s[%4d lines Lv%-2d]%s", v:folddashes, v:foldend-v:foldstart+1, v:foldlevel, v:folddashes)'
     let g:foldCCtext_enable_autofdc_adjuster = 1
   endif
   "}}}
-  if s:bundled('vim-portal') "{{{
+  if s:has_plugin('vim-portal') "{{{
     nmap <Leader>pb <Plug>(portal-gun-blue)
     nmap <Leader>po <Plug>(portal-gun-orange)
     nnoremap <Leader>pr :<C-u>PortalReset<CR>
   endif
   "}}}
-  if s:bundled('restart.vim') "{{{
+  if s:has_plugin('restart.vim') "{{{
     if has('gui_running')
       let g:restart_sessionoptions
             \ = 'blank,buffers,curdir,folds,help,localoptions,tabpages'
@@ -2872,12 +2793,12 @@ if has('vim_starting')
     endif
   endif
   "}}}
-  if s:bundled('vim-poslist') "{{{
+  if s:has_plugin('vim-poslist') "{{{
     "map <C-o> <Plug>(poslist-prev-pos)
     "map <C-i> <Plug>(poslist-next-pos)
   endif
   "}}}
-  if s:bundled('vim-autocdls') "{{{
+  if s:has_plugin('vim-autocdls') "{{{
     let g:autocdls_autols_enabled = 1
     let g:autocdls_set_cmdheight = 2
     let g:autocdls_show_filecounter = 1
@@ -2888,11 +2809,11 @@ if has('vim_starting')
     let g:autocdls_lsgrep_ignorecase = 1
   endif
   "}}}
-  if s:bundled('vim-shellutils') "{{{
+  if s:has_plugin('vim-shellutils') "{{{
     let g:shellutils_disable_commands = ['Ls']
   endif
   "}}}
-  if s:bundled('vim-indent-guides') "{{{
+  if s:has_plugin('vim-indent-guides') "{{{
     hi IndentGuidesOdd  ctermbg=DarkGreen
     hi IndentGuidesEven ctermbg=Black
     let g:indent_guides_enable_on_vim_startup = 0
@@ -2901,14 +2822,25 @@ if has('vim_starting')
     let g:indent_guides_guide_size = 1
   endif
   "}}}
-  if s:bundled('nerdtree') "{{{
+  if s:has_plugin('nerdtree') "{{{
     nnoremap <Space>n :<C-u>NERDTreeToggle<CR>
   endif
   "}}}
-  if s:bundled('vimfiler') "{{{
+  if s:has_plugin('vim-ref') "{{{
+  endif
+  "}}}
+  if s:has_plugin('vimfiler') "{{{
     let vimfiler_safe_mode_by_default = 0
     nnoremap <buffer> <nowait> <Space> <Plug>(vimfiler_toggle_mark_current_line)
     nnoremap <Space>w :<C-u>VimFiler -split -simple -toggle -winwidth=40 -no-quit<CR>
+  endif
+  "}}}
+  if s:has_plugin('indentLine') "{{{
+    " indentLine
+    let g:indentLine_fileTypeExclude = ['', 'help', 'nerdtree', 'calendar', 'thumbnail', 'tweetvim']
+    let g:indentLine_color_term = 111
+    let g:indentLine_color_gui = '#708090'
+    ""let g:indentLine_char = '┆ ' "use ¦, ┆ or │
   endif
   "}}}
 endif

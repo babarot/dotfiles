@@ -14,7 +14,25 @@
 " Author.....<B4B4R07> BABAROT
 " Contacts...<b4b4r07@gmail.com>
 "
-" Initialize variables.
+" # INTRODUCTION
+" This vimrc are built with two pillars mainly.
+" One is mru(b4b4r07/mru.vim), another is buftabs(b4b4r07/vim-buftabs). 
+" Although these are implemented using plugins, in order to be available
+" in the plain vim, defines the following functions.
+" 
+" - s:get_buflists()
+" - s:MRU (the internal vimrc)
+" 
+" The former is a function that emulates the buftabs.
+" The latter is the mru.
+" Focusing on these two functions, this vimrc is composed of many utilities.
+"
+" *Useful priorities*
+" - s:ls()
+" - s:smart_bwipeout()
+" - s:win_tab_switcher()
+"
+" Thank you.
 "==============================================================================
 
 " Skip initialization for vim-tiny or vim-small

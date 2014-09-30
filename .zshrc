@@ -1,15 +1,3 @@
-#       ___           ___           ___           ___           ___     
-#      /\  \         /\  \         /\__\         /\  \         /\  \    
-#      \:\  \       /::\  \       /:/  /        /::\  \       /::\  \   
-#       \:\  \     /:/\ \  \     /:/__/        /:/\:\  \     /:/\:\  \  
-#        \:\  \   _\:\~\ \  \   /::\  \ ___   /::\~\:\  \   /:/  \:\  \ 
-#  _______\:\__\ /\ \:\ \ \__\ /:/\:\  /\__\ /:/\:\ \:\__\ /:/__/ \:\__\
-#  \::::::::/__/ \:\ \:\ \/__/ \/__\:\/:/  / \/_|::\/:/  / \:\  \  \/__/
-#   \:\~~\~~      \:\ \:\__\        \::/  /     |:|::/  /   \:\  \      
-#    \:\  \        \:\/:/  /        /:/  /      |:|\/__/     \:\  \     
-#     \:\__\        \::/  /        /:/  /       |:|  |        \:\__\    
-#      \/__/         \/__/         \/__/         \|__|         \/__/    
-#
 # Initial {{{1
 
 # Language
@@ -54,6 +42,7 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 autoload -Uz colors
 colors
 
+# ヒストリの設定
 HISTFILE=~/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=1000000
@@ -83,22 +72,25 @@ function clipboard_vim_path()
 }
 
 #--------------------------------------------------------------
-# Define EDITOR environment variable.
+# Define EDITOR environment value with search().
 # Use vim with compiled '+clipboard', if present.
 #--------------------------------------------------------------
 export EDITOR=$(clipboard_vim_path)
 export CVSEDITOR="${EDITOR}"
 export SVN_EDITOR="${EDITOR}"
 export GIT_EDITOR="${EDITOR}"
-alias vi="$EDITOR"
-alias vim="$EDITOR"
+alias vi=$EDITOR
+alias vim=$EDITOR
 
 # Option {{{1
 limit coredumpsize 0
 umask 022
 setopt auto_cd
 setopt auto_pushd
-
+# Do not print the directory stack after pushd or popd.
+# setopt pushd_silent
+# cd - と cd + を入れ替える
+setopt pushd_minus
 # ディレクトリスタックに同じディレクトリを追加しないようになる
 setopt pushd_ignore_dups
 # pushd 引数ナシ == pushd $HOME
@@ -147,8 +139,8 @@ setopt path_dirs
 # 戻り値が 0 以外の場合終了コードを表示する
 setopt print_exit_value
 # コマンドラインがどのように展開され実行されたかを表示するようになる
-setopt xtrace
-# Check if execute 'rm' when including '*'
+#setopt xtrace
+# rm * 時に確認する
 setopt rm_star_wait
 # バックグラウンドジョブが終了したら(プロンプトの表示を待たずに)すぐに知らせる
 setopt notify
@@ -156,8 +148,12 @@ setopt notify
 setopt long_list_jobs
 # サスペンド中のプロセスと同じコマンド名を実行した場合はリジュームする
 setopt auto_resume
-# Use 'exit, logout' instead of Ctrl+D
-setopt ignore_eof
+# Ctrl+D では終了しないようになる（exit, logout などを使う）
+#setopt ignore_eof
+#
+# 実行したプロセスの消費時間が3秒以上かかったら
+# 自動的に消費時間の統計情報を表示
+REPORTTIME=3
 
 # glob展開時に大文字小文字を無視
 setopt no_case_glob
@@ -390,7 +386,49 @@ bindkey '^x^p' pbcopy-buffer
 PROMPT2="%{${fg[blue]}%}%_> %{${reset_color}%}"
 SPROMPT="%{${fg[red]}%}correct: %R -> %r [nyae]? %{${reset_color}%}"
 RPROMPT="%{${fg[blue]}%}[%~]%{${reset_color}%}"
+setopt prompt_subst
 #PROMPT=%T
+function branch-status-check {
+    local prefix branchname suffix
+        # .gitの中だから除外
+        if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
+            return
+        fi
+        branchname=`get-branch-name`
+        # ブランチ名が無いので除外
+        if [[ -z $branchname ]]; then
+            return
+        fi
+        prefix=`get-branch-status` #色だけ返ってくる
+        suffix='%{'${reset_color}'%}'
+        echo ${prefix}${branchname}${suffix}
+}
+function get-branch-name {
+    # gitディレクトリじゃない場合のエラーは捨てます
+    echo `git rev-parse --abbrev-ref HEAD 2> /dev/null`
+}
+function get-branch-status {
+    local res color
+        output=`git status --short 2> /dev/null`
+        if [ -z "$output" ]; then
+            res=':' # status Clean
+            color='%{'${fg[green]}'%}'
+        elif [[ $output =~ "[\n]?\?\? " ]]; then
+            res='?:' # Untracked
+            color='%{'${fg[yellow]}'%}'
+        elif [[ $output =~ "[\n]? M " ]]; then
+            res='M:' # Modified
+            color='%{'${fg[red]}'%}'
+        else
+            res='A:' # Added to commit
+            color='%{'${fg[cyan]}'%}'
+        fi
+        # echo ${color}${res}'%{'${reset_color}'%}'
+        echo ${color} # 色だけ返す
+}
+#RPROMPT="$(branch-status-check) at %{${fg[blue]}%}[%~]%{${reset_color}%}"
+#RPROMPT=$'`branch-status-check` %~'
+RPROMPT=$'`branch-status-check` at %{${fg[blue]}%}[%~]%{${reset_color}%}'
 
 			PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[cyan]%}INS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
 function zle-line-init zle-keymap-select

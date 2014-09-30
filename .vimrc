@@ -268,7 +268,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   NeoBundle 'LeafCage/yankround.vim'
   NeoBundle 'LeafCage/foldCC'
   NeoBundle 'junegunn/vim-easy-align'
-  NeoBundle 'jiangmiao/auto-pairs'
+  "NeoBundle 'jiangmiao/auto-pairs'
   NeoBundleLazy 'mattn/gist-vim', {
         \ 'depends': ['mattn/webapi-vim' ],
         \ 'autoload' : {
@@ -302,6 +302,8 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
         \ }
   NeoBundle 'yomi322/unite-tweetvim'
   NeoBundle 'tsukkee/lingr-vim'
+  NeoBundle 'AndrewRadev/switch.vim'
+  NeoBundle 'Yggdroot/indentLine'
 
   " Japanese help
   NeoBundle 'vim-jp/vimdoc-ja'
@@ -320,7 +322,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   endif
   NeoBundleDisable skk.vim
   NeoBundleDisable eskk.vim
-  NeoBundleDisable mru.vim
+  "NeoBundleDisable mru.vim
   "NeoBundleDisable vim-buftabs
 
   " Manually manage rtp
@@ -347,9 +349,11 @@ else "{{{
     endif
     cd $VIMBUNDLE
 
-    call system('git clone git://github.com/Shougo/neobundle.vim')
-    if v:shell_error
-      throw 'neobundleinit: Git error.'
+    if executable('git')
+      call system('git clone git://github.com/Shougo/neobundle.vim')
+      if v:shell_error
+        throw 'neobundleinit: Git error.'
+      endif
     endif
 
     set runtimepath& runtimepath+=$NEOBUNDLEPATH
@@ -475,11 +479,19 @@ endfunction "}}}
 function! s:confirm(msg) "{{{
   return input(printf('%s [y/N]: ', a:msg)) =~? '^y\%[es]$'
 endfunction "}}}
-function! s:mkdir(file, ...) "{{{
-  let f = a:0 ? fnamemodify(a:file, a:1) : a:file
-  if !isdirectory(f)
-    call mkdir(f, 'p')
+"function! s:mkdir(file, ...) "{{{
+"  let f = a:0 ? fnamemodify(a:file, a:1) : a:file
+"  if !isdirectory(f)
+"    call mkdir(f, 'p')
+"  endif
+"endfunction "}}}
+function! s:mkdir(dir) "{{{
+  let dir = expand(a:dir)
+  if !isdirectory(dir)
+    call mkdir(dir, "p")
+    return 1
   endif
+  return 0
 endfunction "}}}
 function! s:auto_mkdir(dir, force) "{{{
   if !isdirectory(a:dir) && (a:force ||
@@ -597,10 +609,13 @@ function! s:rename(new, type) "{{{
   endif
 
   if new != '' && new !=# 'file'
+    let oldpwd = getcwd()
+    lcd %:p:h
     execute 'file' new
     execute 'setlocal filetype=' . fnamemodify(new, ':e')
     write
     call delete(expand('#'))
+    execute 'lcd' oldpwd
   endif
 endfunction "}}}
 function! s:make_junkfile() "{{{
@@ -1537,8 +1552,8 @@ if !s:has_plugin('mru.vim')
   " MRU Essentials {{{
   let s:mru_list_locked = 0
   call s:MRU_LoadList()
-  command! MRU2 call s:MRU_Create_Window()
-  augroup vimrc-mru-files
+  command! MRU call s:MRU_Create_Window()
+  augroup mru-files-vimrc
     autocmd!
     autocmd BufRead      * call s:MRU_AddList(expand('<abuf>'))
     autocmd BufNewFile   * call s:MRU_AddList(expand('<abuf>'))
@@ -1553,7 +1568,7 @@ endif
 " Add execute permission {{{
 if s:vimrc_add_execute_perm == s:true
   if executable('chmod')
-    augroup vimrc-autoexecutable
+    augroup auto-add-executable
       autocmd!
       autocmd BufWritePost * call s:add_permission_x()
     augroup END
@@ -1604,6 +1619,7 @@ function! s:cd_file_parentdir()
   execute ":lcd " . expand("%:p:h")
 endfunction
 command! Cdcd call <SID>cd_file_parentdir()
+nnoremap Q :<C-u>call <SID>cd_file_parentdir()<CR>
 
 if s:vimrc_auto_cd_file_parentdir == s:true
   augroup cd-file-parentdir
@@ -1631,7 +1647,8 @@ if s:is_windows
   set nobackup
 else
   set backup
-  call s:mkdir(expand('~/.vim/backup'))
+  "call s:mkdir(expand('~/.vim/backup'))
+  call s:mkdir('~/.vim/backup')
   augroup backup-files-automatically
     autocmd!
     autocmd BufWritePre * call s:backup_files()
@@ -1649,7 +1666,8 @@ else
 endif
 "}}}
 " Swap settings {{{
-call s:mkdir(expand('~/.vim/swap'))
+"call s:mkdir(expand('~/.vim/swap'))
+call s:mkdir('~/.vim/swap')
 set noswapfile
 set directory=~/.vim/swap
 "}}}
@@ -1665,8 +1683,13 @@ syntax enable
 syntax on
 
 set number
-set lines=50
-set columns=160
+if hostname() =~# '^z1z1r07'
+  set columns=160
+  set lines=60
+else
+  set lines=50
+  set columns=160
+endif
 
 " Colorscheme
 set background=dark "{{{
@@ -1807,23 +1830,22 @@ function! MakeBigStatusLine()
   endif
 endfunction
 
-call MakeBigStatusLine()
-if s:vimrc_statusline_manually == s:true
-  augroup automatically-statusline
+if !s:has_plugin('lightline.vim')
+  call MakeBigStatusLine()
+  if s:vimrc_statusline_manually == s:true
+    " Refresh Manually StatusLine
+    augroup automatically-statusline
+      autocmd!
+      autocmd BufEnter * call MakeBigStatusLine()
+    augroup END
+  endif
+
+  augroup minimal-statusline
     autocmd!
-    autocmd BufEnter * call MakeBigStatusLine()
+    autocmd WinEnter,CursorMoved * if winwidth(0) <  &columns | set statusline=%!MakeStatusLine() | endif
   augroup END
 endif
 
-augroup minimal-statusline
-  autocmd!
-  autocmd WinEnter,CursorMoved * if winwidth(0) <  &columns | set statusline=%!MakeStatusLine() | endif
-  autocmd WinEnter * if winwidth(0) == &columns | call MakeBigStatusLine() | endif
-augroup END
-
-if has('vim_starting')
-  let s:save_sl = &statusline
-endif
 "}}}
 " Emphasize statusline in the insert mode {{{
 if s:vimrc_colorize_statusline_insert == s:true
@@ -2033,16 +2055,21 @@ set showcmd
 " Lets vim set the title of the console
 set notitle
 
-" koko made
-
+" When you create a new line, perform advanced automatic indentation
 set smartindent
+
+" Blank is inserted only the number of 'shiftwidth'.
 set smarttab
+
+" Moving the cursor left and right will be modern.
 set whichwrap=b,s,h,l,<,>,[,]
 
 " Hide buffers instead of unloading them
 set hidden
 
+" The maximum width of the input text
 set textwidth=0
+
 set formatoptions&
 set formatoptions-=t
 set formatoptions-=c
@@ -2054,6 +2081,7 @@ set formatoptions+=l
 set list
 set listchars=tab:>-,trail:-,nbsp:%,extends:>,precedes:<,eol:<
 set listchars=eol:<,tab:>.
+
 set t_Co=256
 set nrformats=alpha,hex
 set winaltkeys=no
@@ -2273,22 +2301,24 @@ if has('vim_starting')
   mapclear!
 endif
 
-" Use backslash
+" Use backslash.
 if s:is_mac
   noremap ¥ \
   noremap \ ¥
 endif
 
-" Define mapleader
-let mapleader = ","
-let maplocalleader = ","
+" Define mapleader.
+let mapleader = ','
+let maplocalleader = ','
 "}}}
 " Function's commands {{{
 
 " MRU within the vimrc
 if !s:has_plugin('mru.vim') 
-  if exists(':MRU2')
-    nnoremap <silent> <Space>j :MRU2<CR>
+  "if exists(':MRU2')
+  if exists('*s:MRU_Create_Window')
+    nnoremap <silent> <Space>j :<C-u>call <SID>MRU_Create_Window()<CR>
+    "nnoremap <silent> <Space>j :<C-u>MRU<CR>
   endif
 endif
 
@@ -2383,7 +2413,9 @@ if s:vimrc_goback_to_eof2bof == s:true
   nnoremap <expr><silent> k <SID>up("gk")
   nnoremap <expr><silent> j <SID>down("gj")
 endif "}}}
-" Buffers and tabpages {{{
+" Buffers, windows, and tabpages {{{
+
+" Buffers
 "nnoremap <silent> <C-j> :<C-u>call <SID>get_buflists('n')<CR>
 "nnoremap <silent> <C-k> :<C-u>call <SID>get_buflists('p')<CR>
 if s:has_plugin('vim-buftabs')
@@ -2393,10 +2425,35 @@ else
   nnoremap <silent> <C-j> :<C-u>silent bnext<CR>:<C-u>call <SID>get_buflists()<CR>
   nnoremap <silent> <C-k> :<C-u>silent bprev<CR>:<C-u>call <SID>get_buflists()<CR>
 endif
+
+" Windows
+nnoremap s <Nop>
+nnoremap sp :<C-u>split<CR>
+nnoremap vs :<C-u>vsplit<CR>
+function! s:vsplit_or_wincmdw() "{{{
+  if winnr('$') == 1
+    return ":vsplit\<CR>"
+  else
+    return ":wincmd w\<CR>"
+  endif
+endfunction "}}}
+nnoremap <expr><silent> ss <SID>vsplit_or_wincmdw()
+nnoremap sj <C-w>j
+nnoremap sk <C-w>k
+nnoremap sl <C-w>l
+nnoremap sh <C-w>h
+
+" tabpages
 "nnoremap <silent> <C-l> :<C-u>silent! tabnext<CR>
 "nnoremap <silent> <C-h> :<C-u>silent! tabprev<CR>
 nnoremap <silent> <C-l> :<C-u>call <SID>win_tab_switcher('l')<CR>
 nnoremap <silent> <C-h> :<C-u>call <SID>win_tab_switcher('h')<CR>
+nnoremap t <Nop>
+nnoremap <silent> <Space>t :<C-u>tabclose<CR>:<C-u>tabnew<CR>
+nnoremap <silent> tt :<C-u>tabnew<CR>
+nnoremap <silent> tT :<C-u>tabnew<CR>:<C-u>tabprev<CR>
+nnoremap <silent> tc :<C-u>tabclose<CR>
+nnoremap <silent> to :<C-u>tabonly<CR>
 "}}}
 " Inser matching bracket automatically {{{
 inoremap [ []<LEFT>
@@ -2443,23 +2500,6 @@ nnoremap <Left> <Nop>
 nnoremap <Right> <Nop>
 nnoremap ZZ <Nop>
 nnoremap ZQ <Nop>
-"}}}
-" Window split {{{
-nnoremap s <Nop>
-nnoremap sp :<C-u>split<CR>
-nnoremap vs :<C-u>vsplit<CR>
-function! s:vsplit_or_wincmdw() "{{{
-  if winnr('$') == 1
-    return ":vsplit\<CR>"
-  else
-    return ":wincmd w\<CR>"
-  endif
-endfunction "}}}
-nnoremap <expr><silent> ss <SID>vsplit_or_wincmdw()
-nnoremap sj <C-w>j
-nnoremap sk <C-w>k
-nnoremap sl <C-w>l
-nnoremap sh <C-w>h
 "}}}
 " Folding (see :h usr_28.txt){{{
 nnoremap <expr>l foldclosed('.') != -1 ? 'zo' : 'l'
@@ -2851,35 +2891,120 @@ endif
 " will be described in this section.
 "==============================================================================
 
-" Experimental. {{{
+function! GuiTabLabel() "{{{
+  " Initialize tab strings
+  let l:label = ''
 
-function! s:help_opened() "{{{
+  " タブに含まれるバッファ(ウィンドウ)についての情報をとっておきます。
+  let l:bufnrlist = tabpagebuflist(v:lnum)
+
+  "let l:bufname = fnamemodify(bufname(l:bufnrlist[tabpagewinnr(v:lnum) - 1]), ':t')
+  let l:bufname = GetBufname(bufnr('%'),'s')
+  let l:label .= l:bufname == '' ? 'No title' : l:bufname
+
+  " タブ内にウィンドウが複数あるときにはその数を追加します(デフォルトで一応あるので)
+  let l:wincount = tabpagewinnr(v:lnum, '$')
+  if l:wincount > 1
+    let l:label = l:wincount . l:label
+  endif
+
+  " Add '+' if one of the buffers in the tab page is modified
+  for bufnr in l:bufnrlist
+    if getbufvar(bufnr, "&modified")
+      let l:label .= ' +'
+      break
+    endif
+  endfor
+
+  return l:label
+endfunction
+"}}}
+function! GuiTabLabel2() "{{{
+  let label = ''
+  let bufnrlist = tabpagebuflist(v:lnum)
+
+  " Append the tab number
+  "let label .= v:lnum.': '
+  " Append the buffer name
+  let name = bufname(bufnrlist[tabpagewinnr(v:lnum) - 1])
+  if name == ''
+    " give a name to no-name documents
+    if &buftype=='quickfix'
+      let name = '[Quickfix List]'
+    else
+      let name = '[No Name]'
+    endif
+  else
+    " get only the file name
+    let name = fnamemodify(name,":t")
+  endif
+  "let label .= name
+  let label .= GetBufname('%', 't')
+  " Append the number of windows in the tab page
+  let wincount = tabpagewinnr(v:lnum, '$')
+
+  " Add '+' if one of the buffers in the tab page is modified
+  for bufnr in l:bufnrlist
+    if getbufvar(bufnr, "&modified")
+      let l:label .= ' +'
+      break
+    endif
+  endfor
+  let wincount = wincount == 1 ? '' : wincount . ' '
+
+  ""return label . '  [' . wincount . ']'
+  return wincount . label
+endfunction "}}}
+
+" GUI settings {{{
+autocmd GUIEnter * call s:gui()
+function! s:gui()
+  syntax enable
+
+  "set guitablabel=
+  "if filereadable(expand('%'))
+    "set guitablabel=%{GetBufname(bufnr('%'),'s')}
+  "endif
+  "set guitablabel=%{GuiTabLabel()}
+  set guitablabel=%{GuiTabLabel2()}
+
+  " Change cursor color if IME works.
+  if has('multi_byte_ime') || has('xim')
+    highlight Cursor   guibg=NONE guifg=Yellow
+    highlight CursorIM guibg=NONE guifg=Red
+    set iminsert=0 imsearch=0
+    inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
+  endif
+
+  " Remove all menus.
+  source $VIMRUNTIME/delmenu.vim
+
+  " Font
+  if s:is_mac
+    set guifont=Andale\ Mono:h12
+  endif
+endfunction
+"}}}
+
+" Don't exit vim when closing last tab with :q and :wq, :qa, :wqa
+if has('gui_running')
+cabbrev q   <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 && tabpagenr('$') == 1 && winnr('$') == 1 ? 'enew' : 'q')<CR>
+cabbrev wq  <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 && tabpagenr('$') == 1 && winnr('$') == 1 ? 'w\|enew' : 'wq')<CR>
+cabbrev qa  <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 ? 'tabonly\|only\|enew' : 'qa')<CR>
+cabbrev wqa <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 ? 'wa\|tabonly\|only\|enew' : 'wqa')<CR>
+endif
+
+" Help settings. {{{
+function! s:filetype_if_help()
   only
   nnoremap <buffer> <nowait> q :bwipeout<CR>
-endfunction "}}}
+  nnoremap <buffer> <nowait> <ESC> :bwipeout<CR>
+endfunction
 augroup when-help-opened
   autocmd!
-  autocmd FileType help call s:help_opened()
-augroup END
+  autocmd FileType help call s:filetype_if_help()
+augroup END "}}}
 
-function! s:remove_swapfile() "{{{
-  let save_wildignore = &wildignore
-  setlocal wildignore=
-  let target = &directory
-  let list = split(glob(target."**/*.sw{p,o}"), '\n')
-  for file in list
-    call delete(file)
-    echo file
-  endfor
-  let &wildignore = save_wildignore
-endfunction "}}}
-command! RemoveSwapfile call <SID>remove_swapfile()
-
-function! s:mkdir(dir) "{{{
-  if !isdirectory(a:dir)
-    call mkdir(a:dir, "p")
-  endif
-endfunction "}}}
 function! s:file_complete(A, L, P) "{{{
   let lists = []
   let filelist = glob(getcwd() . "/*")
@@ -2894,11 +3019,9 @@ endfunction
 "command! -nargs=1 -complete=customlist,<SID>file_complete Edit edit<bang> <args>
 "command! -nargs=1 -complete=customlist,<SID>file_complete Cat call s:cat(<f-args>)
 "}}}
-"}}}
 
-call s:mkdir(expand('$HOME/.vim/colors'))
-
-"------------------------------------------------------------------------------
+"call s:mkdir(expand('$HOME/.vim/colors'))
+call s:mkdir('$HOME/.vim/colors')
 
 augroup vim-startup-nomodified "{{{
   autocmd!
@@ -2915,13 +3038,13 @@ augroup END
 let s:WordCountStr = ''
 let s:WordCountDict = {'word': 2, 'char': 3, 'byte': 4}
 "}}}
-augroup ctrl-g-information "{{{
+augroup auto-ctrl-g-information "{{{
   autocmd!
   "autocmd CursorHold,CursorHoldI * redraw
   "autocmd CursorHold,CursorHoldI * execute "normal! 1\<C-g>"
   "autocmd CursorHold,CursorHoldI * execute "echo GetFileInfo()"
 augroup END "}}}
-augroup vimrc-auto-mkdir "{{{
+augroup auto-mkdir-saving "{{{
   autocmd!
   autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
   function! s:auto_mkdir(dir, force)
@@ -2934,7 +3057,7 @@ augroup vimrc-auto-mkdir "{{{
 augroup END "}}}
 augroup echo-file-path "{{{
   autocmd!
-  autocmd WinEnter * execute "normal! 1\<C-g>"
+  "autocmd WinEnter * execute "normal! 1\<C-g>"
 augroup END "}}}
 augroup no-comment "{{{
   autocmd!
@@ -2948,22 +3071,23 @@ augroup END "}}}
 augroup only-window-help "{{{
   autocmd!
   "autocmd BufEnter *.jax only
-  "autocmd Filetype help only
+  autocmd Filetype help only
 augroup END "}}}
 
 " Launched with -b option {{{
 if has('vim_starting') && &binary
-  augroup vimrc-xxd
+  augroup vim-xxd-mode
     autocmd!
     autocmd BufReadPost * if &l:binary | setlocal filetype=xxd | endif
   augroup END
 endif "}}}
 " View directory {{{
-call s:mkdir(expand('$HOME/.vim/view'))
+"call s:mkdir(expand('$HOME/.vim/view'))
+call s:mkdir('$HOME/.vim/view')
 set viewdir=~/.vim/view
 set viewoptions-=options
 set viewoptions+=slash,unix
-augroup vimrc-view
+augroup view-file
   autocmd!
   autocmd BufLeave * if expand('%') !=# '' && &buftype ==# ''
         \ | mkview
@@ -2998,7 +3122,7 @@ endif "}}}
 " Loading divided files {{{
 let g:local_vimrc = expand('~/.vimrc.local')
 if filereadable(g:local_vimrc)
-  execute 'source ' . g:local_vimrc
+  execute 'source' g:local_vimrc
 endif
 "}}}
 

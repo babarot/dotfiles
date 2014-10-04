@@ -1,0 +1,95 @@
+#!/bin/bash
+#
+# @(#) richpager ver.0.1 2014.10.2
+#
+# Usage:
+#   richpager file...
+#
+# Description:
+#   Rich pager; Cat or less automatically, with pygmentize.
+#
+######################################################################
+
+function richpager()
+{
+	# Use cat as default pager.
+	Pager='cat'
+	if type pygmentize >/dev/null 2>&1; then
+		Pager='pygmentize -O style=monokai -f console256 -g'
+	fi
+	Less='less -R +Gg'
+	# Get display lines.
+	DispLines=$[ $( stty 'size' < '/dev/tty' | cut -d' ' -f1 ) - 2 ]
+
+	declare -i arg=0
+	declare -a exist_files=()
+	declare -a non_exist_files=()
+
+	while (( $# > 0 ))
+	do
+		case "$1" in
+			-*)
+				if [[ "$1" =~ 'n' ]]; then
+					nflag='-n'
+				fi
+				if [[ "$1" =~ 'l' ]]; then
+					lflag='-l'
+				fi
+				if [[ "$1" =~ 'p' ]]; then
+					pflag='-p'
+				fi
+				shift
+				;;
+			*)
+				((++arg))
+				if [ -e "$1" ]; then
+					exist_files=("${exist_files[@]}" "$1")
+				else
+					non_exist_files=("${non_exist_files[@]}" "$1")
+				fi
+				shift
+				;;
+		esac
+	done
+
+	for file in "${exist_files[@]}"
+	do
+		if [ -r "$file" ]; then
+			List[${#List[@]}]=$( <"$file" )
+		fi
+	done
+
+	if (( ${#List[@]} > 0 )); then
+		File=$( for i in "${List[@]}" ; do echo "$i"; done )
+	elif [ -p /dev/stdin ] || (( arg < 1)) ; then
+		File=$( cat - )
+	fi
+
+	declare -i FileLines=$( echo -n "$File" | grep -c '' )
+	FileLines+="${#non_exist_files[@]}"
+
+	if [ -n "$pflag" ]; then
+		Pager='cat'
+	fi
+
+	if [ -n "${exist_files}" -o -p /dev/stdin ]; then
+		if (( FileLines > DispLines )) || [ -n "$lflag" ]; then
+			echo "$File" | ${Pager} | cat ${nflag} | ${Less}
+		else
+			echo "$File" | ${Pager} | cat ${nflag}
+		fi
+	fi
+
+	for file in "${non_exist_files[@]}"
+	do
+		ERR=1
+		echo "$file: no such file or directory" 1>&2
+	done
+
+	if [ -n "$ERR" ]; then
+		return 1
+	fi
+	return 0
+}
+
+richpager "$@"

@@ -1,4 +1,14 @@
 #!/bin/bash
+#
+# @(#) gre ver.0.1 2014.10.2
+#
+# Usage:
+#   gre file word...
+#
+# Description:
+#   Multiple grep, wrapper script
+#
+######################################################################
 
 narrowing()
 {
@@ -34,6 +44,7 @@ narrowing()
 	done
 
 	echo "${target_sorted}"
+	return 0
 }
 
 narrowing ${@+"$@"}

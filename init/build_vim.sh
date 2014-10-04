@@ -5,9 +5,9 @@ trap "exit 0" INT EXIT
 function check_vim_type()
 {
 	if `which vim` --version | grep "version" | grep -q "^Huge"; then
-		false
+		return 1
 	else
-		true
+		return 0
 	fi
 }
 

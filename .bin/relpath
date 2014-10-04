@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# @(#) relpath ver.0.1 2014.10.2
+#
+# Usage:
+#   relpath file
+#
+# Description:
+#   Get relative path
+#
+######################################################################
+
+function rel_path()
+{
+	if [ -z "$1" ]; then
+		echo 'too few arguments' 1>&2
+		return 1
+	fi
+
+	if [ `expr x"$1" : x'/'` -eq 0 ]; then
+		echo "$1: not an absolute path" 1>&2
+		return 1
+	fi
+
+	local org=`expr x"$PWD" : x'/\(.*\)'`
+	local abs=`expr x"$1"   : x'/\(.*\)'`
+	local rel="."
+	local org1=""
+	local abs1=""
+
+	while true; do
+		org1=`expr x"$org" : x'\([^/]*\)'`
+		abs1=`expr x"$abs" : x'\([^/]*\)'`
+
+		[ "$org1" != "$abs1" ] && break
+
+		org=`expr x"$org" : x'[^/]*/\(.*\)'`
+		abs=`expr x"$abs" : x'[^/]*/\(.*\)'`
+	done
+
+	if [ -n "$org" ]; then
+		local _IFS="$IFS"; IFS='/'
+		for c in $org; do
+			rel="$rel/.."
+		done
+		IFS="$_IFS"
+	fi
+
+	if [ -n "$abs" ]; then
+		rel="$rel/$abs"
+	fi
+
+	rel=`expr x"$rel" : x'\./\(.*\)'`
+	echo "$rel"
+	return 0
+}
+
+rel_path "$@"

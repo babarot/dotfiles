@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+# @(#) abspath ver.0.1 2014.10.2
+#
+# Usage:
+#   abspath file...
+#
+# Description:
+#   Get the absolute(full) pathname.
+#
+######################################################################
+
+function abs_path()
+{
+	if [ -z "$1" ]; then
+		echo "too few arguments" 1>&2
+		return 1
+	fi
+
+	if [ `expr x"$1" : x'/'` -ne 0 ]; then
+		local rel="$1"
+	else
+		local rel="$PWD/$1"
+	fi
+
+	local abs="/"
+	local _IFS="$IFS"; IFS='/'
+
+	for comp in $rel; do
+		case "$comp" in
+			'.' | '')
+				continue
+				;;
+			'..'	)
+				abs=`dirname "$abs"`
+				;;
+			*		)
+				[ "$abs" = "/" ] && abs="/$comp" || abs="$abs/$comp"
+				;;
+		esac
+	done
+	IFS="$_IFS"
+
+	echo "$abs"
+	return 0
+}
+
+abs_path "$@"

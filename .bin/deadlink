@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# @(#) deadlink ver.0.1 2014.10.2
+#
+# Usage:
+#   deadlink [path]
+#
+# Description:
+#   Backup dotfiles directory.
+#
+######################################################################
+
+function deadlink()
+{
+	local f=
+
+	for f in `command ls -A "${1:-$PWD}"`; do
+		local fpath="${1:-$PWD}/$f"
+		if [ -h "$fpath" ]; then
+			[ -a "$fpath" ] || command rm -i "$fpath"
+		fi
+	done
+
+	unset f fpath
+	return 0
+}
+
+deadlink "$@"

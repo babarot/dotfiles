@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# @(#) tac ver.0.1 2014.10.2
+#
+# Usage:
+#   tac file...
+#
+# Description:
+#   GNU tac command. Same as 'tail -r'.
+#
+######################################################################
+
+function tac()
+{
+	if [ -z "$1" ]; then
+		echo 'too few arguments' 1>&2
+		return 1
+	fi
+
+	`which ex` -s "${1}" <<-EOF
+	g/^/mo0
+	%p
+	EOF
+
+	return 0
+}
+
+tac "$@"

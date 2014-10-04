@@ -175,7 +175,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
         \ 'autoload' : {
         \ 'unite_sources' : 'file_mru',
         \ }}
-  NeoBundle 'Shougo/vimfiler', {
+  NeoBundleLazy 'Shougo/vimfiler', {
         \ 'depends' : 'Shougo/unite.vim',
         \ 'autoload' : {
         \    'commands' : [{ 'name' : 'VimFiler',
@@ -184,7 +184,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
         \                  'Edit', 'Read', 'Source', 'Write'],
         \    'mappings' : ['<Plug>(vimfiler_switch)']
         \ }}
-  NeoBundle 'Shougo/vimshell', {
+  NeoBundleLazy 'Shougo/vimshell', {
         \ 'autoload' : {
         \   'commands' : [{ 'name' : 'VimShell',
         \                   'complete' : 'customlist,vimshell#complete'},
@@ -303,7 +303,10 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   NeoBundle 'yomi322/unite-tweetvim'
   NeoBundle 'tsukkee/lingr-vim'
   NeoBundle 'AndrewRadev/switch.vim'
-  NeoBundle 'Yggdroot/indentLine'
+  "NeoBundle 'Yggdroot/indentLine'
+  NeoBundleLazy 'amdt/sunset', {
+        \ 'gui' : 1,
+        \ }
 
   " Japanese help
   NeoBundle 'vim-jp/vimdoc-ja'
@@ -1338,6 +1341,15 @@ if !s:has_plugin('neobundle.vim')
     autocmd!
     autocmd VimEnter * if !argc() | call s:b4b4r07() | endif
   augroup END
+  "autocmd VimEnter * nested if @% == '' && s:GetBufByte() == 0 | edit $MYVIMRC | endif
+  "function! s:GetBufByte()
+  "    let byte = line2byte(line('$') + 1)
+  "    if byte == -1
+  "        return 0
+  "    else
+  "        return byte - 1
+  "    endif
+  "endfunction
 endif "}}}
 
 " MRU {{{
@@ -1609,10 +1621,13 @@ augroup END
 
 " Automatically get buffer list {{{
 if !s:has_plugin('vim-buftabs')
+  "if !has('vim_starting')
   augroup bufenter-get-buffer-list
     autocmd!
-    autocmd BufEnter,BufAdd,BufWinEnter * call <SID>get_buflists()
+    " Escape getting buflist by "@% != ''" when "VimEnter"
+    autocmd BufEnter,BufAdd,BufWinEnter * if @% != '' | call <SID>get_buflists() | endif
   augroup END
+  "endif
 endif "}}}
 " Automatically cd parent directory when opening the file {{{
 function! s:cd_file_parentdir()
@@ -1692,7 +1707,10 @@ else
 endif
 
 " Colorscheme
-set background=dark "{{{
+"set background=dark "{{{
+if !has('gui_running')
+  set background=dark
+endif
 set t_Co=256
 if &t_Co < 256
   colorscheme default
@@ -1700,12 +1718,20 @@ else
   if has('gui_running') && !s:is_windows
     " For MacVim, only
     if s:has_plugin('solarized.vim')
-      colorscheme solarized
+      try
+        colorscheme solarized-cui
+      catch
+        colorscheme solarized
+      endtry
     endif
   else
     " Vim for CUI
     if s:has_plugin('solarized.vim')
-      colorscheme solarized
+      try
+        colorscheme solarized-cui
+      catch
+        colorscheme solarized
+      endtry
     elseif s:has_plugin('jellybeans.vim')
       colorscheme jellybeans
     elseif s:has_plugin('vim-hybrid')
@@ -2297,8 +2323,8 @@ command! -bang -complete=file -nargs=? WMac  write<bang> ++fileformat=mac <args>
 " Essentials. {{{
 " It is likely to be changed by $VIM/vimrc.
 if has('vim_starting')
-  mapclear
-  mapclear!
+  "mapclear
+  "mapclear!
 endif
 
 " Use backslash.
@@ -2331,7 +2357,7 @@ if s:has_plugin('vim-buftabs')
   nnoremap <silent> <C-x>K     :<C-u>call <SID>smart_bwipeout(1)<CR>
   nnoremap <silent> <C-x><C-k> :<C-u>call <SID>smart_bwipeout(2)<CR>
 else
-  autocmd BufUnload,BufLeave,BufDelete,BufWipeout * call <SID>get_buflists()
+  "autocmd BufUnload,BufLeave,BufDelete,BufWipeout * call <SID>get_buflists()
 
   nnoremap <silent> <C-x>k     :<C-u>call <SID>smart_bwipeout(0)<CR>
   nnoremap <silent> <C-x>K     :<C-u>call <SID>smart_bwipeout(1)<CR>
@@ -2891,6 +2917,13 @@ endif
 " will be described in this section.
 "==============================================================================
 
+"let g:sunset_latitude = 51.5
+"let g:sunset_longitude = -0.1167
+"let g:sunset_utc_offset = 1
+let g:sunset_latitude = 35.67
+let g:sunset_longitude = 139.8
+let g:sunset_utc_offset = 9
+
 function! GuiTabLabel() "{{{
   " Initialize tab strings
   let l:label = ''
@@ -2961,9 +2994,13 @@ autocmd GUIEnter * call s:gui()
 function! s:gui()
   syntax enable
 
+  "set background=dark
+  "colorscheme multi-solarized
+  "colorscheme solarized
+
   "set guitablabel=
   "if filereadable(expand('%'))
-    "set guitablabel=%{GetBufname(bufnr('%'),'s')}
+  "set guitablabel=%{GetBufname(bufnr('%'),'s')}
   "endif
   "set guitablabel=%{GuiTabLabel()}
   set guitablabel=%{GuiTabLabel2()}
@@ -2977,7 +3014,9 @@ function! s:gui()
   endif
 
   " Remove all menus.
+  "if filereadable(expand($VIMRUNTIME/delmenu.vim))
   source $VIMRUNTIME/delmenu.vim
+  "endif
 
   " Font
   if s:is_mac
@@ -2986,12 +3025,41 @@ function! s:gui()
 endfunction
 "}}}
 
+nnoremap <silent><Space>c :<C-u>call <SID>CopipeTerm()<CR>
+function! s:CopipeTerm()
+  if !exists('b:copipe_term_save')
+    let b:copipe_term_save = {
+          \     'number': &l:number,
+          \     'relativenumber': &relativenumber,
+          \     'foldcolumn': &foldcolumn,
+          \     'wrap': &wrap,
+          \     'list': &list,
+          \     'showbreak': &showbreak
+          \ }
+    setlocal foldcolumn=0
+    setlocal nonumber
+    setlocal norelativenumber
+    setlocal wrap
+    setlocal nolist
+    set showbreak=
+  else
+    let &l:foldcolumn = b:copipe_term_save['foldcolumn']
+    let &l:number = b:copipe_term_save['number']
+    let &l:relativenumber = b:copipe_term_save['relativenumber']
+    let &l:wrap = b:copipe_term_save['wrap']
+    let &l:list = b:copipe_term_save['list']
+    let &showbreak = b:copipe_term_save['showbreak']
+
+    unlet b:copipe_term_save
+  endif
+endfunction
+
 " Don't exit vim when closing last tab with :q and :wq, :qa, :wqa
 if has('gui_running')
-cabbrev q   <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 && tabpagenr('$') == 1 && winnr('$') == 1 ? 'enew' : 'q')<CR>
-cabbrev wq  <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 && tabpagenr('$') == 1 && winnr('$') == 1 ? 'w\|enew' : 'wq')<CR>
-cabbrev qa  <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 ? 'tabonly\|only\|enew' : 'qa')<CR>
-cabbrev wqa <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 ? 'wa\|tabonly\|only\|enew' : 'wqa')<CR>
+  cabbrev q   <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 && tabpagenr('$') == 1 && winnr('$') == 1 ? 'enew' : 'q')<CR>
+  cabbrev wq  <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 && tabpagenr('$') == 1 && winnr('$') == 1 ? 'w\|enew' : 'wq')<CR>
+  cabbrev qa  <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 ? 'tabonly\|only\|enew' : 'qa')<CR>
+  cabbrev wqa <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 ? 'wa\|tabonly\|only\|enew' : 'wqa')<CR>
 endif
 
 " Help settings. {{{

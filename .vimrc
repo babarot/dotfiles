@@ -125,6 +125,11 @@ if has('vim_starting')
     endfor
   endif
 endif
+
+if len(findfile("dev.vim", ".;")) > 0
+  let s:vimrc_plugin_on = s:false
+  execute "set rtp+=" . getcwd()
+endif
 "}}}
 
 " NeoBundle: {{{
@@ -1708,6 +1713,7 @@ endif
 
 " Colorscheme
 "set background=dark "{{{
+set background=dark
 if !has('gui_running')
   set background=dark
 endif
@@ -1782,6 +1788,42 @@ function! MakeTabLine() "{{{
   let info = '%#TabLineFill#'
   let info .= fnamemodify(getcwd(), ':~') . ' '
   return tabs . '%=' . info
+endfunction "}}}
+function! GuiTabLabel() "{{{
+  let label = ''
+  let bufnrlist = tabpagebuflist(v:lnum)
+
+  " Append the tab number
+  "let label .= v:lnum.': '
+  " Append the buffer name
+  let name = bufname(bufnrlist[tabpagewinnr(v:lnum) - 1])
+  if name == ''
+    " give a name to no-name documents
+    if &buftype=='quickfix'
+      let name = '[Quickfix List]'
+    else
+      let name = '[No Name]'
+    endif
+  else
+    " get only the file name
+    let name = fnamemodify(name,":t")
+  endif
+  "let label .= name
+  let label .= GetBufname('%', 't')
+  " Append the number of windows in the tab page
+  let wincount = tabpagewinnr(v:lnum, '$')
+
+  " Add '+' if one of the buffers in the tab page is modified
+  for bufnr in l:bufnrlist
+    if getbufvar(bufnr, "&modified")
+      let l:label .= ' +'
+      break
+    endif
+  endfor
+  let wincount = wincount == 1 ? '' : wincount . ' '
+
+  ""return label . '  [' . wincount . ']'
+  return wincount . label
 endfunction "}}}
 
 " Status-line
@@ -2876,7 +2918,7 @@ if has('vim_starting')
   endif
   "}}}
   if s:has_plugin('vim-shellutils') "{{{
-    let g:shellutils_disable_commands = ['Ls']
+    "let g:shellutils_disable_commands = ['Ls']
   endif
   "}}}
   if s:has_plugin('vim-indent-guides') "{{{
@@ -2916,94 +2958,26 @@ endif
 " Experimental setup and settings that do not belong to any section
 " will be described in this section.
 "==============================================================================
+"set rtp+=~/Dropbox/data/Documents/vim-favdir
 
-"let g:sunset_latitude = 51.5
-"let g:sunset_longitude = -0.1167
-"let g:sunset_utc_offset = 1
-let g:sunset_latitude = 35.67
-let g:sunset_longitude = 139.8
-let g:sunset_utc_offset = 9
-
-function! GuiTabLabel() "{{{
-  " Initialize tab strings
-  let l:label = ''
-
-  " タブに含まれるバッファ(ウィンドウ)についての情報をとっておきます。
-  let l:bufnrlist = tabpagebuflist(v:lnum)
-
-  "let l:bufname = fnamemodify(bufname(l:bufnrlist[tabpagewinnr(v:lnum) - 1]), ':t')
-  let l:bufname = GetBufname(bufnr('%'),'s')
-  let l:label .= l:bufname == '' ? 'No title' : l:bufname
-
-  " タブ内にウィンドウが複数あるときにはその数を追加します(デフォルトで一応あるので)
-  let l:wincount = tabpagewinnr(v:lnum, '$')
-  if l:wincount > 1
-    let l:label = l:wincount . l:label
-  endif
-
-  " Add '+' if one of the buffers in the tab page is modified
-  for bufnr in l:bufnrlist
-    if getbufvar(bufnr, "&modified")
-      let l:label .= ' +'
-      break
-    endif
-  endfor
-
-  return l:label
-endfunction
-"}}}
-function! GuiTabLabel2() "{{{
-  let label = ''
-  let bufnrlist = tabpagebuflist(v:lnum)
-
-  " Append the tab number
-  "let label .= v:lnum.': '
-  " Append the buffer name
-  let name = bufname(bufnrlist[tabpagewinnr(v:lnum) - 1])
-  if name == ''
-    " give a name to no-name documents
-    if &buftype=='quickfix'
-      let name = '[Quickfix List]'
-    else
-      let name = '[No Name]'
-    endif
-  else
-    " get only the file name
-    let name = fnamemodify(name,":t")
-  endif
-  "let label .= name
-  let label .= GetBufname('%', 't')
-  " Append the number of windows in the tab page
-  let wincount = tabpagewinnr(v:lnum, '$')
-
-  " Add '+' if one of the buffers in the tab page is modified
-  for bufnr in l:bufnrlist
-    if getbufvar(bufnr, "&modified")
-      let l:label .= ' +'
-      break
-    endif
-  endfor
-  let wincount = wincount == 1 ? '' : wincount . ' '
-
-  ""return label . '  [' . wincount . ']'
-  return wincount . label
-endfunction "}}}
+"if getcwd() ==# expand('~/.vim/dev')
+"  let s:devfile = fnamemodify(findfile(".vimrc.dev", getcwd().";".expand("$HOME")), ":p")
+"  if filereadable(s:devfile)
+"    autocmd! VimEnter * execute 'source ' . s:devfile
+"          \ | echomsg "source '" . s:devfile . "'!"
+"    finish
+"  endif
+"endif
 
 " GUI settings {{{
 autocmd GUIEnter * call s:gui()
 function! s:gui()
   syntax enable
+  colorscheme solarized
+  set background=dark
 
-  "set background=dark
-  "colorscheme multi-solarized
-  "colorscheme solarized
-
-  "set guitablabel=
-  "if filereadable(expand('%'))
-  "set guitablabel=%{GetBufname(bufnr('%'),'s')}
-  "endif
-  "set guitablabel=%{GuiTabLabel()}
-  set guitablabel=%{GuiTabLabel2()}
+  " Tabpages
+  set guitablabel=%{GuiTabLabel()}
 
   " Change cursor color if IME works.
   if has('multi_byte_ime') || has('xim')
@@ -3014,9 +2988,10 @@ function! s:gui()
   endif
 
   " Remove all menus.
-  "if filereadable(expand($VIMRUNTIME/delmenu.vim))
-  source $VIMRUNTIME/delmenu.vim
-  "endif
+  try
+    source $VIMRUNTIME/delmenu.vim
+  catch
+  endtry
 
   " Font
   if s:is_mac
@@ -3025,8 +3000,8 @@ function! s:gui()
 endfunction
 "}}}
 
-nnoremap <silent><Space>c :<C-u>call <SID>CopipeTerm()<CR>
-function! s:CopipeTerm()
+nnoremap <silent><Space>c :<C-u>call <SID>copipe_mode()<CR>
+function! s:copipe_mode()
   if !exists('b:copipe_term_save')
     let b:copipe_term_save = {
           \     'number': &l:number,
@@ -3055,7 +3030,7 @@ function! s:CopipeTerm()
 endfunction
 
 " Don't exit vim when closing last tab with :q and :wq, :qa, :wqa
-if has('gui_running')
+if has('gui_running') && exists('s:vimrc_nil_dummy_variables')
   cabbrev q   <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 && tabpagenr('$') == 1 && winnr('$') == 1 ? 'enew' : 'q')<CR>
   cabbrev wq  <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 && tabpagenr('$') == 1 && winnr('$') == 1 ? 'w\|enew' : 'wq')<CR>
   cabbrev qa  <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 ? 'tabonly\|only\|enew' : 'qa')<CR>
@@ -3067,6 +3042,8 @@ function! s:filetype_if_help()
   only
   nnoremap <buffer> <nowait> q :bwipeout<CR>
   nnoremap <buffer> <nowait> <ESC> :bwipeout<CR>
+  setlocal colorcolumn=78
+  setlocal list&
 endfunction
 augroup when-help-opened
   autocmd!
@@ -3088,7 +3065,6 @@ endfunction
 "command! -nargs=1 -complete=customlist,<SID>file_complete Cat call s:cat(<f-args>)
 "}}}
 
-"call s:mkdir(expand('$HOME/.vim/colors'))
 call s:mkdir('$HOME/.vim/colors')
 
 augroup vim-startup-nomodified "{{{

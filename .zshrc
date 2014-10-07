@@ -21,6 +21,19 @@ export OS=$(uname | awk '{print tolower($1)}')
 export BIN="$HOME/.bin"
 export PATH="$BIN:$PATH"
 
+# Loads the file except executable one.
+test -d $BIN || mkdir -p $BIN
+if [ -d $BIN ]; then
+	if ls -A1 $BIN/ | grep -q '.sh'; then
+		for f in $BIN/*.sh ; do
+			[ ! -x "$f" ] && source "$f" && echo " load $f"
+		done
+		echo ""
+		unset f
+	fi
+fi
+#source $BIN/favdir.sh
+
 #-------------------------------------------------------------
 # Tailoring 'less'
 #-------------------------------------------------------------
@@ -42,16 +55,16 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 autoload -Uz colors
 colors
 
-# ヒストリの設定
+# History
 HISTFILE=~/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=1000000
 
 function clipboard_vim_path()
 {
-	typeset -a all_path
-	typeset i
-	typeset clipboard_vim_path
+	local -a all_path
+	local i
+	local clipboard_vim_path
 
 	all_path=( `echo $PATH | tr ':' "\n" | sort | uniq` )
 	for i in "${all_path[@]}"
@@ -81,6 +94,12 @@ export SVN_EDITOR="${EDITOR}"
 export GIT_EDITOR="${EDITOR}"
 alias vi=$EDITOR
 alias vim=$EDITOR
+if $is_mac; then
+	alias vim='open -a "MacVim"'
+fi
+
+export CORRECT_IGNORE='_*'
+export CORRECT_IGNORE_FILE='.*'
 
 # Option {{{1
 limit coredumpsize 0
@@ -88,45 +107,43 @@ umask 022
 setopt auto_cd
 setopt auto_pushd
 # Do not print the directory stack after pushd or popd.
-# setopt pushd_silent
-# cd - と cd + を入れ替える
+#setopt pushd_silent
+# Replace 'cd -' with 'cd +'
 setopt pushd_minus
-# ディレクトリスタックに同じディレクトリを追加しないようになる
+# Ignore duplicates to add to pushd
 setopt pushd_ignore_dups
-# pushd 引数ナシ == pushd $HOME
+# pushd no arg == pushd $HOME
 setopt pushd_to_home
-# コマンドのスペルチェックをする
+# Check spell command
 setopt correct
-# コマンドライン全てのスペルチェックをする
+# Check spell all
 setopt correct_all
-# > or >> を使用した上書きリダイレクトの禁止 (Use >! and >>! to bypass.)
+# Prohibit overwrite by redirection(> & >>) (Use >! and >>! to bypass.)
 setopt no_clobber
 # Deploy {a-c} -> a b c
 setopt brace_ccl
-
+# Enable 8bit
 setopt print_eight_bit
-# 変数に格納されたパスでcd
-#setopt cdable_vars
-# "~$var" でディレクトリにアクセス
-#setopt auto_name_dirs
-# 変数内の文字列分解のデリミタ
+# 
 setopt sh_word_split
 
-# echo 'hoge' \' 'fuga'
-# echo 'hoge '' fuga'  <- これが可能になる
+# Change
+#~$ echo 'hoge' \' 'fuga'
+# to
+#~$ echo 'hoge '' fuga'
 setopt rc_quotes
 
 # 複数のリダイレクトやパイプなど、必要に応じて tee や cat の機能が使われる
-#  $ < file1  # cat
-#  $ < file1 < file2  # 2ファイル同時cat
-#  $ < file1 > file3  # file1をfile3へコピー
-#  $ < file1 > file3 | cat  # コピーしつつ標準出力にも表示
-#  $ cat file1 > file3 > /dev/stdin  # tee
+# ~$ < file1  # cat
+# ~$ < file1 < file2  # 2ファイル同時cat
+# ~$ < file1 > file3  # file1をfile3へコピー
+# ~$ < file1 > file3 | cat  # コピーしつつ標準出力にも表示
+# ~$ cat file1 > file3 > /dev/stdin  # tee
 setopt multios
 
 # 補完で末尾に補われた / をスペース挿入で自動的に削除
 setopt auto_remove_slash
-# beepを鳴らさない
+# No Beep
 setopt no_beep
 setopt no_list_beep
 setopt no_hist_beep
@@ -140,41 +157,36 @@ setopt path_dirs
 setopt print_exit_value
 # コマンドラインがどのように展開され実行されたかを表示するようになる
 #setopt xtrace
-# rm * 時に確認する
+# Confirm when executing 'rm *'
 setopt rm_star_wait
-# バックグラウンドジョブが終了したら(プロンプトの表示を待たずに)すぐに知らせる
+# Let me know immediately when terminating job
 setopt notify
-# jobsでプロセスIDも出力
+# Show process ID
 setopt long_list_jobs
-# サスペンド中のプロセスと同じコマンド名を実行した場合はリジュームする
+# Resume when executing the same name command as suspended process name
 setopt auto_resume
-# Ctrl+D では終了しないようになる（exit, logout などを使う）
+# Disable Ctrl-d (Use 'exit', 'logout')
 #setopt ignore_eof
-#
-# 実行したプロセスの消費時間が3秒以上かかったら
-# 自動的に消費時間の統計情報を表示
-REPORTTIME=3
-
-# glob展開時に大文字小文字を無視
+# Ignore case when glob
 setopt no_case_glob
 
-# *, ~, ^ の 3 文字を正規表現として扱う
+# Use '*, ~, ^' as regular expression
 # Match without pattern
 #  ex. > rm *~398
 #  remove * without a file "398". For test, use "echo *~398"
 setopt extended_glob
 
-# globでパスを生成したときに、パスがディレクトリだったら最後に「/」をつける。
+# If the path is directory, add '/' to path tail when generating path by glob
 setopt mark_dirs
 
-# URLをコピペしたときに自動でエスケープ
+# Automaticall escape URL when copy and paste
 autoload -Uz url-quote-magic
 zle -N self-insert url-quote-magic
 
-# 改行のない出力をプロンプトで上書きするのを防ぐ
+# Prevent overwrite prompt from output withour cr
 setopt no_prompt_cr
 
-# メールが届いていたら知らせる
+# Let me know mail arrival
 setopt mail_warning
 
 # Aliases {{{1
@@ -193,7 +205,9 @@ if $is_mac; then
 fi
 
 # function
-alias cl="richpager"
+if $(is_exist 'richpager'); then
+	alias cl="richpager"
+fi
 
 # Common aliases
 alias ..="cd .."
@@ -257,40 +271,45 @@ alias -g X='| xargs'
 alias -s py=python
 
 function extract() {
-  case $1 in
-    *.tar.gz|*.tgz) tar xzvf $1;;
-    *.tar.xz) tar Jxvf $1;;
-    *.zip) unzip $1;;
-    *.lzh) lha e $1;;
-    *.tar.bz2|*.tbz) tar xjvf $1;;
-    *.tar.Z) tar zxvf $1;;
-    *.gz) gzip -d $1;;
-    *.bz2) bzip2 -dc $1;;
-    *.Z) uncompress $1;;
-    *.tar) tar xvf $1;;
-    *.arj) unarj $1;;
-  esac
+case $1 in
+	*.tar.gz|*.tgz) tar xzvf $1;;
+*.tar.xz) tar Jxvf $1;;
+	*.zip) unzip $1;;
+*.lzh) lha e $1;;
+	*.tar.bz2|*.tbz) tar xjvf $1;;
+*.tar.Z) tar zxvf $1;;
+	*.gz) gzip -d $1;;
+*.bz2) bzip2 -dc $1;;
+	*.Z) uncompress $1;;
+*.tar) tar xvf $1;;
+	*.arj) unarj $1;;
+esac
 }
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 
 if [ `uname` = "Darwin" ]; then
-  alias google-chrome='open -a Google\ Chrome'
+	alias google-chrome='open -a Google\ Chrome'
 else
 	alias chrome='google-chrome'
 fi
 alias -s html=chrome
 
 if [ `uname` = "Darwin" ]; then
-  alias eog='open -a Preview'
+	alias eog='open -a Preview'
 fi
 alias -s {png,jpg,bmp,PNG,JPG,BMP}=eog
 
 # Utils {{{1
+
+# Make all bind clear
 bindkey -d
+# Use vim-like key binding
 bindkey -v
 
+# Escape insert-mode with jj when 'bindkey -v'
 bindkey -M viins 'jj' vi-cmd-mode
 
+# Useful key binding like emacs
 bindkey "^A" beginning-of-line
 bindkey "^B" backward-char
 bindkey "^E" end-of-line
@@ -307,65 +326,67 @@ bindkey "^U" kill-whole-line
 bindkey "^W" backward-kill-word
 
 chpwd() {
-    ls_abbrev
+	ls_abbrev
 }
 ls_abbrev() {
-    # -a : Do not ignore entries starting with ..
-    # -C : Force multi-column output.
-    # -F : Append indicator (one of */=>@|) to entries.
-    local cmd_ls='ls'
-    local -a opt_ls
-    opt_ls=('-aCF' '--color=always')
-    case "${OSTYPE}" in
-        freebsd*|darwin*)
-            if type gls > /dev/null 2>&1; then
-                cmd_ls='gls'
-            else
-                # -G : Enable colorized output.
-                opt_ls=('-aCFG')
-            fi
-            ;;
-    esac
- 
-    local ls_result
-    ls_result=$(CLICOLOR_FORCE=1 COLUMNS=$COLUMNS command $cmd_ls ${opt_ls[@]} | sed $'/^\e\[[0-9;]*m$/d')
- 
-    local ls_lines=$(echo "$ls_result" | wc -l | tr -d ' ')
- 
-    if [ $ls_lines -gt 10 ]; then
-        echo "$ls_result" | head -n 5
-        echo '...'
-        echo "$ls_result" | tail -n 5
-        echo "$(command ls -1 -A | wc -l | tr -d ' ') files exist"
-    else
-        echo "$ls_result"
-    fi
+	# -a : Do not ignore entries starting with ..
+	# -C : Force multi-column output.
+	# -F : Append indicator (one of */=>@|) to entries.
+	local cmd_ls='ls'
+	local -a opt_ls
+	opt_ls=('-aCF' '--color=always')
+	case "${OSTYPE}" in
+		freebsd*|darwin*)
+			if type gls > /dev/null 2>&1; then
+				cmd_ls='gls'
+			else
+				# -G : Enable colorized output.
+				opt_ls=('-aCFG')
+			fi
+			;;
+	esac
+	cmd_ls='/bin/ls'
+	opt_ls=('-aCFG')
+
+	local ls_result
+	ls_result=$(CLICOLOR_FORCE=1 COLUMNS=$COLUMNS command $cmd_ls ${opt_ls[@]} | sed $'/^\e\[[0-9;]*m$/d')
+
+	local ls_lines=$(echo "$ls_result" | wc -l | tr -d ' ')
+
+	if [ $ls_lines -gt 10 ]; then
+		echo "$ls_result" | head -n 5
+		echo '...'
+		echo "$ls_result" | tail -n 5
+		echo "$(command ls -1 -A | wc -l | tr -d ' ') files exist"
+	else
+		echo "$ls_result"
+	fi
 }
 function do_enter() #{{{2
 {
-    if [ -n "$BUFFER" ]; then
-        zle accept-line
-        return 0
-    fi
-    echo
-    ls_abbrev
-    #if [ "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = 'true' ]; then
-    #    echo
-    #    echo -e "\e[0;33m--- git status ---\e[0m"
-    #    git status -sb 2> /dev/null
-    #fi
-    #call_precmd
-    zle reset-prompt
-    return 0
+	if [ -n "$BUFFER" ]; then
+		zle accept-line
+		return 0
+	fi
+	echo
+	ls_abbrev
+	#if [ "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = 'true' ]; then
+	#    echo
+	#    echo -e "\e[0;33m--- git status ---\e[0m"
+	#    git status -sb 2> /dev/null
+	#fi
+	#call_precmd
+	zle reset-prompt
+	return 0
 }
 zle -N do_enter
 bindkey '^m' do_enter
 
 function show_buffer_stack() #{{{2
 {
-  POSTDISPLAY="
-stack: $LBUFFER"
-  zle push-line-or-edit
+	POSTDISPLAY="
+	stack: $LBUFFER"
+	zle push-line-or-edit
 }
 zle -N show_buffer_stack
 setopt noflowcontrol
@@ -373,65 +394,46 @@ bindkey '^Q' show_buffer_stack
 
 function pbcopy-buffer() #{{{2
 {
-    print -rn $BUFFER | pbcopy
-    zle -M "pbcopy: ${BUFFER}"
+	print -rn $BUFFER | pbcopy
+	zle -M "pbcopy: ${BUFFER}"
 }
 
 zle -N pbcopy-buffer
 bindkey '^x^p' pbcopy-buffer
 
-# Prompt {{{1
-#PROMPT="%{${fg[red]}%}[%n@%m]%{${reset_color}%} %~ %# "
-#PROMPT="%{${fg[blue]}%}[%n@%m] %(!.#.$) %{${reset_color}%}"
-PROMPT2="%{${fg[blue]}%}%_> %{${reset_color}%}"
-SPROMPT="%{${fg[red]}%}correct: %R -> %r [nyae]? %{${reset_color}%}"
-RPROMPT="%{${fg[blue]}%}[%~]%{${reset_color}%}"
-setopt prompt_subst
-#PROMPT=%T
-function branch-status-check {
-    local prefix branchname suffix
-        # .gitの中だから除外
-        if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
-            return
-        fi
-        branchname=`get-branch-name`
-        # ブランチ名が無いので除外
-        if [[ -z $branchname ]]; then
-            return
-        fi
-        prefix=`get-branch-status` #色だけ返ってくる
-        suffix='%{'${reset_color}'%}'
-        echo ${prefix}${branchname}${suffix}
-}
-function get-branch-name {
-    # gitディレクトリじゃない場合のエラーは捨てます
-    echo `git rev-parse --abbrev-ref HEAD 2> /dev/null`
-}
-function get-branch-status {
-    local res color
-        output=`git status --short 2> /dev/null`
-        if [ -z "$output" ]; then
-            res=':' # status Clean
-            color='%{'${fg[green]}'%}'
-        elif [[ $output =~ "[\n]?\?\? " ]]; then
-            res='?:' # Untracked
-            color='%{'${fg[yellow]}'%}'
-        elif [[ $output =~ "[\n]? M " ]]; then
-            res='M:' # Modified
-            color='%{'${fg[red]}'%}'
-        else
-            res='A:' # Added to commit
-            color='%{'${fg[cyan]}'%}'
-        fi
-        # echo ${color}${res}'%{'${reset_color}'%}'
-        echo ${color} # 色だけ返す
-}
-#RPROMPT="$(branch-status-check) at %{${fg[blue]}%}[%~]%{${reset_color}%}"
-#RPROMPT=$'`branch-status-check` %~'
-RPROMPT=$'`branch-status-check` at %{${fg[blue]}%}[%~]%{${reset_color}%}'
 
-			PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[cyan]%}INS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
-function zle-line-init zle-keymap-select
+if $is_mac; then
+	function op()
+	{
+		if [ -p /dev/stdin ]; then
+			open $(cat -) "$@"
+		elif [ -z "$1" ]; then
+			open .
+		else
+			open "$@"
+		fi
+	}
+
+	function tex()
+	{
+		if ! $(is_exist 'platex') || ! $(is_exist 'dvipdfmx'); then
+			return 1
+		fi
+		platex "$1" && dvipdfmx "${1/.tex/.dvi}" && {
+		echo -e "\n\033[31mCompile complete!\033[m"
+	} && if $(is_exist 'open'); then
+	open "${1/.tex/.pdf}"; fi
+}
+
+function poweroff() {
+osascript -e "set Volume 0"
+osascript -e 'tell application "Finder" to shut down'
+	}
+fi
+# Prompt {{{1
+# L prompt {{{2
+PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[cyan]%}INS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
+function zle-line-init zle-keymap-select()
 {
 	case $KEYMAP in
 		vicmd)
@@ -446,18 +448,91 @@ function zle-line-init zle-keymap-select
 zle -N zle-line-init
 zle -N zle-keymap-select
 
+# R prompt {{{2
+setopt prompt_subst
+function branch-status-check()
+{
+	local prefix branchname suffix
+	if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
+		return
+	fi
+	branchname=`get-branch-name`
+	if [[ -z $branchname ]]; then
+		return
+	fi
+	prefix=`get-branch-status`
+	suffix='%{'${reset_color}'%}'
+	echo ${prefix}${branchname}${suffix}
+}
+function get-branch-name()
+{
+	echo `git rev-parse --abbrev-ref HEAD 2> /dev/null`
+}
+function get-branch-status()
+{
+	local res color
+	output=`git status --short 2> /dev/null`
+	if [ -z "$output" ]; then
+		res=':' # status Clean
+		color='%{'${fg[green]}'%}'
+	elif [[ $output =~ "[\n]?\?\? " ]]; then
+		res='?:' # Untracked
+		color='%{'${fg[yellow]}'%}'
+	elif [[ $output =~ "[\n]? M " ]]; then
+		res='M:' # Modified
+		color='%{'${fg[red]}'%}'
+	else
+		res='A:' # Added to commit
+		color='%{'${fg[cyan]}'%}'
+	fi
+	#echo ${color}${res}'%{'${reset_color}'%}'
+	echo ${color}
+}
 
+if [ -f ~/.bin/git-prompt.sh ]; then
+	source ~/.bin/git-prompt.sh
+fi
+setopt TRANSIENT_RPROMPT
+function precmd()
+{
+	touch ~/zsh_cdhist
+	if [ "$PWD" != "$OLDPWD" ]; then
+		OLDPWD=$PWD
+		pwd >>~/zsh_cdhist
+	fi
 
-# History configuration {{{1
-#
+	if [ -f ~/.bin/git-prompt.sh ]; then
+		RPROMPT='%{'${fg[red]}'%}'`echo $(__git_ps1 "(%s)")|sed -e s/%/%%/|sed -e s/%%%/%%/|sed -e 's/\\$/\\\\$/'`'%{'${reset_color}'%}'
+		RPROMPT+=$' at %{${fg[blue]}%}[%~]%{${reset_color}%}'
+	else
+		RPROMPT=$'`branch-status-check` at %{${fg[blue]}%}[%~]%{${reset_color}%}'
+	fi
+}
+
+GIT_PS1_SHOWDIRTYSTATE=1
+GIT_PS1_SHOWSTASHSTATE=1
+GIT_PS1_SHOWUNTRACKEDFILES=1
+GIT_PS1_SHOWUPSTREAM="auto"
+GIT_PS1_DESCRIBE_STYLE="branch"
+GIT_PS1_SHOWCOLORHINTS=0
+
+# Other prompt {{{2
+SPROMPT="%{${fg[red]}%}Did you mean?: %R -> %r [nyae]? %{${reset_color}%}"
+
+# History {{{1
+
+# History file
 HISTFILE=~/.zsh_history
-HISTSIZE=10000   # メモリ内の履歴の数
-SAVEHIST=1000000  # 保存される履歴の数
-LISTMAX=50       # 補完リストを尋ねる数(0=ウィンドウから溢れる時は尋ねる)
-# rootのコマンドはヒストリに追加しない
+# History size in memory
+HISTSIZE=10000
+# The number of histsize
+SAVEHIST=1000000
+# The size of asking history
+LISTMAX=50
+# Do not add in root
 if [ $UID = 0 ]; then
-    unset HISTFILE
-    SAVEHIST=0
+	unset HISTFILE
+	SAVEHIST=0
 fi
 
 # Do not record an event that was just recorded again.
@@ -469,34 +544,31 @@ setopt hist_save_nodups
 setopt hist_expire_dups_first
 # Do not display a previously found event.
 setopt hist_find_no_dups
-# historyの共有 (悩みどころ)
+# Shere history
 setopt share_history
 #unsetopt share_history
-# 余分な空白は詰める
+# Pack extra blank
 setopt hist_reduce_blanks
 # Write to the history file immediately, not when the shell exits.
 setopt inc_append_history
-# history (fc -l) コマンドをヒストリリストから取り除く。
+# Remove comannd of 'hostory' or 'fc -l' from history list
 setopt hist_no_store
-# ヒストリから関数定義を取り除く
+# Remove functions from history list
 setopt hist_no_functions
-# zsh の開始・終了時刻をヒストリファイルに書き込む
+# Record start and end time to history file
 setopt extended_history
-# スペースで始まるコマンドはヒストリに追加しない
+# Ignore the beginning space command to history file
 setopt hist_ignore_space
-# 履歴を追加 (毎回 .zhistory を作らない)
+# Append to history file
 setopt append_history
-# ヒストリを呼び出してから実行する間に一旦編集できる状態になる
+# Edit history file during call history before executing
 setopt hist_verify
-# !を使ったヒストリ展開を行う
+# Enable history system like a Bash
 setopt bang_hist
 
 # Other {{{1
-autoload -U compinit
-compinit
+# Stronger completing
 zstyle ':completion:*:default' menu select=2
-
-# 補完関数の表示を強化する
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
 zstyle ':completion:*:messages' format '%F{YELLOW}%d'$DEFAULT
@@ -504,10 +576,8 @@ zstyle ':completion:*:warnings' format '%F{RED}No matches for:''%F{YELLOW} %d'$D
 zstyle ':completion:*:descriptions' format '%F{YELLOW}completing %B%d%b'$DEFAULT
 zstyle ':completion:*:options' description 'yes'
 zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAULT
-
-# マッチ種別を別々に表示
 zstyle ':completion:*' group-name ''
-
 zstyle ':completion:*' list-separator '-->'
 zstyle ':completion:*:manuals' separate-sections true
+
 # vim:fdm=marker fdc=3 ft=zsh ts=2 sw=2 sts=2:

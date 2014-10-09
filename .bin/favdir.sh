@@ -114,7 +114,7 @@ function _favdir_show()
   # show help about show function
   [ "$1" = "-h" ] || [ "$1" = "--help" ] && { _favdir_usage 'show'; return 0; }
   # if listfile does not exist, output error message and exit
-  [ -f $favdir_list ] || { echo "$(basename $bookmarklist): no exist"; return 1; }
+  [ -f $favdir_list ] || { echo "$(basename $favdir_list): no exist"; return 1; }
 
   local opt
   local -i i 
@@ -204,7 +204,7 @@ function _favdir_regist()
         return 0
         ;;
       '-t'|'--temp' )
-        shift 1 
+        shift 1
         local -i option_t=1
         ;;
       '--' )

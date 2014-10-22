@@ -54,7 +54,7 @@ Then, `make install` runs all shell scripts from `init/` directory. In addition,
 
 * Set the editor
 
-	I use vim to the editor. At this stage, the plugins are not installed in Vim. When you start Vim for the first time, it is recommended that it is of specifying the `-c 'NeoBundleInit'` as the argument. By doing so, many plugins will be installed quickly. To effectively use the plugin, that the type of vim is normal or [more]((http://www.drchip.org/astronaut/vim/vimfeat.html) is desired. Of course, `git` is required.
+	I use vim to the editor. At this stage, the plugins are not installed in Vim. When you start Vim for the first time, it is recommended that it is of specifying the `-c 'NeoBundleInit'` as the argument. By doing so, many plugins will be installed quickly. To effectively use the plugin, that the type of vim is normal or [more](http://www.drchip.org/astronaut/vim/vimfeat.html) is desired. Of course, `git` is required.
 
 * Set the Git
 

@@ -169,7 +169,9 @@ function _favdir_show()
   fpath=( `awk '{print $2}' "$favdir_list"` )
 
   for (( i=0; i<${#fname[*]}; i++ )); do
-    if grep -w "${fname[i]}" "$favdir_log" >/dev/null; then
+    #if grep -w "${fname[i]}" "$favdir_log" >/dev/null; then
+    #if awk '$3 ~ /^'"${fname[i]}"'$/' "$favdir_log" >/dev/null; then
+    if awk '{print $3}' "$favdir_log" | grep -w "${fname[i]}" >/dev/null; then
       printf "\033[31m%-15s\033[m%s\n" "${fname[i]}" "${fpath[i]}"
     elif grep -w "^${fname[i]}" "$favdir_temp" >/dev/null
     then
@@ -271,7 +273,7 @@ function _favdir_gg()
       # case of registered
     else
       if cd "$fpath" 2>/dev/null; then
-        echo "$(date '+%Y-%m-%d %H:%M:%S')  $1  $fpath" >>$favdir_log
+        printf "$(date '+%Y-%m-%d %H:%M:%S')\t$1\t$fpath\n" >>!$favdir_log
         # case of -t option
         if [ -f $favdir_temp ]; then
           if awk '{print $2}' $favdir_temp | grep -x $fpath >/dev/null; then

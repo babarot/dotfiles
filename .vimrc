@@ -1363,7 +1363,7 @@ if !s:has_plugin('neobundle.vim')
   "endfunction
 endif "}}}
 
-" MRU {{{
+" Builtin MRU {{{
 if !s:has_plugin('mru.vim')
   " MRU configuration variables {{{
   if !exists('s:MRU_File')
@@ -1710,11 +1710,11 @@ syntax on
 
 set number
 if hostname() =~# '^z1z1r07'
-  set columns=160
-  set lines=60
+  "setlocal columns=160
+  "setlocal lines=60
 else
-  set lines=50
-  set columns=160
+  "setlocal columns=160
+  "setlocal lines=50
 endif
 
 " Colorscheme
@@ -1989,7 +1989,7 @@ augroup auto-cursorcolumn-appear
   endfunction
 augroup END
 "}}}
-augroup multi-window-toggle-cursor"{{{
+augroup multi-window-toggle-cursor "{{{
   autocmd!
   autocmd WinEnter * setlocal cursorline
   autocmd WinLeave * setlocal nocursorline nocursorcolumn
@@ -2539,7 +2539,6 @@ inoremap ` ``<LEFT>
 " Make cursor-moving useful {{{
 inoremap <C-h> <Backspace>
 inoremap <C-d> <Delete>
-inoremap <C-m> <Return>
 
 cnoremap <C-k> <UP>
 cnoremap <C-j> <DOWN>
@@ -2585,7 +2584,6 @@ nnoremap <silent>z0 :<C-u>set foldlevel=<C-r>=foldlevel('.')<CR><CR>
 " CursorLine
 nnoremap <silent> <Leader>l :<C-u>call <SID>toggle_option('cursorline')<CR>
 
-" CursorColumn
 nnoremap <silent> <Leader>c :<C-u>call <SID>toggle_option('cursorcolumn')<CR>
 
 " Add a relative number toggle
@@ -2964,7 +2962,8 @@ endif
 " Experimental setup and settings that do not belong to any section
 " will be described in this section.
 "==============================================================================
-"set rtp+=~/Dropbox/data/Documents/vim-favdir
+
+" EXPERIMENTAL: Experimental code is described here
 
 "if getcwd() ==# expand('~/.vim/dev')
 "  let s:devfile = fnamemodify(findfile(".vimrc.dev", getcwd().";".expand("$HOME")), ":p")
@@ -2979,7 +2978,7 @@ endif
 autocmd GUIEnter * call s:gui()
 function! s:gui()
   syntax enable
-  colorscheme solarized
+  "colorscheme solarized
   set background=dark
 
   " Tabpages
@@ -3006,6 +3005,7 @@ function! s:gui()
 endfunction
 "}}}
 
+" Copy and paste helper {{{
 nnoremap <silent><Space>c :<C-u>call <SID>copipe_mode()<CR>
 function! s:copipe_mode()
   if !exists('b:copipe_term_save')

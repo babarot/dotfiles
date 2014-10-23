@@ -273,7 +273,7 @@ function _favdir_gg()
       # case of registered
     else
       if cd "$fpath" 2>/dev/null; then
-        printf "$(date '+%Y-%m-%d %H:%M:%S')\t$1\t$fpath\n" >>!$favdir_log
+        printf "$(date '+%Y-%m-%d %H:%M:%S')\t$1\t$fpath\n" >>"$favdir_log"
         # case of -t option
         if [ -f $favdir_temp ]; then
           if awk '{print $2}' $favdir_temp | grep -x $fpath >/dev/null; then

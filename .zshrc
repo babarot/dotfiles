@@ -33,6 +33,8 @@ if [ -d $BIN ]; then
 	fi
 fi
 #source $BIN/favdir.sh
+export LC_CTYPE=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
 #-------------------------------------------------------------
 # Tailoring 'less'

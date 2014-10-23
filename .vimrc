@@ -2153,16 +2153,25 @@ set formatoptions-=o
 set formatoptions-=v
 set formatoptions+=l
 
+" Identifying problems and bringing them to the foreground
 set list
 set listchars=tab:>-,trail:-,nbsp:%,extends:>,precedes:<,eol:<
 set listchars=eol:<,tab:>.
 
-set t_Co=256
+" Increase or decrease items
 set nrformats=alpha,hex
+
+" Do not use alt key on Win
 set winaltkeys=no
-set visualbell
+
+" Do not use visualbell
+set novisualbell
 set vb t_vb=
+
+" Automatically equal size when opening
 set noequalalways
+
+" History size
 set history=10000
 set wrap
 

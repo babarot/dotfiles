@@ -2069,7 +2069,8 @@ set switchbuf=useopen,usetab,newtab
 set nostartofline
 
 " Use tabs instead of spaces
-set noexpandtab
+"set noexpandtab
+set expandtab
 
 " When starting a new line, indent in automatic
 set autoindent

@@ -253,6 +253,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   NeoBundle 'b4b4r07/mru.vim'
   NeoBundle 'b4b4r07/vim-autocdls'
   NeoBundle 'b4b4r07/vim-shellutils'
+  NeoBundle 'b4b4r07/vim-favdir'
   NeoBundle 'nathanaelkane/vim-indent-guides'
   NeoBundle has('gui_running') ? 'itchyny/lightline.vim' : 'b4b4r07/vim-buftabs'
   NeoBundle 'itchyny/calendar.vim'
@@ -309,6 +310,11 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   NeoBundle 'tsukkee/lingr-vim'
   NeoBundle 'AndrewRadev/switch.vim'
   "NeoBundle 'Yggdroot/indentLine'
+  NeoBundle 'ervandew/supertab'
+  NeoBundleLazy 'vim-scripts/renamer.vim', {
+        \ 'autoload' : {
+        \ 'commands' : 'Renamer'
+        \ }}
   NeoBundleLazy 'amdt/sunset', {
         \ 'gui' : 1,
         \ }

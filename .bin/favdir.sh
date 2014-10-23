@@ -474,7 +474,7 @@ fi
 alias favdir='_favdir_usage'
 alias show='_favdir_show'
 alias reg='_favdir_regist'
-alias gg='_favdir_gg'
+alias gg="${ZSH_VERSION:+nocorrect} _favdir_gg"
 alias del='_favdir_delete'
 alias p='_favdir_print'
 

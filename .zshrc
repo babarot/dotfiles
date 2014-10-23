@@ -232,6 +232,12 @@ alias ll="ls -lv --group-directories-first"
 
 alias cp="cp -i"
 alias mv="mv -i"
+
+#alias gg='nocorrect _favdir_gg'
+alias cp='nocorrect cp'
+alias mv='nocorrect mv'
+alias mkdir='nocorrect mkdir'
+
 alias du="du -h"
 alias jobs="jobs -l"
 alias temp="test -e ~/temporary && command cd ~/temporary || mkdir ~/temporary && cd ~/temporary"

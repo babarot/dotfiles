@@ -2984,6 +2984,23 @@ endif
 "  endif
 "endif
 
+" MISC: Useful code that does not enter the section are described here
+
+" Help settings for Vim {{{
+function! s:filetype_if_help()
+  only
+  nnoremap <buffer> <nowait> q :<C-u>bwipeout<CR>
+  nnoremap <buffer> <nowait> <ESC> :<C-u>bwipeout<CR>
+  if &readonly == 0
+    setlocal colorcolumn=78
+  endif
+  setlocal list&
+endfunction
+augroup when-help-opened
+  autocmd!
+  autocmd FileType help call s:filetype_if_help()
+augroup END "}}}
+
 " GUI settings {{{
 autocmd GUIEnter * call s:gui()
 function! s:gui()
@@ -3044,44 +3061,18 @@ function! s:copipe_mode()
     unlet b:copipe_term_save
   endif
 endfunction
+"}}}
+
+" Make directory for colorscheme
+call s:mkdir('$HOME/.vim/colors')
 
 " Don't exit vim when closing last tab with :q and :wq, :qa, :wqa
-if has('gui_running') && exists('s:vimrc_nil_dummy_variables')
+if has('gui_running') "&& exists('s:vimrc_nil_dummy_variables')
   cabbrev q   <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 && tabpagenr('$') == 1 && winnr('$') == 1 ? 'enew' : 'q')<CR>
   cabbrev wq  <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 && tabpagenr('$') == 1 && winnr('$') == 1 ? 'w\|enew' : 'wq')<CR>
   cabbrev qa  <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 ? 'tabonly\|only\|enew' : 'qa')<CR>
   cabbrev wqa <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 ? 'wa\|tabonly\|only\|enew' : 'wqa')<CR>
 endif
-
-" Help settings. {{{
-function! s:filetype_if_help()
-  only
-  nnoremap <buffer> <nowait> q :bwipeout<CR>
-  nnoremap <buffer> <nowait> <ESC> :bwipeout<CR>
-  setlocal colorcolumn=78
-  setlocal list&
-endfunction
-augroup when-help-opened
-  autocmd!
-  autocmd FileType help call s:filetype_if_help()
-augroup END "}}}
-
-function! s:file_complete(A, L, P) "{{{
-  let lists = []
-  let filelist = glob(getcwd() . "/*")
-
-  for file in split(filelist, "\n")
-    if !isdirectory(file)
-      call add(lists, fnamemodify(file, ":t"))
-    endif
-  endfor
-  return lists
-endfunction
-"command! -nargs=1 -complete=customlist,<SID>file_complete Edit edit<bang> <args>
-"command! -nargs=1 -complete=customlist,<SID>file_complete Cat call s:cat(<f-args>)
-"}}}
-
-call s:mkdir('$HOME/.vim/colors')
 
 augroup vim-startup-nomodified "{{{
   autocmd!
@@ -3132,6 +3123,10 @@ augroup only-window-help "{{{
   autocmd!
   "autocmd BufEnter *.jax only
   autocmd Filetype help only
+augroup END "}}}
+augroup set-bash-shebang "{{{
+    autocmd!
+    autocmd BufNewFile *.sh 0put =\"#!/bin/bash\" | :2
 augroup END "}}}
 
 " Launched with -b option {{{

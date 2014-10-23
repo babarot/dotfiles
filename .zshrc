@@ -94,10 +94,13 @@ export EDITOR=$(clipboard_vim_path)
 export CVSEDITOR="${EDITOR}"
 export SVN_EDITOR="${EDITOR}"
 export GIT_EDITOR="${EDITOR}"
-alias vi=$EDITOR
-alias vim=$EDITOR
+#alias vi=$EDITOR
+#alias vim=$EDITOR
 if $is_mac; then
-	alias vim='open -a "MacVim"'
+	#alias vim='open -a "MacVim"'
+	if $(is_exist 'gvim'); then
+		alias vim='gvim'
+	fi
 fi
 
 export CORRECT_IGNORE='_*'

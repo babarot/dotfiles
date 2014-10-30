@@ -185,6 +185,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
         \ 'autoload' : {
         \    'commands' : [{ 'name' : 'VimFiler',
         \                    'complete' : 'customlist,vimfiler#complete' },
+        \                  'VimFiler',
         \                  'VimFilerExplorer',
         \                  'Edit', 'Read', 'Source', 'Write'],
         \    'mappings' : ['<Plug>(vimfiler_switch)']
@@ -306,7 +307,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
         \ 'depends' : ['basyura/twibill.vim', 'tyru/open-browser.vim'],
         \ 'autoload' : { 'commands' : 'TweetVimHomeTimeline' }
         \ }
-  NeoBundle 'yomi322/unite-tweetvim'
+  "NeoBundle 'yomi322/unite-tweetvim'
   NeoBundle 'tsukkee/lingr-vim'
   NeoBundle 'AndrewRadev/switch.vim'
   "NeoBundle 'Yggdroot/indentLine'

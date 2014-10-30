@@ -2396,8 +2396,8 @@ command! -bang -complete=file -nargs=? WMac  write<bang> ++fileformat=mac <args>
 " Essentials. {{{
 " It is likely to be changed by $VIM/vimrc.
 if has('vim_starting')
-  "mapclear
-  "mapclear!
+  mapclear
+  mapclear!
 endif
 
 " Use backslash.

@@ -408,6 +408,20 @@ filetype plugin indent on
 "==============================================================================
 
 " Some utilities.
+function! s:bundled(bundle)
+  if !isdirectory($VIMBUNDLE)
+    return 0
+  endif
+  if stridx(&runtimepath, $NEOBUNDLEPATH) == -1
+    return 0
+  endif
+
+  if a:bundle ==# 'neobundle.vim'
+    return 1
+  else
+    return neobundle#is_installed(a:bundle)
+  endif
+endfunction
 function! s:has_plugin(name) "{{{
   " Check {name} plugin whether there is in the runtime path
 

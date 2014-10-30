@@ -2408,6 +2408,13 @@ endif
 " Define mapleader.
 let mapleader = ','
 let maplocalleader = ','
+
+" Smart space mapping.
+" Notice: when starting other <Space> mappings in noremap, disappeared [Space].
+nmap  <Space>   [Space]
+xmap  <Space>   [Space]
+nnoremap  [Space]   <Nop>
+xnoremap  [Space]   <Nop>
 "}}}
 " Function's commands {{{
 
@@ -2415,8 +2422,8 @@ let maplocalleader = ','
 if !s:has_plugin('mru.vim') 
   "if exists(':MRU2')
   if exists('*s:MRU_Create_Window')
-    nnoremap <silent> <Space>j :<C-u>call <SID>MRU_Create_Window()<CR>
-    "nnoremap <silent> <Space>j :<C-u>MRU<CR>
+    nnoremap <silent> [Space]j :<C-u>call <SID>MRU_Create_Window()<CR>
+    "nnoremap <silent> [Space]j :<C-u>MRU<CR>
   endif
 endif
 
@@ -2459,10 +2466,10 @@ nnoremap <silent><Tab>   :<C-u>call <SID>move_left_center_right()<CR>
 nnoremap <silent><S-Tab> :<C-u>call <SID>move_left_center_right(1)<CR>
 
 " Open vimrc with tab
-nnoremap <silent> <Space>. :call <SID>recycle_open('edit', $MYVIMRC)<CR>
+nnoremap <silent> [Space]. :call <SID>recycle_open('edit', $MYVIMRC)<CR>
 
 " Make junkfile
-nnoremap <silent> <Space>e  :<C-u>call <SID>make_junkfile()<CR>
+nnoremap <silent> [Space]e  :<C-u>call <SID>make_junkfile()<CR>
 
 " Easy typing tilda insted of backslash
 cnoremap <expr> <Bslash> HomedirOrBackslash()
@@ -2480,8 +2487,8 @@ inoremap jj <ESC>
 cnoremap <expr> j getcmdline()[getcmdpos()-2] ==# 'j' ? "\<BS>\<C-c>" : 'j'
 vnoremap <C-j><C-j> <ESC>
 onoremap jj <ESC>
-inoremap j<Space> j
-onoremap j<Space> j
+inoremap j[Space] j
+onoremap j[Space] j
 "}}}
 " Swap jk for gjgk {{{
 nnoremap j gj
@@ -2547,7 +2554,7 @@ nnoremap sh <C-w>h
 nnoremap <silent> <C-l> :<C-u>call <SID>win_tab_switcher('l')<CR>
 nnoremap <silent> <C-h> :<C-u>call <SID>win_tab_switcher('h')<CR>
 nnoremap t <Nop>
-nnoremap <silent> <Space>t :<C-u>tabclose<CR>:<C-u>tabnew<CR>
+nnoremap <silent> [Space]t :<C-u>tabclose<CR>:<C-u>tabnew<CR>
 nnoremap <silent> tt :<C-u>tabnew<CR>
 nnoremap <silent> tT :<C-u>tabnew<CR>:<C-u>tabprev<CR>
 nnoremap <silent> tc :<C-u>tabclose<CR>
@@ -2626,8 +2633,8 @@ noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ?  'zt' : (winline() == 1)?
 nnoremap <silent> <ESC><ESC> :nohlsearch<CR>
 
 " key map ^,$ to <Space>h,l. Because ^ and $ is difficult to type and damage little finger!!!
-noremap <Space>h ^
-noremap <Space>l $
+noremap [Space]h ^
+noremap [Space]l $
 
 " Type 'v', select end of line in visual mode
 vnoremap v $h
@@ -3050,7 +3057,7 @@ endfunction
 "}}}
 
 " Copy and paste helper {{{
-nnoremap <silent><Space>c :<C-u>call <SID>copipe_mode()<CR>
+nnoremap <silent>[Space]c :<C-u>call <SID>copipe_mode()<CR>
 function! s:copipe_mode()
   if !exists('b:copipe_term_save')
     let b:copipe_term_save = {

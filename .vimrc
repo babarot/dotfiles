@@ -3008,19 +3008,19 @@ endif
 
 " MISC: Useful code that does not enter the section are described here
 
-" Help settings for Vim {{{
-function! s:filetype_if_help()
+" Help for Vim settings {{{
+function! s:help_for_vim()
   only
   nnoremap <buffer> <nowait> q :<C-u>bwipeout<CR>
-  nnoremap <buffer> <nowait> <ESC> :<C-u>bwipeout<CR>
+  "nnoremap <buffer> <nowait> <ESC> :<C-u>bwipeout<CR>
   if &readonly == 0
     setlocal colorcolumn=78
   endif
   setlocal list&
 endfunction
-augroup when-help-opened
+augroup help-for-vim
   autocmd!
-  autocmd FileType help call s:filetype_if_help()
+  autocmd FileType help call s:help_for_vim()
 augroup END "}}}
 
 " GUI settings {{{

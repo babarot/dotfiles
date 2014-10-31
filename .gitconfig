@@ -24,3 +24,6 @@
     log = diff-highlight  | less -R
     show = diff-highlight | less -R
     diff = diff-highlight | less -R
+[diff]
+    tool = vimdiff
+    algorithm = histogram

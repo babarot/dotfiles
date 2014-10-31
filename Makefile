@@ -1,7 +1,13 @@
 RSYNC_OPTS = --exclude ".git/" --exclude ".DS_Store" --exclude "README.md" --exclude="Makefile" -avh --no-perms
-DOTFILES   = $(PWD)
+DOTFILES_DIR = $(PWD)
+FILES_TO_BE_LINKED = .??* bin
+DOTFILES_FILE = $(addprefix $(DOTFILES_DIR)/, $(FILES_TO_BE_LINKED))
+
 
 all: help
+#	@for f in $(DOTFILES_FILE) ; do \
+#		echo "$${f}"; \
+#	done ; true
 
 help:
 	@echo "make list             #=> ls -A"
@@ -19,7 +25,7 @@ deploy:
 	@echo "Start deploy dotfiles current directory."
 	@echo "If this is \"dotdir\", curretly it is ignored and copy your hand."
 	@echo ""
-	@for f in .??* ; do \
+	@for f in $(FILES_TO_BE_LINKED) ; do \
 		test "$${f}" = .git -o "$${f}" = .git/ && continue ; \
 		test "$${f}" = .DS_Store  && continue ; \
 		echo "$${f}" | grep -q 'minimal' && continue ; \
@@ -51,4 +57,4 @@ clean:
 	done ; true
 	rm -rf ~/.vim
 	rm -rf ~/.vital
-	rm -rf $(DOTFILES)
+	rm -rf $(DOTFILES_DIR)

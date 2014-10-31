@@ -34,6 +34,7 @@
 [ -z "$PS1" ] && return
 
 # Language
+export LANG=C
 export LC_ALL=en_US.UTF-8
 
 # Read /etc/bashrc, if present.

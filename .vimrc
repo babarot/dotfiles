@@ -3150,8 +3150,8 @@ augroup only-window-help "{{{
   autocmd Filetype help only
 augroup END "}}}
 augroup set-bash-shebang "{{{
-    autocmd!
-    autocmd BufNewFile *.sh 0put =\"#!/bin/bash\" | :2
+  autocmd!
+  autocmd BufNewFile *.sh 0put =\"#!/bin/bash\" | :2
 augroup END "}}}
 
 " Launched with -b option {{{

@@ -2682,312 +2682,475 @@ nnoremap <Leader>Y :<C-u>%y<CR>
 " If you have below plugins, set it.
 "==============================================================================
 
-if has('vim_starting')
-  if s:has_plugin('mru.vim') "{{{
-    let MRU_Use_Alt_useopen = 1         "Open MRU by line number
-    let MRU_Window_Height   = &lines / 2
-    let MRU_Max_Entries     = 100
-    let MRU_Use_CursorLine  = 1
-    nnoremap <silent> <Space>j :MRU<CR>
+"if has('vim_starting')
+if s:has_plugin('mru.vim') "{{{
+  let MRU_Use_Alt_useopen = 1         "Open MRU by line number
+  let MRU_Window_Height   = &lines / 2
+  let MRU_Max_Entries     = 100
+  let MRU_Use_CursorLine  = 1
+  nnoremap <silent> [Space]j :MRU<CR>
+endif
+"}}}
+if s:bundled('vimfiler') "{{{
+  "if s:has_plugin('vimfiler')
+  nnoremap <silent> [Space]v :<C-u>VimFiler -tab -double<CR>
+  command! V VimFiler -tab -double
+  let g:vimfiler_edit_action = 'tabopen'
+  " vimfiler.vim"{{{
+  "let bundle = neobundle#get('vimfiler')
+  "function! bundle.hooks.on_source(bundle)
+  let g:vimfiler_enable_clipboard = 0
+  let g:vimfiler_safe_mode_by_default = 0
+
+  let g:vimfiler_as_default_explorer = 1
+  let g:vimfiler_detect_drives = s:is_windows ? [
+        \ 'C:/', 'D:/', 'E:/', 'F:/', 'G:/', 'H:/', 'I:/',
+        \ 'J:/', 'K:/', 'L:/', 'M:/', 'N:/'] :
+        \ split(glob('/mnt/*'), '\n') + split(glob('/media/*'), '\n') +
+        \ split(glob('/Users/*'), '\n')
+
+  " %p : full path
+  " %d : current directory
+  " %f : filename
+  " %F : filename removed extensions
+  " %* : filenames
+  " %# : filenames fullpath
+  let g:vimfiler_sendto = {
+        \ 'unzip' : 'unzip %f',
+        \ 'zip' : 'zip -r %F.zip %*',
+        \ 'Inkscape' : 'inkspace',
+        \ 'GIMP' : 'gimp %*',
+        \ 'gedit' : 'gedit',
+        \ }
+
+  if s:is_windows
+    " Use trashbox.
+    let g:unite_kind_file_use_trashbox = 1
+  else
+    " Like Textmate icons.
+    "let g:vimfiler_tree_leaf_icon = ' '
+    "let g:vimfiler_tree_opened_icon = '▾'
+    "let g:vimfiler_tree_closed_icon = '▸'
+    "let g:vimfiler_file_icon = '-'
+    "let g:vimfiler_readonly_file_icon = '✗'
+    "let g:vimfiler_marked_file_icon = '✓'
   endif
-  "}}}
-  if s:has_plugin('unite.vim') "{{{
-    let g:unite_winwidth                   = 40
-    let g:unite_source_file_mru_limit      = 300
-    let g:unite_enable_start_insert        = 0            "off is zero
-    let g:unite_enable_split_vertically    = 0
-    let g:unite_source_history_yank_enable = 1            "enable history/yank
-    let g:unite_source_file_mru_filename_format  = ''
-    let g:unite_kind_jump_list_after_jump_scroll = 0
-    "nnoremap <silent><Space>j :Unite file_mru -direction=botright -toggle<CR>
-    "nnoremap <silent><Space>o :Unite outline  -direction=botright -toggle<CR>
-    let g:unite_split_rule = 'botright'
-    nnoremap <silent><Space>o :Unite outline -vertical -winwidth=40 -toggle<CR>
-    "nnoremap <silent><Space>o :Unite outline -vertical -no-quit -winwidth=40 -toggle<CR>
-  endif
-  "}}}
-  if s:has_plugin('neocomplete') "{{{
-    let g:neocomplete#enable_at_startup = 1
-    let g:neocomplete#disable_auto_complete = 0
-    let g:neocomplete#enable_ignore_case = 1
-    let g:neocomplete#enable_smart_case = 1
-    if !exists('g:neocomplete#keyword_patterns')
-      let g:neocomplete#keyword_patterns = {}
+  " let g:vimfiler_readonly_file_icon = '[O]'
+
+  let g:vimfiler_no_default_key_mappings = 1
+  augroup vimfiler-mappings
+    au!
+    au FileType vimfiler nmap <buffer> a <Plug>(vimfiler_choose_action)
+    au FileType vimfiler nmap <buffer> b <Plug>(vimfiler_open_file_in_another_vimfiler)
+    au FileType vimfiler nmap <buffer> B <Plug>(vimfiler_edit_binary_file)
+    au FileType vimfiler nmap <buffer><nowait> c <Plug>(vimfiler_mark_current_line)<Plug>(vimfiler_copy_file)y<CR>
+    au FileType vimfiler nmap <buffer> dd <Plug>(vimfiler_mark_current_line)<Plug>(vimfiler_delete_file)y<CR>
+    au FileType vimfiler nmap <buffer> ee <Plug>(vimfiler_edit_file)
+    au FileType vimfiler nmap <buffer> er <Plug>(vimfiler_edit_binary_file)
+    au FileType vimfiler nmap <buffer> E <Plug>(vimfiler_new_file)
+    au FileType vimfiler nmap <buffer> ge <Plug>(vimfiler_execute_external_filer)
+    au FileType vimfiler nmap <buffer> gr <Plug>(vimfiler_grep)
+    au FileType vimfiler nmap <buffer> gf <Plug>(vimfiler_find)
+    au FileType vimfiler nmap <buffer> gc <Plug>(vimfiler_cd_vim_current_dir)
+    au FileType vimfiler nmap <buffer> gs <Plug>(vimfiler_toggle_safe_mode)
+    au FileType vimfiler nmap <buffer> gS <Plug>(vimfiler_toggle_simple_mode)
+    au FileType vimfiler nmap <buffer> gg <Plug>(vimfiler_cursor_top)
+    au FileType vimfiler nmap <buffer> g<C-g> <Plug>(vimfiler_toggle_maximize_window)
+    au FileType vimfiler nmap <buffer> h <Plug>(vimfiler_smart_h)
+    au FileType vimfiler nmap <buffer> H <Plug>(vimfiler_popup_shell)
+    au FileType vimfiler nmap <buffer> i <Plug>(vimfiler_switch_to_another_vimfiler)
+    au FileType vimfiler nmap <buffer> j <Plug>(vimfiler_loop_cursor_down)
+    au FileType vimfiler nmap <buffer> k <Plug>(vimfiler_loop_cursor_up)
+    au FileType vimfiler nmap <buffer> K <Plug>(vimfiler_make_directory)
+    au FileType vimfiler nmap <buffer> l <Plug>(vimfiler_smart_l)
+    au FileType vimfiler nmap <buffer> L <Plug>(vimfiler_switch_to_drive)
+    au FileType vimfiler nmap <buffer> I <Plug>(vimfiler_cd_input_directory)
+    au FileType vimfiler nmap <buffer><nowait> m <Plug>(vimfiler_mark_current_line)<Plug>(vimfiler_move_file)y<CR>
+    au FileType vimfiler nmap <buffer> M <Plug>(vimfiler_set_current_mask)
+    au FileType vimfiler nmap <buffer> o <Plug>(vimfiler_sync_with_current_vimfiler)
+    au FileType vimfiler nmap <buffer> O <Plug>(vimfiler_open_file_in_another_vimfiler)
+    "au FileType vimfiler nmap <buffer> O <Plug>(vimfiler_sync_with_another_vimfiler)
+    au FileType vimfiler nmap <buffer> p <Plug>(vimfiler_quick_look)
+    au FileType vimfiler nmap <buffer> P <Plug>(vimfiler_popd)
+    au FileType vimfiler nmap <buffer> q <Plug>(vimfiler_close)
+    au FileType vimfiler nmap <buffer> Q <Plug>(vimfiler_exit)
+    au FileType vimfiler nmap <buffer> r <Plug>(vimfiler_rename_file)
+    au FileType vimfiler nmap <buffer> S <Plug>(vimfiler_select_sort_type)
+    au FileType vimfiler nmap <buffer> t <Plug>(vimfiler_expand_tree)
+    au FileType vimfiler nmap <buffer> T <Plug>(vimfiler_expand_tree_recursive)
+    au FileType vimfiler nmap <buffer> vv <Plug>(vimfiler_toggle_mark_all_lines)
+    au FileType vimfiler nmap <buffer> vu <Plug>(vimfiler_clear_mark_all_lines)
+    au FileType vimfiler nmap <buffer> vi <Plug>(vimfiler_preview_file)
+    au FileType vimfiler nmap <buffer> x <Plug>(vimfiler_execute_system_associated)
+    au FileType vimfiler nmap <buffer> yy <Plug>(vimfiler_yank_full_path)
+    au FileType vimfiler nmap <buffer> Y <Plug>(vimfiler_pushd)
+    au FileType vimfiler nmap <buffer> zc <Plug>(vimfiler_copy_file)
+    au FileType vimfiler nmap <buffer> zm <Plug>(vimfiler_move_file)
+    au FileType vimfiler nmap <buffer> zd <Plug>(vimfiler_delete_file)
+    "au FileType vimfiler nmap <buffer> <C-l> <Plug>(vimfiler_redraw_screen)
+    au FileType vimfiler nnoremap <silent><buffer><expr>es   vimfiler#do_action('split')
+    au FileType vimfiler nmap <buffer> <RightMouse> <Plug>(vimfiler_execute_external_filer)
+    au FileType vimfiler nmap <buffer> <C-CR> <Plug>(vimfiler_execute_external_filer)
+    au FileType vimfiler nmap <buffer> <C-g><C-g> <Plug>(vimfiler_print_filename)
+    au FileType vimfiler nmap <buffer> <C-v> <Plug>(vimfiler_switch_vim_buffer_mode)
+    au FileType vimfiler nmap <buffer> <C-i> <Plug>(vimfiler_switch_to_other_window)
+    "au FileType vimfiler nmap <buffer> <CR> <Plug>(vimfiler_execute)
+    au FileType vimfiler nmap <buffer> <CR> <Plug>(vimfiler_quick_look)
+    au FileType vimfiler nmap <buffer> <S-CR> <Plug>(vimfiler_execute_system_associated)
+    au FileType vimfiler nmap <buffer> <2-LeftMouse> <Plug>(vimfiler_execute_system_associated)
+    au FileType vimfiler nmap <buffer> <BS> <Plug>(vimfiler_switch_to_parent_directory)
+    "au FileType vimfiler nmap <buffer> <C-h> <Plug>(vimfiler_switch_to_history_directory)
+    au FileType vimfiler nmap <buffer> <Space> <Plug>(vimfiler_toggle_mark_current_line)
+    au FileType vimfiler nmap <buffer> ~ <Plug>(vimfiler_switch_to_home_directory)
+    au FileType vimfiler nmap <buffer> \ <Plug>(vimfiler_switch_to_root_directory)
+    au FileType vimfiler nmap <buffer> . <Plug>(vimfiler_toggle_visible_dot_files)
+    au FileType vimfiler nmap <buffer> ! <Plug>(vimfiler_execute_shell_command)
+    au FileType vimfiler nmap <buffer> ? <Plug>(vimfiler_help)
+    au FileType vimfiler nmap <buffer> ` <Plug>(vimfiler_toggle_mark_current_line_up)
+    au FileType vimfiler vmap <buffer> @ <Plug>(vimfiler_toggle_mark_selected_lines)
+    au FileType vimfiler nmap <buffer> @ <Plug>(vimfiler_toggle_mark_current_line)
+  augroup END
+
+  let g:vimfiler_quick_look_command =
+        \ s:is_windows ? 'maComfort.exe -ql' :
+        \ s:is_mac ? 'qlmanage -p' : 'gloobus-preview'
+
+  "autocmd FileType vimfiler call s:vimfiler_my_settings()
+  function! s:vimfiler_my_settings() "{{{
+    call vimfiler#set_execute_file('vim', ['vim', 'notepad'])
+    call vimfiler#set_execute_file('txt', 'vim')
+
+    " Overwrite settings.
+    nnoremap <silent><buffer> J
+          \ <C-u>:Unite -buffer-name=files -default-action=lcd directory_mru<CR>
+    " Call sendto.
+    " nnoremap <buffer> - <C-u>:Unite sendto<CR>
+    " setlocal cursorline
+
+
+    " Migemo search.
+    if !empty(unite#get_filters('matcher_migemo'))
+      nnoremap <silent><buffer><expr> /  line('$') > 10000 ?  'g/' :
+            \ ":\<C-u>Unite -buffer-name=search -start-insert line_migemo\<CR>"
     endif
-    let g:neocomplete#keyword_patterns._ = '\h\w*'
-  elseif s:has_plugin('neocomplcache')
-    let g:neocomplcache_enable_at_startup = 1
-    let g:Neocomplcache_disable_auto_complete = 0
-    let g:neocomplcache_enable_ignore_case = 1
-    let g:neocomplcache_enable_smart_case = 1
-    if !exists('g:neocomplcache_keyword_patterns')
-      let g:neocomplcache_keyword_patterns = {}
-    endif
-    let g:neocomplcache_keyword_patterns._ = '\h\w*'
-    let g:neocomplcache_enable_camel_case_completion = 1
-    let g:neocomplcache_enable_underbar_completion = 1
-  endif
-  "inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-  "inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<S-TAB>"
-
-  highlight Pmenu      ctermbg=lightcyan ctermfg=black
-  highlight PmenuSel   ctermbg=blue      ctermfg=black
-  highlight PmenuSbari ctermbg=darkgray
-  highlight PmenuThumb ctermbg=lightgray
-  "}}}
-  if s:has_plugin('lightline.vim') "{{{
-    let g:lightline = {
-          \ 'colorscheme': 'solarized',
-          \ 'mode_map': {'c': 'NORMAL'},
-          \ 'active': {
-          \   'left':  [ [ 'mode', 'paste' ], [ 'fugitive' ], [ 'filename' ] ],
-          \   'right' : [ [ 'date' ], [ 'filetype', 'fileencoding', 'fileformat', 'lineinfo', 'percent' ], [ 'filepath' ] ],
-          \ },
-          \ 'component_function': {
-          \   'modified': 'MyModified',
-          \   'readonly': 'MyReadonly',
-          \   'fugitive': 'MyFugitive',
-          \   'filepath': 'MyFilepath',
-          \   'filename': 'MyFilename',
-          \   'fileformat': 'MyFileformat',
-          \   'filetype': 'MyFiletype',
-          \   'fileencoding': 'MyFileencoding',
-          \   'mode': 'MyMode',
-          \   'date': 'MyDate'
-          \ }
-          \ }
-
-    function! MyDate()
-      return strftime("%Y/%m/%d %H:%M")
-    endfunction
-
-    function! MyModified()
-      return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
-    endfunction
-
-    function! MyReadonly()
-      return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? 'x' : ''
-    endfunction
-
-    function! MyFilepath()
-      return substitute(getcwd(), $HOME, '~', '')
-    endfunction
-
-    function! MyFilename()
-      return ('' != MyReadonly() ? MyReadonly() . ' ' : '') .
-            \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
-            \  &ft == 'unite' ? unite#get_status_string() :
-            \  &ft == 'vimshell' ? vimshell#get_status_string() :
-            \ '' != expand('%:p:~') ? expand('%:p:~') : '[No Name]') .
-            \ ('' != MyModified() ? ' ' . MyModified() : '')
-    endfunction
-
-    function! MyFugitive()
-      try
-        if &ft !~? 'vimfiler\|gundo' && exists('*fugitive#head')
-          return fugitive#head()
-        endif
-      catch
-      endtry
-      return ''
-    endfunction
-
-    function! MyFileformat()
-      return winwidth(0) > 70 ? &fileformat : ''
-    endfunction
-
-    function! MyFiletype()
-      return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'NONE') : ''
-    endfunction
-
-    function! MyFileencoding()
-      return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
-    endfunction
-
-    function! MyMode()
-      return winwidth(0) > 60 ? lightline#mode() : ''
-    endfunction
-  endif
-  "}}}
-  if s:has_plugin('vim-buftabs') "{{{
-    let g:buftabs_in_statusline   = 1
-    let g:buftabs_in_cmdline      = 0
-    let g:buftabs_only_basename   = 1
-    let g:buftabs_marker_start    = "["
-    let g:buftabs_marker_end      = "]"
-    let g:buftabs_separator       = "#"
-    let g:buftabs_marker_modified = "+"
-    let g:buftabs_active_highlight_group = "Visual"
-    let g:buftabs_statusline_highlight_group = 'BlackWhite'
-  endif
-  "}}}
-  if s:has_plugin('vim-splash') "{{{
-    "let g:loaded_splash = 1
-    let s:vim_intro = $HOME . "/.vim/bundle/vim-splash/sample/intro"
-    if !isdirectory(s:vim_intro)
-      call mkdir(s:vim_intro, 'p')
-      execute ":lcd " . s:vim_intro . "/.."
-      call system('git clone https://gist.github.com/OrgaChem/7630711 intro')
-    endif
-    let g:splash#path = expand(s:vim_intro . '/vim_intro.txt')
-  endif
-  "}}}
-  if s:has_plugin('vim-anzu') "{{{
-    nmap n <Plug>(anzu-n-with-echo)zz
-    nmap N <Plug>(anzu-N-with-echo)zz
-    nmap * <Plug>(anzu-star-with-echo)zz
-    nmap # <Plug>(anzu-sharp-with-echo)zz
-    "nmap n <Plug>(anzu-mode-n)
-    "nmap N <Plug>(anzu-mode-N)
-  endif
-  "}}}
-  if s:has_plugin('yankround.vim') "{{{
-    nmap p <Plug>(yankround-p)
-    xmap p <Plug>(yankround-p)
-    nmap P <Plug>(yankround-P)
-    nmap gp <Plug>(yankround-gp)
-    xmap gp <Plug>(yankround-gp)
-    nmap gP <Plug>(yankround-gP)
-    nmap <C-p> <Plug>(yankround-prev)
-    nmap <C-n> <Plug>(yankround-next)
-    let g:yankround_max_history = 100
-    if s:has_plugin('unite.vim')
-      nnoremap <Space>p :Unite yankround -direction=botright -toggle<CR>
-    endif
-  endif
-  "}}}
-  if s:has_plugin('gist-vim') "{{{
-    let g:github_user = 'b4b4r07'
-    let g:github_token = '0417d1aeeb1016c444c5'
-    let g:gist_curl_options = "-k"
-    let g:gist_detect_filetype = 1
-  endif
-  "}}}
-  if s:has_plugin('excitetranslate-vim') "{{{
-    xnoremap E :ExciteTranslate<CR>
-  endif
-  "}}}
-  if s:has_plugin('gundo.vim') "{{{
-    nmap <Leader>U :<C-u>GundoToggle<CR>
-    let g:gundo_auto_preview = 0
-  endif
-  "}}}
-  if s:has_plugin('vim-quickrun') "{{{
-    let g:quickrun_config = {}
-    let g:quickrun_config.markdown = {
-          \ 'outputter' : 'null',
-          \ 'command'   : 'open',
-          \ 'cmdopt'    : '-a',
-          \ 'args'      : 'Marked',
-          \ 'exec'      : '%c %o %a %s',
-          \ }
-  endif
-  "}}}
-  if s:has_plugin('vimshell') "{{{
-    let g:vimshell_prompt_expr = 'getcwd()." > "'
-    let g:vimshell_prompt_pattern = '^\f\+ > '
-    augroup my-vimshell
-      autocmd!
-      autocmd FileType vimshell
-            \ imap <expr> <buffer> <C-n> pumvisible() ? "\<C-n>" : "\<Plug>(vimshell_history_neocomplete)"
-    augroup END
-  endif
-  "}}}
-  if s:has_plugin('skk.vim') "{{{
-    set imdisable
-    let skk_jisyo = '~/SKK_JISYO.L'
-    let skk_large_jisyo = '~/SKK_JISYO.L'
-    let skk_auto_save_jisyo = 1
-    let skk_keep_state =0
-    let skk_egg_like_newline = 1
-    let skk_show_annotation = 1
-    let skk_use_face = 1
-  endif
-  "}}}
-  if s:has_plugin('eskk.vim') "{{{
-    set imdisable
-    let g:eskk#directory = '~/SKK_JISYO.L'
-    let g:eskk#dictionary = { 'path': "~/SKK_JISYO.L", 'sorted': 0, 'encoding': 'utf-8', }
-    let g:eskk#large_dictionary = { 'path': "~/SKK_JISYO.L", 'sorted': 1, 'encoding': 'utf-8', }
-    let g:eskk#enable_completion = 1
-  endif
-  "}}}
-  if s:has_plugin('foldCC') "{{{
-    set foldtext=foldCC#foldtext()
-    let g:foldCCtext_head = 'v:folddashes. " "'
-    let g:foldCCtext_tail = 'printf(" %s[%4d lines Lv%-2d]%s", v:folddashes, v:foldend-v:foldstart+1, v:foldlevel, v:folddashes)'
-    let g:foldCCtext_enable_autofdc_adjuster = 1
-  endif
-  "}}}
-  if s:has_plugin('vim-portal') "{{{
-    nmap <Leader>pb <Plug>(portal-gun-blue)
-    nmap <Leader>po <Plug>(portal-gun-orange)
-    nnoremap <Leader>pr :<C-u>PortalReset<CR>
-  endif
-  "}}}
-  if s:has_plugin('restart.vim') "{{{
-    if has('gui_running')
-      let g:restart_sessionoptions
-            \ = 'blank,buffers,curdir,folds,help,localoptions,tabpages'
-      command!
-            \   RestartWithSession
-            \   -bar
-            \   let g:restart_sessionoptions = 'blank,curdir,folds,help,localoptions,tabpages'
-            \   | Restart
-    endif
-  endif
-  "}}}
-  if s:has_plugin('vim-poslist') "{{{
-    "map <C-o> <Plug>(poslist-prev-pos)
-    "map <C-i> <Plug>(poslist-next-pos)
-  endif
-  "}}}
-  if s:has_plugin('vim-autocdls') "{{{
-    let g:autocdls_autols_enabled = 1
-    let g:autocdls_set_cmdheight = 2
-    let g:autocdls_show_filecounter = 1
-    let g:autocdls_show_pwd = 0
-    let g:autocdls_alter_letter = 1
-    let g:autocdls_newline_disp = 0
-    let g:autocdls_ls_highlight = 1
-    let g:autocdls_lsgrep_ignorecase = 1
-  endif
-  "}}}
-  if s:has_plugin('vim-shellutils') "{{{
-    "let g:shellutils_disable_commands = ['Ls']
-  endif
-  "}}}
-  if s:has_plugin('vim-indent-guides') "{{{
-    hi IndentGuidesOdd  ctermbg=DarkGreen
-    hi IndentGuidesEven ctermbg=Black
-    let g:indent_guides_enable_on_vim_startup = 0
-    let g:indent_guides_start_level = 1
-    let g:indent_guides_auto_colors = 0
-    let g:indent_guides_guide_size = 1
-  endif
-  "}}}
-  if s:has_plugin('nerdtree') "{{{
-    nnoremap <Space>n :<C-u>NERDTreeToggle<CR>
-  endif
-  "}}}
-  if s:has_plugin('vim-ref') "{{{
-  endif
-  "}}}
-  if s:has_plugin('vimfiler') "{{{
-    let vimfiler_safe_mode_by_default = 0
-    nnoremap <buffer> <nowait> <Space> <Plug>(vimfiler_toggle_mark_current_line)
-    nnoremap <Space>w :<C-u>VimFiler -split -simple -toggle -winwidth=40 -no-quit<CR>
-  endif
-  "}}}
-  if s:has_plugin('indentLine') "{{{
-    " indentLine
-    let g:indentLine_fileTypeExclude = ['', 'help', 'nerdtree', 'calendar', 'thumbnail', 'tweetvim']
-    let g:indentLine_color_term = 111
-    let g:indentLine_color_gui = '#708090'
-    ""let g:indentLine_char = '┆ ' "use ¦, ┆ or │
-  endif
+    nunmap <buffer><C-l>
+    "endfunction "}}}
+  endfunction
+  "let g:vimfiler_as_default_explorer = 1
+  "let g:vimfiler_safe_mode_by_default = 0
+  "" Edit file by tabedit.
+  "let g:vimfiler_edit_action = 'edit'
+  "" Like Textmate icons.
+  "let g:vimfiler_tree_leaf_icon = ' '
+  "let g:vimfiler_tree_opened_icon = '▾'
+  "let g:vimfiler_tree_closed_icon = '▸'
+  "let g:vimfiler_file_icon = '-'
+  "let g:vimfiler_marked_file_icon = '*'
+  "nmap <F2>  :VimFiler -split -horizontal -project -toggle -quit<CR>
+  "autocmd FileType vimfiler nnoremap <buffer><silent>/  :<C-u>Unite file -default-action=vimfiler<CR>
+  "autocmd FileType vimfiler nnoremap <silent><buffer> e :call <SID>vimfiler_tree_edit('open')<CR>
+  "" Windows.
+  "" let g:vimfiler_quick_look_command = 'maComfort.exe -ql'
+  "" Linux.
+  "" let g:vimfiler_quick_look_command = 'gloobus-preview'
+  "" Mac OS X.
+  "let g:vimfiler_quick_look_command = 'qlmanage -p'
+  "autocmd FileType vimfiler nnoremap <buffer> q <Plug>(vimfiler_quick_look)<CR>
+  "autocmd FileType vimfiler nmap <buffer> q <Plug>(vimfiler_quick_look)<CR>
   "}}}
 endif
+"}}}
+if s:has_plugin('unite.vim') "{{{
+  let g:unite_winwidth                   = 40
+  let g:unite_source_file_mru_limit      = 300
+  let g:unite_enable_start_insert        = 0            "off is zero
+  let g:unite_enable_split_vertically    = 0
+  let g:unite_source_history_yank_enable = 1            "enable history/yank
+  let g:unite_source_file_mru_filename_format  = ''
+  let g:unite_kind_jump_list_after_jump_scroll = 0
+  "nnoremap <silent>[Space]j :Unite file_mru -direction=botright -toggle<CR>
+  "nnoremap <silent>[Space]o :Unite outline  -direction=botright -toggle<CR>
+  let g:unite_split_rule = 'botright'
+  nnoremap <silent>[Space]o :Unite outline -vertical -winwidth=40 -toggle<CR>
+  "nnoremap <silent>[Space]o :Unite outline -vertical -no-quit -winwidth=40 -toggle<CR>
+endif
+"}}}
+if s:has_plugin('neocomplete') "{{{
+  let g:neocomplete#enable_at_startup = 1
+  let g:neocomplete#disable_auto_complete = 0
+  let g:neocomplete#enable_ignore_case = 1
+  let g:neocomplete#enable_smart_case = 1
+  if !exists('g:neocomplete#keyword_patterns')
+    let g:neocomplete#keyword_patterns = {}
+  endif
+  let g:neocomplete#keyword_patterns._ = '\h\w*'
+elseif s:has_plugin('neocomplcache')
+  let g:neocomplcache_enable_at_startup = 1
+  let g:Neocomplcache_disable_auto_complete = 0
+  let g:neocomplcache_enable_ignore_case = 1
+  let g:neocomplcache_enable_smart_case = 1
+  if !exists('g:neocomplcache_keyword_patterns')
+    let g:neocomplcache_keyword_patterns = {}
+  endif
+  let g:neocomplcache_keyword_patterns._ = '\h\w*'
+  let g:neocomplcache_enable_camel_case_completion = 1
+  let g:neocomplcache_enable_underbar_completion = 1
+endif
+"inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+"inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<S-TAB>"
+
+highlight Pmenu      ctermbg=lightcyan ctermfg=black
+highlight PmenuSel   ctermbg=blue      ctermfg=black
+highlight PmenuSbari ctermbg=darkgray
+highlight PmenuThumb ctermbg=lightgray
+"}}}
+if s:has_plugin('lightline.vim') "{{{
+  let g:lightline = {
+        \ 'colorscheme': 'solarized',
+        \ 'mode_map': {'c': 'NORMAL'},
+        \ 'active': {
+        \   'left':  [ [ 'mode', 'paste' ], [ 'fugitive' ], [ 'filename' ] ],
+        \   'right' : [ [ 'date' ], [ 'filetype', 'fileencoding', 'fileformat', 'lineinfo', 'percent' ], [ 'filepath' ] ],
+        \ },
+        \ 'component_function': {
+        \   'modified': 'MyModified',
+        \   'readonly': 'MyReadonly',
+        \   'fugitive': 'MyFugitive',
+        \   'filepath': 'MyFilepath',
+        \   'filename': 'MyFilename',
+        \   'fileformat': 'MyFileformat',
+        \   'filetype': 'MyFiletype',
+        \   'fileencoding': 'MyFileencoding',
+        \   'mode': 'MyMode',
+        \   'date': 'MyDate'
+        \ }
+        \ }
+
+  function! MyDate()
+    return strftime("%Y/%m/%d %H:%M")
+  endfunction
+
+  function! MyModified()
+    return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+  endfunction
+
+  function! MyReadonly()
+    return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? 'x' : ''
+  endfunction
+
+  function! MyFilepath()
+    return substitute(getcwd(), $HOME, '~', '')
+  endfunction
+
+  function! MyFilename()
+    return ('' != MyReadonly() ? MyReadonly() . ' ' : '') .
+          \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
+          \  &ft == 'unite' ? unite#get_status_string() :
+          \  &ft == 'vimshell' ? vimshell#get_status_string() :
+          \ '' != expand('%:p:~') ? expand('%:p:~') : '[No Name]') .
+          \ ('' != MyModified() ? ' ' . MyModified() : '')
+  endfunction
+
+  function! MyFugitive()
+    try
+      if &ft !~? 'vimfiler\|gundo' && exists('*fugitive#head')
+        return fugitive#head()
+      endif
+    catch
+    endtry
+    return ''
+  endfunction
+
+  function! MyFileformat()
+    return winwidth(0) > 70 ? &fileformat : ''
+  endfunction
+
+  function! MyFiletype()
+    return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'NONE') : ''
+  endfunction
+
+  function! MyFileencoding()
+    return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
+  endfunction
+
+  function! MyMode()
+    return winwidth(0) > 60 ? lightline#mode() : ''
+  endfunction
+endif
+"}}}
+if s:has_plugin('vim-buftabs') "{{{
+  let g:buftabs_in_statusline   = 1
+  let g:buftabs_in_cmdline      = 0
+  let g:buftabs_only_basename   = 1
+  let g:buftabs_marker_start    = "["
+  let g:buftabs_marker_end      = "]"
+  let g:buftabs_separator       = "#"
+  let g:buftabs_marker_modified = "+"
+  let g:buftabs_active_highlight_group = "Visual"
+  let g:buftabs_statusline_highlight_group = 'BlackWhite'
+endif
+"}}}
+if s:has_plugin('vim-splash') "{{{
+  "let g:loaded_splash = 1
+  let s:vim_intro = $HOME . "/.vim/bundle/vim-splash/sample/intro"
+  if !isdirectory(s:vim_intro)
+    call mkdir(s:vim_intro, 'p')
+    execute ":lcd " . s:vim_intro . "/.."
+    call system('git clone https://gist.github.com/OrgaChem/7630711 intro')
+  endif
+  let g:splash#path = expand(s:vim_intro . '/vim_intro.txt')
+endif
+"}}}
+if s:has_plugin('vim-anzu') "{{{
+  nmap n <Plug>(anzu-n-with-echo)zz
+  nmap N <Plug>(anzu-N-with-echo)zz
+  nmap * <Plug>(anzu-star-with-echo)zz
+  nmap # <Plug>(anzu-sharp-with-echo)zz
+  "nmap n <Plug>(anzu-mode-n)
+  "nmap N <Plug>(anzu-mode-N)
+endif
+"}}}
+if s:has_plugin('yankround.vim') "{{{
+  nmap p <Plug>(yankround-p)
+  xmap p <Plug>(yankround-p)
+  nmap P <Plug>(yankround-P)
+  nmap gp <Plug>(yankround-gp)
+  xmap gp <Plug>(yankround-gp)
+  nmap gP <Plug>(yankround-gP)
+  nmap <C-p> <Plug>(yankround-prev)
+  nmap <C-n> <Plug>(yankround-next)
+  let g:yankround_max_history = 100
+  if s:has_plugin('unite.vim')
+    nnoremap [Space]p :Unite yankround -direction=botright -toggle<CR>
+  endif
+endif
+"}}}
+if s:has_plugin('gist-vim') "{{{
+  let g:github_user = 'b4b4r07'
+  let g:github_token = '0417d1aeeb1016c444c5'
+  let g:gist_curl_options = "-k"
+  let g:gist_detect_filetype = 1
+endif
+"}}}
+if s:has_plugin('excitetranslate-vim') "{{{
+  xnoremap E :ExciteTranslate<CR>
+endif
+"}}}
+if s:has_plugin('gundo.vim') "{{{
+  nmap <Leader>U :<C-u>GundoToggle<CR>
+  let g:gundo_auto_preview = 0
+endif
+"}}}
+if s:has_plugin('vim-quickrun') "{{{
+  let g:quickrun_config = {}
+  let g:quickrun_config.markdown = {
+        \ 'outputter' : 'null',
+        \ 'command'   : 'open',
+        \ 'cmdopt'    : '-a',
+        \ 'args'      : 'Marked',
+        \ 'exec'      : '%c %o %a %s',
+        \ }
+endif
+"}}}
+if s:has_plugin('vimshell') "{{{
+  let g:vimshell_prompt_expr = 'getcwd()." > "'
+  let g:vimshell_prompt_pattern = '^\f\+ > '
+  augroup my-vimshell
+    autocmd!
+    autocmd FileType vimshell
+          \ imap <expr> <buffer> <C-n> pumvisible() ? "\<C-n>" : "\<Plug>(vimshell_history_neocomplete)"
+  augroup END
+endif
+"}}}
+if s:has_plugin('skk.vim') "{{{
+  set imdisable
+  let skk_jisyo = '~/SKK_JISYO.L'
+  let skk_large_jisyo = '~/SKK_JISYO.L'
+  let skk_auto_save_jisyo = 1
+  let skk_keep_state =0
+  let skk_egg_like_newline = 1
+  let skk_show_annotation = 1
+  let skk_use_face = 1
+endif
+"}}}
+if s:has_plugin('eskk.vim') "{{{
+  set imdisable
+  let g:eskk#directory = '~/SKK_JISYO.L'
+  let g:eskk#dictionary = { 'path': "~/SKK_JISYO.L", 'sorted': 0, 'encoding': 'utf-8', }
+  let g:eskk#large_dictionary = { 'path': "~/SKK_JISYO.L", 'sorted': 1, 'encoding': 'utf-8', }
+  let g:eskk#enable_completion = 1
+endif
+"}}}
+if s:has_plugin('foldCC') "{{{
+  set foldtext=foldCC#foldtext()
+  let g:foldCCtext_head = 'v:folddashes. " "'
+  let g:foldCCtext_tail = 'printf(" %s[%4d lines Lv%-2d]%s", v:folddashes, v:foldend-v:foldstart+1, v:foldlevel, v:folddashes)'
+  let g:foldCCtext_enable_autofdc_adjuster = 1
+endif
+"}}}
+if s:has_plugin('vim-portal') "{{{
+  nmap <Leader>pb <Plug>(portal-gun-blue)
+  nmap <Leader>po <Plug>(portal-gun-orange)
+  nnoremap <Leader>pr :<C-u>PortalReset<CR>
+endif
+"}}}
+if s:has_plugin('restart.vim') "{{{
+  if has('gui_running')
+    let g:restart_sessionoptions
+          \ = 'blank,buffers,curdir,folds,help,localoptions,tabpages'
+    command!
+          \   RestartWithSession
+          \   -bar
+          \   let g:restart_sessionoptions = 'blank,curdir,folds,help,localoptions,tabpages'
+          \   | Restart
+  endif
+endif
+"}}}
+if s:has_plugin('vim-poslist') "{{{
+  "map <C-o> <Plug>(poslist-prev-pos)
+  "map <C-i> <Plug>(poslist-next-pos)
+endif
+"}}}
+if s:has_plugin('vim-autocdls') "{{{
+  let g:autocdls_autols_enabled = 1
+  let g:autocdls_set_cmdheight = 2
+  let g:autocdls_show_filecounter = 1
+  let g:autocdls_show_pwd = 0
+  let g:autocdls_alter_letter = 1
+  let g:autocdls_newline_disp = 0
+  let g:autocdls_ls_highlight = 1
+  let g:autocdls_lsgrep_ignorecase = 1
+endif
+"}}}
+if s:has_plugin('vim-shellutils') "{{{
+  "let g:shellutils_disable_commands = ['Ls']
+endif
+"}}}
+if s:has_plugin('vim-indent-guides') "{{{
+  hi IndentGuidesOdd  ctermbg=DarkGreen
+  hi IndentGuidesEven ctermbg=Black
+  let g:indent_guides_enable_on_vim_startup = 0
+  let g:indent_guides_start_level = 1
+  let g:indent_guides_auto_colors = 0
+  let g:indent_guides_guide_size = 1
+endif
+"}}}
+if s:has_plugin('nerdtree') "{{{
+  nnoremap [Space]n :<C-u>NERDTreeToggle<CR>
+endif
+"}}}
+if s:has_plugin('vim-ref') "{{{
+endif
+"}}}
+if s:has_plugin('indentLine') "{{{
+  " indentLine
+  let g:indentLine_fileTypeExclude = ['', 'help', 'nerdtree', 'calendar', 'thumbnail', 'tweetvim']
+  let g:indentLine_color_term = 111
+  let g:indentLine_color_gui = '#708090'
+  ""let g:indentLine_char = '┆ ' "use ¦, ┆ or │
+endif
+"}}}
+"endif
 "}}}
 
 " Misc: {{{

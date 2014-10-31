@@ -3035,13 +3035,13 @@ function! s:gui()
 
   " Change cursor color if IME works.
   if has('multi_byte_ime') || has('xim')
-    highlight Cursor   guibg=NONE guifg=Yellow
-    highlight CursorIM guibg=NONE guifg=Red
+    "highlight Cursor   guibg=NONE guifg=Yellow
+    "highlight CursorIM guibg=NONE guifg=Red
     set iminsert=0 imsearch=0
     inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
   endif
-  highlight Cursor   guibg=Yellow guifg=Black
-  highlight CursorIM guibg=Red    guifg=Black
+  highlight Cursor   guibg=Black guifg=Yellow
+  highlight CursorIM guibg=Black guifg=Red
   inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
 
   " Remove all menus.

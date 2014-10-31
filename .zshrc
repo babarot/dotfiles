@@ -1,5 +1,107 @@
 # Initial {{{1
 
+# Normal Colors {{{2
+Black='\033[0;30m'        # Black
+Red='\033[0;31m'          # Red
+Green='\033[0;32m'        # Green
+Yellow='\033[0;33m'       # Yellow
+Blue='\033[0;34m'         # Blue
+Purple='\033[0;35m'       # Purple
+Cyan='\033[0;36m'         # Cyan
+White='\033[0;37m'        # White
+
+# Bold
+BBlack='\033[1;30m'       # Black
+BRed='\033[1;31m'         # Red
+BGreen='\033[1;32m'       # Green
+BYellow='\033[1;33m'      # Yellow
+BBlue='\033[1;34m'        # Blue
+BPurple='\033[1;35m'      # Purple
+BCyan='\033[1;36m'        # Cyan
+BWhite='\033[1;37m'       # White
+
+# Background
+On_Black='\033[40m'       # Black
+On_Red='\033[41m'         # Red
+On_Green='\033[42m'       # Green
+On_Yellow='\033[43m'      # Yellow
+On_Blue='\033[44m'        # Blue
+On_Purple='\033[45m'      # Purple
+On_Cyan='\033[46m'        # Cyan
+On_White='\033[47m'       # White
+
+NC="\033[m"               # Color Reset
+CR="$(echo -ne '\r')"
+LF="$(echo -ne '\n')"
+TAB="$(echo -ne '\t')"
+ESC="$(echo -ne '\033')"
+#}}}
+
+echo -e "${BCyan}This is ZSH ${BRed}${ZSH_VERSION}${BCyan} - DISPLAY on ${BRed}$DISPLAY${NC}\n"
+
+# Tmux {{{2
+function is_screen_running() {
+    [ ! -z "$WINDOW" ]
+}
+function is_tmux_runnning() {
+    [ ! -z "$TMUX" ]
+}
+function is_screen_or_tmux_running() {
+    is_screen_running || is_tmux_runnning
+}
+function shell_has_started_interactively() {
+    [ ! -z "$PS1" ]
+}
+
+function tmuxx_func()
+{
+  # attach to an existing tmux session, or create one if none exist
+  # also set up access to the system clipboard from within tmux when possible
+  #
+  # e.g.
+  # https://gist.github.com/1462391
+  # https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
+
+  if ! type tmux >/dev/null 2>&1; then
+    echo 'Error: tmux command not found' 2>&1
+    exit 1
+  fi
+
+  if [ -n "$TMUX" ]; then
+    echo "Error: tmux session has been already attached" 2>&1
+    exit 1
+  fi
+
+  if tmux has-session >/dev/null 2>&1 && tmux list-sessions | grep -qE '.*]$'; then
+    # detached session exists
+    tmux attach && echo "$(tmux -V) attached session "
+  else
+    if [[ ( $OSTYPE == darwin* ) && ( -x $(which reattach-to-user-namespace 2>/dev/null) ) ]]; then
+      # on OS X force tmux's default command to spawn a shell in the user's namespace
+      tmux_config=$(cat $HOME/.tmux.conf <(echo 'set-option -g default-command "reattach-to-user-namespace -l /bin/zsh"'))
+      #tmux -f <(echo "$tmux_config") new-session && echo "$(tmux -V) created new session supported OS X"
+      tmux -f <(echo "$tmux_config") new-session \; if "test -f ~/tmux_session" "source-file ~/tmux_session" && echo "$(tmux -V) created new session supported OS X"
+    else
+      tmux new-session && echo "tmux created new session"
+    fi
+  fi
+}
+
+if ! is_screen_or_tmux_running && shell_has_started_interactively; then
+    if type tmuxx_func >/dev/null 2>&1; then
+        tmuxx_func
+    elif type tmux >/dev/null 2>&1; then
+        if tmux has-session && tmux list-sessions | /usr/bin/grep -qE '.*]$'; then
+            tmux attach && echo "tmux attached session "
+        else
+            tmux new-session && echo "tmux created new session"
+        fi
+    elif type screen >/dev/null 2>&1; then
+        screen -rx || screen -D -RR
+    fi
+fi
+#}}}
+
 # Language
 #export LC_ALL=en_US.UTF-8
 export LANGUAGE="ja_JP.eucJP"

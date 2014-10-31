@@ -9,7 +9,7 @@ export LC_ALL="${LANGUAGE}"
 # Check existing.
 function is_exist()
 {
-	type $1 >/dev/null 2>&1; return $?;
+  type $1 >/dev/null 2>&1; return $?;
 }
 
 # OS judgement. boolean.
@@ -18,21 +18,20 @@ typeset is_linux=$( uname | grep -qi 'linux' && true || false )
 
 # environment variables
 export OS=$(uname | awk '{print tolower($1)}')
-export BIN="$HOME/.bin"
-export PATH="$BIN:$PATH"
+export BIN="$HOME/bin"
+export PATH=$BIN:"$PATH"
 
 # Loads the file except executable one.
 test -d $BIN || mkdir -p $BIN
 if [ -d $BIN ]; then
-	if ls -A1 $BIN/ | grep -q '.sh'; then
-		for f in $BIN/*.sh ; do
-			[ ! -x "$f" ] && source "$f" && echo " load $f"
-		done
-		echo ""
-		unset f
-	fi
+  if ls -A1 $BIN/ | grep -q '.sh'; then
+    for f in $BIN/*.sh ; do
+      [ ! -x "$f" ] && source "$f" && echo " load $f"
+    done
+    echo ""
+    unset f
+  fi
 fi
-#source $BIN/favdir.sh
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
@@ -64,26 +63,26 @@ SAVEHIST=1000000
 
 function clipboard_vim_path()
 {
-	local -a all_path
-	local i
-	local clipboard_vim_path
+  local -a all_path
+  local i
+  local clipboard_vim_path
 
-	all_path=( `echo $PATH | tr ':' "\n" | sort | uniq` )
-	for i in "${all_path[@]}"
-	do
-		if [ -x "$i"/vim ]; then
-			vim_path+=( "$i"/vim )
-		fi
-	done
+  all_path=( `echo $PATH | tr ':' "\n" | sort | uniq` )
+  for i in "${all_path[@]}"
+  do
+    if [ -x "$i"/vim ]; then
+      vim_path+=( "$i"/vim )
+    fi
+  done
 
-	for i in "${vim_path[@]}"
-	do
-		if "$i" --version 2>/dev/null | grep -q '+clipboard'; then
-			clipboard_vim_path="$i"
-			break
-		fi
-	done
-	echo $clipboard_vim_path
+  for i in "${vim_path[@]}"
+  do
+    if "$i" --version 2>/dev/null | grep -q '+clipboard'; then
+      clipboard_vim_path="$i"
+      break
+    fi
+  done
+  echo $clipboard_vim_path
 }
 
 #--------------------------------------------------------------
@@ -97,10 +96,10 @@ export GIT_EDITOR="${EDITOR}"
 #alias vi=$EDITOR
 #alias vim=$EDITOR
 if $is_mac; then
-	#alias vim='open -a "MacVim"'
-	if $(is_exist 'gvim'); then
-		alias vim='gvim'
-	fi
+  #alias vim='open -a "MacVim"'
+  if $(is_exist 'gvim'); then
+    alias vim='gvim'
+  fi
 fi
 
 export CORRECT_IGNORE='_*'
@@ -196,22 +195,36 @@ setopt mail_warning
 
 # Aliases {{{1
 if $is_mac; then
-	alias ls='/bin/ls -GF'
+  function macvim()
+  {
+    if $(echo "$OSTYPE"  | grep -qi "darwin"); then
+      macvim_path='/Applications/MacVim.app/Contents/MacOS/Vim'
+      if [ -x "$macvim_path" ]; then
+        "$macvim_path" "$@"
+      else
+        echo "No supporting this"
+      fi
+    fi
+  }
+  alias vi=macvim
+fi
+if $is_mac; then
+  alias ls='/bin/ls -GF'
 fi
 
 if $(is_exist 'git'); then
-	alias gst='git status'
+  alias gst='git status'
 fi
 
 if $is_mac; then
-	if $(is_exist 'qlmanage'); then
-		alias ql='qlmanage -p "$@" >& /dev/null'
-	fi
+  if $(is_exist 'qlmanage'); then
+    alias ql='qlmanage -p "$@" >& /dev/null'
+  fi
 fi
 
 # function
 if $(is_exist 'richpager'); then
-	alias cl="richpager"
+  alias cl="richpager"
 fi
 
 # Common aliases
@@ -248,17 +261,17 @@ alias egrep='egrep --color=auto'
 
 # Use if colordiff exists
 if $(is_exist 'colordiff'); then
-	alias diff='colordiff -u'
+  alias diff='colordiff -u'
 else
-	if [ -f ~/.bin/colordiff ]; then
-		alias diff='~/.bin/colordiff -u'
-	else
-		alias diff='diff -u'
-	fi
+  if [ -f ~/.bin/colordiff ]; then
+    alias diff='~/.bin/colordiff -u'
+  else
+    alias diff='diff -u'
+  fi
 fi
 
 if [ -f ~/.bin/saferm.sh ]; then
-	alias rm='~/.bin/saferm.sh'
+  alias rm='~/.bin/saferm.sh'
 fi
 
 # Use plain vim.
@@ -283,30 +296,30 @@ alias -s py=python
 
 function extract() {
 case $1 in
-	*.tar.gz|*.tgz) tar xzvf $1;;
+  *.tar.gz|*.tgz) tar xzvf $1;;
 *.tar.xz) tar Jxvf $1;;
-	*.zip) unzip $1;;
+  *.zip) unzip $1;;
 *.lzh) lha e $1;;
-	*.tar.bz2|*.tbz) tar xjvf $1;;
+  *.tar.bz2|*.tbz) tar xjvf $1;;
 *.tar.Z) tar zxvf $1;;
-	*.gz) gzip -d $1;;
+  *.gz) gzip -d $1;;
 *.bz2) bzip2 -dc $1;;
-	*.Z) uncompress $1;;
+  *.Z) uncompress $1;;
 *.tar) tar xvf $1;;
-	*.arj) unarj $1;;
+  *.arj) unarj $1;;
 esac
 }
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 
 if [ `uname` = "Darwin" ]; then
-	alias google-chrome='open -a Google\ Chrome'
+  alias google-chrome='open -a Google\ Chrome'
 else
-	alias chrome='google-chrome'
+  alias chrome='google-chrome'
 fi
 alias -s html=chrome
 
 if [ `uname` = "Darwin" ]; then
-	alias eog='open -a Preview'
+  alias eog='open -a Preview'
 fi
 alias -s {png,jpg,bmp,PNG,JPG,BMP}=eog
 
@@ -337,67 +350,67 @@ bindkey "^U" kill-whole-line
 bindkey "^W" backward-kill-word
 
 chpwd() {
-	ls_abbrev
+  ls_abbrev
 }
 ls_abbrev() {
-	# -a : Do not ignore entries starting with ..
-	# -C : Force multi-column output.
-	# -F : Append indicator (one of */=>@|) to entries.
-	local cmd_ls='ls'
-	local -a opt_ls
-	opt_ls=('-aCF' '--color=always')
-	case "${OSTYPE}" in
-		freebsd*|darwin*)
-			if type gls > /dev/null 2>&1; then
-				cmd_ls='gls'
-			else
-				# -G : Enable colorized output.
-				opt_ls=('-aCFG')
-			fi
-			;;
-	esac
-	cmd_ls='/bin/ls'
-	opt_ls=('-aCFG')
+  # -a : Do not ignore entries starting with ..
+  # -C : Force multi-column output.
+  # -F : Append indicator (one of */=>@|) to entries.
+  local cmd_ls='ls'
+  local -a opt_ls
+  opt_ls=('-aCF' '--color=always')
+  case "${OSTYPE}" in
+    freebsd*|darwin*)
+      if type gls > /dev/null 2>&1; then
+        cmd_ls='gls'
+      else
+        # -G : Enable colorized output.
+        opt_ls=('-aCFG')
+      fi
+      ;;
+  esac
+  cmd_ls='/bin/ls'
+  opt_ls=('-aCFG')
 
-	local ls_result
-	ls_result=$(CLICOLOR_FORCE=1 COLUMNS=$COLUMNS command $cmd_ls ${opt_ls[@]} | sed $'/^\e\[[0-9;]*m$/d')
+  local ls_result
+  ls_result=$(CLICOLOR_FORCE=1 COLUMNS=$COLUMNS command $cmd_ls ${opt_ls[@]} | sed $'/^\e\[[0-9;]*m$/d')
 
-	local ls_lines=$(echo "$ls_result" | wc -l | tr -d ' ')
+  local ls_lines=$(echo "$ls_result" | wc -l | tr -d ' ')
 
-	if [ $ls_lines -gt 10 ]; then
-		echo "$ls_result" | head -n 5
-		echo '...'
-		echo "$ls_result" | tail -n 5
-		echo "$(command ls -1 -A | wc -l | tr -d ' ') files exist"
-	else
-		echo "$ls_result"
-	fi
+  if [ $ls_lines -gt 10 ]; then
+    echo "$ls_result" | head -n 5
+    echo '...'
+    echo "$ls_result" | tail -n 5
+    echo "$(command ls -1 -A | wc -l | tr -d ' ') files exist"
+  else
+    echo "$ls_result"
+  fi
 }
 function do_enter() #{{{2
 {
-	if [ -n "$BUFFER" ]; then
-		zle accept-line
-		return 0
-	fi
-	echo
-	ls_abbrev
-	#if [ "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = 'true' ]; then
-	#    echo
-	#    echo -e "\e[0;33m--- git status ---\e[0m"
-	#    git status -sb 2> /dev/null
-	#fi
-	#call_precmd
-	zle reset-prompt
-	return 0
+  if [ -n "$BUFFER" ]; then
+    zle accept-line
+    return 0
+  fi
+  echo
+  ls_abbrev
+  #if [ "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = 'true' ]; then
+  #    echo
+  #    echo -e "\e[0;33m--- git status ---\e[0m"
+  #    git status -sb 2> /dev/null
+  #fi
+  #call_precmd
+  zle reset-prompt
+  return 0
 }
 zle -N do_enter
 bindkey '^m' do_enter
 
 function show_buffer_stack() #{{{2
 {
-	POSTDISPLAY="
-	stack: $LBUFFER"
-	zle push-line-or-edit
+  POSTDISPLAY="
+  stack: $LBUFFER"
+  zle push-line-or-edit
 }
 zle -N show_buffer_stack
 setopt noflowcontrol
@@ -405,8 +418,8 @@ bindkey '^Q' show_buffer_stack
 
 function pbcopy-buffer() #{{{2
 {
-	print -rn $BUFFER | pbcopy
-	zle -M "pbcopy: ${BUFFER}"
+  print -rn $BUFFER | pbcopy
+  zle -M "pbcopy: ${BUFFER}"
 }
 
 zle -N pbcopy-buffer
@@ -414,47 +427,47 @@ bindkey '^x^p' pbcopy-buffer
 
 
 if $is_mac; then
-	function op()
-	{
-		if [ -p /dev/stdin ]; then
-			open $(cat -) "$@"
-		elif [ -z "$1" ]; then
-			open .
-		else
-			open "$@"
-		fi
-	}
+  function op()
+  {
+    if [ -p /dev/stdin ]; then
+      open $(cat -) "$@"
+    elif [ -z "$1" ]; then
+      open .
+    else
+      open "$@"
+    fi
+  }
 
-	function tex()
-	{
-		if ! $(is_exist 'platex') || ! $(is_exist 'dvipdfmx'); then
-			return 1
-		fi
-		platex "$1" && dvipdfmx "${1/.tex/.dvi}" && {
-		echo -e "\n\033[31mCompile complete!\033[m"
-	} && if $(is_exist 'open'); then
-	open "${1/.tex/.pdf}"; fi
+  function tex()
+  {
+    if ! $(is_exist 'platex') || ! $(is_exist 'dvipdfmx'); then
+      return 1
+    fi
+    platex "$1" && dvipdfmx "${1/.tex/.dvi}" && {
+    echo -e "\n\033[31mCompile complete!\033[m"
+  } && if $(is_exist 'open'); then
+  open "${1/.tex/.pdf}"; fi
 }
 
 function poweroff() {
 osascript -e "set Volume 0"
 osascript -e 'tell application "Finder" to shut down'
-	}
+  }
 fi
 # Prompt {{{1
 # L prompt {{{2
 PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[cyan]%}INS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
 function zle-line-init zle-keymap-select()
 {
-	case $KEYMAP in
-		vicmd)
-			PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[red]%}NOR%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
-			;;
-		main|viins)
-			PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[cyan]%}INS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
-			;;
-	esac
-	zle reset-prompt
+  case $KEYMAP in
+    vicmd)
+      PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[red]%}NOR%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
+      ;;
+    main|viins)
+      PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[cyan]%}INS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
+      ;;
+  esac
+  zle reset-prompt
 }
 zle -N zle-line-init
 zle -N zle-keymap-select
@@ -463,61 +476,61 @@ zle -N zle-keymap-select
 setopt prompt_subst
 function branch-status-check()
 {
-	local prefix branchname suffix
-	if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
-		return
-	fi
-	branchname=`get-branch-name`
-	if [[ -z $branchname ]]; then
-		return
-	fi
-	prefix=`get-branch-status`
-	suffix='%{'${reset_color}'%}'
-	echo ${prefix}${branchname}${suffix}
+  local prefix branchname suffix
+  if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
+    return
+  fi
+  branchname=`get-branch-name`
+  if [[ -z $branchname ]]; then
+    return
+  fi
+  prefix=`get-branch-status`
+  suffix='%{'${reset_color}'%}'
+  echo ${prefix}${branchname}${suffix}
 }
 function get-branch-name()
 {
-	echo `git rev-parse --abbrev-ref HEAD 2> /dev/null`
+  echo `git rev-parse --abbrev-ref HEAD 2> /dev/null`
 }
 function get-branch-status()
 {
-	local res color
-	output=`git status --short 2> /dev/null`
-	if [ -z "$output" ]; then
-		res=':' # status Clean
-		color='%{'${fg[green]}'%}'
-	elif [[ $output =~ "[\n]?\?\? " ]]; then
-		res='?:' # Untracked
-		color='%{'${fg[yellow]}'%}'
-	elif [[ $output =~ "[\n]? M " ]]; then
-		res='M:' # Modified
-		color='%{'${fg[red]}'%}'
-	else
-		res='A:' # Added to commit
-		color='%{'${fg[cyan]}'%}'
-	fi
-	#echo ${color}${res}'%{'${reset_color}'%}'
-	echo ${color}
+  local res color
+  output=`git status --short 2> /dev/null`
+  if [ -z "$output" ]; then
+    res=':' # status Clean
+    color='%{'${fg[green]}'%}'
+  elif [[ $output =~ "[\n]?\?\? " ]]; then
+    res='?:' # Untracked
+    color='%{'${fg[yellow]}'%}'
+  elif [[ $output =~ "[\n]? M " ]]; then
+    res='M:' # Modified
+    color='%{'${fg[red]}'%}'
+  else
+    res='A:' # Added to commit
+    color='%{'${fg[cyan]}'%}'
+  fi
+  #echo ${color}${res}'%{'${reset_color}'%}'
+  echo ${color}
 }
 
 if [ -f ~/.bin/git-prompt.sh ]; then
-	source ~/.bin/git-prompt.sh
+  source ~/.bin/git-prompt.sh
 fi
 setopt TRANSIENT_RPROMPT
 function precmd()
 {
-	touch ~/zsh_cdhist
-	if [ "$PWD" != "$OLDPWD" ]; then
-		OLDPWD=$PWD
-		pwd >>~/zsh_cdhist
-	fi
+  touch ~/zsh_cdhist
+  if [ "$PWD" != "$OLDPWD" ]; then
+    OLDPWD=$PWD
+    pwd >>~/zsh_cdhist
+  fi
 
-	if [ -f ~/.bin/git-prompt.sh ]; then
-		RPROMPT='%{'${fg[red]}'%}'`echo $(__git_ps1 "(%s)")|sed -e s/%/%%/|sed -e s/%%%/%%/|sed -e 's/\\$/\\\\$/'`'%{'${reset_color}'%}'
-		RPROMPT+=$' at %{${fg[blue]}%}[%~]%{${reset_color}%}'
-	else
-		RPROMPT=$'`branch-status-check` at %{${fg[blue]}%}[%~]%{${reset_color}%}'
-	fi
+  if [ -f "$BIN/git-prompt.sh" ]; then
+    RPROMPT='%{'${fg[red]}'%}'`echo $(__git_ps1 "(%s)")|sed -e s/%/%%/|sed -e s/%%%/%%/|sed -e 's/\\$/\\\\$/'`'%{'${reset_color}'%}'
+    RPROMPT+=$' at %{${fg[blue]}%}[%~]%{${reset_color}%}'
+  else
+    RPROMPT=$'`branch-status-check` at %{${fg[blue]}%}[%~]%{${reset_color}%}'
+  fi
 }
 
 GIT_PS1_SHOWDIRTYSTATE=1
@@ -542,8 +555,8 @@ SAVEHIST=1000000
 LISTMAX=50
 # Do not add in root
 if [ $UID = 0 ]; then
-	unset HISTFILE
-	SAVEHIST=0
+  unset HISTFILE
+  SAVEHIST=0
 fi
 
 # Do not record an event that was just recorded again.

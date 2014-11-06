@@ -3139,6 +3139,9 @@ endif
 "}}}
 if s:has_plugin('nerdtree') "{{{
   nnoremap [Space]n :<C-u>NERDTreeToggle<CR>
+  " Closes the tree window after opening a file.
+  let g:NERDTreeQuitOnOpen = 1
+  let g:NERDTreeShowHidden = 1
 endif
 "}}}
 if s:has_plugin('vim-ref') "{{{

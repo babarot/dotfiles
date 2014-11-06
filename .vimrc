@@ -2031,8 +2031,8 @@ endif "}}}
 " Display zenkaku-space {{{
 augroup hilight-idegraphic-space
   autocmd!
-  autocmd VimEnter,ColorScheme * highlight IdeographicSpace term=underline ctermbg=DarkGreen guibg=DarkGreen
-  autocmd WinEnter * match IdeographicSpace /　/
+  "autocmd VimEnter,ColorScheme * highlight IdeographicSpace term=underline ctermbg=DarkGreen guibg=DarkGreen
+  "autocmd WinEnter * match IdeographicSpace /　/
 augroup END "}}}
 "}}}
 

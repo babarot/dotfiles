@@ -3208,8 +3208,8 @@ function! s:gui()
     set iminsert=0 imsearch=0
     inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
   endif
-  highlight Cursor   guibg=Black guifg=Yellow
-  highlight CursorIM guibg=Black guifg=Red
+  highlight Cursor   guibg=Yellow guifg=Black
+  highlight CursorIM guibg=Red    guifg=Black
   inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
 
   " Remove all menus.

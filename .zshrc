@@ -550,6 +550,56 @@ osascript -e "set Volume 0"
 osascript -e 'tell application "Finder" to shut down'
   }
 fi
+
+# google {{{2
+function google()
+{
+  is_exist w3m || return 1
+
+  local str opt
+  if [ $ != 0 ]; then
+    for i in $*; do
+      str="$str+$i"
+    done
+    str=`echo $str | sed 's/^\+//'`
+    opt='search?num=50&hl=ja&lr=lang_ja'
+    opt="${opt}&q=${str}"
+  fi
+  w3m http://www.google.co.jp/$opt
+}
+
+function google_translate()
+{
+  is_exist w3m || return 1
+
+  local str opt cond
+
+  if [ $# != 0 ]; then
+    str=`echo $1 | sed -e 's/  */+/g'` # 1文字以上の半角空白を+に変換
+    cond=$2
+    if [ $cond = "ja-en" ]; then
+      # ja -> en 翻訳
+      opt='?hl=ja&sl=ja&tl=en&ie=UTF-8&oe=UTF-8'
+    else
+      # en -> ja 翻訳
+      opt='?hl=ja&sl=en&tl=ja&ie=UTF-8&oe=UTF-8'
+    fi
+  else
+    opt='?hl=ja&sl=en&tl=ja&ie=UTF-8&oe=UTF-8'
+  fi
+
+  opt="${opt}&text=${str}"
+  w3m +13 -dump "http://translate.google.com/${opt}"
+}
+function gte()
+{
+  google_translate "$*" "en-ja" | sed -n -e 20p
+}
+
+function gtj()
+{
+  google_translate "$*" "ja-en" | sed -n -e 21p
+}
 # Prompt {{{1
 # L prompt {{{2
 PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[cyan]%}INS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "

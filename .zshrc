@@ -349,29 +349,39 @@ export CORRECT_IGNORE='_*'
 export CORRECT_IGNORE_FILE='.*'
 
 # Option {{{1
+
 limit coredumpsize 0
 umask 022
 setopt auto_cd
 setopt auto_pushd
+
 # Do not print the directory stack after pushd or popd.
 #setopt pushd_silent
 # Replace 'cd -' with 'cd +'
 setopt pushd_minus
+
 # Ignore duplicates to add to pushd
 setopt pushd_ignore_dups
+
 # pushd no arg == pushd $HOME
 setopt pushd_to_home
+
 # Check spell command
 setopt correct
+
 # Check spell all
 setopt correct_all
+
 # Prohibit overwrite by redirection(> & >>) (Use >! and >>! to bypass.)
 setopt no_clobber
+
 # Deploy {a-c} -> a b c
 setopt brace_ccl
+
 # Enable 8bit
 setopt print_eight_bit
-# 
+
+# sh_word_split
 setopt sh_word_split
 
 # Change
@@ -380,40 +390,54 @@ setopt sh_word_split
 #~$ echo 'hoge '' fuga'
 setopt rc_quotes
 
-# 複数のリダイレクトやパイプなど、必要に応じて tee や cat の機能が使われる
+# Case of multi redirection and pipe,
+# use 'tee' and 'cat', if needed
 # ~$ < file1  # cat
-# ~$ < file1 < file2  # 2ファイル同時cat
-# ~$ < file1 > file3  # file1をfile3へコピー
-# ~$ < file1 > file3 | cat  # コピーしつつ標準出力にも表示
+# ~$ < file1 < file2        # cat 2 files
+# ~$ < file1 > file3        # copy file1 to file3
+# ~$ < file1 > file3 | cat  # copy and put to stdout
 # ~$ cat file1 > file3 > /dev/stdin  # tee
 setopt multios
 
-# 補完で末尾に補われた / をスペース挿入で自動的に削除
+# Automatically delete slash complemented by supplemented by inserting a space.
 setopt auto_remove_slash
+
 # No Beep
 setopt no_beep
 setopt no_list_beep
 setopt no_hist_beep
-# =command を command のパス名に展開する
+
+# Expand '=command' as path of command
+# e.g.) '=ls' -> '/bin/ls'
 setopt equals
-# Ctrl+S/Ctrl+Q によるフロー制御を使わないようにする
+
+# Do not use Ctrl-s/Ctrl-q as flow control
 setopt no_flow_control
-# コマンド名に / が含まれているとき PATH 中のサブディレクトリを探す
+
+# Look for a sub-directory in $PATH when the slash is included in the command
 setopt path_dirs
-# 戻り値が 0 以外の場合終了コードを表示する
+
+# Show exit status if it's except zero.
 setopt print_exit_value
-# コマンドラインがどのように展開され実行されたかを表示するようになる
+
+# Show expaning and executing in what way
 #setopt xtrace
+
 # Confirm when executing 'rm *'
 setopt rm_star_wait
+
 # Let me know immediately when terminating job
 setopt notify
+
 # Show process ID
 setopt long_list_jobs
+
 # Resume when executing the same name command as suspended process name
 setopt auto_resume
+
 # Disable Ctrl-d (Use 'exit', 'logout')
 #setopt ignore_eof
+
 # Ignore case when glob
 setopt no_case_glob
 
@@ -449,24 +473,24 @@ if $is_mac; then
       fi
     fi
   }
-  alias vi=macvim
+  #alias vi=macvim
 fi
-if $is_mac; then
+if is_osx; then
   alias ls='/bin/ls -GF'
 fi
 
-if $(is_exist 'git'); then
+if is_exist 'git'; then
   alias gst='git status'
 fi
 
-if $is_mac; then
-  if $(is_exist 'qlmanage'); then
+if is_osx; then
+  if is_exist 'qlmanage'; then
     alias ql='qlmanage -p "$@" >& /dev/null'
   fi
 fi
 
 # function
-if $(is_exist 'richpager'); then
+if is_exist 'richpager'; then
   alias cl="richpager"
 fi
 
@@ -503,18 +527,18 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 # Use if colordiff exists
-if $(is_exist 'colordiff'); then
+if is_exist 'colordiff'; then
   alias diff='colordiff -u'
 else
-  if [ -f ~/.bin/colordiff ]; then
-    alias diff='~/.bin/colordiff -u'
+  if [ -f "$BIN"/colordiff ]; then
+    alias diff="$BIN/colordiff -u"
   else
     alias diff='diff -u'
   fi
 fi
 
-if [ -f ~/.bin/saferm.sh ]; then
-  alias rm='~/.bin/saferm.sh'
+if [ -f $BIN/saferm.sh ]; then
+  alias rm="$BIN/saferm.sh"
 fi
 
 # Use plain vim.
@@ -540,28 +564,28 @@ alias -s py=python
 function extract() {
 case $1 in
   *.tar.gz|*.tgz) tar xzvf $1;;
-*.tar.xz) tar Jxvf $1;;
+  *.tar.xz) tar Jxvf $1;;
   *.zip) unzip $1;;
-*.lzh) lha e $1;;
+  *.lzh) lha e $1;;
   *.tar.bz2|*.tbz) tar xjvf $1;;
-*.tar.Z) tar zxvf $1;;
+  *.tar.Z) tar zxvf $1;;
   *.gz) gzip -d $1;;
-*.bz2) bzip2 -dc $1;;
+  *.bz2) bzip2 -dc $1;;
   *.Z) uncompress $1;;
-*.tar) tar xvf $1;;
+  *.tar) tar xvf $1;;
   *.arj) unarj $1;;
 esac
 }
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 
-if [ `uname` = "Darwin" ]; then
+if is_osx; then
   alias google-chrome='open -a Google\ Chrome'
 else
   alias chrome='google-chrome'
 fi
 alias -s html=chrome
 
-if [ `uname` = "Darwin" ]; then
+if is_osx; then
   alias eog='open -a Preview'
 fi
 alias -s {png,jpg,bmp,PNG,JPG,BMP}=eog
@@ -768,7 +792,7 @@ function precmd()
     pwd >>~/zsh_cdhist
   fi
 
-  if [ -f "$BIN/git-prompt.sh" ]; then
+  if [ -f "$BIN"/git-prompt.sh ]; then
     RPROMPT='%{'${fg[red]}'%}'`echo $(__git_ps1 "(%s)")|sed -e s/%/%%/|sed -e s/%%%/%%/|sed -e 's/\\$/\\\\$/'`'%{'${reset_color}'%}'
     RPROMPT+=$' at %{${fg[blue]}%}[%~]%{${reset_color}%}'
   else

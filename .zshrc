@@ -750,4 +750,15 @@ zstyle ':completion:*' group-name ''
 zstyle ':completion:*' list-separator '-->'
 zstyle ':completion:*:manuals' separate-sections true
 
+if [ -n "$TMUX" ]; then
+  DISPLAY="$TMUX"
+fi
+### Complete Messages
+echo -e "${BCyan}This is ZSH ${BRed}${ZSH_VERSION}${BCyan} - DISPLAY on ${BRed}$DISPLAY${NC}\n"
+echo "Loading .zshrc completed!! (ZDOTDIR=${ZDOTDIR})"
+echo "Now zsh version $ZSH_VERSION starting!!"
+
+# Print log
+log
+
 # vim:fdm=marker fdc=3 ft=zsh ts=2 sw=2 sts=2:

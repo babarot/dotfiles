@@ -152,7 +152,8 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
         \ 'same' : { 'stay_same' : 1, 'overwrite' : 0 },
         \ '_' : { 'overwrite' : 0 },
         \ }
-  call neobundle#rc($VIMBUNDLE)
+  "call neobundle#rc($VIMBUNDLE)
+  call neobundle#begin($VIMBUNDLE)
 
   " Taking care of NeoBundle by itself
   NeoBundleFetch 'Shougo/neobundle.vim'
@@ -342,6 +343,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
 
   " Manually manage rtp
   "NeoBundle 'vim-mru', {'type' : 'nosync', 'base' : '~/.vim/manual'}
+  call neobundle#end()
 
   " Check.
   NeoBundleCheck

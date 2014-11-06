@@ -1,10 +1,66 @@
 #!/bin/bash
 
-if $(echo "$OSTYPE"  | grep -qi "darwin"); then
-    macvim_path='/Applications/MacVim.app/Contents/MacOS/Vim'
-    if [ -x "$macvim_path" ]; then
-        "$macvim_path" "$@"
-    else
-        echo "No supporting this"
+set -e
+
+function search_all_vim_path()
+{
+    local -a vim
+    local i clipboard_vim_path macvim_path a_vim
+
+    for i in $(echo "$PATH" | tr ':' "\n" | sort | uniq)
+    do
+        if [ -x "$i"/vim ]; then
+            vim+=( "$i"/vim )
+        fi
+    done
+
+    if [[ $(uname -s) =~ 'Darwin' ]]; then
+        macvim_path='/Applications/MacVim.app/Contents/MacOS/Vim'
+        if [ -x "$macvim_path" ]; then
+            vim+=( "$macvim_path" )
+        fi
     fi
-fi
+    for a_vim in "${vim[@]}"
+    do
+        echo "$a_vim"
+    done
+}
+
+function enabled_vim_clipboard()
+{
+    local vim clipboard_vim_path
+
+    for vim in $(search_all_vim_path)
+    do
+        if "$vim" --version 2>/dev/null | grep -q '+clipboard'; then
+            clipboard_vim_path="$vim"
+            break
+        fi
+    done
+
+    if [ -n "$clipboard_vim_path" ]; then
+        echo "$clipboard_vim_path"
+        return 0
+    else
+        return 1
+    fi
+}
+
+function execute_vim()
+{
+    if enabled_vim_clipboard >/dev/null; then
+        eval $(enabled_vim_clipboard) "$@"
+        return 0
+    fi
+    if type vim >/dev/null 2>&1; then
+        eval $(which vim) "$@"
+        return 0
+    fi
+
+    echo 'vim: not found' >/dev/stderr
+    return 1
+}
+execute_vim "$@"
+
+#__END__{{{1
+# vim:fdm=marker fdc=3 ft=sh:

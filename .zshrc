@@ -1,6 +1,147 @@
 # Initial {{{1
+# Essential {{{2
+ostype() { echo $OSTYPE | tr '[A-Z]' '[a-z]'; }
+export SHELL_PLATFORM='unknown'
+case "$(ostype)" in
+  *'linux'*)  SHELL_PLATFORM='linux' ;;
+  *'darwin'*) SHELL_PLATFORM='osx'   ;;
+  *'bsd'*)    SHELL_PLATFORM='bsd'   ;;
+esac
+is_linux() { [[ $SHELL_PLATFORM == 'linux' || $SHELL_PLATFORM == 'bsd' ]]; }
+is_osx()   { [[ $SHELL_PLATFORM == 'osx' ]]; }
+is_bsd()   { [[ $SHELL_PLATFORM == 'bsd' || $SHELL_PLATFORM == 'osx' ]]; }
 
-# Normal Colors {{{2
+is_exist() { type $1 >/dev/null 2>&1; return $?; }
+
+# Language
+#export LANGUAGE="ja_JP.eucJP"
+export LANGUAGE="en_US.UTF-8"
+export LANG="${LANGUAGE}"
+export LC_ALL="${LANGUAGE}"
+export LC_CTYPE="${LANGUAGE}"
+
+# environment variables
+export OS=$(uname | awk '{print tolower($1)}')
+export BIN="$HOME/bin"
+export PATH=$BIN:"$PATH"
+
+# Loads the file except executable one.
+test -d $BIN || mkdir -p $BIN
+if [ -d $BIN ]; then
+  for f in $(echo "$BIN"/*.sh)
+  do
+    if [ ! -x "$f" ]; then
+      source "$f" && echo " loaded $f"
+    fi
+    unset f
+  done
+  echo ""
+fi
+#if [ -d $BIN ]; then
+#  if ls -A1 $BIN/ | grep -q '.sh'; then
+#    for f in $BIN/*.sh ; do
+#      [ ! -x "$f" ] && source "$f" && echo " load $f"
+#    done
+#    echo ""
+#    unset f
+#  fi
+#fi
+
+# colors
+autoload -Uz colors
+colors
+
+export CORRECT_IGNORE='_*'
+export CORRECT_IGNORE_FILE='.*'
+
+# History
+export HISTFILE=~/.zsh_history
+export HISTSIZE=1000000
+export SAVEHIST=1000000
+
+# PAGER {{{2
+
+export PAGER=less
+export LESS='-i -N -w  -z-4 -g -e -M -X -F -R -P%t?f%f :stdin .?pb%pb\%:?lbLine %lb:?bbByte %bb:-...'
+export LESS='-f -N -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
+export LESS='-f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
+export LESSCHARSET='utf-8'
+
+# LESS man page colors (makes Man pages more readable).
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+
+# EDITOR {{{2
+export EDITOR=vim
+export CVSEDITOR="${EDITOR}"
+export SVN_EDITOR="${EDITOR}"
+export GIT_EDITOR="${EDITOR}"
+
+alias vi=$EDITOR
+alias vim=$EDITOR
+# Tmux {{{2
+function is_screen_running() { [ ! -z "$WINDOW" ]; }
+function is_tmux_runnning() { [ ! -z "$TMUX" ]; }
+function is_screen_or_tmux_running() { is_screen_running || is_tmux_runnning; }
+function shell_has_started_interactively() { [ ! -z "$PS1" ]; }
+
+function tmuxx_func()
+{
+  # attach to an existing tmux session, or create one if none exist
+  # also set up access to the system clipboard from within tmux when possible
+  #
+  # e.g.
+  # https://gist.github.com/1462391
+  # https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
+
+  if ! type tmux >/dev/null 2>&1; then
+    echo 'Error: tmux command not found' 2>&1
+    return 1
+  fi
+
+  if [ -n "$TMUX" ]; then
+    echo "Error: tmux session has been already attached" 2>&1
+    return 1
+  fi
+
+  if tmux has-session >/dev/null 2>&1 && tmux list-sessions | grep -qE '.*]$'; then
+    # detached session exists
+    tmux attach && echo "$(tmux -V) attached session "
+  else
+    if [[ ( $OSTYPE == darwin* ) && ( -x $(which reattach-to-user-namespace 2>/dev/null) ) ]]; then
+      # on OS X force tmux's default command to spawn a shell in the user's namespace
+      tmux_config=$(cat $HOME/.tmux.conf <(echo 'set-option -g default-command "reattach-to-user-namespace -l /bin/zsh"'))
+      #tmux -f <(echo "$tmux_config") new-session && echo "$(tmux -V) created new session supported OS X"
+      tmux -f <(echo "$tmux_config") new-session \; if "test -f ~/tmux_session" "source-file ~/tmux_session" && echo "$(tmux -V) created new session supported OS X"
+    else
+      tmux new-session && echo "tmux created new session"
+    fi
+  fi
+}
+
+if ! is_screen_or_tmux_running && shell_has_started_interactively; then
+  if type tmuxx >/dev/null 2>&1; then
+    tmuxx
+  elif type tmuxx_func >/dev/null 2>&1; then
+    tmuxx_func
+    #elif type tmux >/dev/null 2>&1; then
+    #    if tmux has-session && tmux list-sessions | /usr/bin/grep -qE '.*]$'; then
+    #        tmux attach && echo "tmux attached session "
+    #    else
+    #        tmux new-session && echo "tmux created new session"
+    #    fi
+  elif type screen >/dev/null 2>&1; then
+    screen -rx || screen -D -RR
+  fi
+fi
+#}}}
+# Color {{{2
+# Normal Colors
 Black='\033[0;30m'        # Black
 Red='\033[0;31m'          # Red
 Green='\033[0;32m'        # Green

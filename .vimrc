@@ -411,7 +411,7 @@ filetype plugin indent on
 "==============================================================================
 
 " Some utilities.
-function! s:bundled(bundle)
+function! s:bundled(bundle) "{{{
   if !isdirectory($VIMBUNDLE)
     return 0
   endif
@@ -424,7 +424,7 @@ function! s:bundled(bundle)
   else
     return neobundle#is_installed(a:bundle)
   endif
-endfunction
+endfunction "}}}
 function! s:has_plugin(name) "{{{
   " Check {name} plugin whether there is in the runtime path
 

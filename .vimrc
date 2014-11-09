@@ -3130,7 +3130,7 @@ if s:has_plugin('vim-autocdls') "{{{
 endif
 "}}}
 if s:has_plugin('vim-shellutils') "{{{
-  "let g:shellutils_disable_commands = ['Ls']
+  let g:shellutils_disable_commands = ['Ls']
 endif
 "}}}
 if s:has_plugin('vim-indent-guides') "{{{
@@ -3180,6 +3180,9 @@ endif
 "endif
 
 " MISC: Useful code that does not enter the section are described here
+
+"nnoremap <silent> <Space>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Space>o", v:count1)<CR>
+"nnoremap <silent> <Space>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Space>O", v:count1)<CR>
 
 " Help for Vim settings {{{
 function! s:help_for_vim()

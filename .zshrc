@@ -290,20 +290,21 @@ setopt no_prompt_cr
 setopt mail_warning
 
 # Aliases {{{1
-if $is_mac; then
-  function macvim()
-  {
-    if $(echo "$OSTYPE"  | grep -qi "darwin"); then
-      macvim_path='/Applications/MacVim.app/Contents/MacOS/Vim'
-      if [ -x "$macvim_path" ]; then
-        "$macvim_path" "$@"
-      else
-        echo "No supporting this"
-      fi
-    fi
-  }
-  #alias vi=macvim
-fi
+#if $is_mac; then
+#  function macvim()
+#  {
+#    if $(echo "$OSTYPE"  | grep -qi "darwin"); then
+#      macvim_path='/Applications/MacVim.app/Contents/MacOS/Vim'
+#      if [ -x "$macvim_path" ]; then
+#        "$macvim_path" "$@"
+#      else
+#        echo "No supporting this"
+#      fi
+#    fi
+#  }
+#  #alias vi=macvim
+#fi
+
 if is_osx; then
   alias ls='/bin/ls -GF'
 fi

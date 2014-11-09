@@ -118,7 +118,7 @@ if $(is_exist 'gls'); then
 	alias ls="gls --color=auto -F -b"
 else
 	alias ls="$LSPATH --color=auto -F -b"
-	if [ $LSPATH == "" ]; then
+	if [ "$LSPATH" == "" ]; then
 		unalias ls
 	fi
 fi

@@ -321,6 +321,9 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
         \ 'gui' : 1,
         \ }
 
+  NeoBundle 'mopp/googlesuggest-source.vim'
+  NeoBundle 'mattn/googlesuggest-complete-vim'
+
   " Japanese help
   NeoBundle 'vim-jp/vimdoc-ja'
   " Vital

@@ -754,6 +754,8 @@ endfunction "}}}
 
 " Handle buffers.
 function! s:buf_delete(bang) "{{{
+  let g:buf_delete_safety_mode = 1
+
   let file = fnamemodify(expand('%'), ':p')
   if filereadable(file)
     if empty(a:bang)
@@ -761,6 +763,9 @@ function! s:buf_delete(bang) "{{{
     endif
     if !empty(a:bang) || nr2char(getchar()) ==? 'y'
       silent! update
+      if g:buf_delete_safety_mode == 1
+        silent! execute has('clipboard') ? '%yank "*' : '%yank'
+      endif
       if delete(file) == 0
         let bufname = bufname(fnamemodify(file, ':p'))
         if bufexists(bufname) && buflisted(bufname)

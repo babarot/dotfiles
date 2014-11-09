@@ -124,9 +124,9 @@ function tmuxx_func()
   fi
 }
 
-if ! is_screen_or_tmux_running && shell_has_started_interactively; then
+if ! is_screen_or_tmux_running && shell_has_started_interactively && [[ -z "$SSH_CONECTION" ]]; then
   if type tmuxx >/dev/null 2>&1; then
-    tmuxx
+    (SHELL=/bin/zsh; tmuxx;)
   elif type tmuxx_func >/dev/null 2>&1; then
     tmuxx_func
     #elif type tmux >/dev/null 2>&1; then

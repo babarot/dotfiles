@@ -312,7 +312,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   NeoBundle 'tsukkee/lingr-vim'
   NeoBundle 'AndrewRadev/switch.vim'
   "NeoBundle 'Yggdroot/indentLine'
-  NeoBundle 'ervandew/supertab'
+  "NeoBundle 'ervandew/supertab'
   NeoBundleLazy 'vim-scripts/renamer.vim', {
         \ 'autoload' : {
         \ 'commands' : 'Renamer'

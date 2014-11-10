@@ -25,28 +25,6 @@ export OS=$(uname | awk '{print tolower($1)}')
 export BIN="$HOME/bin"
 export PATH=$BIN:"$PATH"
 
-# Loads the file except executable one.
-test -d $BIN || mkdir -p $BIN
-if [ -d $BIN ]; then
-  for f in $(echo "$BIN"/*.sh)
-  do
-    if [ ! -x "$f" ]; then
-      source "$f" && echo " loaded $f"
-    fi
-    unset f
-  done
-  echo ""
-fi
-#if [ -d $BIN ]; then
-#  if ls -A1 $BIN/ | grep -q '.sh'; then
-#    for f in $BIN/*.sh ; do
-#      [ ! -x "$f" ] && source "$f" && echo " load $f"
-#    done
-#    echo ""
-#    unset f
-#  fi
-#fi
-
 # colors
 autoload -Uz colors
 colors
@@ -58,6 +36,43 @@ export CORRECT_IGNORE_FILE='.*'
 export HISTFILE=~/.zsh_history
 export HISTSIZE=1000000
 export SAVEHIST=1000000
+
+# Color {{{2
+# Normal Colors
+Black='\033[0;30m'        # Black
+Red='\033[0;31m'          # Red
+Green='\033[0;32m'        # Green
+Yellow='\033[0;33m'       # Yellow
+Blue='\033[0;34m'         # Blue
+Purple='\033[0;35m'       # Purple
+Cyan='\033[0;36m'         # Cyan
+White='\033[0;37m'        # White
+
+# Bold
+BBlack='\033[1;30m'       # Black
+BRed='\033[1;31m'         # Red
+BGreen='\033[1;32m'       # Green
+BYellow='\033[1;33m'      # Yellow
+BBlue='\033[1;34m'        # Blue
+BPurple='\033[1;35m'      # Purple
+BCyan='\033[1;36m'        # Cyan
+BWhite='\033[1;37m'       # White
+
+# Background
+On_Black='\033[40m'       # Black
+On_Red='\033[41m'         # Red
+On_Green='\033[42m'       # Green
+On_Yellow='\033[43m'      # Yellow
+On_Blue='\033[44m'        # Blue
+On_Purple='\033[45m'      # Purple
+On_Cyan='\033[46m'        # Cyan
+On_White='\033[47m'       # White
+
+NC="\033[m"               # Color Reset
+CR="$(echo -ne '\r')"
+LF="$(echo -ne '\n')"
+TAB="$(echo -ne '\t')"
+ESC="$(echo -ne '\033')"
 
 # PAGER {{{2
 
@@ -72,7 +87,9 @@ export LESS_TERMCAP_mb=$'\E[01;31m'
 export LESS_TERMCAP_md=$'\E[01;31m'
 export LESS_TERMCAP_me=$'\E[0m'
 export LESS_TERMCAP_se=$'\E[0m'
-export LESS_TERMCAP_so=$'\E[01;44;33m'
+#export LESS_TERMCAP_so=$'\E[01;44;33m'
+#export LESS_TERMCAP_so=$'\E[01;44;30m'
+export LESS_TERMCAP_so=$'\E[00;44;37m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
@@ -140,42 +157,38 @@ if ! is_screen_or_tmux_running && shell_has_started_interactively && [[ -z "$SSH
   fi
 fi
 #}}}
-# Color {{{2
-# Normal Colors
-Black='\033[0;30m'        # Black
-Red='\033[0;31m'          # Red
-Green='\033[0;32m'        # Green
-Yellow='\033[0;33m'       # Yellow
-Blue='\033[0;34m'         # Blue
-Purple='\033[0;35m'       # Purple
-Cyan='\033[0;36m'         # Cyan
-White='\033[0;37m'        # White
 
-# Bold
-BBlack='\033[1;30m'       # Black
-BRed='\033[1;31m'         # Red
-BGreen='\033[1;32m'       # Green
-BYellow='\033[1;33m'      # Yellow
-BBlue='\033[1;34m'        # Blue
-BPurple='\033[1;35m'      # Purple
-BCyan='\033[1;36m'        # Cyan
-BWhite='\033[1;37m'       # White
+if [ -n "$TMUX" ]; then
+  DISPLAY="$TMUX"
+  echo "THIS IS ON TMUX"
+fi
+### Complete Messages
+echo -e "\n${BCyan}This is ZSH ${BRed}${ZSH_VERSION}${BCyan} - DISPLAY on ${BRed}$DISPLAY${NC}\n"
+#echo "Loading .zshrc completed!! (ZDOTDIR=${ZDOTDIR})"
+#echo "Now zsh version $ZSH_VERSION starting!!"
 
-# Background
-On_Black='\033[40m'       # Black
-On_Red='\033[41m'         # Red
-On_Green='\033[42m'       # Green
-On_Yellow='\033[43m'      # Yellow
-On_Blue='\033[44m'        # Blue
-On_Purple='\033[45m'      # Purple
-On_Cyan='\033[46m'        # Cyan
-On_White='\033[47m'       # White
+# Loads the file except executable one.
+test -d $BIN || mkdir -p $BIN
+if [ -d $BIN ]; then
+  for f in $(echo "$BIN"/*.sh)
+  do
+    if [ ! -x "$f" ]; then
+      source "$f" && echo " loaded $f"
+    fi
+    unset f
+  done
+  echo ""
+fi
+#if [ -d $BIN ]; then
+#  if ls -A1 $BIN/ | grep -q '.sh'; then
+#    for f in $BIN/*.sh ; do
+#      [ ! -x "$f" ] && source "$f" && echo " load $f"
+#    done
+#    echo ""
+#    unset f
+#  fi
+#fi
 
-NC="\033[m"               # Color Reset
-CR="$(echo -ne '\r')"
-LF="$(echo -ne '\n')"
-TAB="$(echo -ne '\t')"
-ESC="$(echo -ne '\033')"
 
 # Option {{{1
 
@@ -763,16 +776,5 @@ zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAU
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*' list-separator '-->'
 zstyle ':completion:*:manuals' separate-sections true
-
-if [ -n "$TMUX" ]; then
-  DISPLAY="$TMUX"
-fi
-### Complete Messages
-echo -e "${BCyan}This is ZSH ${BRed}${ZSH_VERSION}${BCyan} - DISPLAY on ${BRed}$DISPLAY${NC}\n"
-echo "Loading .zshrc completed!! (ZDOTDIR=${ZDOTDIR})"
-echo "Now zsh version $ZSH_VERSION starting!!"
-
-# Print log
-log
 
 # vim:fdm=marker fdc=3 ft=zsh ts=2 sw=2 sts=2:

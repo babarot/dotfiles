@@ -1,0 +1,3 @@
+#!/bin/bash
+
+groff -mandoc -Tlatin1 "$1"

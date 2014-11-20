@@ -48,16 +48,26 @@ function get_battery()
                     if [[ "$1" =~ 'h' ]]; then
                         echo "$get_battery_help"
                         return 0
-                    elif [[ "$1" =~ 'c' ]]; then
+                    fi
+
+                    [[ "$1" =~ 'p' ]] && echo "$percentage%"
+                    [[ "$1" =~ 't' ]] && echo "$time_remain"
+
+                    if [[ "$1" =~ 'c' ]]; then
                         if [[ -z "$2" ]]; then
                             get_battery_color
                         elif [[ "$2" == 'tmux' ]]; then
                             get_battery_color_tmux
                         fi
+                        return 0
                     fi
                     shift
                     ;;
                 *)
+                    if [[ -n "${percentage}" ]]; then
+                        echo "${percentage}%"
+                        return 0
+                    fi
                     shift
                     ;;
             esac

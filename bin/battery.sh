@@ -16,6 +16,19 @@ shell_is_osx()   { [[ $SHELL_PLATFORM == 'osx' ]]; }
 shell_is_bsd()   { [[ $SHELL_PLATFORM == 'bsd' || $SHELL_PLATFORM == 'osx' ]]; }
 is_exist()       { type $1 >/dev/null 2>&1; return $?; }
 
+declare get_battery_help=$(
+cat <<-END
+usage: ${0##*/} [-h][-pt][-c {type}]
+
+    -h        display this help
+    -p        display percentage(default)
+    -t        display remainning time
+    -c {type} colorize according to the {type}
+              If the {type} is omitted, the color
+              at the terminal is supported.
+END
+)
+
 function get_battery()
 {
     get_battery_initialize
@@ -32,7 +45,7 @@ function get_battery()
             case "$1" in
                 -*)
                     if [[ "$1" =~ 'h' ]]; then
-                        echo 'help'
+                        echo "$get_battery_help"
                         return 0
                     elif [[ "$1" =~ 'c' ]]; then
                         if [[ -z "$2" ]]; then

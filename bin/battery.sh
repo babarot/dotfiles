@@ -16,6 +16,7 @@ shell_is_osx()   { [[ $SHELL_PLATFORM == 'osx' ]]; }
 shell_is_bsd()   { [[ $SHELL_PLATFORM == 'bsd' || $SHELL_PLATFORM == 'osx' ]]; }
 is_exist()       { type $1 >/dev/null 2>&1; return $?; }
 
+declare battery_danger=20
 declare get_battery_help=$(
 cat <<-END
 usage: ${0##*/} [-h][-pt][-c {type}]
@@ -143,7 +144,7 @@ function get_battery_color()
                 [[ "$time_remain" == '0:00' ]] && time_remain='Full charged'
 
                 # Discharging and 1% ~ 10%, 10%+
-                if [ "$percentage" -ge 10 ]; then
+                if [ "$percentage" -ge "$battery_danger" ]; then
                     echo -e "\033[34m${percentage}%\033[0m"
                 else
                     echo -e "\033[31m${percentage}%\033[0m"
@@ -158,7 +159,7 @@ function get_battery_color()
                 [[ "${percentage%.*}" == '100' ]] && time_remain='Full charged'
 
                 # Discharging and 1% ~ 10%, 10%+
-                if [ $(echo "$percentage" | cut -d. -f1) -ge 10 ]; then
+                if [ $(echo "$percentage" | cut -d. -f1) -ge "$battery_danger" ]; then
                     echo -e "\033[34m${percentage}%\033[0m"
                 else
                     echo -e "\033[31m${percentage}%\033[0m"
@@ -182,7 +183,7 @@ function get_battery_color_tmux()
                 [[ "$time_remain" == '0:00' ]] && time_remain='Full charged'
 
                 # Discharging and 1% ~ 10%, 10%+
-                if [ "$percentage" -ge 10 ]; then
+                if [ "$percentage" -ge "$battery_danger" ]; then
                     echo "#[fg=blue]${percentage}%#[default] ($time_remain)"
                 else
                     echo "#[fg=red]${percentage}%#[default] ($time_remain)"
@@ -197,7 +198,7 @@ function get_battery_color_tmux()
                 [[ "${percentage%.*}" == '100' ]] && time_remain='Full charged'
 
                 # Discharging and 1% ~ 10%, 10%+
-                if [ $(echo "$percentage" | cut -d. -f1) -ge 10 ]; then
+                if [ $(echo "$percentage" | cut -d. -f1) -ge "$battery_danger" ]; then
                     echo "#[fg=blue]${percentage}%#[default] ($time_remain)"
                 else
                     echo "#[fg=red]${percentage}%#[default] ($time_remain)"

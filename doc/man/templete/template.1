@@ -1,0 +1,83 @@
+.\" $Id$ -*-nroff-*-
+.TH SLIM 1
+.SH NAME
+slim \- a LMNtal runtime
+.SH SYNOPSIS
+.B slim
+[-t]
+[--version]
+[--showproxy]
+[--hideruleset]
+[--help]
+[-I
+.I path
+]
+[-O[<0-9>] ]
+[--]
+[
+.I program argument ...
+]
+.SH DESCRIPTION
+.I SLIM
+is a LMNtal runtime.
+When
+.I LMNtal intermediate code
+is given, slim loads the code, evaluating code.
+If a file whose extension is .lmn is given, slim compiles the file
+to a intermediate code with LMNtal system(see ENVIRONMENT), and execute the code.
+.SH OPTIONS
+Here is a summary of all the options.
+.TP 5
+.BI --version
+Prints slim version and exits.
+.TP
+.BI -I path
+Adds
+.I path
+to the head of the load path list.
+.TP
+.BI -O
+.TP
+.BI -Olevel
+Optimization level. (-O=-O1)
+.TP
+.BI -t
+Traces and prints the current state of execution.
+.TP
+.BI --showproxy
+Show proxy atoms.
+.TP
+.BI --hideruleset
+Hide ruleset from result
+.TP
+.BI --help
+Print (on the standard output) a description of the command line
+options understood by slim.
+.TP
+.BI --
+Specifies that there are no more options. If there are more
+arguments after this, they are taken as script file name and
+its arguments.
+.SH ENVIRONMENT
+.TP
+.B LMNTAL_HOME
+.TQ
+Path to the LMNtal system
+.TP
+.B SLIM_CFLAGS
+.TQ
+LMNtal compiler options
+.SH AUTHORS
+Taisuke Hori (taisuke @ ueda . info . waseda . ac . jp)
+.SH SEE ALSO
+.PP
+SLIM:
+.br
+http://www.ueda.info.waseda.ac.jp/slim
+.PP
+LMNtal:
+.br
+http://www.ueda.info.waseda.ac.jp/lmntal
+.PP
+For the information about our researches, see
+http://www.ueda.info.waseda.ac.jp/

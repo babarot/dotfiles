@@ -1,0 +1,39 @@
+.TH "SHOW" "1" "Nov 10, 2014" "favdir.sh user manual" ""
+.SH NAME
+.PP
+show \- favdir components; Show bookmarked directory(ies).
+.SH SYNOPSIS
+.PP
+show [-h][-e][-p][-R]
+.SH DESCRIPTION
+.PP
+Display all registered names and paths.
+Need to run independently for all options.
+.PP
+On GitHub: <http://github.com/b4b4r07/favdir>
+.PP
+.SH OPTIONS
+Here is a summary of all the options. The following options are available:
+.TP 5
+.BI -h\fR,\ \fB--help
+Print (on the standard output) a description of the command line options understood by show.
+.TP
+.BI -e\fR,\ \fB--edit
+Edit favdirlist (the default is \fI ~/.favdir/favdirlist\fR), manually. Use $EDITOR environment variables.
+.TP
+.BI -p\fR,\ \fB--plain
+Show list with plain text
+.TP
+.BI -R\fR,\ \fB--refresh
+Refresh \fIfavdirlist\fR. Items that do not exist are deleted from the list.
+.SH SEE ALSO
+.PP
+.BR gg (1)
+,
+.BR del (1)
+,
+.BR p (1)
+,
+.BR reg (1)
+.SH AUTHORS
+B4B4R07 <b4b4r07@gmail.com>.

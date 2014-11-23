@@ -177,6 +177,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
         \ 'autoload' : {
         \ 'unite_sources' : 'help'
         \ }}
+  NeoBundle 'Shougo/neomru.vim'
   NeoBundleLazy 'Shougo/neomru.vim', {
         \ 'autoload' : {
         \ 'unite_sources' : 'file_mru',

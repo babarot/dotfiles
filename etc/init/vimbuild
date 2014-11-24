@@ -1,6 +1,8 @@
 #!/bin/bash
 
 CUR_DIR=`pwd`
+CUR_DIR=/usr/local/vim
+mkdir -p $CUR_DIR
 
 ARCH="unix"
 FILE_VERSIONS_LIST="$CUR_DIR/.vim-versions"
@@ -91,10 +93,10 @@ fi
 command_clean() {
     cd $CUR_DIR
     rm -fr \
- $SRC_DIR \
- $BIN_DIR \
- $PATCH_DIR \
- $FILE_VERSIONS_LIST
+    $SRC_DIR \
+    $BIN_DIR \
+    $PATCH_DIR \
+    $FILE_VERSIONS_LIST
 }
 
 if [ "$COMMAND" = "clean" ];then
@@ -110,13 +112,14 @@ elif [ "$COMMAND" = "versions" ];then
 fi
 
 if [ "$CONFIGURE_OPTIONS" = "" ];then
-	CONFIGURE_OPTIONS="\
-		--enable-multibyte \
-		--with-features=huge \
-		--enable-fontset \
-		--enable-cscope \
-		--disable-selinux \
-		--prefix=$BIN_DIR"
+    CONFIGURE_OPTIONS="\
+        --enable-multibyte \
+        --with-features=huge \
+        --enable-fontset \
+        --enable-cscope \
+        --disable-selinux \
+        --enable-luainterp \
+        --prefix=$BIN_DIR"
 fi
 
 SRC_ARC_FILENAME=""

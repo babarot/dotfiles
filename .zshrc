@@ -1,21 +1,56 @@
+# Essential {{{1
+
 # Initial {{{1
-# Essential {{{2
-ostype() { echo $OSTYPE | tr '[A-Z]' '[a-z]'; }
 export SHELL_PLATFORM='unknown'
+
+ostype() { echo $OSTYPE | tr '[A-Z]' '[a-z]'; }
 case "$(ostype)" in
-  *'linux'*)  SHELL_PLATFORM='linux' ;;
-  *'darwin'*) SHELL_PLATFORM='osx'   ;;
-  *'bsd'*)    SHELL_PLATFORM='bsd'   ;;
+    *'linux'*)  SHELL_PLATFORM='linux' ;;
+    *'darwin'*) SHELL_PLATFORM='osx'   ;;
+    *'bsd'*)    SHELL_PLATFORM='bsd'   ;;
 esac
+
 is_linux() { [[ $SHELL_PLATFORM == 'linux' || $SHELL_PLATFORM == 'bsd' ]]; }
 is_osx()   { [[ $SHELL_PLATFORM == 'osx' ]]; }
 is_bsd()   { [[ $SHELL_PLATFORM == 'bsd' || $SHELL_PLATFORM == 'osx' ]]; }
 
-is_exist() { type $1 >/dev/null 2>&1; return $?; }
+is_exist() { type "$1" >/dev/null 2>&1; return $?; }
+is_exists() {
+    if [[ "${1[1,1]}" =~ "/" ]]; then
+        if [[ -e "$1" ]]; then
+            return 0
+        fi
+    else
+        if type "$1" >/dev/null 2>&1; then
+            return 0
+        fi
+    fi
+    return 1
+}
 
+export ZSH_PLUGUINS_DIR=~/.zsh/plugins
+function has_plugin() { [[ -d ~/.zsh/plugins/"$1" ]]; }
+
+umask 022
+limit coredumpsize 0
+
+# NOTE: set fpath before compinit
+fpath=($HOME/.zsh/Completion(N-/) $fpath)
+fpath=($HOME/.zsh/functions/*(N-/) $fpath)
+
+# Mac homebrew
+if is_osx; then
+    fpath=(/usr/local/share/zsh/site-functions(N-/) $fpath)
+fi
+
+autoload -Uz add-zsh-hook
+autoload -Uz compinit
+compinit
+
+# Environment variables {{{1
 # Language
-#export LANGUAGE="ja_JP.eucJP"
 export LANGUAGE="en_US.UTF-8"
+#export LANGUAGE="ja_JP.eucJP"
 export LANG="${LANGUAGE}"
 export LC_ALL="${LANGUAGE}"
 export LC_CTYPE="${LANGUAGE}"
@@ -23,12 +58,15 @@ export LC_CTYPE="${LANGUAGE}"
 # environment variables
 export OS=$(uname | awk '{print tolower($1)}')
 export BIN="$HOME/bin"
-export PATH=$BIN:"$PATH"
+export PATH=$BIN:$PATH
+export PATH=/usr/local/vim/build/7.4/vim74/src:$PATH
+export PYTHONSTARTUP=~/.pythonrc.py
 
-# colors
+# Colors
 autoload -Uz colors
 colors
 
+# Correct
 export CORRECT_IGNORE='_*'
 export CORRECT_IGNORE_FILE='.*'
 
@@ -36,6 +74,11 @@ export CORRECT_IGNORE_FILE='.*'
 export HISTFILE=~/.zsh_history
 export HISTSIZE=1000000
 export SAVEHIST=1000000
+
+# Plugins
+if has_plugin 'favdir'; then
+    export FAVDIR_HOME=~/Dropbox/.favdir
+fi
 
 # Color {{{2
 # Normal Colors
@@ -74,12 +117,17 @@ LF="$(echo -ne '\n')"
 TAB="$(echo -ne '\t')"
 ESC="$(echo -ne '\033')"
 
-# PAGER {{{2
+# EDITOR {{{2
+export EDITOR=vim
+export CVSEDITOR="${EDITOR}"
+export SVN_EDITOR="${EDITOR}"
+export GIT_EDITOR="${EDITOR}"
 
+# PAGER {{{2
 export PAGER=less
-export LESS='-i -N -w  -z-4 -g -e -M -X -F -R -P%t?f%f :stdin .?pb%pb\%:?lbLine %lb:?bbByte %bb:-...'
-export LESS='-f -N -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
-export LESS='-f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
+#export LESS='-i -N -w  -z-4 -g -e -M -X -F -R -P%t?f%f :stdin .?pb%pb\%:?lbLine %lb:?bbByte %bb:-...'
+#export LESS='-f -N -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
+export LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
 export LESSCHARSET='utf-8'
 
 # LESS man page colors (makes Man pages more readable).
@@ -93,105 +141,760 @@ export LESS_TERMCAP_so=$'\E[00;44;37m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
-# EDITOR {{{2
-export EDITOR=vim
-export CVSEDITOR="${EDITOR}"
-export SVN_EDITOR="${EDITOR}"
-export GIT_EDITOR="${EDITOR}"
-
-alias vi=$EDITOR
-alias vim=$EDITOR
-# Tmux {{{2
+# Settings for Tmux {{{1
 function is_screen_running() { [ ! -z "$WINDOW" ]; }
 function is_tmux_runnning() { [ ! -z "$TMUX" ]; }
 function is_screen_or_tmux_running() { is_screen_running || is_tmux_runnning; }
 function shell_has_started_interactively() { [ ! -z "$PS1" ]; }
+function is_ssh_running() { [ ! -z "$SSH_CONECTION" ]; }
 
 function tmuxx_func()
 {
-  # attach to an existing tmux session, or create one if none exist
-  # also set up access to the system clipboard from within tmux when possible
-  #
-  # e.g.
-  # https://gist.github.com/1462391
-  # https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
+    # attach to an existing tmux session, or create one if none exist
+    # also set up access to the system clipboard from within tmux when possible
+    #
+    # e.g.
+    # https://gist.github.com/1462391
+    # https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
 
-  if ! type tmux >/dev/null 2>&1; then
-    echo 'Error: tmux command not found' 2>&1
-    return 1
-  fi
-
-  if [ -n "$TMUX" ]; then
-    echo "Error: tmux session has been already attached" 2>&1
-    return 1
-  fi
-
-  if tmux has-session >/dev/null 2>&1 && tmux list-sessions | grep -qE '.*]$'; then
-    # detached session exists
-    tmux attach && echo "$(tmux -V) attached session "
-  else
-    if [[ ( $OSTYPE == darwin* ) && ( -x $(which reattach-to-user-namespace 2>/dev/null) ) ]]; then
-      # on OS X force tmux's default command to spawn a shell in the user's namespace
-      tmux_config=$(cat $HOME/.tmux.conf <(echo 'set-option -g default-command "reattach-to-user-namespace -l /bin/zsh"'))
-      #tmux -f <(echo "$tmux_config") new-session && echo "$(tmux -V) created new session supported OS X"
-      tmux -f <(echo "$tmux_config") new-session \; if "test -f ~/tmux_session" "source-file ~/tmux_session" && echo "$(tmux -V) created new session supported OS X"
-    else
-      tmux new-session && echo "tmux created new session"
+    #if ! type tmux >/dev/null 2>&1; then
+    if ! is_exists 'tmux'; then
+        echo 'Error: tmux command not found' 2>&1
+        return 1
     fi
-  fi
+
+    #if [ -n "$TMUX" ]; then
+    if is_tmux_runnning; then
+        echo "Error: tmux session has been already attached" 2>&1
+        return 1
+    fi
+
+    if tmux has-session >/dev/null 2>&1 && tmux list-sessions | grep -qE '.*]$'; then
+        # detached session exists
+        tmux attach && echo "$(tmux -V) attached session "
+    else
+        #if [[ ( $OSTYPE == darwin* ) && ( -x $(which reattach-to-user-namespace 2>/dev/null) ) ]]; then
+        if is_osx && is_exist 'reattach-to-user-namespace'; then
+            # on OS X force tmux's default command to spawn a shell in the user's namespace
+            tmux_config=$(cat $HOME/.tmux.conf <(echo 'set-option -g default-command "reattach-to-user-namespace -l /bin/zsh"'))
+            #tmux -f <(echo "$tmux_config") new-session && echo "$(tmux -V) created new session supported OS X"
+            tmux -f <(echo "$tmux_config") new-session \; if "test -f ~/tmux_session" "source-file ~/tmux_session" && echo "$(tmux -V) created new session supported OS X"
+        else
+            tmux new-session && echo "tmux created new session"
+        fi
+    fi
 }
 
-if ! is_screen_or_tmux_running && shell_has_started_interactively && [[ -z "$SSH_CONECTION" ]]; then
-  if type tmuxx >/dev/null 2>&1; then
-    (SHELL=/bin/zsh; tmuxx;)
-  elif type tmuxx_func >/dev/null 2>&1; then
-    tmuxx_func
-    #elif type tmux >/dev/null 2>&1; then
-    #    if tmux has-session && tmux list-sessions | /usr/bin/grep -qE '.*]$'; then
-    #        tmux attach && echo "tmux attached session "
-    #    else
-    #        tmux new-session && echo "tmux created new session"
-    #    fi
-  elif type screen >/dev/null 2>&1; then
-    screen -rx || screen -D -RR
-  fi
+if ! is_screen_or_tmux_running && shell_has_started_interactively && ! is_ssh_running; then
+    #if type tmux >/dev/null 2>&1; then
+    if is_exist 'tmux'; then
+        if type tmuxx >/dev/null 2>&1; then
+            (SHELL=/bin/zsh; tmuxx;)
+            #elif type tmuxx_func >/dev/null 2>&1; then
+        elif is_exist 'tmuxx_func'; then
+            tmuxx_func
+            #elif type tmux >/dev/null 2>&1; then
+            #    if tmux has-session && tmux list-sessions | /usr/bin/grep -qE '.*]$'; then
+            #        tmux attach && echo "tmux attached session "
+            #    else
+            #        tmux new-session && echo "tmux created new session"
+            #    fi
+        fi
+        #elif type screen >/dev/null 2>&1; then
+    elif is_exist 'screen'; then
+        screen -rx || screen -D -RR
+    fi
 fi
 #}}}
 
-if [ -n "$TMUX" ]; then
-  DISPLAY="$TMUX"
-  echo "THIS IS ON TMUX"
-fi
-### Complete Messages
-echo -e "\n${BCyan}This is ZSH ${BRed}${ZSH_VERSION}${BCyan} - DISPLAY on ${BRed}$DISPLAY${NC}\n"
-#echo "Loading .zshrc completed!! (ZDOTDIR=${ZDOTDIR})"
-#echo "Now zsh version $ZSH_VERSION starting!!"
-
-# Loads the file except executable one.
-test -d $BIN || mkdir -p $BIN
-if [ -d $BIN ]; then
-  for f in $(echo "$BIN"/*.sh)
-  do
-    if [ ! -x "$f" ]; then
-      source "$f" && echo " loaded $f"
+# Startup zsh {{{1
+#
+function zsh_at_startup()
+{
+    :
+    if is_tmux_runnning; then
+        DISPLAY="$TMUX"
+        tmux_pane_and_window=$(tmux display -p '#I-#P')
+        if is_exist 'cowsay'; then
+            #cowsay -f ghostbusters "The tmux is running"
+            cowsay -f ghostbusters "This is on tmux."
+            #            cowsay -n -f ghostbusters <<-EOC
+            #ooooooooooooo ooo        ooooo ooooo     ooo ooooooo  ooooo    
+            #8'   888   \`8 \`88.       .888' \`888'     \`8'  \`8888    d8'
+            #     888       888b     d'888   888       8     Y888..8P       
+            #     888       8 Y88. .P  888   888       8      \`8888'       
+            #     888       8  \`888'   888   888       8     .8PY888.      
+            #     888       8    Y     888   \`88.    .8'    d8'  \`888b    
+            #    o888o     o8o        o888o    \`YbodP'    o888o  o88888o   
+            #EOC
+        else
+            echo "${BRed} _____ __  __ _   ___  __ ${NC}"
+            echo "${BRed}|_   _|  \/  | | | \ \/ / ${NC}"
+            echo "${BRed}  | | | |\/| | | | |\  /  ${NC}"
+            echo "${BRed}  | | | |  | | |_| |/  \  ${NC}"
+            echo "${BRed}  |_| |_|  |_|\___//_/\_\ ${NC}"
+        fi
     fi
-    unset f
-  done
-  echo ""
+
+    ### Complete Messages
+    echo -e "\n${BCyan}This is ZSH ${BRed}${ZSH_VERSION}${BCyan} - DISPLAY on ${BRed}$DISPLAY${NC}\n"
+    #echo "Loading .zshrc completed!! (ZDOTDIR=${ZDOTDIR})"
+
+    # Loads the file except executable one.
+    test -d $BIN || mkdir -p $BIN
+    if [ -d $BIN ]; then
+        for f in $(echo "$BIN"/*.sh)
+        do
+            if [ ! -x "$f" ]; then
+                source "$f" && echo " loaded $f"
+            fi
+            unset f
+        done
+        echo ""
+    fi
+
+    if [ -d ~/.zsh/plugins ];false; then
+        local plugin
+        local -a plugins
+        #plugins=( $(find ~/.zsh/plugins -maxdepth 2 -type f -name "*sh") )
+        plugins=($(find ~/.zsh/plugins -maxdepth 2 -type f \( -name "*.sh" -or -name "*.bash" -or -name "*.zsh" \) -print))
+
+        for plugin in "${plugins[@]}"
+        do
+            if [ ! -x "$plugin" ]; then
+                [[ "$plugin" =~ "syntax" ]] && continue
+                [[ "$plugin" =~ "visual" ]] && continue
+                source "$plugin" && echo " load-plugin ${plugin/$HOME/~}"
+            fi
+        done
+        echo ""
+    fi
+    return 0
+}
+if zsh_at_startup; then
+    source ~/.zsh/plugins/enhancd/enhancd.sh
+    source ~/.zsh/plugins/favdir/favdir.sh
+    source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+    source ~/.zsh/plugins/vi-mode-visual/vi-mode-visual.sh
+    source ~/.zsh/plugins/opp.zsh/opp.zsh
+    #source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
-#if [ -d $BIN ]; then
-#  if ls -A1 $BIN/ | grep -q '.sh'; then
-#    for f in $BIN/*.sh ; do
-#      [ ! -x "$f" ] && source "$f" && echo " load $f"
-#    done
-#    echo ""
-#    unset f
-#  fi
-#fi
+
+# Utility functions {{{1
+function chpwd() #{{{2
+{
+    ls_abbrev
+}
+
+function ls_abbrev() #{{{2
+{
+    # -a : Do not ignore entries starting with ..
+    # -C : Force multi-column output.
+    # -F : Append indicator (one of */=>@|) to entries.
+    local cmd_ls='ls'
+    local -a opt_ls
+    opt_ls=('-aCF' '--color=always')
+    case "${OSTYPE}" in
+        freebsd*|darwin*)
+            if type gls > /dev/null 2>&1; then
+                cmd_ls='gls'
+            else
+                # -G : Enable colorized output.
+                opt_ls=('-aCFG')
+            fi
+            ;;
+    esac
+    cmd_ls='/bin/ls'
+    opt_ls=('-aCFG')
+
+    local ls_result
+    ls_result=$(CLICOLOR_FORCE=1 COLUMNS=$COLUMNS command $cmd_ls ${opt_ls[@]} | sed $'/^\e\[[0-9;]*m$/d')
+
+    local ls_lines=$(echo "$ls_result" | wc -l | tr -d ' ')
+
+    if [ $ls_lines -gt 10 ]; then
+        echo "$ls_result" | head -n 5
+        echo '...'
+        echo "$ls_result" | tail -n 5
+        echo "$(command ls -1 -A | wc -l | tr -d ' ') files exist"
+    else
+        echo "$ls_result"
+    fi
+}
+
+function ssh() #{{{2
+{
+    if [[ -n $(printenv TMUX) ]]; then
+        local window_name=$(tmux display -p '#{window_name}')
+        tmux rename-window -- "$@[-1]" # zsh specified
+        # tmux rename-window -- "${!#}" # for bash
+        command ssh $@
+        tmux rename-window $window_name
+    else
+        command ssh $@
+    fi
+}
+
+function show_buffer_stack() #{{{2
+{
+    POSTDISPLAY="
+    stack: $LBUFFER"
+    zle push-line-or-edit
+}
+zle -N show_buffer_stack
+setopt noflowcontrol
+bindkey '^Q' show_buffer_stack
+
+function pbcopy-buffer() #{{{2
+{
+    print -rn $BUFFER | pbcopy
+    zle -M "pbcopy: ${BUFFER}"
+}
+
+zle -N pbcopy-buffer
+bindkey '^x^p' pbcopy-buffer
+
+# Utils for osx {{{2
+if is_osx; then
+    function op()
+    {
+        if [ -p /dev/stdin ]; then
+            open $(cat -) "$@"
+        elif [ -z "$1" ]; then
+            open .
+        else
+            open "$@"
+        fi
+    }
+
+    function tex()
+    {
+        if ! is_exist 'platex' || ! is_exist 'dvipdfmx'; then
+            return 1
+        fi
+        platex "$1" && dvipdfmx "${1/.tex/.dvi}"
+        if [ $? -eq 0 ]; then
+            echo -e "\n\033[31mCompile complete!\033[m"
+            if is_exist 'open'; then
+                open "${1/.tex/.pdf}"
+            fi
+        fi
+    }
+
+    function poweroff()
+    {
+        osascript -e "set Volume 0"
+        osascript -e 'tell application "Finder" to shut down'
+    }
+fi
+
+# Some utils about google {{{2
+function google()
+{
+    is_exist w3m || return 1
+
+    local str opt
+    if [ $ != 0 ]; then
+        for i in $*; do
+            str="$str+$i"
+        done
+        str=`echo $str | sed 's/^\+//'`
+        opt='search?num=50&hl=ja&lr=lang_ja'
+        opt="${opt}&q=${str}"
+    fi
+    w3m http://www.google.co.jp/$opt
+}
+
+function google_translate()
+{
+    is_exist w3m || return 1
+
+    local str opt cond
+
+    if [ $# != 0 ]; then
+        str=`echo $1 | sed -e 's/  */+/g'` # 1$BJ8;z0J>e$NH>3Q6uGr$r(B+$B$KJQ49(B
+        cond=$2
+        if [ $cond = "ja-en" ]; then
+            # ja -> en $BK]Lu(B
+            opt='?hl=ja&sl=ja&tl=en&ie=UTF-8&oe=UTF-8'
+        else
+            # en -> ja $BK]Lu(B
+            opt='?hl=ja&sl=en&tl=ja&ie=UTF-8&oe=UTF-8'
+        fi
+    else
+        opt='?hl=ja&sl=en&tl=ja&ie=UTF-8&oe=UTF-8'
+    fi
+
+    opt="${opt}&text=${str}"
+    w3m +13 -dump "http://translate.google.com/${opt}"
+}
+
+function gte()
+{
+    google_translate "$*" "en-ja" | sed -n -e 20p
+}
+
+function gtj()
+{
+    google_translate "$*" "ja-en" | sed -n -e 21p
+}
 
 
-# Option {{{1
+# Keybinds and widgets {{{1
+WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+# widgets {{{2
+kill-backward-blank-word() #{{{3
+{
+    zle set-mark-command
+    zle vi-backward-blank-word
+    zle kill-region
+}
+zle -N kill-backward-blank-word
+bindkey '^Y' kill-backward-blank-word
 
+peco-select-history() #{{{3
+{
+    BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$LBUFFER")
+    CURSOR=${#BUFFER}
+    zle accept-line
+    zle clear-screen
+}
+zle -N peco-select-history
+bindkey '^r' peco-select-history
+
+peco-select-git-add() #{{{3
+{
+    local SELECTED_FILE_TO_ADD="$(git status --porcelain | \
+        peco --query "$LBUFFER" | \
+        awk -F ' ' '{print $NF}')"
+    if [ -n "$SELECTED_FILE_TO_ADD" ]; then
+        BUFFER="git add $(echo "$SELECTED_FILE_TO_ADD" | tr '\n' ' ')"
+        CURSOR=$#BUFFER
+    fi
+    zle accept-line
+    # zle clear-screen
+}
+zle -N peco-select-git-add
+bindkey "^x^g" peco-select-git-add
+
+peco-git-recent-branches() #{{{3
+{
+    local selected_branch=$(git for-each-ref --format='%(refname)' --sort=-committerdate refs/heads | \
+        perl -pne 's{^refs/heads/}{}' | \
+        peco)
+    if [ -n "$selected_branch" ]; then
+        BUFFER="git checkout ${selected_branch}"
+        zle accept-line
+    fi
+    zle clear-screen
+}
+zle -N peco-git-recent-branches
+bindkey "^g^b" peco-git-recent-branches
+
+peco-dfind() #{{{3
+{
+    if ls -F -1 | grep -q "/$"; then
+        local current_buffer=$BUFFER
+        local selected_dir="$(find . -maxdepth 5 -type d ! -path "*/.*"| peco)"
+        if [ -d "$selected_dir" ]; then
+            BUFFER="${current_buffer} \"${selected_dir}\""
+            CURSOR=$#BUFFER
+            zle accept-line
+        fi
+        zle clear-screen
+    fi
+}
+zle -N peco-dfind
+bindkey '^z' peco-dfind
+
+do-enter() #{{{3
+{
+    if [ -n "$BUFFER" ]; then
+        zle accept-line
+        return 0
+    fi
+    echo
+    ls_abbrev
+    #if [ "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = 'true' ]; then
+    #    echo
+    #    echo -e "\e[0;33m--- git status ---\e[0m"
+    #    git status -sb 2> /dev/null
+    #fi
+    #call_precmd
+    zle reset-prompt
+    return 0
+}
+zle -N do-enter
+bindkey '^m' do-enter
+
+# keybinds {{{2
+# Default keybinds
+#bindkey -d
+# Use vim-like key binding
+bindkey -v
+
+# Escape insert-mode with jj when 'bindkey -v'
+bindkey -M viins 'jj' vi-cmd-mode
+bindkey -M vicmd "H" beginning-of-line
+bindkey -M vicmd "L" end-of-line
+
+# Useful key binding like emacs
+bindkey "^A" beginning-of-line
+bindkey "^B" backward-char
+bindkey "^E" end-of-line
+bindkey "^F" forward-char
+bindkey "^G" send-break
+bindkey "^H" backward-delete-char
+bindkey "^I" expand-or-complete
+bindkey "^L" clear-screen
+bindkey "^M" accept-line
+bindkey "^N" down-line-or-history
+bindkey "^P" up-line-or-history
+bindkey "^R" history-incremental-search-backward
+bindkey "^U" kill-whole-line
+bindkey "^W" backward-kill-word
+
+if has_plugin 'zsh-history-substring-search'; then
+    # bind P and N for EMACS mode
+    bindkey -M emacs '^P' history-substring-search-up
+    bindkey -M emacs '^N' history-substring-search-down
+
+    # bind k and j for VI mode
+    bindkey -M vicmd 'k' history-substring-search-up
+    bindkey -M vicmd 'j' history-substring-search-down
+
+    # bind UP and DOWN arrow keys
+    bindkey '^[[A' history-substring-search-up
+    bindkey '^[[B' history-substring-search-down
+
+    # bind P and N keys
+    bindkey '^P' history-substring-search-up
+    bindkey '^N' history-substring-search-down
+fi
+
+# Shift-Tab
+bindkey "^[[Z" reverse-menu-complete
+
+#bindkey "^Q" show_buffer_stack
+local p_buffer_stack=""
+local -a buffer_stack_arr
+
+function make_p_buffer_stack()
+{
+    if [[ ! $#buffer_stack_arr > 0 ]]; then
+        p_buffer_stack=""
+        return
+    fi
+    p_buffer_stack="%F{red}<stack:$buffer_stack_arr>%f"
+}
+
+function show_buffer_stack()
+{
+    local cmd_str_len=$#LBUFFER
+    [[ cmd_str_len > 10 ]] && cmd_str_len=10
+    buffer_stack_arr=("[$LBUFFER[1,${cmd_str_len}]]" $buffer_stack_arr)
+    make_p_buffer_stack
+    zle push-line-or-edit
+    zle reset-prompt
+}
+
+function check_buffer_stack()
+{
+    [[ $#buffer_stack_arr > 0 ]] && shift buffer_stack_arr
+    make_p_buffer_stack
+}
+
+zle -N show_buffer_stack
+bindkey "^Q" show_buffer_stack
+add-zsh-hook precmd check_buffer_stack
+
+RPROMPT='${p_buffer_stack}'
+
+# Prompt settings {{{1
+# L prompt {{{2
+PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[cyan]%}INS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
+function zle-line-init zle-keymap-select()
+{
+    case $KEYMAP in
+        vicmd)
+        if [ "$VI_VIS_MODE" -eq 0 ]; then
+            PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[red]%}NOR%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
+        else
+            PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[red]%}VIS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
+        fi
+            ;;
+        main|viins)
+            PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[cyan]%}INS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
+            ;;
+    esac
+    zle reset-prompt
+}
+zle -N zle-line-init
+zle -N zle-keymap-select
+
+#function zle-line-init zle-keymap-select
+#{
+#    EMACS_INSERT=`bindkey -lL main | cut -d ' ' -f 3`
+#    if echo $EMACS_INSERT | grep emacs > /dev/null 2>&1;then
+#        EMACS_INSERT="%K{black}%F{011}%k%f%K{011}%F{034} % $EMACS_INSERT %k%f"
+#        VIM_NORMAL="%K{011}%F{125}%k%f%K{125}%F{015} % NORMAL %k%f%K{125}%F{black}%k%f"
+#        VIM_INSERT="%K{011}%F{075}%k%f%K{075}%F{026} % INSERT %k%f%K{075}%F{black}%k%f"
+#    else
+#        EMACS_INSERT="%K{black}%F{034}%k%f%K{034}%F{011} % $EMACS_INSERT %k%f"
+#        VIM_NORMAL="%K{034}%F{125}%k%f%K{125}%F{015} % NORMAL %k%f%K{125}%F{black}%k%f"
+#        VIM_INSERT="%K{034}%F{075}%k%f%K{075}%F{026} % INSERT %k%f%K{075}%F{black}%k%f"
+#    fi
+#    #RPS1="$EMACS_INSERT${${KEYMAP/vicmd/$VIM_NORMAL}/(main|viins)/$VIM_INSERT}"
+#    #RPS2=$RPS1
+#    PROMPT="$EMACS_INSERT${${KEYMAP/vicmd/$VIM_NORMAL}/(main|viins)/$VIM_INSERT}"
+#    zle reset-prompt
+#}
+#zle -N zle-line-init
+#zle -N zle-keymap-select
+
+# R prompt {{{2
+setopt prompt_subst
+function branch-status-check()
+{
+    local prefix branchname suffix
+    if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
+        return
+    fi
+    branchname=`get-branch-name`
+    if [[ -z $branchname ]]; then
+        return
+    fi
+    prefix=`get-branch-status`
+    suffix='%{'${reset_color}'%}'
+    echo ${prefix}${branchname}${suffix}
+}
+function get-branch-name()
+{
+    echo `git rev-parse --abbrev-ref HEAD 2> /dev/null`
+}
+function get-branch-status()
+{
+    local res color
+    output=`git status --short 2> /dev/null`
+    if [ -z "$output" ]; then
+        res=':' # status Clean
+        color='%{'${fg[green]}'%}'
+    elif [[ $output =~ "[\n]?\?\? " ]]; then
+        res='?:' # Untracked
+        color='%{'${fg[yellow]}'%}'
+    elif [[ $output =~ "[\n]? M " ]]; then
+        res='M:' # Modified
+        color='%{'${fg[red]}'%}'
+    else
+        res='A:' # Added to commit
+        color='%{'${fg[cyan]}'%}'
+    fi
+    #echo ${color}${res}'%{'${reset_color}'%}'
+    echo ${color}
+}
+
+setopt transient_rprompt
+function r-prompt()
+{
+    if [ -f $BIN/git-prompt.sh ]; then
+        RPROMPT='%{'${fg[red]}'%}'`echo $(__git_ps1 "(%s)")|sed -e s/%/%%/|sed -e s/%%%/%%/|sed -e 's/\\$/\\\\$/'`'%{'${reset_color}'%}'
+        RPROMPT+=$' at %{${fg[blue]}%}[%~]%{${reset_color}%}'
+    else
+        RPROMPT=$'`branch-status-check` at %{${fg[blue]}%}[%~]%{${reset_color}%}'
+    fi
+    RPROMPT+='${p_buffer_stack}'
+}
+add-zsh-hook precmd r-prompt
+
+export GIT_PS1_SHOWDIRTYSTATE=1
+export GIT_PS1_SHOWSTASHSTATE=1
+export GIT_PS1_SHOWUNTRACKEDFILES=1
+export GIT_PS1_SHOWUPSTREAM="auto"
+export GIT_PS1_DESCRIBE_STYLE="branch"
+export GIT_PS1_SHOWCOLORHINTS=0
+
+# Other prompt {{{2
+SPROMPT="%{${fg[red]}%}Did you mean?: %R -> %r [nyae]? %{${reset_color}%}"
+
+if false; then
+RPROMPT=""
+
+autoload -Uz vcs_info
+autoload -Uz add-zsh-hook
+autoload -Uz is-at-least
+autoload -Uz colors
+
+# $B0J2<$N(B3$B$D$N%a%C%;!<%8$r%(%/%9%]!<%H$9$k(B
+#   $vcs_info_msg_0_ : $BDL>o%a%C%;!<%8MQ(B ($BNP(B)
+#   $vcs_info_msg_1_ : $B7Y9p%a%C%;!<%8MQ(B ($B2+?'(B)
+#   $vcs_info_msg_2_ : $B%(%i!<%a%C%;!<%8MQ(B ($B@V(B)
+zstyle ':vcs_info:*' max-exports 3
+
+zstyle ':vcs_info:*' enable git svn hg bzr
+# $BI8=`$N%U%)!<%^%C%H(B(git $B0J30$G;HMQ(B)
+# misc(%m) $B$ODL>o$O6uJ8;zNs$KCV$-49$($i$l$k(B
+zstyle ':vcs_info:*' formats '(%s)-[%b]'
+zstyle ':vcs_info:*' actionformats '(%s)-[%b]' '%m' '<!%a>'
+zstyle ':vcs_info:(svn|bzr):*' branchformat '%b:r%r'
+zstyle ':vcs_info:bzr:*' use-simple true
+
+
+if is-at-least 4.3.10; then
+    # git $BMQ$N%U%)!<%^%C%H(B
+    # git $B$N$H$-$O%9%F!<%8$7$F$$$k$+$I$&$+$rI=<((B
+    zstyle ':vcs_info:git:*' formats '(%s)-[%b]' '%c%u %m'
+    zstyle ':vcs_info:git:*' actionformats '(%s)-[%b]' '%c%u %m' '<!%a>'
+    zstyle ':vcs_info:git:*' check-for-changes true
+    zstyle ':vcs_info:git:*' stagedstr "+"    # %c $B$GI=<($9$kJ8;zNs(B
+    zstyle ':vcs_info:git:*' unstagedstr "-"  # %u $B$GI=<($9$kJ8;zNs(B
+fi
+
+# hooks $B@_Dj(B
+if is-at-least 4.3.11; then
+    # git $B$N$H$-$O%U%C%/4X?t$r@_Dj$9$k(B
+
+    # formats '(%s)-[%b]' '%c%u %m' , actionformats '(%s)-[%b]' '%c%u %m' '<!%a>'
+    # $B$N%a%C%;!<%8$r@_Dj$9$kD>A0$N%U%C%/4X?t(B
+    # $B:#2s$N@_Dj$N>l9g$O(Bformat $B$N;~$O(B2$B$D(B, actionformats $B$N;~$O(B3$B$D%a%C%;!<%8$,$"$k$N$G(B
+    # $B3F4X?t$,:GBg(B3$B2s8F$S=P$5$l$k!#(B
+    zstyle ':vcs_info:git+set-message:*' hooks \
+                                            git-hook-begin \
+                                            git-untracked \
+                                            git-push-status \
+                                            git-nomerge-branch \
+                                            git-stash-count
+
+    # $B%U%C%/$N:G=i$N4X?t(B
+    # git $B$N:n6H%3%T!<$N$"$k%G%#%l%/%H%j$N$_%U%C%/4X?t$r8F$S=P$9$h$&$K$9$k(B
+    # (.git $B%G%#%l%/%H%jFb$K$$$k$H$-$O8F$S=P$5$J$$(B)
+    # .git $B%G%#%l%/%H%jFb$G$O(B git status --porcelain $B$J$I$,%(%i!<$K$J$k$?$a(B
+    function +vi-git-hook-begin() {
+        if [[ $(command git rev-parse --is-inside-work-tree 2> /dev/null) != 'true' ]]; then
+            # 0$B0J30$rJV$9$H$=$l0J9_$N%U%C%/4X?t$O8F$S=P$5$l$J$$(B
+            return 1
+        fi
+
+        return 0
+    }
+
+    # untracked $B%U%!%$%kI=<((B
+    #
+    # untracked $B%U%!%$%k(B($B%P!<%8%g%s4IM}$5$l$F$$$J$$%U%!%$%k(B)$B$,$"$k>l9g$O(B
+    # unstaged (%u) $B$K(B ? $B$rI=<((B
+    function +vi-git-untracked() {
+        # zstyle formats, actionformats $B$N(B2$BHVL\$N%a%C%;!<%8$N$_BP>]$K$9$k(B
+        if [[ "$1" != "1" ]]; then
+            return 0
+        fi
+
+        if command git status --porcelain 2> /dev/null \
+            | awk '{print $1}' \
+            | command grep -F '??' > /dev/null 2>&1 ; then
+
+            # unstaged (%u) $B$KDI2C(B
+            hook_com[unstaged]+='?'
+        fi
+    }
+
+    # push $B$7$F$$$J$$%3%_%C%H$N7o?tI=<((B
+    #
+    # $B%j%b!<%H%j%]%8%H%j$K(B push $B$7$F$$$J$$%3%_%C%H$N7o?t$r(B
+    # pN $B$H$$$&7A<0$G(B misc (%m) $B$KI=<($9$k(B
+    function +vi-git-push-status() {
+        # zstyle formats, actionformats $B$N(B2$BHVL\$N%a%C%;!<%8$N$_BP>]$K$9$k(B
+        if [[ "$1" != "1" ]]; then
+            return 0
+        fi
+
+        if [[ "${hook_com[branch]}" != "master" ]]; then
+            # master $B%V%i%s%A$G$J$$>l9g$O2?$b$7$J$$(B
+            return 0
+        fi
+
+        # push $B$7$F$$$J$$%3%_%C%H?t$r<hF@$9$k(B
+        local ahead
+        ahead=$(command git rev-list origin/master..master 2>/dev/null \
+            | wc -l \
+            | tr -d ' ')
+
+        if [[ "$ahead" -gt 0 ]]; then
+            # misc (%m) $B$KDI2C(B
+            hook_com[misc]+="(p${ahead})"
+        fi
+    }
+
+    # $B%^!<%8$7$F$$$J$$7o?tI=<((B
+    #
+    # master $B0J30$N%V%i%s%A$K$$$k>l9g$K!"(B
+    # $B8=:_$N%V%i%s%A>e$G$^$@(B master $B$K%^!<%8$7$F$$$J$$%3%_%C%H$N7o?t$r(B
+    # (mN) $B$H$$$&7A<0$G(B misc (%m) $B$KI=<((B
+    function +vi-git-nomerge-branch() {
+        # zstyle formats, actionformats $B$N(B2$BHVL\$N%a%C%;!<%8$N$_BP>]$K$9$k(B
+        if [[ "$1" != "1" ]]; then
+            return 0
+        fi
+
+        if [[ "${hook_com[branch]}" == "master" ]]; then
+            # master $B%V%i%s%A$N>l9g$O2?$b$7$J$$(B
+            return 0
+        fi
+
+        local nomerged
+        nomerged=$(command git rev-list master..${hook_com[branch]} 2>/dev/null | wc -l | tr -d ' ')
+
+        if [[ "$nomerged" -gt 0 ]] ; then
+            # misc (%m) $B$KDI2C(B
+            hook_com[misc]+="(m${nomerged})"
+        fi
+    }
+
+
+    # stash $B7o?tI=<((B
+    #
+    # stash $B$7$F$$$k>l9g$O(B :SN $B$H$$$&7A<0$G(B misc (%m) $B$KI=<((B
+    function +vi-git-stash-count() {
+        # zstyle formats, actionformats $B$N(B2$BHVL\$N%a%C%;!<%8$N$_BP>]$K$9$k(B
+        if [[ "$1" != "1" ]]; then
+            return 0
+        fi
+
+        local stash
+        stash=$(command git stash list 2>/dev/null | wc -l | tr -d ' ')
+        if [[ "${stash}" -gt 0 ]]; then
+            # misc (%m) $B$KDI2C(B
+            hook_com[misc]+=":S${stash}"
+        fi
+    }
+
+fi
+
+function _update_vcs_info_msg() {
+    local -a messages
+    local prompt
+
+    LANG=en_US.UTF-8 vcs_info
+
+    if [[ -z ${vcs_info_msg_0_} ]]; then
+        # vcs_info $B$G2?$b<hF@$7$F$$$J$$>l9g$O%W%m%s%W%H$rI=<($7$J$$(B
+        prompt=""
+    else
+        # vcs_info $B$G>pJs$r<hF@$7$?>l9g(B
+        # $vcs_info_msg_0_ , $vcs_info_msg_1_ , $vcs_info_msg_2_ $B$r(B
+        # $B$=$l$>$lNP!"2+?'!"@V$GI=<($9$k(B
+        [[ -n "$vcs_info_msg_0_" ]] && messages+=( "%F{green}${vcs_info_msg_0_}%f" )
+        [[ -n "$vcs_info_msg_1_" ]] && messages+=( "%F{yellow}${vcs_info_msg_1_}%f" )
+        [[ -n "$vcs_info_msg_2_" ]] && messages+=( "%F{red}${vcs_info_msg_2_}%f" )
+
+        # $B4V$K%9%Z!<%9$rF~$l$FO"7k$9$k(B
+        prompt="${(j: :)messages}"
+    fi
+
+    RPROMPT="$prompt"
+}
+add-zsh-hook precmd _update_vcs_info_msg
+fi
+
+# Basic options {{{1
 limit coredumpsize 0
 umask 022
 setopt auto_cd
@@ -302,6 +1005,160 @@ setopt no_prompt_cr
 # Let me know mail arrival
 setopt mail_warning
 
+# History {{{2
+# History file
+HISTFILE=~/.zsh_history
+# History size in memory
+HISTSIZE=10000
+# The number of histsize
+SAVEHIST=1000000
+# The size of asking history
+LISTMAX=50
+# Do not add in root
+if [ $UID = 0 ]; then
+    unset HISTFILE
+    SAVEHIST=0
+fi
+
+# Do not record an event that was just recorded again.
+setopt hist_ignore_dups
+
+# Delete an old recorded event if a new event is a duplicate.
+setopt hist_ignore_all_dups
+setopt hist_save_nodups
+
+# Expire a duplicate event first when trimming history.
+setopt hist_expire_dups_first
+
+# Do not display a previously found event.
+setopt hist_find_no_dups
+
+# Shere history
+setopt share_history
+
+# Pack extra blank
+setopt hist_reduce_blanks
+
+# Write to the history file immediately, not when the shell exits.
+setopt inc_append_history
+
+# Remove comannd of 'hostory' or 'fc -l' from history list
+setopt hist_no_store
+
+# Remove functions from history list
+setopt hist_no_functions
+
+# Record start and end time to history file
+setopt extended_history
+
+# Ignore the beginning space command to history file
+setopt hist_ignore_space
+
+# Append to history file
+setopt append_history
+
+# Edit history file during call history before executing
+setopt hist_verify
+
+# Enable history system like a Bash
+setopt bang_hist
+
+# Misc and test {{{1
+
+autoload -Uz zmv
+alias zmv='noglob zmv -W'
+
+#local DEFAULT=$'%{^[[m%}'$
+local RED=$'%{^[[1;31m%}'$
+local GREEN=$'%{^[[1;32m%}'$
+local YELLOW=$'%{^[[1;33m%}'$
+local BLUE=$'%{^[[1;34m%}'$
+local PURPLE=$'%{^[[1;35m%}'$
+local LIGHT_BLUE=$'%{^[[1;36m%}'$
+local WHITE=$'%{^[[1;37m%}'$
+
+# Stronger completing
+zstyle ':completion:*:default' menu select=2
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
+zstyle ':completion:*:messages' format '%F{YELLOW}%d'$DEFAULT
+zstyle ':completion:*:warnings' format '%F{RED}No matches for:''%F{YELLOW} %d'$DEFAULT
+zstyle ':completion:*:descriptions' format '%F{YELLOW}completing %B%d%b'$DEFAULT
+zstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAULT
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' list-separator '-->'
+zstyle ':completion:*:manuals' separate-sections true
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+zmodload zsh/complist
+autoload -Uz compinit && compinit -u
+zstyle ':completion:*:default' menu select=2
+#zstyle ':completion:*' menu select interactive
+setopt menu_complete
+
+zmodload zsh/complist
+# "bindkey -M menuselect"$B@_Dj$G$-$k$h$&$K$9$k$?$a$N%b%8%e!<%k%m!<%I(B
+bindkey -v '^a' beginning-of-line                             # $B9TF,$X(B(menuselect$B$G$OJd408uJd$N@hF,$X(B)
+bindkey -v '^b' backward-char                                 # $B#1J8;z:8$X(B(menuselect$B$G$OJd408uJd(B1$B$D:8$X(B)
+bindkey -v '^e' end-of-line                                   # $B9TKv$X(B(menuselect$B$G$OJd408uJd$N:G8eHx$X(B)
+bindkey -v '^f' forward-char                                  # $B#1J8;z1&$X(B(menuselect$B$G$OJd408uJd(B1$B$D1&$X(B)
+bindkey -v '^h' backward-delete-char                          # 1$BJ8;z:o=|(B(menuselect$B$G$O9J$j9~$_$N(B1$BJ8;z:o=|(B)
+bindkey -v '^i' expand-or-complete                            # $BJd403+;O(B
+bindkey -M menuselect '^g' .send-break                        # send-break2$B2sJ,$N8z2L(B
+bindkey -M menuselect '^i' forward-char                       # $BJd408uJd(B1$B$D1&$X(B
+bindkey -M menuselect '^j' .accept-line                       # accept-line2$B2sJ,$N8z2L(B
+bindkey -M menuselect '^k' accept-and-infer-next-history      # $B<!$NJd40%a%K%e!<$rI=<($9$k(B
+bindkey -M menuselect '^n' down-line-or-history               # $BJd408uJd(B1$B$D2<$X(B
+bindkey -M menuselect '^p' up-line-or-history                 # $BJd408uJd(B1$B$D>e$X(B
+bindkey -M menuselect '^r' history-incremental-search-forward # $BJd408uJdFb%$%s%/%j%a%s%?%k%5!<%A(B
+# $BJd40;~$K(Bhjkl$B$GA*Br(B
+bindkey -M menuselect '^h' vi-backward-char
+bindkey -M menuselect '^j' vi-down-line-or-history
+bindkey -M menuselect '^k' vi-up-line-or-history
+bindkey -M menuselect '^l' vi-forward-char
+
+# $BL>A0$G?'$rIU$1$k$h$&$K$9$k(B
+autoload colors
+colors
+
+# LS_COLORS$B$r@_Dj$7$F$*$/(B
+export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+
+# $B%U%!%$%kJd408uJd$K?'$rIU$1$k(B
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+zstyle ':completion:*:manuals' separate-sections true
+
+# $BJd404X?t$NI=<($r6/2=$9$k(B
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
+zstyle ':completion:*:messages' format '%F{YELLOW}%d'$DEFAULT
+zstyle ':completion:*:warnings' format '%F{RED}No matches for:''%F{YELLOW} %d'$DEFAULT
+zstyle ':completion:*:descriptions' format '%F{YELLOW}completing %B%d%b'$DEFAULT
+zstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAULT
+
+# $B%^%C%A<oJL$rJL!9$KI=<((B
+zstyle ':completion:*' group-name ''
+
+autoload -Uz is-at-least
+if is-at-least 4.3.10; then
+    autoload -Uz vcs_info
+    # $B$3$3$K(B vcs_info $B$K4X$o$k@_Dj$r$+$/(B
+fi
+REPORTTIME=3
+
+## TEST
+
+#declare -a plugins
+#plugins=( $(find .zsh/plugins -maxdepth 1 -type f -name "*sh") )
+#
+#for plugin in "${plugins[@]}"
+#do
+#  echo $plugin
+#done
+
 # Aliases {{{1
 #if $is_mac; then
 #  function macvim()
@@ -319,22 +1176,22 @@ setopt mail_warning
 #fi
 
 if is_osx; then
-  alias ls='/bin/ls -GF'
+    alias ls='/bin/ls -GF'
 fi
 
 if is_exist 'git'; then
-  alias gst='git status'
+    alias gst='git status'
 fi
 
 if is_osx; then
-  if is_exist 'qlmanage'; then
-    alias ql='qlmanage -p "$@" >& /dev/null'
-  fi
+    if is_exist 'qlmanage'; then
+        alias ql='qlmanage -p "$@" >& /dev/null'
+    fi
 fi
 
 # function
 if is_exist 'richpager'; then
-  alias cl="richpager"
+    alias cl="richpager"
 fi
 
 # Common aliases
@@ -356,7 +1213,6 @@ alias ll="ls -lv --group-directories-first"
 alias cp="cp -i"
 alias mv="mv -i"
 
-#alias gg='nocorrect _favdir_gg'
 alias cp='nocorrect cp'
 alias mv='nocorrect mv'
 alias mkdir='nocorrect mkdir'
@@ -371,17 +1227,17 @@ alias egrep='egrep --color=auto'
 
 # Use if colordiff exists
 if is_exist 'colordiff'; then
-  alias diff='colordiff -u'
+    alias diff='colordiff -u'
 else
-  if [ -f "$BIN"/colordiff ]; then
-    alias diff="$BIN/colordiff -u"
-  else
-    alias diff='diff -u'
-  fi
+    if [ -f "$BIN"/colordiff ]; then
+        alias diff="$BIN/colordiff -u"
+    else
+        alias diff='diff -u'
+    fi
 fi
 
 if [ -f $BIN/saferm.sh ]; then
-  alias rm="$BIN/saferm.sh"
+    alias rm="$BIN/saferm.sh"
 fi
 
 # Use plain vim.
@@ -394,6 +1250,7 @@ alias nvim='vim -N -u NONE -i NONE'
 alias sudo='sudo '
 
 # Global aliases
+alias -g C='| pbcopy'
 alias -g G='| grep'
 alias -g L='| less'
 alias -g H='| head'
@@ -404,377 +1261,48 @@ alias -g X='| xargs'
 
 alias -s py=python
 
-function extract() {
-case $1 in
-  *.tar.gz|*.tgz) tar xzvf $1;;
-  *.tar.xz) tar Jxvf $1;;
-  *.zip) unzip $1;;
-  *.lzh) lha e $1;;
-  *.tar.bz2|*.tbz) tar xjvf $1;;
-  *.tar.Z) tar zxvf $1;;
-  *.gz) gzip -d $1;;
-  *.bz2) bzip2 -dc $1;;
-  *.Z) uncompress $1;;
-  *.tar) tar xvf $1;;
-  *.arj) unarj $1;;
-esac
+function extract()
+{
+    case "$1" in
+        *.tar.gz|*.tgz)  tar xzvf $1;;
+        *.tar.xz)        tar Jxvf $1;;
+        *.zip)           unzip $1;;
+        *.lzh)           lha e $1;;
+        *.tar.bz2|*.tbz) tar xjvf $1;;
+        *.tar.Z)         tar zxvf $1;;
+        *.gz)            gzip -d $1;;
+        *.bz2)           bzip2 -dc $1;;
+        *.Z)             uncompress $1;;
+        *.tar)           tar xvf $1;;
+        *.arj)           unarj $1;;
+    esac
 }
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 
 if is_osx; then
-  alias google-chrome='open -a Google\ Chrome'
+    alias google-chrome='open -a Google\ Chrome'
 else
-  alias chrome='google-chrome'
+    alias chrome='google-chrome'
 fi
 alias -s html=chrome
 
 if is_osx; then
-  alias eog='open -a Preview'
+    alias eog='open -a Preview'
 fi
 alias -s {png,jpg,bmp,PNG,JPG,BMP}=eog
 
-# Utils {{{1
+# __END__ {{{1
+# Setup zsh-autosuggestions
+source ~/.zsh/plugins/zsh-autosuggestions/autosuggestions.zsh
 
-function ssh() {
-  if [[ -n $(printenv TMUX) ]]
-  then
-    local window_name=$(tmux display -p '#{window_name}')
-    tmux rename-window -- "$@[-1]" # zsh specified
-    # tmux rename-window -- "${!#}" # for bash
-    command ssh $@
-    tmux rename-window $window_name
-  else
-    command ssh $@
-  fi
-}
-
-# Make all bind clear
-bindkey -d
-# Use vim-like key binding
-bindkey -v
-
-# Escape insert-mode with jj when 'bindkey -v'
-bindkey -M viins 'jj' vi-cmd-mode
-
-# Useful key binding like emacs
-bindkey "^A" beginning-of-line
-bindkey "^B" backward-char
-bindkey "^E" end-of-line
-bindkey "^F" forward-char
-bindkey "^G" send-break
-bindkey "^H" backward-delete-char
-bindkey "^I" expand-or-complete
-bindkey "^L" clear-screen
-bindkey "^M" accept-line
-bindkey "^N" down-line-or-history
-bindkey "^P" up-line-or-history
-bindkey "^R" history-incremental-search-backward
-bindkey "^U" kill-whole-line
-bindkey "^W" backward-kill-word
-
-chpwd() {
-  ls_abbrev
-}
-ls_abbrev() {
-  # -a : Do not ignore entries starting with ..
-  # -C : Force multi-column output.
-  # -F : Append indicator (one of */=>@|) to entries.
-  local cmd_ls='ls'
-  local -a opt_ls
-  opt_ls=('-aCF' '--color=always')
-  case "${OSTYPE}" in
-    freebsd*|darwin*)
-      if type gls > /dev/null 2>&1; then
-        cmd_ls='gls'
-      else
-        # -G : Enable colorized output.
-        opt_ls=('-aCFG')
-      fi
-      ;;
-  esac
-  cmd_ls='/bin/ls'
-  opt_ls=('-aCFG')
-
-  local ls_result
-  ls_result=$(CLICOLOR_FORCE=1 COLUMNS=$COLUMNS command $cmd_ls ${opt_ls[@]} | sed $'/^\e\[[0-9;]*m$/d')
-
-  local ls_lines=$(echo "$ls_result" | wc -l | tr -d ' ')
-
-  if [ $ls_lines -gt 10 ]; then
-    echo "$ls_result" | head -n 5
-    echo '...'
-    echo "$ls_result" | tail -n 5
-    echo "$(command ls -1 -A | wc -l | tr -d ' ') files exist"
-  else
-    echo "$ls_result"
-  fi
-}
-function do_enter() #{{{2
-{
-  if [ -n "$BUFFER" ]; then
-    zle accept-line
-    return 0
-  fi
-  echo
-  ls_abbrev
-  #if [ "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = 'true' ]; then
-  #    echo
-  #    echo -e "\e[0;33m--- git status ---\e[0m"
-  #    git status -sb 2> /dev/null
-  #fi
-  #call_precmd
-  zle reset-prompt
-  return 0
-}
-zle -N do_enter
-bindkey '^m' do_enter
-
-function show_buffer_stack() #{{{2
-{
-  POSTDISPLAY="
-  stack: $LBUFFER"
-  zle push-line-or-edit
-}
-zle -N show_buffer_stack
-setopt noflowcontrol
-bindkey '^Q' show_buffer_stack
-
-function pbcopy-buffer() #{{{2
-{
-  print -rn $BUFFER | pbcopy
-  zle -M "pbcopy: ${BUFFER}"
-}
-
-zle -N pbcopy-buffer
-bindkey '^x^p' pbcopy-buffer
-
-
-if $is_mac; then
-  function op()
-  {
-    if [ -p /dev/stdin ]; then
-      open $(cat -) "$@"
-    elif [ -z "$1" ]; then
-      open .
-    else
-      open "$@"
-    fi
-  }
-
-  function tex()
-  {
-    if ! $(is_exist 'platex') || ! $(is_exist 'dvipdfmx'); then
-      return 1
-    fi
-    platex "$1" && dvipdfmx "${1/.tex/.dvi}" && {
-    echo -e "\n\033[31mCompile complete!\033[m"
-  } && if $(is_exist 'open'); then
-  open "${1/.tex/.pdf}"; fi
-}
-
-function poweroff() {
-osascript -e "set Volume 0"
-osascript -e 'tell application "Finder" to shut down'
-  }
-fi
-
-# google {{{2
-function google()
-{
-  is_exist w3m || return 1
-
-  local str opt
-  if [ $ != 0 ]; then
-    for i in $*; do
-      str="$str+$i"
-    done
-    str=`echo $str | sed 's/^\+//'`
-    opt='search?num=50&hl=ja&lr=lang_ja'
-    opt="${opt}&q=${str}"
-  fi
-  w3m http://www.google.co.jp/$opt
-}
-
-function google_translate()
-{
-  is_exist w3m || return 1
-
-  local str opt cond
-
-  if [ $# != 0 ]; then
-    str=`echo $1 | sed -e 's/  */+/g'` # 1文字以上の半角空白を+に変換
-    cond=$2
-    if [ $cond = "ja-en" ]; then
-      # ja -> en 翻訳
-      opt='?hl=ja&sl=ja&tl=en&ie=UTF-8&oe=UTF-8'
-    else
-      # en -> ja 翻訳
-      opt='?hl=ja&sl=en&tl=ja&ie=UTF-8&oe=UTF-8'
-    fi
-  else
-    opt='?hl=ja&sl=en&tl=ja&ie=UTF-8&oe=UTF-8'
-  fi
-
-  opt="${opt}&text=${str}"
-  w3m +13 -dump "http://translate.google.com/${opt}"
-}
-function gte()
-{
-  google_translate "$*" "en-ja" | sed -n -e 20p
-}
-
-function gtj()
-{
-  google_translate "$*" "ja-en" | sed -n -e 21p
-}
-# Prompt {{{1
-# L prompt {{{2
-PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[cyan]%}INS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
-function zle-line-init zle-keymap-select()
-{
-  case $KEYMAP in
-    vicmd)
-      PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[red]%}NOR%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
-      ;;
-    main|viins)
-      PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[cyan]%}INS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
-      ;;
-  esac
-  zle reset-prompt
+# Enable autosuggestions automatically
+zle-line-init() {
+    zle autosuggest-start
 }
 zle -N zle-line-init
-zle -N zle-keymap-select
 
-# R prompt {{{2
-setopt prompt_subst
-function branch-status-check()
-{
-  local prefix branchname suffix
-  if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
-    return
-  fi
-  branchname=`get-branch-name`
-  if [[ -z $branchname ]]; then
-    return
-  fi
-  prefix=`get-branch-status`
-  suffix='%{'${reset_color}'%}'
-  echo ${prefix}${branchname}${suffix}
-}
-function get-branch-name()
-{
-  echo `git rev-parse --abbrev-ref HEAD 2> /dev/null`
-}
-function get-branch-status()
-{
-  local res color
-  output=`git status --short 2> /dev/null`
-  if [ -z "$output" ]; then
-    res=':' # status Clean
-    color='%{'${fg[green]}'%}'
-  elif [[ $output =~ "[\n]?\?\? " ]]; then
-    res='?:' # Untracked
-    color='%{'${fg[yellow]}'%}'
-  elif [[ $output =~ "[\n]? M " ]]; then
-    res='M:' # Modified
-    color='%{'${fg[red]}'%}'
-  else
-    res='A:' # Added to commit
-    color='%{'${fg[cyan]}'%}'
-  fi
-  #echo ${color}${res}'%{'${reset_color}'%}'
-  echo ${color}
-}
+# use ctrl+t to toggle autosuggestions(hopefully this wont be needed as
+# zsh-autosuggestions is designed to be unobtrusive)
+bindkey '^0' autosuggest-toggle
 
-if [ -f ~/.bin/git-prompt.sh ]; then
-  source ~/.bin/git-prompt.sh
-fi
-setopt TRANSIENT_RPROMPT
-function precmd()
-{
-  touch ~/zsh_cdhist
-  if [ "$PWD" != "$OLDPWD" ]; then
-    OLDPWD=$PWD
-    pwd >>~/zsh_cdhist
-  fi
-
-  if [ -f "$BIN"/git-prompt.sh ]; then
-    RPROMPT='%{'${fg[red]}'%}'`echo $(__git_ps1 "(%s)")|sed -e s/%/%%/|sed -e s/%%%/%%/|sed -e 's/\\$/\\\\$/'`'%{'${reset_color}'%}'
-    RPROMPT+=$' at %{${fg[blue]}%}[%~]%{${reset_color}%}'
-  else
-    RPROMPT=$'`branch-status-check` at %{${fg[blue]}%}[%~]%{${reset_color}%}'
-  fi
-}
-
-export GIT_PS1_SHOWDIRTYSTATE=1
-export GIT_PS1_SHOWSTASHSTATE=1
-export GIT_PS1_SHOWUNTRACKEDFILES=1
-export GIT_PS1_SHOWUPSTREAM="auto"
-export GIT_PS1_DESCRIBE_STYLE="branch"
-export GIT_PS1_SHOWCOLORHINTS=0
-
-# Other prompt {{{2
-SPROMPT="%{${fg[red]}%}Did you mean?: %R -> %r [nyae]? %{${reset_color}%}"
-
-# History {{{1
-
-# History file
-HISTFILE=~/.zsh_history
-# History size in memory
-HISTSIZE=10000
-# The number of histsize
-SAVEHIST=1000000
-# The size of asking history
-LISTMAX=50
-# Do not add in root
-if [ $UID = 0 ]; then
-  unset HISTFILE
-  SAVEHIST=0
-fi
-
-# Do not record an event that was just recorded again.
-setopt hist_ignore_dups
-# Delete an old recorded event if a new event is a duplicate.
-setopt hist_ignore_all_dups
-setopt hist_save_nodups
-# Expire a duplicate event first when trimming history.
-setopt hist_expire_dups_first
-# Do not display a previously found event.
-setopt hist_find_no_dups
-# Shere history
-setopt share_history
-#unsetopt share_history
-# Pack extra blank
-setopt hist_reduce_blanks
-# Write to the history file immediately, not when the shell exits.
-setopt inc_append_history
-# Remove comannd of 'hostory' or 'fc -l' from history list
-setopt hist_no_store
-# Remove functions from history list
-setopt hist_no_functions
-# Record start and end time to history file
-setopt extended_history
-# Ignore the beginning space command to history file
-setopt hist_ignore_space
-# Append to history file
-setopt append_history
-# Edit history file during call history before executing
-setopt hist_verify
-# Enable history system like a Bash
-setopt bang_hist
-
-# Other {{{1
-# Stronger completing
-zstyle ':completion:*:default' menu select=2
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
-zstyle ':completion:*:messages' format '%F{YELLOW}%d'$DEFAULT
-zstyle ':completion:*:warnings' format '%F{RED}No matches for:''%F{YELLOW} %d'$DEFAULT
-zstyle ':completion:*:descriptions' format '%F{YELLOW}completing %B%d%b'$DEFAULT
-zstyle ':completion:*:options' description 'yes'
-zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAULT
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*' list-separator '-->'
-zstyle ':completion:*:manuals' separate-sections true
-
-# vim:fdm=marker fdc=3 ft=zsh ts=2 sw=2 sts=2:
+# vim:fdm=marker fdc=3 ft=zsh ts=4 sw=4 sts=4:

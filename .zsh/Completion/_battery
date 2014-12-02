@@ -1,0 +1,24 @@
+#compdef battery
+
+_battery() {
+  local curcontext="$curcontext" state line ret=1
+  typeset -A opt_args
+
+  _arguments -C \
+    '-h[Show help and exit]: :_no_arguments' \
+    '-p[Display percentage(default)]' \
+    '-t[Display remainning time]' \
+    '-c[Colorize accorfing to {type}]: :_battery_color_type' \
+    '*: :_files' && ret=0
+}
+
+_battery_color_type() {
+  local -a types
+
+  types=('tmux')
+  _describe -t commands 'color type' types
+}
+
+_battery "$@"
+
+# vim: ft=zsh sw=2 ts=2 et

@@ -1,0 +1,15 @@
+#compdef richpager
+
+local curcontext="$curcontext" state line ret=1
+typeset -A opt_args
+
+_arguments -C \
+  '-h[Show help and exit]' \
+  '-n[Number the output lines, starting at 1]' \
+  '-l[Use less nevertheless linage]' \
+  '-p[Output plane text without pygmentize]' \
+  '*: :_files' && ret=0
+
+return ret
+
+# vim: ft=zsh sw=2 ts=2 et

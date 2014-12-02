@@ -270,13 +270,13 @@ function zsh_at_startup()
         local plugin
         local -a plugins
         #plugins=( $(find ~/.zsh/plugins -maxdepth 2 -type f -name "*sh") )
+        #echo ~/bin/(*.sh|*.zsh|*.bash)
         plugins=($(find ~/.zsh/plugins -maxdepth 2 -type f \( -name "*.sh" -or -name "*.bash" -or -name "*.zsh" \) -print))
 
         for plugin in "${plugins[@]}"
         do
             if [ ! -x "$plugin" ]; then
                 [[ "$plugin" =~ "syntax" ]] && continue
-                [[ "$plugin" =~ "visual" ]] && continue
                 source "$plugin" && echo " load-plugin ${plugin/$HOME/~}"
             fi
         done

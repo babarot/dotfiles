@@ -38,6 +38,7 @@ function has_plugin() { [[ -d ~/.zsh/plugins/"$1" ]]; }
 
 umask 022
 limit coredumpsize 0
+bindkey -d
 
 # NOTE: set fpath before compinit
 fpath=($HOME/.zsh/Completion(N-/) $fpath)

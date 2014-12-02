@@ -1336,17 +1336,38 @@ fi
 alias -s {png,jpg,bmp,PNG,JPG,BMP}=eog
 
 # __END__ {{{1
-# Setup zsh-autosuggestions
-source ~/.zsh/plugins/zsh-autosuggestions/autosuggestions.zsh
+setopt extended_glob
 
-# Enable autosuggestions automatically
-zle-line-init() {
-    zle autosuggest-start
+typeset -A abbreviations
+abbreviations=(
+"G"    "| grep"
+"X"    "| xargs"
+"T"    "| tail"
+"C"    "| cat"
+"W"    "| wc"
+"A"    "| awk"
+"S"    "| sed"
+"E"    "2>&1 >/dev/null"
+"N"    ">/dev/null"
+)
+
+magic-abbrev-expand()
+{
+    local MATCH
+    LBUFFER=${LBUFFER%%(#m)[-_a-zA-Z0-9]#}
+    LBUFFER+=${abbreviations[$MATCH]:-$MATCH}
+    zle self-insert
+
 }
-zle -N zle-line-init
 
-# use ctrl+t to toggle autosuggestions(hopefully this wont be needed as
-# zsh-autosuggestions is designed to be unobtrusive)
-bindkey '^0' autosuggest-toggle
+no-magic-abbrev-expand()
+{
+    LBUFFER+=' '
+}
+
+zle -N magic-abbrev-expand
+zle -N no-magic-abbrev-expand
+bindkey " " magic-abbrev-expand
+bindkey "^x " no-magic-abbrev-expand
 
 # vim:fdm=marker fdc=3 ft=zsh ts=4 sw=4 sts=4:

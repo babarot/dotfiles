@@ -155,7 +155,7 @@ export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
 # Settings for Tmux {{{1
-function is_screen_running() { [ ! -z "$WINDOW" ]; }
+function is_screen_running() { [ ! -z "$STY" ]; }
 function is_tmux_runnning() { [ ! -z "$TMUX" ]; }
 function is_screen_or_tmux_running() { is_screen_running || is_tmux_runnning; }
 function shell_has_started_interactively() { [ ! -z "$PS1" ]; }

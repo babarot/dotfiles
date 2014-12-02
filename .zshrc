@@ -284,6 +284,7 @@ function zsh_at_startup()
     fi
     return 0
 }
+
 if zsh_at_startup; then
     source ~/.zsh/plugins/enhancd/enhancd.sh
     source ~/.zsh/plugins/favdir/favdir.sh
@@ -291,6 +292,7 @@ if zsh_at_startup; then
     source ~/.zsh/plugins/vi-mode-visual/vi-mode-visual.sh
     source ~/.zsh/plugins/opp.zsh/opp.zsh
     #source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    source ~/.zsh/plugins/zsh-autosuggestions/autosuggestions.zsh
 fi
 
 # Utility functions {{{1

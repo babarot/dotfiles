@@ -1101,6 +1101,14 @@ setopt bang_hist
 
 # Misc and test {{{1
 
+if has_plugin 'zsh-autosuggestions'; then
+    # Enable autosuggestions automatically
+    zle-line-init() {
+        zle autosuggest-start
+    }
+    zle -N zle-line-init
+fi
+
 autoload -Uz zmv
 alias zmv='noglob zmv -W'
 

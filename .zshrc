@@ -1,4 +1,8 @@
-# Essential {{{1
+# Essentials {{{1
+if [[ "${has_starting:=0}" == 1 ]]; then
+    exit
+fi
+has_starting=1
 
 # Initial {{{1
 export SHELL_PLATFORM='unknown'

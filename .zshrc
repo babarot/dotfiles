@@ -53,6 +53,13 @@ autoload -Uz add-zsh-hook
 autoload -Uz compinit
 compinit
 
+autoload -U run-help
+autoload run-help-git
+autoload run-help-svn
+autoload run-help-svk
+unalias run-help
+alias help=run-help
+
 # Environment variables {{{1
 # Language
 export LANGUAGE="en_US.UTF-8"

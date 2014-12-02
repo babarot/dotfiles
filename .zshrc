@@ -742,17 +742,6 @@ function r-prompt()
 }
 add-zsh-hook precmd r-prompt
 
-export GIT_PS1_SHOWDIRTYSTATE=1
-export GIT_PS1_SHOWSTASHSTATE=1
-export GIT_PS1_SHOWUNTRACKEDFILES=1
-export GIT_PS1_SHOWUPSTREAM="auto"
-export GIT_PS1_DESCRIBE_STYLE="branch"
-export GIT_PS1_SHOWCOLORHINTS=0
-
-# Other prompt {{{2
-SPROMPT="%{${fg[red]}%}Did you mean?: %R -> %r [nyae]? %{${reset_color}%}"
-
-if false; then
 RPROMPT=""
 
 autoload -Uz vcs_info

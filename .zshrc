@@ -31,6 +31,7 @@ is_exists() {
     fi
     return 1
 }
+is_login_shell() { [[ "$SHLVL" == 1 ]]; }
 
 export ZSH_PLUGUINS_DIR=~/.zsh/plugins
 function has_plugin() { [[ -d ~/.zsh/plugins/"$1" ]]; }

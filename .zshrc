@@ -723,9 +723,16 @@ function get-branch-status()
 }
 
 setopt transient_rprompt
+
 function r-prompt()
 {
     if [ -f $BIN/git-prompt.sh ]; then
+        export GIT_PS1_SHOWDIRTYSTATE=1
+        export GIT_PS1_SHOWSTASHSTATE=1
+        export GIT_PS1_SHOWUNTRACKEDFILES=1
+        export GIT_PS1_SHOWUPSTREAM="auto"
+        export GIT_PS1_DESCRIBE_STYLE="branch"
+        export GIT_PS1_SHOWCOLORHINTS=0
         RPROMPT='%{'${fg[red]}'%}'`echo $(__git_ps1 "(%s)")|sed -e s/%/%%/|sed -e s/%%%/%%/|sed -e 's/\\$/\\\\$/'`'%{'${reset_color}'%}'
         RPROMPT+=$' at %{${fg[blue]}%}[%~]%{${reset_color}%}'
     else

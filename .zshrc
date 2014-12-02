@@ -161,61 +161,116 @@ function is_screen_or_tmux_running() { is_screen_running || is_tmux_runnning; }
 function shell_has_started_interactively() { [ ! -z "$PS1" ]; }
 function is_ssh_running() { [ ! -z "$SSH_CONECTION" ]; }
 
-function tmuxx_func()
-{
-    # attach to an existing tmux session, or create one if none exist
-    # also set up access to the system clipboard from within tmux when possible
-    #
-    # e.g.
-    # https://gist.github.com/1462391
-    # https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
+#function tmuxx_func()
+#{
+#    # attach to an existing tmux session, or create one if none exist
+#    # also set up access to the system clipboard from within tmux when possible
+#    #
+#    # e.g.
+#    # https://gist.github.com/1462391
+#    # https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
+#
+#    #if ! type tmux >/dev/null 2>&1; then
+#    if ! is_exists 'tmux'; then
+#        echo 'Error: tmux command not found' 2>&1
+#        return 1
+#    fi
+#
+#    #if [ -n "$TMUX" ]; then
+#    if is_tmux_runnning; then
+#        echo "Error: tmux session has been already attached" 2>&1
+#        return 1
+#    fi
+#
+#    if tmux has-session >/dev/null 2>&1 && tmux list-sessions | grep -qE '.*]$'; then
+#        # detached session exists
+#        tmux attach && echo "$(tmux -V) attached session "
+#    else
+#        #if [[ ( $OSTYPE == darwin* ) && ( -x $(which reattach-to-user-namespace 2>/dev/null) ) ]]; then
+#        if is_osx && is_exist 'reattach-to-user-namespace'; then
+#            # on OS X force tmux's default command to spawn a shell in the user's namespace
+#            tmux_config=$(cat $HOME/.tmux.conf <(echo 'set-option -g default-command "reattach-to-user-namespace -l /bin/zsh"'))
+#            #tmux -f <(echo "$tmux_config") new-session && echo "$(tmux -V) created new session supported OS X"
+#            tmux -f <(echo "$tmux_config") new-session \; if "test -f ~/tmux_session" "source-file ~/tmux_session" && echo "$(tmux -V) created new session supported OS X"
+#        else
+#            tmux new-session && echo "tmux created new session"
+#        fi
+#    fi
+#}
+#
+#if ! is_screen_or_tmux_running && shell_has_started_interactively && ! is_ssh_running; then
+#    #if type tmux >/dev/null 2>&1; then
+#    if is_exist 'tmux'; then
+#        if type tmuxx >/dev/null 2>&1; then
+#            (SHELL=/bin/zsh; tmuxx;)
+#            #elif type tmuxx_func >/dev/null 2>&1; then
+#        elif is_exist 'tmuxx_func'; then
+#            tmuxx_func
+#            #elif type tmux >/dev/null 2>&1; then
+#            #    if tmux has-session && tmux list-sessions | /usr/bin/grep -qE '.*]$'; then
+#            #        tmux attach && echo "tmux attached session "
+#            #    else
+#            #        tmux new-session && echo "tmux created new session"
+#            #    fi
+#        fi
+#        #elif type screen >/dev/null 2>&1; then
+#    elif is_exist 'screen'; then
+#        screen -rx || screen -D -RR
+#    fi
+#fi
 
-    #if ! type tmux >/dev/null 2>&1; then
-    if ! is_exists 'tmux'; then
-        echo 'Error: tmux command not found' 2>&1
-        return 1
-    fi
-
-    #if [ -n "$TMUX" ]; then
+if is_screen_or_tmux_running; then
     if is_tmux_runnning; then
-        echo "Error: tmux session has been already attached" 2>&1
-        return 1
+        if is_exist 'cowsay'; then
+            cowsay -f ghostbusters "This is on tmux."
+        else
+            echo "$fg_bold[red] _____ __  __ _   ___  __ $reset_color"
+            echo "$fg_bold[red]|_   _|  \/  | | | \ \/ / $reset_color"
+            echo "$fg_bold[red]  | | | |\/| | | | |\  /  $reset_color"
+            echo "$fg_bold[red]  | | | |  | | |_| |/  \  $reset_color"
+            echo "$fg_bold[red]  |_| |_|  |_|\___//_/\_\ $reset_color"
+        fi
+        export DISPLAY="$TMUX"
+    elif is_screen_running; then
+        # For GNU screen
+        :
     fi
+else
+    if shell_has_started_interactively && ! is_ssh_running; then
+        if ! is_exists 'tmux'; then
+            echo 'Error: tmux command not found' 2>&1
+            return 1
+        fi
 
-    if tmux has-session >/dev/null 2>&1 && tmux list-sessions | grep -qE '.*]$'; then
-        # detached session exists
-        tmux attach && echo "$(tmux -V) attached session "
-    else
-        #if [[ ( $OSTYPE == darwin* ) && ( -x $(which reattach-to-user-namespace 2>/dev/null) ) ]]; then
+        if tmux has-session >/dev/null 2>&1 && tmux list-sessions | grep -qE '.*]$'; then
+            # detached session exists
+            tmux list-sessions
+            echo -n "Tmux: attach? (y/N/num) "
+            read
+            if [[ "$REPLY" =~ ^[Yy]$ ]] || [[ "$REPLY" == '' ]]; then
+                tmux attach-session
+                if [ $? -eq 0 ]; then
+                    echo "$(tmux -V) attached session"
+                    return 0
+                fi
+            elif [[ "$REPLY" =~ "^[0-9]+$" ]]; then
+                tmux attach -t "$REPLY"
+                if [ $? -eq 0 ]; then
+                    echo "$(tmux -V) attached session"
+                    return 0
+                fi
+            fi
+        fi
+
         if is_osx && is_exist 'reattach-to-user-namespace'; then
-            # on OS X force tmux's default command to spawn a shell in the user's namespace
-            tmux_config=$(cat $HOME/.tmux.conf <(echo 'set-option -g default-command "reattach-to-user-namespace -l /bin/zsh"'))
-            #tmux -f <(echo "$tmux_config") new-session && echo "$(tmux -V) created new session supported OS X"
-            tmux -f <(echo "$tmux_config") new-session \; if "test -f ~/tmux_session" "source-file ~/tmux_session" && echo "$(tmux -V) created new session supported OS X"
+            # on OS X force tmux's default command
+            # to spawn a shell in the user's namespace
+            tmux_login_shell="/bin/zsh"
+            tmux_config=$(cat $HOME/.tmux.conf <(echo 'set-option -g default-command "reattach-to-user-namespace -l' $tmux_login_shell'"'))
+            tmux -f <(echo "$tmux_config") new-session && echo "$(tmux -V) created new session supported OS X"
         else
             tmux new-session && echo "tmux created new session"
         fi
-    fi
-}
-
-if ! is_screen_or_tmux_running && shell_has_started_interactively && ! is_ssh_running; then
-    #if type tmux >/dev/null 2>&1; then
-    if is_exist 'tmux'; then
-        if type tmuxx >/dev/null 2>&1; then
-            (SHELL=/bin/zsh; tmuxx;)
-            #elif type tmuxx_func >/dev/null 2>&1; then
-        elif is_exist 'tmuxx_func'; then
-            tmuxx_func
-            #elif type tmux >/dev/null 2>&1; then
-            #    if tmux has-session && tmux list-sessions | /usr/bin/grep -qE '.*]$'; then
-            #        tmux attach && echo "tmux attached session "
-            #    else
-            #        tmux new-session && echo "tmux created new session"
-            #    fi
-        fi
-        #elif type screen >/dev/null 2>&1; then
-    elif is_exist 'screen'; then
-        screen -rx || screen -D -RR
     fi
 fi
 #}}}
@@ -224,33 +279,9 @@ fi
 #
 function zsh_at_startup()
 {
-    :
-    if is_tmux_runnning; then
-        DISPLAY="$TMUX"
-        tmux_pane_and_window=$(tmux display -p '#I-#P')
-        if is_exist 'cowsay'; then
-            #cowsay -f ghostbusters "The tmux is running"
-            cowsay -f ghostbusters "This is on tmux."
-            #            cowsay -n -f ghostbusters <<-EOC
-            #ooooooooooooo ooo        ooooo ooooo     ooo ooooooo  ooooo    
-            #8'   888   \`8 \`88.       .888' \`888'     \`8'  \`8888    d8'
-            #     888       888b     d'888   888       8     Y888..8P       
-            #     888       8 Y88. .P  888   888       8      \`8888'       
-            #     888       8  \`888'   888   888       8     .8PY888.      
-            #     888       8    Y     888   \`88.    .8'    d8'  \`888b    
-            #    o888o     o8o        o888o    \`YbodP'    o888o  o88888o   
-            #EOC
-        else
-            echo "${BRed} _____ __  __ _   ___  __ ${NC}"
-            echo "${BRed}|_   _|  \/  | | | \ \/ / ${NC}"
-            echo "${BRed}  | | | |\/| | | | |\  /  ${NC}"
-            echo "${BRed}  | | | |  | | |_| |/  \  ${NC}"
-            echo "${BRed}  |_| |_|  |_|\___//_/\_\ ${NC}"
-        fi
-    fi
-
     ### Complete Messages
-    echo -e "\n${BCyan}This is ZSH ${BRed}${ZSH_VERSION}${BCyan} - DISPLAY on ${BRed}$DISPLAY${NC}\n"
+   # echo -e "\n${BCyan}This is ZSH ${BRed}${ZSH_VERSION}${BCyan} - DISPLAY on ${BRed}$DISPLAY${NC}\n"
+    echo "\n$fg_bold[cyan]This is ZSH $fg_bold[red]${ZSH_VERSION}$fg_bold[cyan] - DISPLAY on $fg_bold[red]$DISPLAY$reset_color\n"
     #echo "Loading .zshrc completed!! (ZDOTDIR=${ZDOTDIR})"
 
     # Loads the file except executable one.

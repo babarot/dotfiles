@@ -632,11 +632,11 @@ function zle-line-init zle-keymap-select()
 {
     case $KEYMAP in
         vicmd)
-        if [ "$VI_VIS_MODE" -eq 0 ]; then
-            PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[red]%}NOR%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
-        else
-            PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[red]%}VIS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
-        fi
+            if [ "$VI_VIS_MODE" -eq 0 ]; then
+                PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[red]%}NOR%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
+            else
+                PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[red]%}VIS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
+            fi
             ;;
         main|viins)
             PROMPT="%{$fg[red]%}[%{$reset_color%}%n/%{$fg_bold[cyan]%}INS%{$reset_color%}%{$fg[red]%}]%#%{$reset_color%} "
@@ -647,28 +647,9 @@ function zle-line-init zle-keymap-select()
 zle -N zle-line-init
 zle -N zle-keymap-select
 
-#function zle-line-init zle-keymap-select
-#{
-#    EMACS_INSERT=`bindkey -lL main | cut -d ' ' -f 3`
-#    if echo $EMACS_INSERT | grep emacs > /dev/null 2>&1;then
-#        EMACS_INSERT="%K{black}%F{011}%k%f%K{011}%F{034} % $EMACS_INSERT %k%f"
-#        VIM_NORMAL="%K{011}%F{125}%k%f%K{125}%F{015} % NORMAL %k%f%K{125}%F{black}%k%f"
-#        VIM_INSERT="%K{011}%F{075}%k%f%K{075}%F{026} % INSERT %k%f%K{075}%F{black}%k%f"
-#    else
-#        EMACS_INSERT="%K{black}%F{034}%k%f%K{034}%F{011} % $EMACS_INSERT %k%f"
-#        VIM_NORMAL="%K{034}%F{125}%k%f%K{125}%F{015} % NORMAL %k%f%K{125}%F{black}%k%f"
-#        VIM_INSERT="%K{034}%F{075}%k%f%K{075}%F{026} % INSERT %k%f%K{075}%F{black}%k%f"
-#    fi
-#    #RPS1="$EMACS_INSERT${${KEYMAP/vicmd/$VIM_NORMAL}/(main|viins)/$VIM_INSERT}"
-#    #RPS2=$RPS1
-#    PROMPT="$EMACS_INSERT${${KEYMAP/vicmd/$VIM_NORMAL}/(main|viins)/$VIM_INSERT}"
-#    zle reset-prompt
-#}
-#zle -N zle-line-init
-#zle -N zle-keymap-select
-
 # R prompt {{{2
 setopt prompt_subst
+
 function branch-status-check()
 {
     local prefix branchname suffix
@@ -683,10 +664,12 @@ function branch-status-check()
     suffix='%{'${reset_color}'%}'
     echo ${prefix}${branchname}${suffix}
 }
+
 function get-branch-name()
 {
     echo `git rev-parse --abbrev-ref HEAD 2> /dev/null`
 }
+
 function get-branch-status()
 {
     local res color

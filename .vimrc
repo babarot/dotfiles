@@ -274,6 +274,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
         \ 'autoload': {
         \ 'commands': ['Gcommit', 'Gblame', 'Ggrep', 'Gdiff'] }}
   NeoBundle 'osyo-manga/vim-anzu'
+  NeoBundle 'cohama/vim-insert-linenr'
   NeoBundle 'LeafCage/yankround.vim'
   NeoBundle 'LeafCage/foldCC'
   NeoBundle 'junegunn/vim-easy-align'

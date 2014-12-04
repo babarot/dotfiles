@@ -28,7 +28,8 @@ Run the following commands in your terminal.
 
 To install these dotfiles without Git:
 
-	curl -L http://github.com/b4b4r07/dotfiles/tarball/master | tar xz
+	$ curl -L http://github.com/b4b4r07/dotfiles/tarball/master | tar xz
+	$ make deploy
 
 ## Updating
 
@@ -49,13 +50,15 @@ Many plugins are not installed yet. When you start Vim for the first time, it is
 ### Git
 
 Make the configuration file for personal use. Copy and paste the following to personal configuration file, e.g. `~/.sh.local`
-	
-	GIT_AUTHOR_NAME="b4b4r07"
-	GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
-	git config --global user.name "$GIT_AUTHOR_NAME"
-	GIT_AUTHOR_EMAIL="b4b4r07@gmail.com"
-	GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
-	git config --global user.email "$GIT_AUTHOR_EMAIL"
+
+```bash
+GIT_AUTHOR_NAME="b4b4r07"
+GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
+git config --global user.name "$GIT_AUTHOR_NAME"
+GIT_AUTHOR_EMAIL="b4b4r07@gmail.com"
+GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
+git config --global user.email "$GIT_AUTHOR_EMAIL"
+```
 
 ### OS X Hacks
 
@@ -79,7 +82,7 @@ $ bash ./init/osx/defaults.sh
 
 	```
 $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-```
+	```
 
 ### Homebrew
 

@@ -43,6 +43,7 @@ mini:
 
 update:
 	git pull origin master
+	git submodule foreach git pull origin master
 
 install:
 	@for x in init/*.sh ; do sh $$x; done; true

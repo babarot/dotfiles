@@ -52,11 +52,16 @@ Many plugins are not installed yet. When you start Vim for the first time, it is
 Make the configuration file for personal use. Copy and paste the following to personal configuration file, e.g. `~/.sh.local`
 
 ```bash
+# Git credentials
+# Not under version control to prevent people from
+# accidentally committing with your details
 GIT_AUTHOR_NAME="b4b4r07"
+GIT_AUTHOR_EMAIL="b4b4r07@example.com"
 GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
-git config --global user.name "$GIT_AUTHOR_NAME"
-GIT_AUTHOR_EMAIL="b4b4r07@gmail.com"
 GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
+
+# Set the credentials (modifies ~/.gitconfig)
+git config --global user.name "$GIT_AUTHOR_NAME"
 git config --global user.email "$GIT_AUTHOR_EMAIL"
 ```
 

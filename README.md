@@ -14,7 +14,7 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 - Tmux 1.9a
 - Terminal.app (Full-screen)
 
-![](http://cl.ly/image/1046141M0d3B/dev_env.png "vim-on-tmux")
+![](http://cl.ly/image/1f2H0F3U0240/dev-env.png "vim-on-tmux")
 
 ## Installation
 
@@ -106,12 +106,11 @@ The resulting `/etc/paths` files looks like this:
 
 ## Components
 
-- **`bin/`**: Anything in `bin/` will get added to your `$PATH` and be made available everywhere.
-- **`etc/init/`**: Some utilities and files to be executed initially.
-- **`etc/osx/`**: Some configuration files for OS X are stored.
-- **`doc/man/`**: Self-made script manuals are stored here.
-- **`.zsh/plugin/*`
-**: Any files ending in `.sh` get loaded into your environment.
+- **bin/**: Anything in `bin/` will get added to your `$PATH` and be made available everywhere.
+- **etc/init/**: Some utilities and files to be executed initially.
+- **etc/osx/**: Some configuration files for OS X are stored.
+- **doc/man/**: Self-made script manuals are stored here.
+- **.zsh/plugin/\***: Any files ending in `.sh` get loaded into your environment.
 
 ## Credits
 

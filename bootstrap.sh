@@ -29,16 +29,23 @@ else
     if [ -d "$dotfiles" ]; then
         cd "$dotfiles" && git pull --rebase
     else
-        git clone https://github.com/b4b4r07/dotfiles.git "$dotfiles"
-        if [ $? -eq 0 ]; then
-            cd "$dotfiles"
-            make deploy
-            echo ""; make help
-            echo ""
-            exec ${SHELL:-/bin/bash}
+        if type git >/dev/null 2>&1; then
+            git clone https://github.com/b4b4r07/dotfiles.git "$dotfiles"
+        else
+            cd /tmp
+            curl -LSfs -o dotfiles.zip https://github.com/b4b4r07/dotfiles/archive/master.zip
+            unzip -oq dotfiles.zip
+            mv dotfiles-master ~/.dotfiles
         fi
+        cd "$dotfiles"
+        make deploy
+        echo ""; make help
+        echo ""
+        exec ${SHELL:-/bin/bash}
     fi
 
     git submodule init
     git submodule update
 fi
+echo "$0"
+echo "$(basename $0)"

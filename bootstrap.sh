@@ -3,12 +3,13 @@
 set -e
 set -u
 
-
+echo ''
 echo '    | |     | |  / _(_) |           '
 echo '  __| | ___ | |_| |_ _| | ___  ___  '
 echo ' / _` |/ _ \| __|  _| | |/ _ \/ __| '
 echo '| (_| | (_) | |_| | | | |  __/\__ \ '
 echo ' \__,_|\___/ \__|_| |_|_|\___||___/ '
+echo ''
 
 declare msg='
 By executing ./bootstrap.sh, the following commands are run
@@ -18,6 +19,8 @@ By executing ./bootstrap.sh, the following commands are run
 Author: b4b4r07 aka BABAROT <b4b4r07@gmail.com>
 '
 echo -e "$msg";
+echo "$0"
+echo "$(basename "${BASH_SOURCE}")"
 exit
 
 main()

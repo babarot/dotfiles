@@ -208,6 +208,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
         \ 'autoload' : {
         \ 'commands' : ['MemoNew', 'MemoGrep']
         \ }}
+  NeoBundle 'severin-lemaignan/vim-minimap'
   NeoBundleLazy 'thinca/vim-scouter', {
         \ 'autoload' : {
         \ 'commands' : 'Scouter'

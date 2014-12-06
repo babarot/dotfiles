@@ -35,12 +35,6 @@ deploy:
 sync:
 	rsync $(RSYNC_OPTS) . ~;
 
-mini:
-	@for x in .*.minimal; do \
-		rm -rf  ~/"$${x%.*}"; \
-		cp -v -f "$(PWD)/$$x" ~/"$${x%.*}"; \
-	done ; true
-
 update:
 	git pull origin master
 	git submodule foreach git pull origin master

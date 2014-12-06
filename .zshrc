@@ -327,7 +327,7 @@ if zsh_at_startup; then
     source ~/.zsh/plugins/vi-mode-visual/vi-mode-visual.sh
     source ~/.zsh/plugins/opp.zsh/opp.zsh
     #source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-    source ~/.zsh/plugins/zsh-autosuggestions/autosuggestions.zsh
+    #source ~/.zsh/plugins/zsh-autosuggestions/autosuggestions.zsh
 fi
 
 # Utility functions {{{1
@@ -1062,10 +1062,11 @@ setopt bang_hist
 
 if has_plugin 'zsh-autosuggestions'; then
     # Enable autosuggestions automatically
-    zle-line-init() {
-        zle autosuggest-start
-    }
-    zle -N zle-line-init
+    #zle-line-init() {
+    #    zle autosuggest-start
+    #}
+    #zle -N zle-line-init
+    :
 fi
 
 autoload -Uz zmv

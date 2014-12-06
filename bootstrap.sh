@@ -19,9 +19,6 @@ By executing ./bootstrap.sh, the following commands are run
 Author: b4b4r07 aka BABAROT <b4b4r07@gmail.com>
 '
 echo -e "$msg";
-echo "$0"
-echo "$(basename "${BASH_SOURCE}")"
-exit
 
 main()
 {
@@ -31,7 +28,6 @@ main()
     fi
 
     local DOTFILES_PATH=~/.dotfiles
-
     if [ -d "$DOTFILES_PATH" ]; then
         cd $DOTFILES_PATH
         make update

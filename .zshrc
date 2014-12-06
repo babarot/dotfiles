@@ -43,6 +43,7 @@ bindkey -d
 # NOTE: set fpath before compinit
 fpath=($HOME/.zsh/Completion(N-/) $fpath)
 fpath=($HOME/.zsh/functions/*(N-/) $fpath)
+fpath=($HOME/.zsh/plugins/zsh-completions(N-/) $fpath)
 
 # Mac homebrew
 if is_osx; then
@@ -279,6 +280,9 @@ function tmux_automatically_attach()
 tmux_automatically_attach
 #}}}
 
+autoload -Uz colors
+colors
+
 # Startup zsh {{{1
 #
 function zsh_at_startup()
@@ -489,8 +493,8 @@ function gtj()
     google_translate "$*" "ja-en" | sed -n -e 21p
 }
 
-
 # Keybinds and widgets {{{1
+
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 # widgets {{{2
 kill-backward-blank-word() #{{{3
@@ -1059,7 +1063,6 @@ setopt hist_verify
 setopt bang_hist
 
 # Misc and test {{{1
-
 if has_plugin 'zsh-autosuggestions'; then
     # Enable autosuggestions automatically
     #zle-line-init() {
@@ -1121,10 +1124,6 @@ bindkey -M menuselect '^h' vi-backward-char
 bindkey -M menuselect '^j' vi-down-line-or-history
 bindkey -M menuselect '^k' vi-up-line-or-history
 bindkey -M menuselect '^l' vi-forward-char
-
-# 名前で色を付けるようにする
-autoload colors
-colors
 
 # LS_COLORSを設定しておく
 export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'

@@ -3,49 +3,57 @@
 set -e
 set -u
 
-echo ''
-echo '     | |     | |  / _(_) |           '
-echo '   __| | ___ | |_| |_ _| | ___  ___  '
-echo '  / _` |/ _ \| __|  _| | |/ _ \/ __| '
-echo ' | (_| | (_) | |_| | | | |  __/\__ \ '
-echo '  \__,_|\___/ \__|_| |_|_|\___||___/ '
-echo ''
 
-declare dotfiles=~/.dotfiles
-declare msg=$(
-cat <<-EOF
+echo '    | |     | |  / _(_) |           '
+echo '  __| | ___ | |_| |_ _| | ___  ___  '
+echo ' / _` |/ _ \| __|  _| | |/ _ \/ __| '
+echo '| (_| | (_) | |_| | | | |  __/\__ \ '
+echo ' \__,_|\___/ \__|_| |_|_|\___||___/ '
+
+declare msg='
 By executing ./bootstrap.sh, the following commands are run
-\t1. git clone https://github.com/b4b4r07/dotfiles
-\t2. make deploy
-\n
-Author: b4b4r07 aka BABAROT <b4b4r07@gmail.com>
-EOF
-)
+    1. git clone https://github.com/b4b4r07/dotfiles
+    2. make deploy
 
+Author: b4b4r07 aka BABAROT <b4b4r07@gmail.com>
+'
 echo -e "$msg";
-if [[ "$0" =~ "bootstrap.sh" ]]; then
-    echo "That this file is started directly is not recommended";
-else
-    if [ -d "$dotfiles" ]; then
-        cd "$dotfiles" && git pull --rebase
+exit
+
+main()
+{
+    if [[ "$0" =~ "$(basename "${BASH_SOURCE}")" ]]; then
+        echo "That this file is started directly is not recommended" 1>&2
+        return 1
+    fi
+
+    local DOTFILES_PATH=~/.dotfiles
+
+    if [ -d "$DOTFILES_PATH" ]; then
+        cd $DOTFILES_PATH
+        make update
     else
         if type git >/dev/null 2>&1; then
-            git clone https://github.com/b4b4r07/dotfiles.git "$dotfiles"
+            # --recursive equals to ...
+            # git submodule init
+            # git submodule update
+            git clone --recursive https://github.com/b4b4r07/dotfiles.git $DOTFILES_PATH
         else
             cd /tmp
-            curl -LSfs -o dotfiles.zip https://github.com/b4b4r07/dotfiles/archive/master.zip
+            curl -fsSL -o dotfiles.zip https://github.com/b4b4r07/dotfiles/archive/master.zip
             unzip -oq dotfiles.zip
             mv dotfiles-master ~/.dotfiles
         fi
-        cd "$dotfiles"
+
+        cd $DOTFILES_PATH
         make deploy
-        echo ""; make help
-        echo ""
+
+        if [[ "$1" == "install" ]]; then
+            make install
+        fi
+
         exec ${SHELL:-/bin/bash}
     fi
+}
 
-    git submodule init
-    git submodule update
-fi
-echo "$0"
-echo "$(basename $0)"
+main "$@"

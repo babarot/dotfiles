@@ -67,6 +67,15 @@ git config --global user.email "$GIT_AUTHOR_EMAIL"
 
 ### OS X Hacks
 
+- Login shell
+
+	There is configuration for zsh so switch your shell from the default bash to zsh on OS X:
+
+	```	
+chsh -s /bin/zsh
+	```
+
+
 - How to Install Command Line Tools in OS X Mavericks (Without Xcode)
 
 	You need to have [Xcode](https://developer.apple.com/downloads/index.action?=xcode) or, at the very minimum, the [Xcode Command Line Tools](https://developer.apple.com/downloads/index.action?=command%20line%20tools), which are available as a much smaller download.
@@ -81,7 +90,7 @@ git config --global user.email "$GIT_AUTHOR_EMAIL"
 $ bash ./init/osx/defaults.sh
 	```
 
-- [Installing Homebrew](http://brew.sh/index.html)
+- [Installing Homebrew](http://brew.sh)
 
 	Paste that at a Terminal prompt.
 

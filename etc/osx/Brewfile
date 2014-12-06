@@ -1,81 +1,88 @@
-#
-# First: 
-#
-update
-upgrade
+#!/bin/bash
+# vim: ft=sh
 
-# For groff
-brew tap homebrew/dupes
+set -u
+set -e
 
-#
-# Brew <http://brew.sh/>
-#
-install ack
-install bash
-install bash-completion
-install colordiff
-install coreutils
-install cowsay
-install findutils
-install fortune
-install gawk
-install gist
-install git
-install gnu-sed --default-names
-install go --cross-compile-common
-install groff
-install hg
-install hub
-install macvim --with-lua --with-luajit
-install openssl
-install tig
-install reattach-to-user-namespace
-install tmux
-install tree
-install vim --override-system-vi
-install wget
+if ! type brew >/dev/null 2>&1; then
+    echo 'brew: command not found' 1>&2
+    echo -n "Install now? (y/N/) "
+    read
+    if [[ "$REPLY" =~ ^[Yy]$ ]] || [[ "$REPLY" == '' ]]; then
+        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        if [ $? -eq 0 ]; then
+            echo "Complete!"
+            return 0
+        fi
+        return 1
+    fi
+fi
 
-#
-# Cask <http://caskroom.io/>
-#
-brew install caskroom/cask/brew-cask
+echo "brew updating..."
 
-cask install alfred              || true
-cask alfred  link               
-cask install appcleaner          || true
-cask install bettertouchtool     || true
-cask install burn                || true
-cask install diskwave            || true
-cask install dropbox             || true
-cask install evernote            || true
-cask install github              || true
-cask install google-chrome       || true
-cask install google-drive        || true
-cask install google-japanese-ime || true
-cask install iterm2              || true
-cask install keepassx            || true
-cask install keyremap4macbook    || true
-cask install keyremap4macbook    || true
-cask install kobito              || true
-cask install lyrics-master       || true
-cask install marked              || true
-cask install mou                 || true
-cask install onepassword         || true
-cask install skype               || true
-cask install the-unarchiver      || true
-cask install vlc                 || true
-cask install vox-preference-pane || true
-cask install yorufukurou         || true
-cask install xtrafinder          || true
-# QuickLook plugins
-cask install qlcolorcode
-cask install qlmarkdown
-cask install qlstephen
-cask install quicklook-csv 
-cask install qlimagesize
-cask install scriptql
+brew update
+outdated=$(brew outdated)
 
-#
-# Final: Remove outdated versions from the cellar
-#
-cleanup
+if [ -n "$outdated" ]; then
+    echo 'The following package(s) will upgrade.'
+    echo ''
+    echo "$outdated"
+    echo 'Are you sure?'
+    echo 'If you do not want to upgrade, please type Ctrl-c now.'
+    echo ''
+
+    # Wait Ctrl-c
+    read dummy
+
+    brew upgrade
+fi
+
+declare -a BREW_PACKAGES=(
+  "ack"
+  "autoconf"
+  "bdw-gc"
+  "caskroom/cask/brew-cask"
+  "cmigemo"
+  "cowsay"
+  "cscope"
+  "figlet"
+  "freetype"
+  "ghostscript"
+  "git"
+  "go"
+  "groff"
+  "hub"
+  "imagemagick"
+  "jbig2dec"
+  "jpeg"
+  "libevent"
+  "libpng"
+  "libtiff"
+  "libtool"
+  "little-cms2"
+  "openssl"
+  "pcre"
+  "peco/peco/peco"
+  "pkg-config"
+  "rbenv"
+  "reattach-to-user-namespace"
+  "ruby-build"
+  "terminal-notifier"
+  "the_silver_searcher"
+  "tig"
+  "tmux"
+  "tree"
+  "vim"
+  "w3m"
+  "wget"
+  "xz"
+)
+
+for package in "${BREW_PACKAGES[@]}"
+do
+    if brew list -1 | grep -q "^$(basename $package)"; then
+        echo "Skip: brew install ${package}"
+    else
+        brew install $package
+    fi
+done

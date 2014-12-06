@@ -1,0 +1,79 @@
+#/bin/bash
+# vim: ft=sh
+
+set -u
+set -e
+
+if ! type brew >/dev/null 2>&1; then
+    echo 'brew: command not found' 1>&2
+    echo -n "Install now? (y/N/) "
+    read
+    if [[ "$REPLY" =~ ^[Yy]$ ]] || [[ "$REPLY" == '' ]]; then
+        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        if [ $? -eq 0 ]; then
+            echo "Complete!"
+            return 0
+        fi
+        return 1
+    fi
+fi
+
+if brew cask >/dev/null 2>&1; then
+    echo 'brew-cask: command not found' 1>&2
+    echo -n "Install now? (y/N/) "
+    read
+    if [[ "$REPLY" =~ ^[Yy]$ ]] || [[ "$REPLY" == '' ]]; then
+        brew install caskroom/cask/brew-cask
+        if [ $? -eq 0 ]; then
+            echo "Complete!"
+            return 0
+        fi
+        return 1
+    fi
+fi
+
+#cask install alfred
+#cask alfred  link
+
+declare -a CASK_PACKAGES=(
+  "appcleaner"
+  "licecap"
+  "bettertouchtool"
+  "burn"
+  "diskwave"
+  "dropbox"
+  "evernote"
+  "github"
+  "google-chrome"
+  "google-drive"
+  "google-japanese-ime"
+  "iterm2"
+  "keepassx"
+  "karabiner"
+  "kobito"
+  "lyrics-master"
+  "marked"
+  "mou"
+  "onepassword"
+  "skype"
+  "the-unarchiver"
+  "vlc"
+  "vox-preference-pane"
+  "yorufukurou"
+  "xtrafinder"
+  "qlcolorcode"
+  "qlmarkdown"
+  "qlstephen"
+  "quicklook-csv"
+  "qlimagesize"
+  "scriptql"
+)
+
+for package in "${CASK_PACKAGES[@]}"
+do
+    if brew cask list -1 | grep -q "^${package}"; then
+        echo "Skip: brew cask install ${package}"
+    else
+        brew cask install $package
+    fi
+done

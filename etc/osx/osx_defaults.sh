@@ -1,11 +1,13 @@
 #!/bin/bash
 
-trap "exit 0" INT EXIT ERR TERM KILL
+trap "echo Error: $0: stopped" ERR
+set -e
+set -u
 
-read -p "Power-up your OS X by defaults commands (y/n) " -n 1
-echo ""
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-	exit 0
+echo -n "Power-up your OS X by defaults commands (y/n) "
+read
+if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
+    exit 0
 fi
 
 # Show Hidden Files

@@ -40,9 +40,9 @@ update:
 	git submodule foreach git pull origin master
 
 install:
-	@for x in init/*.sh ; do sh $$x; done; true
+	@for x in ./etc/init/*.sh ; do bash $$x 2>/dev/null; done; true
 ifeq ($(shell uname),Darwin)
-	@for x in osx/*.sh ; do sh $$x; done; true
+	@for x in ./etc/osx/*.sh ; do bash $$x 2>/dev/null; done; true
 endif
 
 clean:

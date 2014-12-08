@@ -1,35 +1,37 @@
 # The [B4B4R07](https://twitter.com/b4b4r07)'s dotfiles
 
-This is a repository with my configuration files, those that in Linux/OS X normally are these files under the `$HOME` directory that are hidden and preceded by a dot, AKA **dotfiles**.
+This is a repository with my configuration files, those that in Linux/OS X normally are these files under the `$HOME` directory that are hidden and preceded by a dot, AKA *dotfiles*.
 
-The primary goal is to increase CLI productivity on OS X, though many scripts run just fine on any POSIX implementation and to it easy to build environment again.
+## Overview
+
+The primary goal is to increase CLI productivity on OS X, though many scripts run just fine on any POSIX implementation and it is easy to build environment again by running just [installation command](#installation) of one liner .
 
 My primary OS is OS X (10.10.x) and some of these configurations are tuned to work on that platform. The bash files are more generic and friendly toward other Unix-based operating systems.
 
 ## Features
 
-- OS X 10.10.x (Mac mini / Macbook Air)
+- OS X Yosemite (Macbook Air)
 - Zsh 5.0.5
-- Vim 7.4 (Solarized)
+- Vim 7.4
 - Tmux 1.9a
 - Terminal.app (Full-screen)
+- Solarized ([base 16](https://github.com/chriskempson/base16))
 
-![](http://cl.ly/image/1f2H0F3U0240/dev-env.png "vim-on-tmux")
+Click this image to see a larger version.
+
+![](http://cl.ly/image/1f2H0F3U0240/dev-env.png "b4b4r07's environment")
 
 ## Installation
-
-**Requires**: git
 
 Run the following commands in your terminal. 
 
 	$ bash -c "$(curl -fsSL raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)"
 
-**Git-free install**
+**what's inside?**
 
-To install these dotfiles without Git:
-
-	$ curl -L http://github.com/b4b4r07/dotfiles/tarball/master | tar xz
-	$ make deploy
+1. Downloads this repository (**prerequisites**: `git` or `curl` must be installed).
+2. Deploy (i.e. *copy* or *create symlink*) dot files to your home directory.
+3. Run all programs for setup in `./etc/` directory (**Optional**: when running [installation command](#installation) specify `-s install` as an argument).
 
 ## Updating
 
@@ -41,11 +43,19 @@ In addition, there are several git submodules included in this configuration. On
 
 ## Setup
 
+All configuration files for setup is stored within the `etc/` directory. By running this command, you can interactively setup all preferences.
+
+	$ make install
+
 ### Vim
+
+To install the Vim plugins, run this command.
 
 	$ vim +NeoBundleInit +qall
 
-Many plugins are not installed yet. When you start Vim for the first time, it is recommended that it is of specifying the `-c 'NeoBundleInit'` as the argument. By doing so, many plugins will be installed quickly. To effectively use the plugin, that the type of vim is **normal or [more](http://www.drchip.org/astronaut/vim/vimfeat.html)** is desired. Of course, `git` is required.
+Vim plugins are not installed from you just running the [installation command](#installation). To install the plugins, you must specify the `-c 'NeoBundleInit'` as an argument when starting Vim. By doing so, install immediately [neobundle.vim](https://github.com/Shougo/neobundle.vim) and other plugins (**requires**: `git` in `$PATH`, Vim 7.2+, a lot of time, Wi-Fi). 
+
+To use these plugins effectively, features of Vim needs **normal or [more](http://www.drchip.org/astronaut/vim/vimfeat.html)**.
 
 ### Git
 
@@ -67,20 +77,25 @@ git config --global user.email "$GIT_AUTHOR_EMAIL"
 
 ### OS X Hacks
 
-- Login shell
+- Change login shell
 
 	There is configuration for zsh so switch your shell from the default bash to zsh on OS X:
 
 	```	
-chsh -s /bin/zsh
+$ chsh -s /bin/zsh
 	```
-
 
 - How to Install Command Line Tools in OS X Mavericks (Without Xcode)
 
 	You need to have [Xcode](https://developer.apple.com/downloads/index.action?=xcode) or, at the very minimum, the [Xcode Command Line Tools](https://developer.apple.com/downloads/index.action?=command%20line%20tools), which are available as a much smaller download.
 
-	The easiest way to install the Xcode Command Line Tools in OSX 10.9+ is to open up a terminal, type `xcode-select --install` and [follow the prompts](http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/). _Tested in OS X 10.10_
+	The easiest way to install the Xcode Command Line Tools in OSX 10.9+ is to open up a terminal, type
+
+	```	
+$ xcode-select --install
+	```
+
+	and [follow the prompts](http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/). _Tested in OS X 10.10_
 
 - Custom OS X defaults
 
@@ -124,10 +139,10 @@ The resulting `/etc/paths` files looks like this:
 ## Components
 
 - **bin/**: Anything in `bin/` will get added to your `$PATH` and be made available everywhere.
-- **etc/init/**: Some utilities and files to be executed initially.
-- **etc/osx/**: Some configuration files for OS X are stored.
-- **doc/man/**: Self-made script manuals are stored here.
-- **.zsh/plugin/\***: Any files ending in `.sh` get loaded into your environment.
+- **etc/init/**: Configuration file storage to be executed initially for setup.
+- **etc/osx/**: Some configuration files for OS X storage.
+- **doc/man/**: A self-written program's manuals.
+- **.zsh/plugin/**: Any files ending in `.sh` get loaded into your environment.
 
 ## Credits
 
@@ -147,5 +162,3 @@ The resulting `/etc/paths` files looks like this:
 Copyright (c) 2014 "BABAROT" b4b4r07
 
 Licensed under the [MIT license](./doc/LICENSE-MIT.txt).
-
-<http://opensource.org/licenses/MIT>

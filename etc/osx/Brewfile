@@ -67,6 +67,7 @@ declare -a BREW_PACKAGES=(
   "rbenv"
   "reattach-to-user-namespace"
   "ruby-build"
+  "shellcheck"
   "terminal-notifier"
   "the_silver_searcher"
   "tig"

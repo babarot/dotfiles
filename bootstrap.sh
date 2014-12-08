@@ -22,7 +22,7 @@ echo -e "$msg";
 
 main()
 {
-    if [[ "$0" =~ "$(basename "${BASH_SOURCE:-NONE}")" ]]; then
+    if [[ "$0" =~ $(basename "${BASH_SOURCE:-NONE}") ]]; then
         echo "That this file is started directly is not recommended" 1>&2
         return 1
     fi

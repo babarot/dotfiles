@@ -1,5 +1,7 @@
 # The [B4B4R07](https://twitter.com/b4b4r07)'s dotfiles
 
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/b4b4r07/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
 This is a repository with my configuration files, those that in Linux/OS X normally are these files under the `$HOME` directory that are hidden and preceded by a dot, AKA *dotfiles*.
 
 ## Overview
@@ -162,6 +164,4 @@ The resulting `/etc/paths` files looks like this:
 Copyright (c) 2014 "BABAROT" b4b4r07
 
 Licensed under the [MIT license](./doc/LICENSE-MIT.txt).
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/b4b4r07/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 

@@ -117,12 +117,18 @@ $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/maste
 
 ### Homebrew
 
-The `Brewfile` acts as a bundle for Homebrew. Use `brew bundle path/to/Brewfile` to set up brews.
+- `brew bundle` is dead.
+
+	Therefore, cannot use `brew bundle path/to/Brewfile` to set up brews.
+	
+	cf. [What? "Warning: brew bundle is unsupported ..." #30815](https://github.com/Homebrew/homebrew/issues/30815)
+
+**Solution**: replace Brewfile with shell script.
 
 When setting up a new Mac, you may want to install some common Homebrew formulae (after installing Homebrew, of course):
 
-	$ brew bundle ./init/osx/Brewfile
-	$ brew bundle ./init/osx/Caskfile
+	$ bash ./init/osx/Brewfile
+	$ bash ./init/osx/Caskfile
 
 **NOTES:**
 

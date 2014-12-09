@@ -130,7 +130,7 @@ When setting up a new Mac, you may want to install some common Homebrew formulae
 	$ bash ./init/osx/Brewfile
 	$ bash ./init/osx/Caskfile
 
-**NOTES:**
+**Notes:**
 
 On those Mac OS machines where I install Homebrew I also edit `/etc/paths` to move the `/usr/local/bin` entry to the top of the list. This ensures that Homebrew-managed programs and libraries occur prior to `/usr/bin` and system-provided programs and libraries. 
 

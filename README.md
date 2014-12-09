@@ -12,12 +12,12 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 
 ## Features
 
-- OS X Yosemite (Macbook Air)
-- Zsh 5.0.5
-- Vim 7.4
-- Tmux 1.9a
-- Terminal.app (Full-screen)
-- Solarized ([base 16](https://github.com/chriskempson/base16))
+- **OS X** Yosemite (Macbook Air)
+- **Zsh** 5.0.5
+- **Vim** 7.4
+- **Tmux** 1.9a
+- **Terminal.app** (Full-screen)
+- **Solarized** ([base 16](https://github.com/chriskempson/base16))
 
 Click this image to see a larger version.
 

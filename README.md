@@ -4,7 +4,7 @@ This is a repository with my configuration files, those that in Linux/OS X norma
 
 ## Overview
 
-The primary goal is to increase CLI productivity on OS X, though many scripts run just fine on any POSIX implementation and it is easy to build environment again by running just [installation command](#installation) of one liner .
+The primary goal is to increase CLI productivity on OS X, though many scripts run just fine on any POSIX implementation and it is easy to build environment again by running just [Installation](#installation) command of one liner .
 
 My primary OS is OS X (10.10.x) and some of these configurations are tuned to work on that platform. The bash files are more generic and friendly toward other Unix-based operating systems.
 
@@ -31,7 +31,7 @@ Run the following commands in your terminal.
 
 1. Downloads this repository (**prerequisites**: `git` or `curl` must be installed).
 2. Deploy (i.e. *copy* or *create symlink*) dot files to your home directory.
-3. Run all programs for setup in `./etc/` directory (**Optional**: when running [installation command](#installation) specify `-s install` as an argument).
+3. Run all programs for setup in `./etc/` directory (**Optional**: when running [Installation](#installation) command specify `-s install` as an argument).
 
 ## Updating
 
@@ -53,7 +53,7 @@ To install the Vim plugins, run this command.
 
 	$ vim +NeoBundleInit +qall
 
-Vim plugins are not installed from you just running the [installation command](#installation). To install the plugins, you must specify the `-c 'NeoBundleInit'` as an argument when starting Vim. By doing so, install immediately [neobundle.vim](https://github.com/Shougo/neobundle.vim) and other plugins (**requires**: `git` in `$PATH`, Vim 7.2+, a lot of time, Wi-Fi). 
+Vim plugins are not installed from you just running the [Installation](#installation) command. To install the plugins, you must specify the `-c 'NeoBundleInit'` as an argument when starting Vim. By doing so, install immediately [neobundle.vim](https://github.com/Shougo/neobundle.vim) and other plugins (**requires**: `git` in `$PATH`, Vim 7.2+, a lot of time, Wi-Fi). 
 
 To use these plugins effectively, features of Vim needs **normal or [more](http://www.drchip.org/astronaut/vim/vimfeat.html)**.
 

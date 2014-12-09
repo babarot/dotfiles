@@ -162,3 +162,6 @@ The resulting `/etc/paths` files looks like this:
 Copyright (c) 2014 "BABAROT" b4b4r07
 
 Licensed under the [MIT license](./doc/LICENSE-MIT.txt).
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/b4b4r07/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+

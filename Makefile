@@ -43,10 +43,6 @@ ifeq ($(shell uname), Darwin)
 endif
 
 clean:
-	@echo "rm -rf files..."
-	@for f in .??* ; do \
-		rm -v -rf ~/"$${f}" ; \
-	done ; true
-	rm -rf ~/.vim
-	rm -rf ~/.vital
-	rm -rf $(DOTFILES_DIR)
+	@echo 'Remove dot files in your home directory...'
+	@$(foreach var, $(DOTFILES_FILES), rm -vrf $(HOME)/$(var);)
+	-rm -rf $(DOTFILES_DIR)

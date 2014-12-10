@@ -1,7 +1,7 @@
-RSYNC_OPTS = --exclude ".git/" --exclude ".DS_Store" --exclude "README.md" --exclude="Makefile" -avh --no-perms
-DOTFILES_DIR = $(PWD)
-FILES_TO_BE_LINKED = .??* bin
-DOTFILES_FILE = $(addprefix $(DOTFILES_DIR)/, $(FILES_TO_BE_LINKED))
+DOTFILES_DIR      := $(PWD)
+DOTFILES_TARGET   := $(wildcard .??*) bin
+DOTFILES_EXCLUDES := .DS_Store .git
+DOTFILES_FILES    := $(filter-out $(DOTFILES_EXCLUDES), $(DOTFILES_TARGET))
 
 all:
 	help

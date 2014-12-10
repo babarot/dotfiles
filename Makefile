@@ -17,16 +17,10 @@ list:
 	@$(foreach val, $(DOTFILES_FILES), ls -dF $(val);)
 
 deploy:
-	@echo "Start deploy dotfiles current directory."
-	@echo "If this is \"dotdir\", curretly it is ignored and copy your hand."
-	@echo ""
-	@for f in $(FILES_TO_BE_LINKED) ; do \
-		test "$${f}" = .git -o "$${f}" = .git/ && continue ; \
-		test "$${f}" = .DS_Store  && continue ; \
-		echo "$${f}" | grep -q 'minimal' && continue ; \
-		ln -sfnv "$(PWD)/$${f}" "$(HOME)/$${f}" ; \
-	done ; true
-
+	@echo 'Start deploy dotfiles current directory.'
+	@echo 'If this is "dotdir", curretly it is ignored and copy your hand.'
+	@echo ''
+	@$(foreach var, $(DOTFILES_FILES), ln -sfnv $(abspath $(var)) $(HOME)/$(val);)
 
 update:
 	git pull origin master

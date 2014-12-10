@@ -35,9 +35,17 @@ update:
 	git submodule foreach git pull origin master
 
 install:
-	@for x in ./etc/init/*.sh ; do bash $$x 2>/dev/null; done; true
-ifeq ($(shell uname),Darwin)
-	@for x in ./etc/osx/*.sh ; do bash $$x 2>/dev/null; done; true
+	@for x in $(wildcard ./etc/init/*.sh); \
+		do \
+		echo "Makefile: $$x"; \
+		bash $$x 2>/dev/null; \
+		done
+ifeq ($(shell uname), Darwin)
+	@for x in $(wildcard ./etc/osx/*.sh); \
+		do \
+		echo "Makefile: $$x"; \
+		bash $$x 2>/dev/null; \
+		done
 endif
 
 clean:

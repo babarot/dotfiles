@@ -3,11 +3,8 @@ DOTFILES_DIR = $(PWD)
 FILES_TO_BE_LINKED = .??* bin
 DOTFILES_FILE = $(addprefix $(DOTFILES_DIR)/, $(FILES_TO_BE_LINKED))
 
-
-all: help
-#	@for f in $(DOTFILES_FILE) ; do \
-#		echo "$${f}"; \
-#	done ; true
+all:
+	help
 
 help:
 	@echo "make list             #=> ls -A"

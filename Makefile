@@ -14,7 +14,7 @@ help:
 	@echo "make clean            #=> remove the files"
 
 list:
-	@ls -A
+	@$(foreach val, $(DOTFILES_FILES), ls -dF $(val);)
 
 deploy:
 	@echo "Start deploy dotfiles current directory."
@@ -27,8 +27,6 @@ deploy:
 		ln -sfnv "$(PWD)/$${f}" "$(HOME)/$${f}" ; \
 	done ; true
 
-sync:
-	rsync $(RSYNC_OPTS) . ~;
 
 update:
 	git pull origin master

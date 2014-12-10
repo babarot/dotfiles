@@ -27,7 +27,7 @@ Click this image to see a larger version.
 
 Run the following commands in your terminal. 
 
-	$ bash -c "$(curl -fsSL raw.github.com/b4b4r07/dotfiles/master/bootstrap.sh)"
+	$ bash -c "$(curl -fsSL raw.github.com/b4b4r07/dotfiles/master/bin/install)"
 
 **what's inside?**
 

@@ -7,13 +7,11 @@ all:
 	help
 
 help:
-	@echo "make list             #=> ls -A"
+	@echo "make list             #=> list the files"
 	@echo "make deploy           #=> create symlink"
-	@echo "make rsync            #=> copy files by rsync"
-	@echo "make mini             #=> copy minimal rc files"
-	@echo "make update           #=> git pull origin master"
+	@echo "make update           #=> fetch changes"
 	@echo "make install          #=> setup environment"
-	@echo "make clean            #=> rm -rf all files"
+	@echo "make clean            #=> remove the files"
 
 list:
 	@ls -A

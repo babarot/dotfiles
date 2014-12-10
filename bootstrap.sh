@@ -52,7 +52,7 @@ main()
             make install
         fi
 
-        exec ${SHELL:-/bin/bash}
+        exec "${SHELL:-/bin/bash}"
     fi
 }
 

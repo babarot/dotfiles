@@ -29,7 +29,7 @@ function richpager()
     do
         case "$1" in
             -*)
-                if [[ "$1" =~ 'h' ]]; then
+                if [[ "$1" =~ h ]]; then
                     echo "usage: richpager [-h][-nlp] file..."
                     echo "  -h  show this help"
                     echo "  -n  number the output lines, starting at 1"
@@ -37,13 +37,13 @@ function richpager()
                     echo "  -p  use plane text without pygmentize"
                     return 0
                 fi
-                if [[ "$1" =~ 'n' ]]; then
+                if [[ "$1" =~ n ]]; then
                     nflag='-n'
                 fi
-                if [[ "$1" =~ 'l' ]]; then
+                if [[ "$1" =~ l ]]; then
                     lflag='-l'
                 fi
-                if [[ "$1" =~ 'p' ]]; then
+                if [[ "$1" =~ p ]]; then
                     pflag='-p'
                 fi
                 shift

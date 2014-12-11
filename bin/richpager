@@ -19,7 +19,7 @@ function richpager()
     fi
     Less='less -R +Gg'
     # Get display lines.
-    DispLines=$[ $( stty 'size' < '/dev/tty' | cut -d' ' -f1 ) - 2 ]
+    DispLines=$(( $( stty 'size' < '/dev/tty' | cut -d' ' -f1 ) - 2 ))
 
     declare -i arg=0
     declare -a exist_files=()

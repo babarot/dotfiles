@@ -21,7 +21,7 @@ echo -n "Rebuild vim? (y/N) "
 read
 if [[ "$REPLY" =~ ^[Yy]$ ]]; then
     export PATH="../../bin:$PATH"
-    if type vimbuild >/dev/null 2>&1
+    if type vimbuild >/dev/null 2>&1; then
         vimbuild
     else
         echo "Execute vimbuild at your terminal" 1>&2

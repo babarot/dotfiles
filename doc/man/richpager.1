@@ -4,7 +4,7 @@
 richpager \- Rich pager; Cat or less automatically, with pygmentize.
 .SH SYNOPSIS
 .PP
-richpager [-h][-lnp] \f[I]file\f[] \f[I]...\f[]
+richpager [-h][-lnp][-s \f[I]style\f[]] \f[I]file\f[] \f[I]...\f[]
 .SH DESCRIPTION
 .PP
 This command computes the number of commands you type in 24 hours.
@@ -27,6 +27,9 @@ Number the output lines, starting at 1
 .TP
 .BI -p
 Use plain text (namely, disuse pygmentize)
+.TP
+.BI -s\ \f[I]style\f[]
+Specify the \f[I]style\f[] of pygments for syntax highlighting
 .SH SEE ALSO
 .PP
 http://pygments.org

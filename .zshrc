@@ -1194,7 +1194,7 @@ fi
 
 # function
 if is_exist 'richpager'; then
-    alias cl="richpager"
+    alias cl="richpager -s solarized"
 fi
 
 # Common aliases

@@ -204,6 +204,8 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
         \ 'autoload' : {
         \   'commands' : [ 'VimShell', "VimShellPop", "VimShellInteractive" ] }
         \}
+  NeoBundle 'Shougo/neosnippet'
+  NeoBundle 'Shougo/neosnippet-snippets'
   NeoBundleLazy 'glidenote/memolist.vim', {
         \ 'autoload' : {
         \ 'commands' : ['MemoNew', 'MemoGrep']
@@ -3172,7 +3174,36 @@ if s:has_plugin('nerdtree') "{{{
   let g:NERDTreeShowHidden = 1
 endif
 "}}}
-if s:has_plugin('vim-ref') "{{{
+if s:has_plugin('neosnippet') "{{{
+  " Plugin key-mappings.
+  imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+  smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+  xmap <C-k>     <Plug>(neosnippet_expand_target)
+
+  " SuperTab like snippets behavior.
+  imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+        \ "\<Plug>(neosnippet_expand_or_jump)"
+        \: pumvisible() ? "\<C-n>" : "\<TAB>"
+  smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+        \ "\<Plug>(neosnippet_expand_or_jump)"
+        \: "\<TAB>"
+
+  " For snippet_complete marker.
+  if has('conceal')
+    set conceallevel=2 concealcursor=i
+  endif
+
+  " Enable snipMate compatibility feature.
+  let g:neosnippet#enable_snipmate_compatibility = 1
+
+  " Tell Neosnippet about the other snippets
+  let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets'
+  """ Tell Neosnippet about the other snippets
+  ""if !exists("g:neosnippet#snippets_directory")
+  ""  let g:neosnippet#snippets_directory=""
+  ""endif
+  """let g:neosnippet#snippets_directory='~/.vim/bundle/snipmate-snippets/snippets, ~/.vim/mysnippets'
+  ""let g:neosnippet#snippets_directory='~/.vim/snippets, ~/.vim/bundle/vim-snippets/snippets'
 endif
 "}}}
 if s:has_plugin('indentLine') "{{{

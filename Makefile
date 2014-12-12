@@ -28,13 +28,13 @@ update:
 	git submodule foreach git pull origin master
 
 install:
-	@for x in $(wildcard ./etc/init/*.sh); \
+	@-for x in $(wildcard ./etc/init/*.sh); \
 		do \
 		echo "Makefile: $$x"; \
 		bash $$x 2>/dev/null; \
 		done
 ifeq ($(shell uname), Darwin)
-	@for x in $(wildcard ./etc/osx/*.sh); \
+	@-for x in $(wildcard ./etc/osx/*.sh); \
 		do \
 		echo "Makefile: $$x"; \
 		bash $$x 2>/dev/null; \

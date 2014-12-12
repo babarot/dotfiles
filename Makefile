@@ -1,10 +1,9 @@
-DOTFILES_DIR      := $(PWD)
-DOTFILES_TARGET   := $(wildcard .??*) bin
 DOTFILES_EXCLUDES := .DS_Store .git
+DOTFILES_TARGET   := $(wildcard .??*) bin
+DOTFILES_DIR      := $(PWD)
 DOTFILES_FILES    := $(filter-out $(DOTFILES_EXCLUDES), $(DOTFILES_TARGET))
 
-all:
-	help
+all: help
 
 help:
 	@echo "make list             #=> list the files"

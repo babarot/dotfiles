@@ -179,6 +179,10 @@ __git_ps1_show_upstream ()
 		fi
 	fi
 
+    # Number of commits should be push
+    local ahead
+    ahead=$(command git rev-list origin/master..master 2>/dev/null | wc -l | tr -d ' ')
+
 	# calculate the result
 	if [[ -z "$verbose" ]]; then
 		case "$count" in
@@ -187,7 +191,8 @@ __git_ps1_show_upstream ()
 		"0	0") # equal to upstream
 			p="=" ;;
 		"0	"*) # ahead of upstream
-			p=">" ;;
+			#p=">" ;;
+            [[ "$ahead" -gt 0 ]] && p=">${ahead}" || p=">" ;;
 		*"	0") # behind upstream
 			p="<" ;;
 		*)	    # diverged from upstream

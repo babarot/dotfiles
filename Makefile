@@ -30,15 +30,21 @@ update:
 install:
 	@-for x in $(wildcard ./etc/init/*.sh); \
 		do \
-		echo "Makefile: $$x"; \
 		bash $$x 2>/dev/null; \
 		done
 ifeq ($(shell uname), Darwin)
 	@-for x in $(wildcard ./etc/init/osx/*.sh); \
 		do \
-		echo "Makefile: $$x"; \
 		bash $$x 2>/dev/null; \
 		done
+endif
+
+ifeq ($(shell uname), Darwin)
+brew:
+	bash ./etc/init/osx/Brewfile
+
+cask:
+	bash ./etc/init/osx/Caskfile
 endif
 
 clean:

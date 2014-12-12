@@ -35,7 +35,7 @@ if [[ "$REPLY" =~ ^[Yy]$ ]]; then
             sudo cp ../en.lproj/SystemFolderLocalizations.strings .
             killall Finder
         fi
+    else
+        LANG=C xdg-user-dirs-gtk-update
     fi
-else
-    LANG=C xdg-user-dirs-gtk-update
 fi

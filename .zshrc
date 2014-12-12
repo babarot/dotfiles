@@ -688,8 +688,9 @@ zle -N zle-keymap-select
 
 # R prompt {{{2
 setopt prompt_subst
+
 # Automatically hidden rprompt
-#setopt transient_rprompt
+setopt transient_rprompt
 
 if [[ -f ~/bin/git-prompt.sh ]]; then
     function r-prompt()

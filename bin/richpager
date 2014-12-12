@@ -86,7 +86,6 @@ function richpager()
         File=$( cat - )
         FileLines=$(echo -n "$File" | grep -c '')
     else
-        declare -i col=0
         declare -a a=('0')
         for file in "${exist_files[@]}"
         do

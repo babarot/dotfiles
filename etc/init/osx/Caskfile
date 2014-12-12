@@ -1,34 +1,23 @@
 #/bin/bash
 # vim: ft=sh
 
+trap 'echo Error: $0: stopped' ERR
 set -u
 set -e
 
 if ! type brew >/dev/null 2>&1; then
-    echo 'brew: command not found' 1>&2
-    echo -n "Install now? (y/N/) "
-    read
-    if [[ "$REPLY" =~ ^[Yy]$ ]] || [[ "$REPLY" == '' ]]; then
-        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-        if [ $? -eq 0 ]; then
-            echo "Complete!"
-            return 0
-        fi
-        return 1
-    fi
+    echo 'Requirement: brew' 1>&2
+    exit 1
 fi
 
-if brew cask >/dev/null 2>&1; then
+if ! brew cask >/dev/null 2>&1; then
     echo 'brew-cask: command not found' 1>&2
-    echo -n "Install now? (y/N/) "
+    echo -n 'Install now? (y/N/) '
     read
-    if [[ "$REPLY" =~ ^[Yy]$ ]] || [[ "$REPLY" == '' ]]; then
+    if [[ "$REPLY" =~ ^[Yy]$ ]]; then
         brew install caskroom/cask/brew-cask
-        if [ $? -eq 0 ]; then
-            echo "Complete!"
-            return 0
-        fi
-        return 1
+    else
+        exit 0
     fi
 fi
 
@@ -37,7 +26,6 @@ fi
 
 declare -a CASK_PACKAGES=(
   "appcleaner"
-  "licecap"
   "bettertouchtool"
   "burn"
   "diskwave"
@@ -48,25 +36,26 @@ declare -a CASK_PACKAGES=(
   "google-drive"
   "google-japanese-ime"
   "iterm2"
-  "keepassx"
   "karabiner"
+  "keepassx"
   "kobito"
+  "licecap"
   "lyrics-master"
   "marked"
   "mou"
   "onepassword"
+  "qlcolorcode"
+  "qlimagesize"
+  "qlmarkdown"
+  "qlstephen"
+  "quicklook-csv"
+  "scriptql"
   "skype"
   "the-unarchiver"
   "vlc"
   "vox-preference-pane"
-  "yorufukurou"
   "xtrafinder"
-  "qlcolorcode"
-  "qlmarkdown"
-  "qlstephen"
-  "quicklook-csv"
-  "qlimagesize"
-  "scriptql"
+  "yorufukurou"
 )
 
 for package in "${CASK_PACKAGES[@]}"

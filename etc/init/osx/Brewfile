@@ -1,24 +1,16 @@
 #!/bin/bash
 # vim: ft=sh
 
+trap 'echo Error: $0: stopped' ERR
 set -u
 set -e
 
 if ! type brew >/dev/null 2>&1; then
-    echo 'brew: command not found' 1>&2
-    echo -n "Install now? (y/N/) "
-    read
-    if [[ "$REPLY" =~ ^[Yy]$ ]] || [[ "$REPLY" == '' ]]; then
-        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-        if [ $? -eq 0 ]; then
-            echo "Complete!"
-            return 0
-        fi
-        return 1
-    fi
+    echo 'Requirement: brew' 1>&2
+    exit 1
 fi
 
-echo "brew updating..."
+echo 'brew updating...'
 
 brew update
 outdated=$(brew outdated)

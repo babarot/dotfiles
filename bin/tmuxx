@@ -8,7 +8,7 @@
 # https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
 
 if ! type tmux >/dev/null 2>&1; then
-    echo 'Error: tmux command not found' 2>&1
+    echo 'Error: tmux command not found' 1>&2
     exit 1
 fi
 

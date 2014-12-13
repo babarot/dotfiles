@@ -52,11 +52,10 @@ function richpager()
                     pflag='-p'
                 fi
                 if [[ "$1" =~ s ]]; then
+                    declare style="default"
                     if echo "$styles" | grep -q -x "${2:-NONE}"; then
                         style="$2"
                         shift
-                    else
-                        style="default"
                     fi
                     Pager="pygmentize -O style=$style -f console256 -g"
                 fi

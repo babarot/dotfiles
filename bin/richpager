@@ -81,22 +81,29 @@ function richpager()
     #
     # Count the number of lines in the all files given as an argument
     #
-    if [ -p /dev/stdin ] || (( arg < 1)) ; then
+    if [ -p /dev/stdin ] || (( arg < 1 )); then
         File=$( cat - )
         FileLines=$(echo -n "$File" | grep -c '')
-    else
-        declare -a a=('0')
+    elif (( arg > 0 )); then
+        declare -a lines=('0')
         for file in "${exist_files[@]}"
         do
-            a+="+ $(wc -l <$file)"
+            lines+="+ $(wc -l <$file)"
         done
-        FileLines=$(echo "${a[@]}" |bc)
+        FileLines=$(echo "${lines[@]} + ${#non_exist_files[@]}" | bc)
     fi
 
     #
     # Use less if not be displayed all of the contents of the files in the terminal
     #
-    if [ -n "${exist_files}" ] || [ -p /dev/stdin ]; then
+    #if [ -n "${exist_files}" ] || [ -p /dev/stdin ]; then
+    if [ -p /dev/stdin ]; then
+        if (( FileLines > DispLines )) || [ -n "$lflag" ]; then
+            echo "$File" | ${Pager} | cat ${nflag} | ${Less}
+        else
+            echo "$File" | ${Pager} | cat ${nflag}
+        fi
+    else
         if (( FileLines > DispLines )) || [ -n "$lflag" ]; then
             for file in "${exist_files[@]}"
             do

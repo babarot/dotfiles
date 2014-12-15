@@ -13,8 +13,7 @@ elif type easy_install >/dev/null 2>&1; then
     installer='easy_install'
 fi
 
-echo    "Pygments is python syntax highlighter."
-echo -n "Do you install pygments? (y/N) "
+echo -n "Do you want to install the pygments is a syntax highlighter written in python? (y/N) "
 read
 if [[ "$REPLY" =~ ^[Yy]$ ]]; then
     if [[ "$installer" == 'unknown' ]]; then

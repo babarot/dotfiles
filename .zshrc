@@ -496,6 +496,7 @@ function gtj()
 # Keybinds and widgets {{{1
 
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+WORDCHARS='*?.[]~&;!#$%^(){}<>'
 # widgets {{{2
 kill-backward-blank-word() #{{{3
 {

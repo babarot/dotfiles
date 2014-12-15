@@ -2609,8 +2609,6 @@ cnoremap <C-f> <Right>
 cnoremap <C-d> <Del>
 cnoremap <C-h> <BS>
 
-nnoremap <C-a> ^
-nnoremap <C-e> $
 "nnoremap + <C-a>
 "nnoremap - <C-x>
 "}}}

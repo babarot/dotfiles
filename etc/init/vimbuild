@@ -1,0 +1,241 @@
+#!/bin/bash
+
+CUR_DIR=`pwd`
+CUR_DIR=/usr/local/vim
+mkdir -p $CUR_DIR
+
+ARCH="unix"
+FILE_VERSIONS_LIST="$CUR_DIR/.vim-versions"
+ARC_DIR="$CUR_DIR/vim"
+FTP_VIM_PATH="pub/vim"
+SRC_ARC_URL_PATH="ftp://ftp.vim.org/$FTP_VIM_PATH/$ARCH"
+
+
+usage() {
+    echo "Usage: $0 [install|build|clean|update|versions|rpmbuild] [TARGET_VERSION]"
+}
+
+get_version() {
+    cd $CUR_DIR
+    ftp -n -i  <<-EOF
+open ftp.vim.org
+user anonymous pass
+cd $FTP_VIM_PATH/$ARCH
+pwd
+nlist vim-* $FILE_VERSIONS_LIST
+bye
+EOF
+}
+
+disp_version() {
+    cd $CUR_DIR
+    if [ ! -f $FILE_VERSIONS_LIST ];then
+        get_version
+    fi
+    grep -v ".diff." $FILE_VERSIONS_LIST | cut -d"." -f1-2 | cut -d"-" -f2-
+}
+
+disp_version_latest() {
+    cd $CUR_DIR
+    disp_version | tail -1
+}
+
+CONFIGURE_OPTIONS=""
+TARGET_VERSION=""
+
+while getopts hc: OPT
+do
+    case $OPT in
+        h)  usage
+            exit
+            ;;
+        c)
+            CONFIGURE_OPTIONS="$OPTARG"
+            ;;
+        \?) usage
+            exit
+            ;;
+    esac
+done
+
+# command
+if [ "$1" = "install" -o "$1" = "build" -o "$1" = "clean" -o "$1" = "update" -o "$1" = "rpmbuild" ]; then
+    COMMAND=$1
+    if [ "$2" = "" ];then
+        TARGET_VERSION=`disp_version_latest`
+    else
+        TARGET_VERSION=$2
+    fi
+elif [ "$1" = "versions" ];then
+    COMMAND=$1
+    TARGET_VERSION=""
+else
+    COMMAND="install"
+    if [ "$1" = "" ];then
+        TARGET_VERSION=`disp_version_latest`
+    else
+        TARGET_VERSION=$1
+    fi
+fi
+
+#echo $TARGET_VERSION
+
+if [ "$TARGET_VERSION" != "" ];then
+    SRC_DIR="$CUR_DIR/build/$TARGET_VERSION"
+    BIN_DIR="$CUR_DIR/bin/$TARGET_VERSION"
+    PATCH_DIR="$CUR_DIR/patches/$TARGET_VERSION"
+else
+    SRC_DIR=""
+    BIN_DIR=""
+    PATCH_DIR=""
+fi
+
+command_clean() {
+    cd $CUR_DIR
+    rm -fr \
+    $SRC_DIR \
+    $BIN_DIR \
+    $PATCH_DIR \
+    $FILE_VERSIONS_LIST
+}
+
+if [ "$COMMAND" = "clean" ];then
+    if [ "$SRC_DIR" = "" -o "$PATCH_DIR" = "" ]; then
+        echo "error: SRC_DIR or PATCH_DIR none."
+        exit
+    fi
+    command_clean
+    exit
+elif [ "$COMMAND" = "versions" ];then
+    disp_version
+    exit
+fi
+
+if [ "$CONFIGURE_OPTIONS" = "" ];then
+    CONFIGURE_OPTIONS="\
+        --enable-multibyte \
+        --with-features=huge \
+        --enable-fontset \
+        --enable-cscope \
+        --disable-selinux \
+        --enable-luainterp \
+        --prefix=$BIN_DIR"
+fi
+
+SRC_ARC_FILENAME=""
+if [ "$TARGET_VERSION" != "" ];then
+    if [ ! -f $FILE_VERSIONS_LIST ];then
+        echo "not found $FILE_VERSIONS_LIST"
+        exit
+    fi
+    SRC_ARC_FILENAME=`egrep "^vim-"$TARGET_VERSION"\." $FILE_VERSIONS_LIST`
+fi
+
+# vim source download
+download_vim_source() {
+    cd $CUR_DIR
+    mkdir -p $ARC_DIR
+    cd $ARC_DIR
+    if [ ! -f $SRC_ARC_FILENAME ]; then
+        curl -O $SRC_ARC_URL_PATH/$SRC_ARC_FILENAME
+    fi
+}
+
+FILE_PATCHES_LIST="$PATCH_DIR/.vim-patches"
+
+# patch download
+get_patch_list() {
+    cd $CUR_DIR
+    mkdir -p $PATCH_DIR
+    cd $PATCH_DIR
+    ftp -n -i  <<EOF
+open ftp.vim.org
+user anonymous pass
+cd $FTP_VIM_PATH/patches/$TARGET_VERSION
+pwd
+nlist $TARGET_VERSION.* $FILE_PATCHES_LIST
+bye
+EOF
+}
+
+download_patch() {
+    cd $CUR_DIR
+    cd $PATCH_DIR
+    rm -f $FILE_PATCHES_LIST.u
+    cat $FILE_PATCHES_LIST | while read PATCH_FILE; do
+        URL_PATCH_FILE="http://ftp.vim.org/$FTP_VIM_PATH/patches/$TARGET_VERSION/$PATCH_FILE"
+        echo "$URL_PATCH_FILE" >> $FILE_PATCHES_LIST.u
+    done
+    cat $FILE_PATCHES_LIST.u | xargs wget -N -c
+}
+
+uncompress_vim_source() {
+    cd $CUR_DIR
+    rm -fr $SRC_DIR
+    mkdir -p $SRC_DIR
+    mkdir -p $BIN_DIR
+    cd $SRC_DIR
+    tar -xvjf $ARC_DIR/$SRC_ARC_FILENAME
+}
+
+# run patch
+run_patch() {
+    cd $PATCH_DIR
+    patchlist=`ls -v $TARGET_VERSION.*`
+    cd $SRC_DIR
+    SRC_CORE_DIR=`ls | grep vim`
+    cd $SRC_CORE_DIR
+    for patchfile in $patchlist; do
+        cat $PATCH_DIR/$patchfile
+    done | patch -p0
+}
+
+# configure
+run_configure() {
+    cd $SRC_DIR/$SRC_CORE_DIR
+    ./configure $CONFIGURE_OPTIONS
+}
+
+# make
+build_vim() {
+    cd $SRC_DIR/$SRC_CORE_DIR
+    make clean
+    make
+    make install
+}
+
+if [ "$COMMAND" = "rpmbuild" ];then
+    echo "not impliment."
+    exit
+fi
+
+if [ "$SRC_DIR" = "" -o "$PATCH_DIR" = "" ]; then
+    echo "error: SRC_DIR or PATCH_DIR none."
+    exit
+fi
+
+if [ "$COMMAND" = "update" ];then
+    command_clean
+    get_version
+    download_vim_source
+    get_patch_list
+    download_patch
+    exit
+elif [ "$COMMAND" = "install" ];then
+#    get_version
+#    command_clean
+    download_vim_source
+    get_patch_list
+    download_patch
+    uncompress_vim_source
+    run_patch
+    run_configure
+    build_vim
+elif [ "$COMMAND" = "build" ];then
+    uncompress_vim_source
+    run_patch
+    run_configure
+    build_vim
+fi
+
+echo "To use this vim, do 'export PATH=$SRC_DIR/$SRC_CORE_DIR/src:\$PATH'."

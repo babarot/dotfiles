@@ -1,0 +1,8 @@
+#!/bin/bash
+# usage: trunc FILE...
+# truncate files
+
+for f in "$@"
+do
+    cat </dev/null >"$f"
+done

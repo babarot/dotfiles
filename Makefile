@@ -28,24 +28,7 @@ update:
 	git submodule foreach git pull origin master
 
 install:
-	@-for x in $(wildcard ./etc/init/*.sh); \
-		do \
-		bash $$x 2>/dev/null; \
-		done
-ifeq ($(shell uname), Darwin)
-	@-for x in $(wildcard ./etc/init/osx/*.sh); \
-		do \
-		bash $$x 2>/dev/null; \
-		done
-endif
-
-ifeq ($(shell uname), Darwin)
-brew:
-	bash ./etc/init/osx/Brewfile
-
-cask:
-	bash ./etc/init/osx/Caskfile
-endif
+	@$(foreach val, $(wildcard ./etc/init/*.sh), bash $(val);)
 
 clean:
 	@echo 'Remove dot files in your home directory...'

@@ -13,3 +13,14 @@ if ! type brew >/dev/null 2>&1; then
     fi
 fi
 
+echo -n 'Install Homebrew packages? (y/N/) '
+read
+if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+    bash "$(dirname "${BASH_SOURCE}")"/Brewfile
+fi
+
+echo -n 'Install Homebrew Cask packages? (y/N/) '
+read
+if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+    bash "$(dirname "${BASH_SOURCE}")"/Caskfile
+fi

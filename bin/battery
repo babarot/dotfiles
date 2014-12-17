@@ -1,4 +1,15 @@
 #!/bin/bash
+#
+# @(#) battery ver.0.2 2014.12.17
+#
+# Usage:
+#   battery [-p][-t]
+#
+# Description:
+#   Display battery information
+#   supported ansi/tmux color
+#
+######################################################################
 
 ostype() { echo $OSTYPE | tr '[A-Z]' '[a-z]'; }
 determine_os()
@@ -33,13 +44,10 @@ END
 function get_battery()
 {
     get_battery_initialize
+    [ -z "$percentage" ] && return 1
 
     if [[ $# == 0 ]]; then
-        if [[ -n "${percentage}" ]]; then
-            echo "${percentage}%"
-        else
-            return 1
-        fi
+        echo "${percentage}%"
     else
         while (( $# > 0 ))
         do

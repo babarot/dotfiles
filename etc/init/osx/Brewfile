@@ -52,6 +52,8 @@ declare -a BREW_PACKAGES=(
   "libtiff"
   "libtool"
   "little-cms2"
+  "mecab"
+  "mecab-ipadic"
   "openssl"
   "pcre"
   "peco/peco/peco"

@@ -10,6 +10,7 @@
 #   Same as 'tail -r' and 'tac'.
 #
 ######################################################################
+# Oneliner: awk '{a[NR]=$0}END{for(i=NR;i>0;i--)print a[i]}'
 
 BEGIN {
     # In order to avoid conflicts,

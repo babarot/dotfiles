@@ -10,19 +10,7 @@
 #
 ######################################################################
 
-function tac()
-{
-	if [ -z "$1" ]; then
-		echo 'too few arguments' 1>&2
-		return 1
-	fi
-
-	`which ex` -s "${1}" <<-EOF
-	g/^/mo0
-	%p
-	EOF
-
-	return 0
-}
-
-tac "$@"
+ex -s "$1" <<-EOF
+g/^/mo0
+%p
+EOF

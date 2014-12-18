@@ -1,0 +1,85 @@
+#!/bin/bash
+#
+# Use: Put something this in your .tmux.conf file
+# set-option -g status-right: '#(wifi -c tmux)'
+#
+#   -20　Excellent
+#　 -30　Excellent
+#　 -40　Excellent
+#　 -50　Excellent
+#　 -60　better
+#　 -70　good
+#　 -80　not good
+#　 -90　bad
+#　-100　bad
+#
+# ▁▂▃▅▇
+
+declare airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
+
+wifi()
+{
+    if [[ ! -x $airport ]]; then
+        return 1
+    fi
+
+    #all_signal=(▁ ▂ ▅ ▆ ▇)
+    local all_signal=(▂ ▅ ▆)
+
+    # Search information about Wi-Fi by using airport command
+    local current=$(bash -c "$airport -I" | egrep "agrCtlRSSI|state|lastTxRate| SSID" | tr "\\n" ";" | awk '{print $2,$4,$6,$8}')
+    if [ "$current" = "" ]; then
+        echo "no_wifi"
+        return 1
+    fi
+
+    local strength=$(echo "$current" | cut -d";" -f1-1 | cut -d" " -f2-)
+    local state=$(echo "$current" | cut -d";" -f2-2 | cut -d" " -f2-)
+    local bandwidth=$(echo "$current" | cut -d";" -f3-3 | cut -d" " -f2-)
+    local name=$(echo "$current" | cut -d";" -f4-4 | cut -d" " -f2-)
+
+    # Decide the number of radio waves
+    #if [[ $j -eq 0 && $strength -gt -80 ]] || [[ $j -eq 1 && $strength -gt -79 ]] ||
+        #   [[ $j -eq 2 && $strength -gt -59 ]] || [[ $j -eq 3 && $strength -gt -49 ]] ||
+        #   [[ $j -eq 4 && $strength -gt -39 ]]; then
+    local signal=""
+    #for ((j = 0; j < 5; j++)); do
+    for ((j = 0; j < 3; j++)); do
+        if [[ $j -eq 0 && $strength -gt -100 ]] ||
+            [[ $j -eq 1 && $strength -gt -80 ]] ||
+            [[ $j -eq 2 && $strength -gt -50 ]]; then
+        signal="${signal}${all_signal[$j]} "
+    else
+        signal="${signal}  "
+    fi; done
+
+    if [[ $1 == '-h' || $1 == '--help' ]]; then
+        echo "usage: wifi [-h][-c type]"
+        echo "  If type is omitted, signified *ansi* color"
+        echo "  also, *tmux* color is supported."
+        return 0
+    elif [[ $1 == '-c' ]]; then
+        local normal='\033[m'
+        local blue='\033[34m'
+        local red='\033[31m'
+        if [[ $2 == 'tmux' ]]; then
+            normal="#[fg=default]"
+            blue="#[fg=blue]"
+            red="#[fg=red]"
+        fi
+        local color="$blue"
+
+        local s="${signal/ //}"
+        if [[ "${#s}" -le 4 ]]; then
+            color="$red"
+        fi
+    fi
+
+    echo -e "${name} ${bandwidth}Mbs ${color}${signal}${normal}"
+}
+
+if [[ $OSTYPE == darwin* ]]; then
+    wifi "$@"
+else
+    exit 1
+fi

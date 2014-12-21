@@ -18,8 +18,8 @@
     # `git config --global push.default simple`. See http://git.io/mMah-w.
     default = matching
 [user]
-    name = Z1Z1R07
-    email = z1z1r07@gmail.com
+    name = b4b4r07
+    email = b4b4r07@gmail.com
 [pager]
     log = diff-highlight  | less -R
     show = diff-highlight | less -R

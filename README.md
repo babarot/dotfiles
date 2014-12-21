@@ -1,5 +1,7 @@
 # The [B4B4R07](https://twitter.com/b4b4r07)'s dotfiles
 
+[![](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](./doc/LICENSE-MIT.txt)
+[![endorse](https://api.coderwall.com/b4b4r07/endorsecount.png)](https://coderwall.com/b4b4r07)
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/b4b4r07/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 This is a repository with my [configuration files](http://en.wikipedia.org/wiki/Configuration_file), those that in Linux/OS X normally are these files under the `$HOME` directory that are hidden and preceded by a dot, AKA *dotfiles*.

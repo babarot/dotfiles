@@ -1,5 +1,7 @@
 # The [B4B4R07](https://twitter.com/b4b4r07)'s dotfiles
 
+![dotfiles-logo](http://cl.ly/image/2q1a2d0Y2S3y/dotfiles.png "dotfiles")
+
 [![](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt)
 [![](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat)](./doc/LICENSE-MIT.txt)
 [![endorse](https://api.coderwall.com/b4b4r07/endorsecount.png)](https://coderwall.com/b4b4r07)

@@ -52,11 +52,10 @@ function richpager()
                     pflag='-p'
                 fi
                 if [[ "$1" =~ s ]]; then
+                    declare style="default"
                     if echo "$styles" | grep -q -x "${2:-NONE}"; then
                         style="$2"
                         shift
-                    else
-                        style="default"
                     fi
                     Pager="pygmentize -O style=$style -f console256 -g"
                 fi
@@ -74,34 +73,51 @@ function richpager()
         esac
     done
 
-    for file in "${exist_files[@]}"
-    do
-        if [ -r "$file" ]; then
-            List[${#List[@]}]=$( <"$file" )
-        fi
-    done
-
-    if (( ${#List[@]} > 0 )); then
-        File=$( for i in "${List[@]}" ; do echo "$i"; done )
-    elif [ -p /dev/stdin ] || (( arg < 1)) ; then
-        File=$( cat - )
-    fi
-
-    declare -i FileLines=$( echo -n "$File" | grep -c '' )
-    FileLines+="${#non_exist_files[@]}"
-
+    # Option -p
     if [ -n "$pflag" ]; then
         Pager='cat'
     fi
 
-    if [ -n "${exist_files}" -o -p /dev/stdin ]; then
+    #
+    # Count the number of lines in the all files given as an argument
+    #
+    if [ -p /dev/stdin ] || (( arg < 1 )); then
+        File=$( cat - )
+        FileLines=$(echo -n "$File" | grep -c '')
+    elif (( arg > 0 )); then
+        declare -a lines=('0')
+        for file in "${exist_files[@]}"
+        do
+            lines+="+ $(wc -l <$file)"
+        done
+        FileLines=$(echo "${lines[@]} + ${#non_exist_files[@]}" | bc)
+    fi
+
+    #
+    # Use less if not be displayed all of the contents of the files in the terminal
+    #
+    #if [ -n "${exist_files}" ] || [ -p /dev/stdin ]; then
+    if [ -p /dev/stdin ]; then
         if (( FileLines > DispLines )) || [ -n "$lflag" ]; then
             echo "$File" | ${Pager} | cat ${nflag} | ${Less}
         else
             echo "$File" | ${Pager} | cat ${nflag}
         fi
+    else
+        if (( FileLines > DispLines )) || [ -n "$lflag" ]; then
+            for file in "${exist_files[@]}"
+            do
+                ${Pager} "$file"
+            done | cat ${nflag} | ${Less}
+        else
+            for file in "${exist_files[@]}"
+            do
+                ${Pager} "$file"
+            done | cat ${nflag}
+        fi
     fi
 
+    # In case of files that do not exist
     for file in "${non_exist_files[@]}"
     do
         ERR=1

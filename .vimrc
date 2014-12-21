@@ -3233,6 +3233,20 @@ endif
 
 " MISC: Useful code that does not enter the section are described here
 
+function! s:tex()
+  let file = a:0 ? a:1 : expand('%:p')
+  if fnamemodify(file, ':e') ==# 'tex'
+    execute 'update' file
+    execute 'cd' fnamemodify(file, ':p:h')
+    echo system('platex ' . file)
+    echo system('dvipdfmx ' . fnamemodify(file, ':p:r') . '.dvi')
+    echo system('open ' . fnamemodify(file, ':p:r') . '.pdf')
+  else
+    call s:error(file . ' is not TeX file!')
+  endif
+endfunction
+command! -complete=file Tex call s:tex()
+
 "nnoremap <silent> <Space>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Space>o", v:count1)<CR>
 "nnoremap <silent> <Space>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Space>O", v:count1)<CR>
 

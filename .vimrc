@@ -3268,8 +3268,12 @@ function! s:gui()
     set iminsert=0 imsearch=0
     inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
   endif
-  highlight Cursor   guibg=Yellow guifg=Black
-  highlight CursorIM guibg=Red    guifg=Black
+  "autocmd VimEnter,ColorScheme * highlight Cursor   guibg=Yellow guifg=Black
+  "autocmd VimEnter,ColorScheme * highlight CursorIM guibg=Red    guifg=Black
+  autocmd VimEnter,ColorScheme * if &background ==# 'dark'  | highlight Cursor   guibg=Yellow guifg=Black | endif
+  autocmd VimEnter,ColorScheme * if &background ==# 'dark'  | highlight CursorIM guibg=Red    guifg=Black | endif
+  autocmd VimEnter,ColorScheme * if &background ==# 'light' | highlight Cursor   guibg=Black  guifg=NONE  | endif
+  autocmd VimEnter,ColorScheme * if &background ==# 'light' | highlight CursorIM guibg=Red    guifg=Black | endif
   inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
 
   " Remove all menus.

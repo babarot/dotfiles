@@ -280,9 +280,6 @@ function tmux_automatically_attach()
 tmux_automatically_attach
 #}}}
 
-autoload -Uz colors
-colors
-
 # Startup zsh {{{1
 #
 function zsh_at_startup()

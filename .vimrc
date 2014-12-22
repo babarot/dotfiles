@@ -3268,9 +3268,9 @@ augroup END "}}}
 " GUI settings {{{
 autocmd GUIEnter * call s:gui()
 function! s:gui()
-  syntax enable
   "colorscheme solarized
-  set background=dark
+  set background=light
+  syntax enable
 
   " Tabpages
   set guitablabel=%{GuiTabLabel()}

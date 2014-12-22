@@ -289,44 +289,54 @@ function zsh_at_startup()
     echo "\n$fg_bold[cyan]This is ZSH $fg_bold[red]${ZSH_VERSION}$fg_bold[cyan] - DISPLAY on $fg_bold[red]$DISPLAY$reset_color\n"
     #echo "Loading .zshrc completed!! (ZDOTDIR=${ZDOTDIR})"
 
-    # Loads the file except executable one.
-    test -d $BIN || mkdir -p $BIN
-    if [ -d $BIN ]; then
-        for f in $(echo "$BIN"/*.sh)
+    ## Loads the file except executable one.
+    #test -d $BIN || mkdir -p $BIN
+    #if [ -d $BIN ]; then
+    #    for f in $(echo "$BIN"/*.sh)
+    #    do
+    #        if [ ! -x "$f" ]; then
+    #            source "$f" && echo " loaded $f"
+    #        fi
+    #        unset f
+    #    done
+    #    echo ""
+    #fi
+
+    #if [ -d ~/.zsh/plugins ];false; then
+    #    local plugin
+    #    local -a plugins
+    #    #plugins=( $(find ~/.zsh/plugins -maxdepth 2 -type f -name "*sh") )
+    #    #echo ~/bin/(*.sh|*.zsh|*.bash)
+    #    plugins=($(find ~/.zsh/plugins -maxdepth 2 -type f \( -name "*.sh" -or -name "*.bash" -or -name "*.zsh" \) -print))
+
+    #    for plugin in "${plugins[@]}"
+    #    do
+    #        if [ ! -x "$plugin" ]; then
+    #            [[ "$plugin" =~ "syntax" ]] && continue
+    #            source "$plugin" && echo " load-plugin ${plugin/$HOME/~}"
+    #        fi
+    #    done
+    #    echo ""
+    #fi
+    if [[ -d  ~/.loading ]]; then
+        for f in ~/.loading/*
         do
-            if [ ! -x "$f" ]; then
+            #if [ ! -x "$f" ]; then
                 source "$f" && echo " loaded $f"
-            fi
+            #fi
             unset f
         done
         echo ""
     fi
-
-    if [ -d ~/.zsh/plugins ];false; then
-        local plugin
-        local -a plugins
-        #plugins=( $(find ~/.zsh/plugins -maxdepth 2 -type f -name "*sh") )
-        #echo ~/bin/(*.sh|*.zsh|*.bash)
-        plugins=($(find ~/.zsh/plugins -maxdepth 2 -type f \( -name "*.sh" -or -name "*.bash" -or -name "*.zsh" \) -print))
-
-        for plugin in "${plugins[@]}"
-        do
-            if [ ! -x "$plugin" ]; then
-                [[ "$plugin" =~ "syntax" ]] && continue
-                source "$plugin" && echo " load-plugin ${plugin/$HOME/~}"
-            fi
-        done
-        echo ""
-    fi
-    return 0
 }
 
 if zsh_at_startup; then
-    source ~/.zsh/plugins/enhancd/enhancd.sh
-    source ~/.zsh/plugins/favdir/favdir.sh
-    source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
-    source ~/.zsh/plugins/vi-mode-visual/vi-mode-visual.sh
-    source ~/.zsh/plugins/opp.zsh/opp.zsh
+    :
+    #source ~/.zsh/plugins/enhancd/enhancd.sh
+    #source ~/.zsh/plugins/favdir/favdir.sh
+    #source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+    #source ~/.zsh/plugins/vi-mode-visual/vi-mode-visual.sh
+    #source ~/.zsh/plugins/opp.zsh/opp.zsh
     #source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
     #source ~/.zsh/plugins/zsh-autosuggestions/autosuggestions.zsh
 fi

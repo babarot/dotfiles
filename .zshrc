@@ -338,6 +338,7 @@ fi
 function chpwd() #{{{2
 {
     ls_abbrev
+    echo $(tmux display -p "#I:#P"):$PWD >>|~/.tmux.info
 }
 
 function ls_abbrev() #{{{2

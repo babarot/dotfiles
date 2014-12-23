@@ -1,0 +1,16 @@
+# Rules
+
+1. placed into the `etc/init/` directory
+2. file name ending in `.sh`
+3. following description at the beginning of the `.sh` file
+    - trap 'echo Error: $0: stopped' ERR
+    - set -e
+    - set -u
+    - echo -n "Do you want to ...? (y/N) "
+    - read
+    - if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+4. As much as possible, do **not use** the `exit 1`
+5. Process dependent on the OS X is placed the `etc/init/osx/` directory
+6. It is desirable dependencies are resolved in the script
+
+vim:ft=markdown

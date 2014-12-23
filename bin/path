@@ -106,7 +106,7 @@ function get_path()
         case "$1" in
             -*)
                 if [[ "$1" == '-h' ]]; then
-                    echo "$(usage: basename $0 [-h|-ar] path...)"
+                    echo "usage: $(basename $0) [-h|-ar] path..."
                     echo "  -a: Get absolute path(default)"
                     echo "  -r: Get relative path"
                     return 0

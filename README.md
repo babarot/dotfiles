@@ -163,8 +163,13 @@ The resulting `/etc/paths` files looks like this:
 
 ## Credits
 
-* Dotfiles' `README` layout based on [@Mathias's dotfiles](https://github.com/mathiasbynens/dotfiles)
-* File Hierarchy based on [@Pritzker's dotfiles](https://github.com/skwp/dotfiles)
+* Inspired by [cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/bin/dotfiles)
+* Inspired by [skwp's dotfiles](https://github.com/skwp/dotfiles)
+* *Installation* section based on [@necolas's dotfiles](https://github.com/necolas/dotfiles)
+* *OS X Hacks* section based on [cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/README.md)
+* *Components* section based on [@holman's dotfiles](https://github.com/holman/dotfiles)
+* *Author* section and [*OS X defaults*](etc/init/osx/osx_defaults.sh) based on [@Mathias's dotfiles](https://github.com/mathiasbynens/dotfiles)
+* `README.md` layout based on [@zanshin's README.md](https://github.com/zanshin/dotfiles)
 * `Makefile` based on [@Tetsuji's dotfiles](https://github.com/xtetsuji/dotfiles)
 * `bootstrap.sh` based on [@Rocha's dotfiles](https://github.com/zenorocha/old-dotfiles)
 

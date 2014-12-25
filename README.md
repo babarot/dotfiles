@@ -113,7 +113,7 @@ $ xcode-select --install
 	When setting up a new Mac, you may want to set some sensible OS X defaults:
 
 	```
-$ bash ./init/osx/defaults.sh
+$ bash ./etc/init/osx/osx_defaults.sh
 	```
 
 - [Installing Homebrew](http://brew.sh)
@@ -136,8 +136,8 @@ $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/maste
 
 When setting up a new Mac, you may want to install some common Homebrew formulae (after installing Homebrew, of course):
 
-	$ bash ./init/osx/Brewfile
-	$ bash ./init/osx/Caskfile
+	$ bash ./etc/init/osx/Brewfile
+	$ bash ./etc/init/osx/Caskfile
 
 **Notes:**
 

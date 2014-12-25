@@ -2,6 +2,7 @@
 
 [![dotfiles-logo](http://cl.ly/image/2q1a2d0Y2S3y/dotfiles.png "dotfiles")](https://dribbble.com/shots/1466768-dotfiles-logo)
 
+[![tag](http://img.shields.io/github/tag/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/releases/tag/stable)
 [![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt)
 [![platform](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat)](./doc/LICENSE-MIT.txt)
 [![endorse](https://api.coderwall.com/b4b4r07/endorsecount.png)](https://coderwall.com/b4b4r07)
@@ -17,7 +18,7 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 
 ## Features
 
-- **OS X** Yosemite (Macbook Air)
+- **OS X** Yosemite (MacBook Air)
 - **Zsh** 5.0.5
 - **Vim** 7.4
 - **Tmux** 1.9a
@@ -185,6 +186,6 @@ Copyright (c) 2014 "BABAROT" b4b4r07
 
 Licensed under the [MIT license](./doc/LICENSE-MIT.txt).
 
-Unless attributed otherwise, everything is under the MIT licence (see LICENCE for more info).
+Unless attributed otherwise, everything is under the MIT licence (see [LICENCE](./doc/LICENSE-MIT.txt) for more info).
 
 Some stuff is not from me, and without attribution, and I no longer remember where I got it from. I apologize for that.

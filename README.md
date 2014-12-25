@@ -183,6 +183,8 @@ The resulting `/etc/paths` files looks like this:
 
 Copyright (c) 2014 "BABAROT" b4b4r07
 
-Licensed under the [MIT license](./doc/LICENSE-MIT.txt) in principle.
+Licensed under the [MIT license](./doc/LICENSE-MIT.txt).
 
-However, if there is a description for the license at the beginning of the file, follow over it.
+Unless attributed otherwise, everything is under the MIT licence (see LICENCE for more info).
+
+Some stuff is not from me, and without attribution, and I no longer remember where I got it from. I apologize for that.

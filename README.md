@@ -157,9 +157,9 @@ The resulting `/etc/paths` files looks like this:
 
 - **bin/**: Anything in `bin/` will get added to your `$PATH` and be made available everywhere.
 - **etc/init/**: Configuration file storage to be executed initially for setup.
-- **etc/osx/**: Some configuration files for OS X storage.
-- **doc/man/**: A self-written program's manuals.
-- **.zsh/plugin/**: Any files ending in `.sh` get loaded into your environment.
+- **etc/init/osx/**: Some configuration files for OS X storage.
+- **doc/man/**: Self-written program's manuals.
+- **.loading/**: Any files ending in `.sh` get loaded into your environment.
 
 ## Credits
 

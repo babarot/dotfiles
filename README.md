@@ -4,7 +4,7 @@
 
 [![tag](http://img.shields.io/github/tag/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/releases/tag/stable)
 [![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt)
-[![platform](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat)](./doc/OSX.txt)
+[![platform](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat)](./doc/OSX.md)
 [![endorse](https://api.coderwall.com/b4b4r07/endorsecount.png)](https://coderwall.com/b4b4r07)
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/b4b4r07/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 

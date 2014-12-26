@@ -1,1 +1,0 @@
-../.zsh/plugins/enhancd/enhancd.sh

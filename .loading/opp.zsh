@@ -1,1 +1,0 @@
-../.zsh/plugins/opp.zsh/opp.zsh

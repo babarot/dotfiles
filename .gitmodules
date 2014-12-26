@@ -1,27 +1,3 @@
-[submodule ".zsh/plugins/zsh-history-substring-search"]
-	path = .zsh/plugins/zsh-history-substring-search
-	url = https://github.com/zsh-users/zsh-history-substring-search
-[submodule ".zsh/plugins/zsh-syntax-highlighting"]
-	path = .zsh/plugins/zsh-syntax-highlighting
-	url = https://github.com/zsh-users/zsh-syntax-highlighting
-[submodule ".zsh/plugins/zsh-completions"]
-	path = .zsh/plugins/zsh-completions
-	url = https://github.com/zsh-users/zsh-completions
-[submodule ".zsh/plugins/enhancd"]
-	path = .zsh/plugins/enhancd
-	url = https://github.com/b4b4r07/enhancd
-[submodule ".zsh/plugins/favdir"]
-	path = .zsh/plugins/favdir
-	url = https://github.com/b4b4r07/favdir
-[submodule ".zsh/plugins/opp.zsh"]
-	path = .zsh/plugins/opp.zsh
-	url = https://github.com/hchbaw/opp.zsh
-[submodule ".zsh/plugins/auto-fu"]
-	path = .zsh/plugins/auto-fu
-	url = https://github.com/hchbaw/auto-fu.zsh
 [submodule ".zsh/plugins/zsh-zsh-autosuggestions"]
 	path = .zsh/plugins/zsh-zsh-autosuggestions
-	url = https://github.com/tarruda/zsh-autosuggestions
-[submodule ".zsh/plugins/zsh-autosuggestions"]
-	path = .zsh/plugins/zsh-autosuggestions
 	url = https://github.com/tarruda/zsh-autosuggestions

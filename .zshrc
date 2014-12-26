@@ -34,7 +34,25 @@ is_exists() {
 is_login_shell() { [[ "$SHLVL" == 1 ]]; }
 
 export ZSH_PLUGUINS_DIR=~/.zsh/plugins
-function has_plugin() { [[ -d ~/.zsh/plugins/"$1" ]]; }
+#function has_plugin() { [[ -d ~/.zsh/plugins/"$1" ]]; }
+function has_plugin()
+{
+    if [[ -d ~/.antigen/repos ]]; then
+        setopt localoptions nonomatch
+        local source_antigen plugin dir db antigen_file
+
+        antigen_file="${2:-~/.zshrc.antigen}"
+        source_antigen=$(grep -E '^antigen bundle .+/.+' "$antigen_file" | while read line; do
+        #echo $line | sed 's/^.*bundle //g'
+        echo ${line##* }; done)
+
+        plugin=$(echo "$1" | sed 's / -SLASH- g')
+        dir=$(echo ~/.antigen/repos/*$plugin*)
+        db=$(echo "$source_antigen" | grep -x "$1")
+
+        [[ -d "$dir" && -n "$db" ]]
+    fi
+}
 
 umask 022
 limit coredumpsize 0
@@ -90,7 +108,7 @@ export HISTSIZE=1000000
 export SAVEHIST=1000000
 
 # Plugins
-if has_plugin 'favdir'; then
+if has_plugin 'b4b4r07/favdir'; then
     export FAVDIR_HOME=~/Dropbox/.favdir
 fi
 
@@ -318,6 +336,7 @@ function zsh_at_startup()
     #    done
     #    echo ""
     #fi
+    [[ -f ~/.zshrc.antigen ]] && source ~/.zshrc.antigen
     if [[ -d  ~/.loading ]]; then
         for f in ~/.loading/*
         do
@@ -617,7 +636,7 @@ bindkey "^R" history-incremental-search-backward
 bindkey "^U" kill-whole-line
 bindkey "^W" backward-kill-word
 
-if has_plugin 'zsh-history-substring-search'; then
+if has_plugin 'zsh-users/zsh-history-substring-search'; then
     # bind P and N for EMACS mode
     bindkey -M emacs '^P' history-substring-search-up
     bindkey -M emacs '^N' history-substring-search-down
@@ -701,7 +720,7 @@ setopt prompt_subst
 # Automatically hidden rprompt
 setopt transient_rprompt
 
-if [[ -f ~/bin/git-prompt.sh ]]; then
+if [[ -f ~/.loading/git-prompt.sh ]]; then
     function r-prompt()
     {
         export GIT_PS1_SHOWDIRTYSTATE=1
@@ -1073,7 +1092,7 @@ setopt hist_verify
 setopt bang_hist
 
 # Misc and test {{{1
-if has_plugin 'zsh-autosuggestions'; then
+if has_plugin 'tarruda/zsh-autosuggestions'; then
     # Enable autosuggestions automatically
     #zle-line-init() {
     #    zle autosuggest-start

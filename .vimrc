@@ -2074,6 +2074,8 @@ augroup END "}}}
 " For more information about options, see :help 'option-list'.
 "==============================================================================
 
+set pumheight=10
+
 " Don't redraw while executing macros
 set lazyredraw
 

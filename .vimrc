@@ -162,25 +162,25 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   NeoBundle 'Shougo/unite.vim'
   NeoBundle 'Shougo/vimproc', {
         \ 'build': {
-        \ 'windows': 'make -f make_mingw32.mak',
-        \ 'cygwin': 'make -f make_cygwin.mak',
-        \ 'mac': 'make -f make_mac.mak',
-        \ 'unix': 'make -f make_unix.mak',
+        \     'windows': 'make -f make_mingw32.mak',
+        \     'cygwin': 'make -f make_cygwin.mak',
+        \     'mac': 'make -f make_mac.mak',
+        \     'unix': 'make -f make_unix.mak',
         \ }}
   NeoBundle has('lua') ? 'Shougo/neocomplete' : 'Shougo/neocomplcache'
   NeoBundleLazy 'Shougo/unite-outline', {
         \ 'depends' : 'Shougo/unite.vim',
         \ 'autoload' : {
-        \   'unite_sources' : 'outline' },
+        \     'unite_sources' : 'outline' },
         \ }
   NeoBundleLazy 'Shougo/unite-help', {
         \ 'autoload' : {
-        \ 'unite_sources' : 'help'
+        \     'unite_sources' : 'help'
         \ }}
   NeoBundle 'Shougo/neomru.vim'
   NeoBundleLazy 'Shougo/neomru.vim', {
         \ 'autoload' : {
-        \ 'unite_sources' : 'file_mru',
+        \     'unite_sources' : 'file_mru',
         \ }}
   NeoBundleLazy 'Shougo/vimfiler', {
         \ 'depends' : 'Shougo/unite.vim',
@@ -202,22 +202,24 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
         \ }}
   NeoBundleLazy 'Shougo/vimshell', {
         \ 'autoload' : {
-        \   'commands' : [ 'VimShell', "VimShellPop", "VimShellInteractive" ] }
-        \}
+        \     'commands' : [ 'VimShell',
+        \                    'VimShellPop',
+        \                    'VimShellInteractive' ] }
+        \ }
   NeoBundle 'Shougo/neosnippet'
   NeoBundle 'Shougo/neosnippet-snippets'
   NeoBundleLazy 'glidenote/memolist.vim', {
         \ 'autoload' : {
-        \ 'commands' : ['MemoNew', 'MemoGrep']
+        \     'commands' : ['MemoNew', 'MemoGrep']
         \ }}
   NeoBundle 'severin-lemaignan/vim-minimap'
   NeoBundleLazy 'thinca/vim-scouter', {
         \ 'autoload' : {
-        \ 'commands' : 'Scouter'
+        \     'commands' : 'Scouter'
         \ }}
   NeoBundleLazy 'thinca/vim-ref', {
         \ 'autoload' : {
-        \ 'commands' : 'Ref'
+        \     'commands' : 'Ref'
         \ }}
   NeoBundle 'thinca/vim-quickrun'
   NeoBundle 'thinca/vim-unite-history'
@@ -227,7 +229,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   NeoBundle 'thinca/vim-tabrecent'
   NeoBundleLazy 'thinca/vim-qfreplace', {
         \ 'autoload' : {
-        \ 'filetypes' : ['unite', 'quickfix'],
+        \     'filetypes' : ['unite', 'quickfix'],
         \ }}
   NeoBundleLazy 'thinca/vim-ref', {
         \ 'autoload' : {
@@ -239,43 +241,53 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   NeoBundle 'tyru/skk.vim'
   NeoBundleLazy 'tyru/eskk.vim', {
         \ 'autoload' : {
-        \ 'mappings' : [['i', '<Plug>(eskk:toggle)']],
+        \     'mappings' : [['i', '<Plug>(eskk:toggle)']],
         \ }}
   NeoBundleLazy 'tyru/open-browser.vim', {
         \ 'autoload' : {
-        \ 'mappings' : '<Plug>(open-browser-wwwsearch)',
+        \     'mappings' : '<Plug>(open-browser-wwwsearch)',
         \ }}
   NeoBundleLazy 'tyru/restart.vim', {
         \ 'gui' : 1,
         \ 'autoload' : {
-        \  'commands' : 'Restart'
+        \     'commands' : 'Restart'
         \ }}
   NeoBundleLazy 'sjl/gundo.vim', {
         \ 'autoload' : {
-        \ 'commands' : 'GundoToggle'
+        \     'commands' : 'GundoToggle'
         \ }}
-  NeoBundle 'ujihisa/neco-look'
+  NeoBundle 'ujihisa/neco-look', { 'external_commands' : 'look' }
   NeoBundle 'ujihisa/unite-colorscheme'
   NeoBundle 'b4b4r07/mru.vim'
   NeoBundle 'b4b4r07/vim-autocdls'
   NeoBundle 'b4b4r07/vim-shellutils'
   NeoBundle 'b4b4r07/vim-favdir'
-  NeoBundle 'nathanaelkane/vim-indent-guides'
   NeoBundle has('gui_running') ? 'itchyny/lightline.vim' : 'b4b4r07/vim-buftabs'
+  "NeoBundle 'b4b4r07/vim-buftabs', {
+  "      \ 'gui' : 0,
+  "      \ 'disabled' : !has('gui_running'),
+  "      \ }
+  "NeoBundle 'itchyny/lightline.vim', {
+  "      \ 'gui' : 1,
+  "      \ 'disabled' : has('gui_running'),
+  "      \ }
   NeoBundle 'itchyny/calendar.vim'
+  NeoBundle 'nathanaelkane/vim-indent-guides'
   NeoBundle 'scrooloose/syntastic'
   NeoBundleLazy 'scrooloose/nerdtree', {
         \ 'autoload' : {
-        \ 'commands' : 'NERDTreeToggle'
+        \     'commands' : 'NERDTreeToggle'
         \ }}
   NeoBundle 'tpope/vim-surround'
   NeoBundle 'tpope/vim-repeat'
   NeoBundleLazy 'tpope/vim-markdown', {
         \ 'autoload' : {
-        \ 'filetypes' : ['markdown'] }}
+        \     'filetypes' : ['markdown']
+        \ }}
   NeoBundleLazy 'tpope/vim-fugitive', {
         \ 'autoload': {
-        \ 'commands': ['Gcommit', 'Gblame', 'Ggrep', 'Gdiff'] }}
+        \     'commands': ['Gcommit', 'Gblame', 'Ggrep', 'Gdiff']
+        \ }}
   NeoBundle 'osyo-manga/vim-anzu'
   "NeoBundle 'cohama/vim-insert-linenr'
   NeoBundle 'cohama/agit.vim', {
@@ -287,21 +299,21 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   NeoBundle 'junegunn/vim-easy-align'
   "NeoBundle 'jiangmiao/auto-pairs'
   NeoBundleLazy 'mattn/gist-vim', {
-        \ 'depends': ['mattn/webapi-vim' ],
+        \ 'depends': ['mattn/webapi-vim'],
         \ 'autoload' : {
-        \ 'commands' : 'Gist' }}
+        \     'commands' : 'Gist' }}
   NeoBundleLazy 'mattn/webapi-vim', {
         \ 'autoload' : {
-        \ 'function_prefix': 'webapi'
+        \     'function_prefix': 'webapi'
         \ }}
   NeoBundleLazy 'mattn/benchvimrc-vim', {
         \ 'autoload' : {
-        \ 'commands' : 'BenchVimrc'
+        \     'commands' : 'BenchVimrc'
         \ }}
   NeoBundle 'vim-scripts/Align'
   NeoBundleLazy 'DirDiff.vim', {
         \ 'autoload' : {
-        \ 'commands' : 'DirDiff'
+        \     'commands' : 'DirDiff'
         \ }}
   NeoBundleLazy 'mattn/excitetranslate-vim', {
         \ 'depends': 'mattn/webapi-vim',
@@ -324,7 +336,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   "NeoBundle 'ervandew/supertab'
   NeoBundleLazy 'vim-scripts/renamer.vim', {
         \ 'autoload' : {
-        \ 'commands' : 'Renamer'
+        \     'commands' : 'Renamer'
         \ }}
   NeoBundleLazy 'amdt/sunset', {
         \ 'gui' : 1,
@@ -336,7 +348,11 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   " Japanese help
   NeoBundle 'vim-jp/vimdoc-ja'
   " Vital
-  NeoBundle 'vim-jp/vital.vim'
+  NeoBundle 'vim-jp/vital.vim', {
+        \ 'lazy' : 1,
+        \ 'autoload' : {
+        \     'commands' : ['Vitalize'],
+        \ }}
 
   " Colorscheme plugins
   NeoBundle 'b4b4r07/solarized.vim', { "base" : $HOME."/.vim/colors" }

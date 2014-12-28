@@ -1,9 +1,12 @@
-DOTFILES_EXCLUDES := .DS_Store .git .gitmodules
+DOTFILES_EXCLUDES := .DS_Store .git .gitmodules .travis.yml
 DOTFILES_TARGET   := $(wildcard .??*) bin
 DOTFILES_DIR      := $(PWD)
 DOTFILES_FILES    := $(filter-out $(DOTFILES_EXCLUDES), $(DOTFILES_TARGET))
 
 all: help
+
+test: deploy
+	@$(foreach val, $(DOTFILES_FILES), bash ./test.sh $(val);)
 
 help:
 	@echo "make list             #=> list the files"

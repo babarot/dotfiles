@@ -1,0 +1,9 @@
+language: python
+python:
+  - 2.7
+  - 3.2
+script:
+  - python --version
+  - ruby --version
+  - echo test1
+  - echo test2

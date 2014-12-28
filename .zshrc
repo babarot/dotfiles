@@ -41,8 +41,7 @@ function has_plugin()
         setopt localoptions nonomatch
         local source_antigen plugin dir db antigen_file
 
-        antigen_file="${2:-~/.zshrc.antigen}"
-        source_antigen=$(grep -E '^antigen bundle .+/.+' "$antigen_file" | while read line; do
+        source_antigen=$(grep -E '^antigen bundle .+/.+' ${2:-~/.zshrc.antigen} | while read line; do
         #echo $line | sed 's/^.*bundle //g'
         echo ${line##* }; done)
 

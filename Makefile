@@ -22,7 +22,7 @@ deploy:
 	@echo 'Start deploy dotfiles current directory.'
 	@echo 'If this is "dotdir", curretly it is ignored and copy your hand.'
 	@echo ''
-	@$(foreach var, $(DOTFILES_FILES), ln -sfnv $(abspath $(var)) $(HOME)/$(val);)
+	@$(foreach val, $(DOTFILES_FILES), ln -sfnv $(abspath $(val)) $(HOME)/$(val);)
 
 update:
 	git pull origin master

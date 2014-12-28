@@ -6,8 +6,7 @@ DOTFILES_FILES    := $(filter-out $(DOTFILES_EXCLUDES), $(DOTFILES_TARGET))
 all: help
 
 test: deploy
-	@[[ $$OSTYPE == darwin* || $$OSTYPE == *linux* ]] || exit 1
-	@$(foreach val, $(DOTFILES_FILES), [[ `readlink $(HOME)/$(val)` == $(PWD)/$(val) ]] || exit 1;)
+	@$(foreach val, $(DOTFILES_FILES), [[ `readlink $(HOME)/$(val)` == $(DOTFILES_DIR)/$(val) ]] || exit 1;)
 
 help:
 	@echo "make list             #=> list the files"

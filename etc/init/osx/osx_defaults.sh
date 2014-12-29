@@ -448,7 +448,7 @@ set_ui_and_ux_preferences()
 }
 
 # main {{{1}}}
-echo -n "Power-up your OS X by defaults commands (y/n) "
+echo -n "Power-up your OS X by defaults commands (y/N) "
 read
 if [[ "$REPLY" =~ ^[Yy]$ ]]; then
     # Ask for the administrator password upfront

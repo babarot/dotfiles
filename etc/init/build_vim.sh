@@ -14,7 +14,7 @@ do
     fi
 done
 
-echo -n "Rebuild vim? (y/N) "
+echo -n "Rebuild vim? But it takes time.(y/N) "
 read
 if [[ "$REPLY" =~ ^[Yy]$ ]]; then
     bash "$(dirname "${BASH_SOURCE}")"/vimbuild

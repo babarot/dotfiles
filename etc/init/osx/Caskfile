@@ -1,7 +1,7 @@
 #/bin/bash
 # vim: ft=sh
 
-trap 'echo Error: $0: stopped' ERR
+trap 'echo Error: $0: stopped' ERR INT
 set -u
 set -e
 
@@ -10,7 +10,8 @@ if ! type brew >/dev/null 2>&1; then
     exit 1
 fi
 
-if ! brew cask >/dev/null 2>&1; then
+#if ! brew cask >/dev/null 2>&1; then
+if [[ ! "$(brew ls --versions brew-cask)" ]]; then
     echo 'brew-cask: command not found' 1>&2
     echo -n 'Install now? (y/N/) '
     read
@@ -24,7 +25,11 @@ fi
 #cask install alfred
 #cask alfred  link
 
+# Hack to show the first-run brew-cask password prompt immediately.
+#brew cask info this-is-somewhat-annoying 2>/dev/null
+
 declare -a CASK_PACKAGES=(
+  # Applications
   "appcleaner"
   "bettertouchtool"
   "burn"
@@ -44,6 +49,7 @@ declare -a CASK_PACKAGES=(
   "marked"
   "mou"
   "onepassword"
+  # QuickLook plugins
   "qlcolorcode"
   "qlimagesize"
   "qlmarkdown"
@@ -66,3 +72,4 @@ do
         brew cask install $package
     fi
 done
+brew cask cleanup

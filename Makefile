@@ -32,6 +32,18 @@ update:
 
 install:
 	@$(foreach val, $(wildcard ./etc/init/*.sh), bash $(val);)
+ifeq ($(shell uname), Darwin)
+	@$(foreach val, $(wildcard ./etc/init/osx/*.sh), bash $(val);)
+
+homebrew:
+	@bash $(DOTFILES_DIR)/etc/init/osx/install_homebrew.sh
+
+brew: homebrew
+	@bash $(DOTFILES_DIR)/etc/init/osx/Brewfile
+
+cask: homebrew
+	@bash $(DOTFILES_DIR)/etc/init/osx/Caskfile
+endif
 
 clean:
 	@echo 'Remove dot files in your home directory...'

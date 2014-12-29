@@ -31,7 +31,7 @@ EOT
 export DOTFILES=~/.dotfiles
 
 # Logging stuff.
-function e_newline() { echo -e "\n"; }
+function e_newline() { echo -en "\n"; }
 function e_header()  { echo -e "\n\033[1m$*\033[0m"; }
 function e_success() { echo -e " \033[1;32m✔\033[0m  $*"; }
 function e_error()   { echo -e " \033[1;31m✖\033[0m  $*" 1>&2; }
@@ -61,12 +61,33 @@ function make_install()
 function dotfiles()
 {
     if [ -d "$DOTFILES" ]; then
-        e_arrow "Change to the $DOTFILES directory"
-        cd $DOTFILES
+        if is_exist 'git'; then
+            e_arrow "Change to the $DOTFILES directory"
+            cd $DOTFILES
 
-        e_header "Updating..."
-        make update
-        e_success 'DONE.'
+            e_header "Updating..."
+            make update
+            e_success 'DONE.'
+        elif is_exist 'curl'; then
+            #e_header 'Please re-install after executing "make clean"'
+            e_arrow "Change to the $DOTFILES directory"
+            cd $DOTFILES
+
+            e_arrow "Cleaning dotfiles..."
+            make clean
+
+            e_arrow "Re-installing and deploying..."
+            cd /tmp
+            curl -fsSL -o dotfiles.zip https://github.com/b4b4r07/dotfiles/archive/master.zip
+            unzip -oq dotfiles.zip
+            mv dotfiles-master $DOTFILES
+            cd $DOTFILES
+            make deploy
+            e_success 'DONE.'
+        else
+            e_error 'Require: git or curl'
+            return 1
+        fi
     else
         e_header 'Downloading dotfiles...'
         if is_exist 'git'; then
@@ -74,11 +95,14 @@ function dotfiles()
             # git submodule init
             # git submodule update
             git clone --recursive https://github.com/b4b4r07/dotfiles.git $DOTFILES
-        else
+        elif is_exist 'curl'; then
             cd /tmp
             curl -fsSL -o dotfiles.zip https://github.com/b4b4r07/dotfiles/archive/master.zip
             unzip -oq dotfiles.zip
             mv dotfiles-master $DOTFILES
+        else
+            e_error 'Require: git or curl'
+            return 1
         fi
         e_success 'Done'
 
@@ -94,7 +118,8 @@ function dotfiles()
             make_install
         fi
 
-        e_header "Restart your shell"
+        e_newline
+        e_arrow "Restart your shell"
         exec "${SHELL:-/bin/zsh}"
     fi
 }

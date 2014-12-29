@@ -11,12 +11,16 @@ cat <<'EOT'
 | (_| | (_) | |_| | | | |  __/\__ \ 
  \__,_|\___/ \__|_| |_|_|\___||___/ 
 
+*** WHAT'S INSIDE? ***
+  1. Download https://github.com/b4b4r07/dotfiles
+  2. make deploy
+  3. (Optional) make install
 
-By executing ./bootstrap.sh, the following commands are run
-1. git clone https://github.com/b4b4r07/dotfiles
-2. make deploy
+See the README for documentation.
+https://github.com/b4b4r07/dotfiles
 
-Author: b4b4r07 aka BABAROT <b4b4r07@gmail.com>
+Copyright (c) 2014 "BABAROT" aka @b4b4r07
+Licensed under the MIT license.
 
 EOT
 
@@ -25,31 +29,48 @@ if [[ "$0" =~ $(basename "${BASH_SOURCE:-NONE}") ]]; then
     exit 1
 fi
 
-declare DOTFILES_PATH=~/.dotfiles
+# Where the magic happens.
+export DOTFILES=~/.dotfiles
 
-if [ -d "$DOTFILES_PATH" ]; then
-    cd $DOTFILES_PATH
-    make update
-else
-    if type git >/dev/null 2>&1; then
-        # --recursive equals to ...
-        # git submodule init
-        # git submodule update
-        git clone --recursive https://github.com/b4b4r07/dotfiles.git $DOTFILES_PATH
+# Logging stuff.
+function e_header()  { echo -e "\n\033[1m$*\033[0m"; }
+function e_success() { echo -e " \033[1;32m✔\033[0m  $*"; }
+function e_error()   { echo -e " \033[1;31m✖\033[0m  $*"; }
+function e_arrow()   { echo -e " \033[1;34m➜\033[0m  $*"; }
+
+function dotfiles()
+{
+    if [ -d "$DOTFILES" ]; then
+        cd $DOTFILES
+        make update
     else
-        cd /tmp
-        curl -fsSL -o dotfiles.zip https://github.com/b4b4r07/dotfiles/archive/master.zip
-        unzip -oq dotfiles.zip
-        mv dotfiles-master ~/.dotfiles
+        e_header 'Downloading dotfiles...'
+        if type git >/dev/null 2>&1; then
+            # --recursive equals to ...
+            # git submodule init
+            # git submodule update
+            git clone --recursive https://github.com/b4b4r07/dotfiles.git $DOTFILES
+        else
+            cd /tmp
+            curl -fsSL -o dotfiles.zip https://github.com/b4b4r07/dotfiles/archive/master.zip
+            unzip -oq dotfiles.zip
+            mv dotfiles-master ~/.dotfiles
+        fi
+        e_success 'Done'
+
+        cd $DOTFILES
+        e_header 'Deploying dotfiles...'
+        make deploy
+        e_success 'Done'
+
+        if [[ "${1:-NONE}" == "install" ]]; then
+            e_header 'Installing...'
+            echo ''
+            make install
+        fi
+
+        exec "${SHELL:-/bin/zsh}"
     fi
+}
 
-    cd $DOTFILES_PATH
-    make deploy
-
-    if [[ "${1:-NONE}" == "install" ]]; then
-        echo ''
-        make install
-    fi
-
-    exec "${SHELL:-/bin/zsh}"
-fi
+dotfiles "$@" && e_success 'All done'

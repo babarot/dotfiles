@@ -33,7 +33,7 @@ Click this image to see a larger version.
 
 Run the following <a name="oneliner">installation command</a> in your terminal. 
 
-	$ bash -c "$(curl -fsSL raw.github.com/b4b4r07/dotfiles/master/bin/install)"
+	$ bash -c "$(curl -fsSL raw.github.com/b4b4r07/dotfiles/master/etc/install)"
 
 **what's inside?**
 
@@ -57,7 +57,7 @@ All configuration files for setup is stored within the `etc/` directory. By runn
 
 To run `make install` immediately after running [install command](#oneliner):
 
-	$ bash -c "$(curl -fsSL raw.github.com/b4b4r07/dotfiles/master/bin/install)" -s install
+	$ bash -c "$(curl -fsSL raw.github.com/b4b4r07/dotfiles/master/etc/install)" -s install
 
 ### Vim
 

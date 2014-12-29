@@ -1,8 +1,12 @@
 #!/bin/bash
 
+trap 'e_error "$0: DANGER: CLOSING..."; exit 1' INT ERR
 set -e
 set -u
 
+# Display Logo!
+# Regardless of execution or non-execution
+#
 cat <<-'EOT'
 
     | |     | |  / _(_) |           
@@ -13,8 +17,8 @@ cat <<-'EOT'
 
 *** WHAT'S INSIDE? ***
   1. Download https://github.com/b4b4r07/dotfiles
-  2. make deploy
-  3. (Optional) make install
+  2. Symlinking to your home directory
+  3. (Optional): Set following some config files within etc/
 
 See the README for documentation.
 https://github.com/b4b4r07/dotfiles
@@ -24,42 +28,45 @@ Licensed under the MIT license.
 
 EOT
 
-if [[ "$0" =~ $(basename "${BASH_SOURCE:-}") ]]; then
-    echo "That this file is started directly is not recommended" 1>&2
-    exit 1
-fi
-
-# Where the magic happens.
 export DOTFILES=~/.dotfiles
 
 # Logging stuff.
 function e_newline() { echo -e "\n"; }
 function e_header()  { echo -e "\n\033[1m$*\033[0m"; }
 function e_success() { echo -e " \033[1;32m✔\033[0m  $*"; }
-function e_error()   { echo -e " \033[1;31m✖\033[0m  $*"; }
+function e_error()   { echo -e " \033[1;31m✖\033[0m  $*" 1>&2; }
 function e_arrow()   { echo -e " \033[1;34m➜\033[0m  $*"; }
-
-# Booleans
 function is_exist()  { type "$1" >/dev/null 2>&1; return $?; }
 
+#
+# $ make install
+#
 function make_install()
 {
-    local file
-    local files=($DOTFILES/etc/init/{osx/,}*.sh)
+    local -i i=1
+    local file files=($(echo $DOTFILES/etc/init/{osx/,}*.sh))
     # No files? abort.
-    if (( ${#files[@]} == 0 )); then return; fi
+    if (( ${#files[@]:-} == 0 )); then return; fi
     for file in "${files[@]}"; do
-        e_arrow "$file: running..."
-        bash "$file"
-        e_success "done"
+        e_header "$i/${#files[@]:-} $(basename $file): running..."
+        if bash "$file"; then
+            e_success "DONE."
+        else
+            e_error "ERROR!!"
+        fi
+        ((i++))
     done
 }
 
 function dotfiles()
 {
     if [ -d "$DOTFILES" ]; then
+        e_arrow "Change to the $DOTFILES directory"
         cd $DOTFILES
+
+        e_header "Updating..."
         make update
+        e_success 'DONE.'
     else
         e_header 'Downloading dotfiles...'
         if is_exist 'git'; then
@@ -87,9 +94,27 @@ function dotfiles()
             make_install
         fi
 
+        e_header "Restart your shell"
         exec "${SHELL:-/bin/zsh}"
     fi
 }
+
+#
+# ~~~ MAIN PART ~~~
+#
+# A SAFETY system
+# Note: This script is designed to be run from a command line shell.
+if [[ "$0" =~ $(basename "${BASH_SOURCE:-}") ]]; then
+    e_error 'WARNING!!'
+    e_error 'You should NOT run directly from the command line'
+    e_error 'For more info, see https://github.com/b4b4r07/dotfiles'
+    e_newline
+
+    # Push off the safety catch
+    if [[ "${1:-}" != "directly" ]]; then
+        exit 1
+    fi
+fi
 
 dotfiles "$@"
 e_success 'All done'

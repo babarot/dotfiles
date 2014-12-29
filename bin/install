@@ -3,7 +3,7 @@
 set -e
 set -u
 
-cat <<'EOT'
+cat <<-'EOT'
 
     | |     | |  / _(_) |           
   __| | ___ | |_| |_ _| | ___  ___  
@@ -24,7 +24,7 @@ Licensed under the MIT license.
 
 EOT
 
-if [[ "$0" =~ $(basename "${BASH_SOURCE:-NONE}") ]]; then
+if [[ "$0" =~ $(basename "${BASH_SOURCE:-}") ]]; then
     echo "That this file is started directly is not recommended" 1>&2
     exit 1
 fi
@@ -33,10 +33,27 @@ fi
 export DOTFILES=~/.dotfiles
 
 # Logging stuff.
+function e_newline() { echo -e "\n"; }
 function e_header()  { echo -e "\n\033[1m$*\033[0m"; }
 function e_success() { echo -e " \033[1;32m✔\033[0m  $*"; }
 function e_error()   { echo -e " \033[1;31m✖\033[0m  $*"; }
 function e_arrow()   { echo -e " \033[1;34m➜\033[0m  $*"; }
+
+# Booleans
+function is_exist()  { type "$1" >/dev/null 2>&1; return $?; }
+
+function make_install()
+{
+    local file
+    local files=($DOTFILES/etc/init/{osx/,}*.sh)
+    # No files? abort.
+    if (( ${#files[@]} == 0 )); then return; fi
+    for file in "${files[@]}"; do
+        e_arrow "$file: running..."
+        bash "$file"
+        e_success "done"
+    done
+}
 
 function dotfiles()
 {
@@ -45,7 +62,7 @@ function dotfiles()
         make update
     else
         e_header 'Downloading dotfiles...'
-        if type git >/dev/null 2>&1; then
+        if is_exist 'git'; then
             # --recursive equals to ...
             # git submodule init
             # git submodule update
@@ -54,7 +71,7 @@ function dotfiles()
             cd /tmp
             curl -fsSL -o dotfiles.zip https://github.com/b4b4r07/dotfiles/archive/master.zip
             unzip -oq dotfiles.zip
-            mv dotfiles-master ~/.dotfiles
+            mv dotfiles-master $DOTFILES
         fi
         e_success 'Done'
 
@@ -63,14 +80,16 @@ function dotfiles()
         make deploy
         e_success 'Done'
 
-        if [[ "${1:-NONE}" == "install" ]]; then
+        if [[ "${1:-}" == "install" ]]; then
             e_header 'Installing...'
-            echo ''
-            make install
+            e_newline
+            #make install
+            make_install
         fi
 
         exec "${SHELL:-/bin/zsh}"
     fi
 }
 
-dotfiles "$@" && e_success 'All done'
+dotfiles "$@"
+e_success 'All done'

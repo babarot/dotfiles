@@ -12,7 +12,7 @@ This is a repository with my [configuration files](http://en.wikipedia.org/wiki/
 
 ## Overview
 
-The primary goal is to increase CLI productivity on OS X, though many scripts run just fine on any POSIX implementation and it is easy to build environment again by running just [installation command](#oneliner) of one liner .
+The primary goal is to increase CLI productivity on OS X, though many scripts run just fine on any POSIX implementation and it is easy to build environment again by running just [installation command](#oneliner) of one liner.
 
 My primary OS is OS X (10.10.x) and some of these configurations are tuned to work on that platform. The bash files are more generic and friendly toward other Unix-based operating systems.
 
@@ -164,7 +164,7 @@ The resulting `/etc/paths` files looks like this:
 
 ## Credits
 
-* Inspired by [cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/bin/dotfiles)
+* Deeply inspired by [cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/bin/dotfiles)
 * Inspired by [skwp's dotfiles](https://github.com/skwp/dotfiles)
 * *Installation* section based on [@necolas's dotfiles](https://github.com/necolas/dotfiles)
 * *OS X Hacks* section based on [cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/README.md)

@@ -113,7 +113,6 @@ function dotfiles()
 
         if [[ "${1:-}" == "install" ]]; then
             e_header 'Installing...'
-            e_newline
             #make install
             make_install
         fi

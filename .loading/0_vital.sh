@@ -1,1 +1,1 @@
-vital.sh
+../etc/libs/vital.sh

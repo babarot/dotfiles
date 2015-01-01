@@ -25,6 +25,7 @@ wifi()
 
     #all_signal=(▁ ▂ ▅ ▆ ▇)
     local all_signal=(▂ ▅ ▆)
+    local all_signal=(▂ ▅ ▇)
 
     # Search information about Wi-Fi by using airport command
     local current=$(bash -c "$airport -I" | egrep "agrCtlRSSI|state|lastTxRate| SSID" | tr "\\n" ";" | awk '{print $2,$4,$6,$8}')

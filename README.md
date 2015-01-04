@@ -1,6 +1,8 @@
 # The [B4B4R07](https://twitter.com/b4b4r07)'s dotfiles
 
+<div style="text-align: center;">
 [![dotfiles-logo](http://cl.ly/image/2q1a2d0Y2S3y/dotfiles.png "dotfiles")](https://dribbble.com/shots/1466768-dotfiles-logo)
+</div>
 
 [![tag](http://img.shields.io/github/tag/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/releases/tag/stable)
 [![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt)

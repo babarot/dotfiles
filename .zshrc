@@ -190,149 +190,150 @@ function tmux_automatically_attach()
 
 function zsh_set_utilities()
 {
-# Utils for osx
-if is_osx; then
-    function op()
+    # Utils for osx
+    if is_osx; then
+        function op()
+        {
+            if [ -p /dev/stdin ]; then
+                open $(cat -) "$@"
+            elif [ -z "$1" ]; then
+                open .
+            else
+                open "$@"
+            fi
+        }
+
+        function tex()
+        {
+            if ! is_exist 'platex' || ! is_exist 'dvipdfmx'; then
+                return 1
+            fi
+            platex "$1" && dvipdfmx "${1/.tex/.dvi}"
+            if [ $? -eq 0 ]; then
+                echo -e "\n\033[31mCompile complete!\033[m"
+                if is_exist 'open'; then
+                    open "${1/.tex/.pdf}"
+                fi
+            fi
+        }
+
+        function poweroff()
+        {
+            osascript -e "set Volume 0"
+            osascript -e 'tell application "Finder" to shut down'
+        }
+    fi
+
+    #autoload -Uz add-zsh-hook
+    #add-zsh-hook precmd my_chpwd
+    #
+    #function my_chpwd()
+    #{
+    #    if [[ $PWD != $OLDPWD ]]; then
+    #        OLDPWD=$PWD
+    #        ls_abbrev
+    #    fi
+    #}
+
+    function chpwd()
     {
-        if [ -p /dev/stdin ]; then
-            open $(cat -) "$@"
-        elif [ -z "$1" ]; then
-            open .
+        #ls_abbrev
+        ls -F
+        echo "$(tmux display -p "#I:#P"):$PWD" >>~/.tmux.info
+    }
+
+    function ls_abbrev()
+    {
+        # -a : Do not ignore entries starting with ..
+        # -C : Force multi-column output.
+        # -F : Append indicator (one of */=>@|) to entries.
+        local cmd_ls='ls'
+        local -a opt_ls
+        opt_ls=('-aCF' '--color=always')
+        case "${OSTYPE}" in
+            freebsd*|darwin*)
+                if type gls > /dev/null 2>&1; then
+                    cmd_ls='gls'
+                else
+                    # -G : Enable colorized output.
+                    opt_ls=('-aCFG')
+                fi
+                ;;
+        esac
+        cmd_ls='/bin/ls'
+        opt_ls=('-aCFG')
+
+        local ls_result
+        ls_result=$(CLICOLOR_FORCE=1 COLUMNS=$COLUMNS command $cmd_ls ${opt_ls[@]} | sed $'/^\e\[[0-9;]*m$/d')
+
+        local ls_lines=$(echo "$ls_result" | wc -l | tr -d ' ')
+
+        if [ $ls_lines -gt 10 ]; then
+            echo "$ls_result" | head -n 5
+            echo '...'
+            echo "$ls_result" | tail -n 5
+            echo "$(command ls -1 -A | wc -l | tr -d ' ') files exist"
         else
-            open "$@"
+            echo "$ls_result"
         fi
     }
 
-    function tex()
+    function has_plugin()
     {
-        if ! is_exist 'platex' || ! is_exist 'dvipdfmx'; then
+        if [[ -n $1 ]]; then
+            #local -a enabled_plugins
+            #enabled_plugins=(${antigen_plugins:#\#*})
+            #[[ -n ${(M)enabled_plugins:#$1} ]]
+            typeset -g -a antigen_plugins
+
+            [[ -n ${(M)antigen_plugins:#$1} ]]
+        else
             return 1
         fi
-        platex "$1" && dvipdfmx "${1/.tex/.dvi}"
-        if [ $? -eq 0 ]; then
-            echo -e "\n\033[31mCompile complete!\033[m"
-            if is_exist 'open'; then
-                open "${1/.tex/.pdf}"
-            fi
-        fi
     }
 
-    function poweroff()
+    function google()
     {
-        osascript -e "set Volume 0"
-        osascript -e 'tell application "Finder" to shut down'
+        is_exist w3m || return 1
+
+        local str opt
+        if [ $ != 0 ]; then
+            for i in $*; do
+                str="$str+$i"
+            done
+            str=`echo $str | sed 's/^\+//'`
+            opt='search?num=50&hl=ja&lr=lang_ja'
+            opt="${opt}&q=${str}"
+        fi
+        w3m http://www.google.co.jp/$opt
     }
-fi
 
-autoload -Uz add-zsh-hook
-add-zsh-hook precmd my_chpwd
+    function google_translate()
+    {
+        is_exist w3m || return 1
 
-function my_chpwd()
-{
-    if [[ $PWD != $OLDPWD ]]; then
-        OLDPWD=$PWD
-        ls_abbrev
-    fi
-}
+        local str opt cond
 
-function chpwd()
-{
-    #ls_abbrev
-    echo "$(tmux display -p "#I:#P"):$PWD" >>~/.tmux.info
-}
-
-function ls_abbrev()
-{
-    # -a : Do not ignore entries starting with ..
-    # -C : Force multi-column output.
-    # -F : Append indicator (one of */=>@|) to entries.
-    local cmd_ls='ls'
-    local -a opt_ls
-    opt_ls=('-aCF' '--color=always')
-    case "${OSTYPE}" in
-        freebsd*|darwin*)
-            if type gls > /dev/null 2>&1; then
-                cmd_ls='gls'
+        if [ $# != 0 ]; then
+            str=`echo $1 | sed -e 's/  */+/g'`
+            cond=$2
+            if [ $cond = "ja-en" ]; then
+                # ja -> en
+                opt='?hl=ja&sl=ja&tl=en&ie=UTF-8&oe=UTF-8'
             else
-                # -G : Enable colorized output.
-                opt_ls=('-aCFG')
+                # en -> ja
+                opt='?hl=ja&sl=en&tl=ja&ie=UTF-8&oe=UTF-8'
             fi
-            ;;
-    esac
-    cmd_ls='/bin/ls'
-    opt_ls=('-aCFG')
-
-    local ls_result
-    ls_result=$(CLICOLOR_FORCE=1 COLUMNS=$COLUMNS command $cmd_ls ${opt_ls[@]} | sed $'/^\e\[[0-9;]*m$/d')
-
-    local ls_lines=$(echo "$ls_result" | wc -l | tr -d ' ')
-
-    if [ $ls_lines -gt 10 ]; then
-        echo "$ls_result" | head -n 5
-        echo '...'
-        echo "$ls_result" | tail -n 5
-        echo "$(command ls -1 -A | wc -l | tr -d ' ') files exist"
-    else
-        echo "$ls_result"
-    fi
-}
-
-function has_plugin()
-{
-    if [[ -n $1 ]]; then
-        #local -a enabled_plugins
-        #enabled_plugins=(${antigen_plugins:#\#*})
-        #[[ -n ${(M)enabled_plugins:#$1} ]]
-        typeset -g -a antigen_plugins
-
-        [[ -n ${(M)antigen_plugins:#$1} ]]
-    else
-        return 1
-    fi
-}
-
-function google()
-{
-    is_exist w3m || return 1
-
-    local str opt
-    if [ $ != 0 ]; then
-        for i in $*; do
-            str="$str+$i"
-        done
-        str=`echo $str | sed 's/^\+//'`
-        opt='search?num=50&hl=ja&lr=lang_ja'
-        opt="${opt}&q=${str}"
-    fi
-    w3m http://www.google.co.jp/$opt
-}
-
-function google_translate()
-{
-    is_exist w3m || return 1
-
-    local str opt cond
-
-    if [ $# != 0 ]; then
-        str=`echo $1 | sed -e 's/  */+/g'`
-        cond=$2
-        if [ $cond = "ja-en" ]; then
-            # ja -> en
-            opt='?hl=ja&sl=ja&tl=en&ie=UTF-8&oe=UTF-8'
         else
-            # en -> ja
             opt='?hl=ja&sl=en&tl=ja&ie=UTF-8&oe=UTF-8'
         fi
-    else
-        opt='?hl=ja&sl=en&tl=ja&ie=UTF-8&oe=UTF-8'
-    fi
 
-    opt="${opt}&text=${str}"
-    w3m +13 -dump "http://translate.google.com/${opt}"
-}
+        opt="${opt}&text=${str}"
+        w3m +13 -dump "http://translate.google.com/${opt}"
+    }
 
-function gte() { google_translate "$*" "en-ja" | sed -n -e 20p; }
-function gtj() { google_translate "$*" "ja-en" | sed -n -e 21p; }
+    function gte() { google_translate "$*" "en-ja" | sed -n -e 20p; }
+    function gtj() { google_translate "$*" "ja-en" | sed -n -e 21p; }
 }
 
 # vim-like iab global alias {{{2

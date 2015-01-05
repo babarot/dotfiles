@@ -341,6 +341,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   NeoBundleLazy 'amdt/sunset', {
         \ 'gui' : 1,
         \ }
+  NeoBundle 'rking/ag.vim', { 'external_commands' : 'ag' }
 
   NeoBundle 'mopp/googlesuggest-source.vim'
   NeoBundle 'mattn/googlesuggest-complete-vim'
@@ -2921,6 +2922,21 @@ if s:has_plugin('unite.vim') "{{{
   let g:unite_split_rule = 'botright'
   nnoremap <silent>[Space]o :Unite outline -vertical -winwidth=40 -toggle<CR>
   "nnoremap <silent>[Space]o :Unite outline -vertical -no-quit -winwidth=40 -toggle<CR>
+
+  " Grep
+  nnoremap <silent> ,g  :<C-u>Unite grep:. -buffer-name=search-buffer<CR>
+  " Grep word on cursor
+  nnoremap <silent> ,cg :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R><C-W>
+  " Re-call grep results
+  nnoremap <silent> ,r  :<C-u>UniteResume search-buffer<CR>
+
+  " Use ag(The Silver Searcher) as unite grep
+  if executable('ag')
+    let g:unite_source_grep_command = 'ag'
+    let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
+    let g:unite_source_grep_recursive_opt = ''
+  endif
+
 endif
 "}}}
 if s:has_plugin('neocomplete') "{{{
@@ -3380,6 +3396,9 @@ endif
 "endif
 
 " MISC: Useful code that does not enter the section are described here
+
+set fileencoding=japan
+set fileencodings=iso-2022-jp,utf-8,euc-jp,ucs-2le,ucs-2,cp932
 
 function! s:tex()
   let file = a:0 ? a:1 : expand('%:p')

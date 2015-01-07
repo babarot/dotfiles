@@ -29,5 +29,3 @@ Library files of shell script has been saved.
 
 Shell script that did not become a command has been saved.
 (btw, the commands has been stored in the `/bin` directory.)
-
-vim: ft=markdown

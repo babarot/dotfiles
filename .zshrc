@@ -53,6 +53,8 @@ export LC_CTYPE="${LANGUAGE}"
 # environment variables
 export PATH=/usr/local/vim/build/7.4/vim74/src:$PATH
 export PYTHONSTARTUP=~/.pythonrc.py
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
 
 # Correct
 export CORRECT_IGNORE='_*'

@@ -95,6 +95,8 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 # Utilities {{{1
 function zsh_at_startup()
 {
+
+    echo -e "$fg[blue]Starting $SHELL....$reset_color\n"
     # Loading
     if [[ -d  ~/.loading ]]; then
         for f in ~/.loading/**/*.sh

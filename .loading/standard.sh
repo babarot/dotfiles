@@ -1,1 +1,1 @@
-../etc/libs/standard.sh
+../etc/lib/standard.sh

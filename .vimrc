@@ -2712,14 +2712,13 @@ nnoremap <silent> cy   ce<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
 nnoremap <Leader>y :<C-u>%y<CR>
 nnoremap <Leader>Y :<C-u>%y<CR>
 "}}}
-
 " Emacs-kile keybindings in insert mode {{{
 inoremap <C-a> <Home>
 inoremap <C-e> <End>
 inoremap <C-h> <BS>
 inoremap <C-d> <Del>
-inoremap <C-f> <Left>
-inoremap <C-b> <Right>
+inoremap <C-f> <Right>
+inoremap <C-b> <Left>
 inoremap <C-n> <Up>
 inoremap <C-p> <Down>
 inoremap <C-m> <CR>

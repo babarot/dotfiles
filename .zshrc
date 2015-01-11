@@ -609,6 +609,7 @@ zsh_set_keybind()
         zle accept-line
         zle clear-screen
     }
+
     peco-select-path()
     {
         if [ "$LBUFFER" -eq "" ]; then
@@ -670,10 +671,21 @@ zsh_set_keybind()
         # zle clear-screen
     }
 
+    start-tmux-if-it-is-not-already-started()
+    {
+        BUFFER='tmux'
+        if is_exist 'tmux_automatically_attach'; then
+            BUFFER='tmux_automatically_attach'
+        fi
+        CURSOR=$#BUFFER
+        zle accept-line
+    }
+
     zle -N peco-select-git-add
     zle -N do-enter
     zle -N peco-select-history
     zle -N peco-select-path
+    zle -N start-tmux-if-it-is-not-already-started
 
     if has_plugin 'tarruda/zsh-autosuggestions'; then
         # Enable autosuggestions automatically
@@ -726,6 +738,10 @@ zsh_set_keybind()
     bindkey '^r' peco-select-history
     bindkey '^x^f' peco-select-path
     bindkey '^x^g' peco-select-git-add
+
+    if ! is_tmux_runnning; then
+        bindkey '^T' start-tmux-if-it-is-not-already-started
+    fi
 }
 
 # Aliases {{{1

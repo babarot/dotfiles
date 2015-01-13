@@ -117,8 +117,7 @@ function dotfiles()
             make_install
         fi
 
-        e_newline
-        e_arrow "Restart your shell"
+        # Restart shell
         exec "${SHELL:-/bin/zsh}"
     fi
 }
@@ -141,4 +140,5 @@ if [[ "$0" =~ $(basename "${BASH_SOURCE:-}") ]]; then
 fi
 
 dotfiles "$@"
+source $(cd "$(dirname "${BASH_SOURCE}")" && pwd)/$(basename $0)
 e_success 'All done'

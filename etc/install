@@ -140,5 +140,5 @@ if [[ "$0" =~ $(basename "${BASH_SOURCE:-}") ]]; then
 fi
 
 dotfiles "$@"
-source $(cd "$(dirname "${BASH_SOURCE}")" && pwd)/$(basename $0)
+function e_success() { echo -e " \033[1;32m✔\033[0m  $*"; }
 e_success 'All done'

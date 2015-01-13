@@ -118,7 +118,13 @@ function dotfiles()
         fi
 
         # Restart shell
-        exec "${SHELL:-/bin/zsh}"
+        # not restart:
+        #   curl -fsSL {URL} | bash
+        if [ ! -p /dev/stdout ]; then
+            e_newline
+            e_arrow "Restart your shell"
+            exec "${SHELL:-/bin/zsh}"
+        fi
     fi
 }
 
@@ -140,5 +146,4 @@ if [[ "$0" =~ $(basename "${BASH_SOURCE:-}") ]]; then
 fi
 
 dotfiles "$@"
-function e_success() { echo -e " \033[1;32m✔\033[0m  $*"; }
 e_success 'All done'

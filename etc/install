@@ -1,12 +1,14 @@
 #!/bin/bash
 
 # An interrupt (typically ^C) has the effect of aborting the current command
-trap 'e_error "Abort the command that is in progress"; exit 1' INT ERR
+trap 'e_error "Abort the command that is in progress"; exit 1' INT
+trap 'e_error "Some error has occurred"; exit 1' ERR
 set -e
 set -u
 
-# Display Logo!
-# Regardless of execution or non-execution
+# Pilot of dotfiles
+# It shows the use of dotfiles and describe what is inside
+# regardless of execution or non-execution
 #
 cat <<-'EOT'
 
@@ -29,8 +31,6 @@ Licensed under the MIT license.
 
 EOT
 
-export DOTFILES=~/.dotfiles
-
 # Insert newline
 function e_newline() { echo -en "\n"; }
 # Normal style of writing
@@ -43,6 +43,9 @@ function e_error()   { echo -e " \033[1;31m✖\033[0m  $*" 1>&2; }
 function e_arrow()   { echo -e " \033[1;34m➜\033[0m  $*"; }
 # Check if exists
 function is_exist()  { type "$1" >/dev/null 2>&1; return $?; }
+
+# Set dotfiles environment valuable
+export DOTFILES=~/.dotfiles
 
 #
 # $ make install
@@ -60,7 +63,7 @@ function make_install()
         if bash "$file"; then
             e_success 'done'
         else
-            e_error 'error!!'
+            e_error 'error!'
         fi
         ((i++))
     done
@@ -68,74 +71,63 @@ function make_install()
 
 function dotfiles()
 {
-    if [ -d "$DOTFILES" ]; then
-        if is_exist 'git'; then
-            e_arrow "Change to the $DOTFILES directory"
-            cd $DOTFILES
+    # If $DOTFILES already exists, removing the directory
+    if [[ -d $DOTFILES ]]; then
+        e_header "$DOTFILES: already exists"
+        e_header "Removing..."
+        rm -rf "$DOTFILES"
+    fi
 
-            e_header "Updating..."
-            make update
-            e_success 'done'
-        elif is_exist 'curl'; then
-            #e_header 'Please re-install after executing "make clean"'
-            e_arrow "Change to the $DOTFILES directory"
-            cd $DOTFILES
+    # Download the repository
+    # Priority: git > curl > wget
+    e_header 'Downloading dotfiles...'
+    if is_exist 'git'; then
+        # --recursive equals to ...
+        # git submodule init
+        # git submodule update
+        git clone --recursive https://github.com/b4b4r07/dotfiles.git "$DOTFILES"
 
-            e_arrow 'Cleaning dotfiles...'
-            make clean
-
-            e_arrow 'Re-installing and deploying...'
-            cd /tmp
-            curl -fsSL -o dotfiles.zip https://github.com/b4b4r07/dotfiles/archive/master.zip
-            unzip -oq dotfiles.zip
-            mv dotfiles-master $DOTFILES
-            cd $DOTFILES
-            make deploy
-            e_success 'done'
-        else
-            e_error 'Require: git or curl'
-            return 1
-        fi
     else
-        e_header 'Downloading dotfiles...'
-        if is_exist 'git'; then
-            # --recursive equals to ...
-            # git submodule init
-            # git submodule update
-            git clone --recursive https://github.com/b4b4r07/dotfiles.git $DOTFILES
-        elif is_exist 'curl'; then
-            cd /tmp
-            curl -fsSL -o dotfiles.zip https://github.com/b4b4r07/dotfiles/archive/master.zip
-            unzip -oq dotfiles.zip
-            mv dotfiles-master $DOTFILES
+        local zip_url='https://github.com/b4b4r07/dotfiles/archive/master.zip'
+
+        # Ensure the workplace
+        mkdir -p /tmp/$$ && cd /tmp/$$
+
+        if is_exist 'curl'; then
+            curl -o dotfiles.zip "$zip_url"
+        elif is_exist 'wget'; then
+            wget -O dotfiles.zip "$zip_url"
         else
-            e_error 'Require: git or curl'
+            e_error 'not found downloader'
             return 1
         fi
+
+        # Expand the zip to dotfiles directory
+        # and move to $DOTFILES
+        unzip -d dotfiles dotfiles.zip
+        mv dotfiles "$DOTFILES"
+    fi && e_success 'done'
+
+    cd "$DOTFILES"
+    e_header 'Deploying dotfiles...'
+    if make deploy; then
         e_success 'done'
+    fi
 
-        cd $DOTFILES
-        e_header 'Deploying dotfiles...'
-        make deploy
-        e_success 'done'
+    if [[ "${1:-}" == 'install' ]]; then
+        e_header 'Installing...'
+        make_install
+    fi
 
-        if [[ "${1:-}" == "install" ]]; then
-            e_header 'Installing...'
-            #make install
-            make_install
-        fi
-
-        #
-        e_newline
-        if [ -p /dev/stdout ]; then
-            e_arrow 'Restart your shell, manually'
-        else
-            # Restart shell if specified "bash -c $(curl -L {URL})"
-            # not restart:
-            #   curl -L {URL} | bash
-            e_arrow 'Restart your shell'
-            exec "${SHELL:-/bin/zsh}"
-        fi
+    e_newline
+    if [ -p /dev/stdout ]; then
+        e_arrow 'Restart your shell, manually'
+    else
+        # Restart shell if specified "bash -c $(curl -L {URL})"
+        # not restart:
+        #   curl -L {URL} | bash
+        e_arrow 'Restart your shell'
+        exec "${SHELL:-/bin/zsh}"
     fi
 }
 

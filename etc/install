@@ -129,7 +129,7 @@ function dotfiles()
         # Restart shell if specified "bash -c $(curl -L {URL})"
         # not restart:
         #   curl -L {URL} | bash
-        e_arrow 'Restart your shell'
+        e_arrow 'Restarting your shell...'
         exec "${SHELL:-/bin/zsh}"
     else
         e_arrow 'Restart your shell, manually'
@@ -143,7 +143,7 @@ function dotfiles()
 #
 # A SAFETY system
 # Note: This script is designed to be run from a command line shell.
-if [[ "$0" =~ $(basename "${BASH_SOURCE:-}") ]]; then
+if [[ $0 == ${BASH_SOURCE:-} ]]; then
     e_error 'WARNING!!'
     e_error 'You should NOT run directly from the command line'
     e_error 'For more info, see https://github.com/b4b4r07/dotfiles'

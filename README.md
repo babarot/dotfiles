@@ -31,15 +31,18 @@ Click this image to see a larger version.
 
 ## Installation
 
-Run the following <a name="oneliner">installation command</a> in your terminal. 
+Run the following installation command in your terminal. 
 
-	$ bash -c "$(curl -fsSL raw.github.com/b4b4r07/dotfiles/master/etc/install)"
+| Tools | <a name="oneliner">The installation command</a> |
+|:-:|:-:|
+| cURL | `bash -c "$(curl -fsSL dot.b4b4r07.com)"` |
+| Wget | `bash -c "$(wget -qO - dot.b4b4r07.com)"` |
 
 **what's inside?**
 
-1. Downloads this repository (**prerequisites**: `git` or `curl` must be installed).
+1. Downloads this repository.
 2. Deploy (i.e. *copy* or *create symlink*) dot files to your home directory.
-3. Run all programs for setup in `./etc/` directory (**Optional**: when running [installation command](#oneliner) specify `-s install` as an argument).
+3. Run all programs for setup in `./etc/init/` directory (**optional**: when running the [installation command](#oneliner) specify `-s install` as an argument).
 
 ## Updating
 
@@ -51,13 +54,11 @@ In addition, there are several git submodules included in this configuration. On
 
 ## Setup
 
-All configuration files for setup is stored within the `etc/` directory. By running this command, you can interactively setup all preferences.
+All configuration files for setup is stored within the `etc/init/` directory. By running this command, you can interactively setup all preferences.
 
 	$ make install
 
-To run `make install` immediately after running [install command](#oneliner):
-
-	$ bash -c "$(curl -fsSL raw.github.com/b4b4r07/dotfiles/master/etc/install)" -s install
+To run `make install` immediately after running the [installation command](#oneliner).
 
 ### Vim
 
@@ -131,14 +132,14 @@ $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/maste
 
 	Therefore, cannot use `brew bundle path/to/Brewfile` to set up brews.
 	
-	cf. [What? "Warning: brew bundle is unsupported ..." #30815](https://github.com/Homebrew/homebrew/issues/30815)
+	> [What? "Warning: brew bundle is unsupported ..." #30815](https://github.com/Homebrew/homebrew/issues/30815)
 
-**Solution**: replace Brewfile with shell script.
+	**Solution**: replace Brewfile with shell script.
 
 When setting up a new Mac, you may want to install some common Homebrew formulae (after installing Homebrew, of course):
 
-	$ bash ./etc/init/osx/Brewfile
-	$ bash ./etc/init/osx/Caskfile
+	$ make brew
+	$ make cask
 
 **Notes:**
 
@@ -159,6 +160,7 @@ The resulting `/etc/paths` files looks like this:
 - **bin/**: Anything in `bin/` will get added to your `$PATH` and be made available everywhere.
 - **etc/init/**: Configuration file storage to be executed initially for setup.
 - **etc/init/osx/**: Some configuration files for OS X storage.
+- **etc/lib/**: Shell scripts Libraries
 - **doc/man/**: Self-written program's manuals.
 - **.loading/**: Any files ending in `.sh` get loaded into your environment.
 

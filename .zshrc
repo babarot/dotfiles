@@ -139,7 +139,11 @@ function tmux_automatically_attach()
     if is_screen_or_tmux_running; then
         if is_tmux_runnning; then
             if is_exist 'cowsay'; then
-                cowsay -f ghostbusters "TMUX: Hello, shell"
+                #cowsay -f ghostbusters "$fg[blue]Starting $SHELL....$reset_color"
+                if [[ $(( $RANDOM % 5 )) == 1 ]]; then
+                    cowsay -f ghostbusters "G,g,g,ghostbusters!!!"
+                    echo ""
+                fi
             else
                 echo "$fg_bold[red] _____ __  __ _   ___  __ $reset_color"
                 echo "$fg_bold[red]|_   _|  \/  | | | \ \/ / $reset_color"

@@ -3,17 +3,17 @@ DOTFILES_TARGET   := $(wildcard .??*) bin
 DOTFILES_DIR      := $(PWD)
 DOTFILES_FILES    := $(filter-out $(DOTFILES_EXCLUDES), $(DOTFILES_TARGET))
 
-all: help
-
-test: deploy
-	@$(foreach val, $(DOTFILES_FILES), [[ `readlink $(HOME)/$(val)` == $(DOTFILES_DIR)/$(val) ]] || exit 1;)
+all: update deploy install
 
 help:
-	@echo "make list             #=> list the files"
-	@echo "make deploy           #=> create symlink"
-	@echo "make update           #=> fetch changes"
-	@echo "make install          #=> setup environment"
-	@echo "make clean            #=> remove the files"
+	@echo "make list           #=> List the files"
+	@echo "make update         #=> Fetch changes"
+	@echo "make deploy         #=> Create symlink"
+	@echo "make install        #=> Setup environment"
+	@echo "make clean          #=> Remove the dotfiles"
+	@echo "make homebrew       #=> Install homebrew without it"
+	@echo "make brew           #=> Update brew packages"
+	@echo "make cask           #=> Update cask packages"
 
 list:
 	@$(foreach val, $(DOTFILES_FILES), ls -dF $(val);)

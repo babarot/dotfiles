@@ -108,8 +108,7 @@ function zsh_at_startup()
         done
         echo ""
     fi
-    tmux_automatically_attach
-    echo ""
+    tmux_automatically_attach 2>/dev/null
 
     # Antigen
     if [[ -f ~/.antigen/antigen.zsh ]]; then

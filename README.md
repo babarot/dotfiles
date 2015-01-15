@@ -31,14 +31,14 @@ Click this image to see a larger version.
 
 ## Installation
 
-Run the following installation command in your terminal. 
+Run the installation command below in your terminal.
 
 | Tools | <a name="oneliner">The installation command</a> |
 |:-:|:-:|
-| cURL | `bash -c "$(curl -fsSL dot.b4b4r07.com)"` |
-| Wget | `bash -c "$(wget -qO - dot.b4b4r07.com)"` |
+| cURL | bash -c "$(curl -fsSL [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
+| Wget | bash -c "$(wget -qO - [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
 
-It is almost the same as the following except for executing through a Web site directly.
+It is almost the same as the command below except for executing through a Web site directly.
 
 	$ make install
 

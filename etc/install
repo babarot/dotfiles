@@ -126,13 +126,13 @@ function dotfiles()
 
     e_newline
     if [ -p /dev/stdout ]; then
-        e_arrow 'Restart your shell, manually'
-    else
         # Restart shell if specified "bash -c $(curl -L {URL})"
         # not restart:
         #   curl -L {URL} | bash
         e_arrow 'Restart your shell'
         exec "${SHELL:-/bin/zsh}"
+    else
+        e_arrow 'Restart your shell, manually'
     fi
 }
 

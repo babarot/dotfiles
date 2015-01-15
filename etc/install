@@ -21,7 +21,7 @@ cat <<-'EOT'
 *** WHAT'S INSIDE? ***
   1. Download https://github.com/b4b4r07/dotfiles.git
   2. Symlinking dot files to your home directory
-  3. (Optional): Set following some config files within etc/
+  3. Execute all sh files within 'etc/init/` (optional)
 
 See the README for documentation.
 https://github.com/b4b4r07/dotfiles
@@ -73,12 +73,13 @@ function dotfiles()
 {
     # If $DOTFILES already exists, removing the directory
     if [[ -d $DOTFILES ]]; then
-        e_header "$DOTFILES: already exists"
-        e_header "Removing..."
-        rm -rf "$DOTFILES"
+        e_header "$DOTFILES: already exists, removing..."
+        #rm -rf "$DOTFILES"
+        mv -f "$DOTFILES" "$DOTFILES".old
     fi
 
-    # Download the repository
+    # 1. Download the repository
+    # ==> downloading
     # Priority: git > curl > wget
     e_header 'Downloading dotfiles...'
     if is_exist 'git'; then
@@ -94,7 +95,7 @@ function dotfiles()
         mkdir -p /tmp/$$ && cd /tmp/$$
 
         if is_exist 'curl'; then
-            curl -o dotfiles.zip "$zip_url"
+            curl -L -o dotfiles.zip "$zip_url"
         elif is_exist 'wget'; then
             wget -O dotfiles.zip "$zip_url"
         else
@@ -104,16 +105,20 @@ function dotfiles()
 
         # Expand the zip to dotfiles directory
         # and move to $DOTFILES
-        unzip -d dotfiles dotfiles.zip
-        mv dotfiles "$DOTFILES"
+        unzip dotfiles.zip
+        mv dotfiles-master "$DOTFILES"
     fi && e_success 'done'
 
+    # 2. Deploy dotfiles to your home directory
+    # ==> deploying
     cd "$DOTFILES"
     e_header 'Deploying dotfiles...'
     if make deploy; then
         e_success 'done'
     fi
 
+    # 3. Execute all sh files within etc/init/
+    # ==> init install
     if [[ "${1:-}" == 'install' ]]; then
         e_header 'Installing...'
         make_install

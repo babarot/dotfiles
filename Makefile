@@ -47,5 +47,5 @@ endif
 
 clean:
 	@echo 'Remove dot files in your home directory...'
-	@-$(foreach var, $(DOTFILES_FILES), rm -vrf $(HOME)/$(var);)
+	@-$(foreach val, $(DOTFILES_FILES), rm -vrf $(HOME)/$(val);)
 	-rm -rf $(DOTFILES_DIR)

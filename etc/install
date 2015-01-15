@@ -48,11 +48,11 @@ function is_exist()  { type "$1" >/dev/null 2>&1; return $?; }
 export DOTFILES=~/.dotfiles
 
 #
-# $ make install
+# $ make init
 #
 # This is a make install, which is functionize
 # To execute all sh files within etc/init/.
-function make_install()
+function make_init()
 {
     local -i i=1
     local file files=($(echo $DOTFILES/etc/init/{osx/,}*.sh))
@@ -69,7 +69,7 @@ function make_install()
     done
 }
 
-function dotfiles()
+function installing_dotfiles()
 {
     # If $DOTFILES already exists, removing the directory
     if [[ -d $DOTFILES ]]; then
@@ -118,10 +118,10 @@ function dotfiles()
     fi
 
     # 3. Execute all sh files within etc/init/
-    # ==> init install
-    if [[ "${1:-}" == 'install' ]]; then
-        e_header 'Installing...'
-        make_install
+    # ==> initializing
+    if [[ "${1:-}" == 'init' ]]; then
+        e_header 'Initializing...'
+        make_init
     fi
 
     e_newline
@@ -155,5 +155,5 @@ if [[ $0 == ${BASH_SOURCE:-} ]]; then
     fi
 fi
 
-dotfiles "$@"
+installing_dotfiles "$@"
 e_success 'All done'

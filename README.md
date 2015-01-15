@@ -38,11 +38,15 @@ Run the following installation command in your terminal.
 | cURL | `bash -c "$(curl -fsSL dot.b4b4r07.com)"` |
 | Wget | `bash -c "$(wget -qO - dot.b4b4r07.com)"` |
 
+It is almost the same as the following except for executing through a Web site directly.
+
+	$ make install
+
 **what's inside?**
 
-1. Downloads this repository.
-2. Deploy (i.e. *copy* or *create symlink*) dot files to your home directory.
-3. Run all programs for setup in `./etc/init/` directory (**optional**: when running the [installation command](#oneliner) specify `-s install` as an argument).
+1. Downloads this repository
+2. Deploy (i.e. *copy* or *create symlink*) dot files to your home directory; `make deploy`
+3. Run all programs for setup in `./etc/init/` directory; `make init` (**Optional**: when running the [installation command](#oneliner) specify `-s init` as an argument)
 
 ## Updating
 
@@ -56,9 +60,9 @@ In addition, there are several git submodules included in this configuration. On
 
 All configuration files for setup is stored within the `etc/init/` directory. By running this command, you can interactively setup all preferences.
 
-	$ make install
+	$ make init
 
-To run `make install` immediately after running the [installation command](#oneliner).
+To run `make init` immediately after running the [installation command](#oneliner).
 
 ### Vim
 

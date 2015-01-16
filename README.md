@@ -2,6 +2,7 @@
 
 [![dotfiles-logo](http://cl.ly/image/2q1a2d0Y2S3y/dotfiles.png "dotfiles")](https://dribbble.com/shots/1466768-dotfiles-logo)
 
+[![issues](http://img.shields.io/github/issues/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/issues)
 [![tag](http://img.shields.io/github/tag/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/releases/tag/stable)
 [![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt)
 [![platform](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat)](./doc/OSX.md)
@@ -195,3 +196,5 @@ Licensed under the [MIT license](./doc/LICENSE-MIT.txt).
 Unless attributed otherwise, everything is under the MIT licence (see [LICENCE](./doc/LICENSE-MIT.txt) for more info).
 
 Some stuff is not from me, and without attribution, and I no longer remember where I got it from. I apologize for that.
+
+You can clone or fork them freely, but I don't guarantee that they fit you.

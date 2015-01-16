@@ -10,7 +10,7 @@ help:
 	@echo "make update         #=> Fetch changes"
 	@echo "make deploy         #=> Create symlink"
 	@echo "make init           #=> Setup environment"
-	@echo "make install        #=> "
+	@echo "make install        #=> Updating, deploying and initializng"
 	@echo "make clean          #=> Remove the dotfiles"
 	@echo "make homebrew       #=> Install homebrew without it"
 	@echo "make brew           #=> Update brew packages"
@@ -53,7 +53,3 @@ clean:
 	@echo 'Remove dot files in your home directory...'
 	@-$(foreach val, $(DOTFILES_FILES), rm -vrf $(HOME)/$(val);)
 	-rm -rf $(DOTFILES_DIR)
-
-restart:
-	@#bash -c "exec zsh"
-	@exec zsh

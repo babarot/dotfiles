@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/sh
+# This shell script conforms to POSIX.
 
 # An interrupt (typically ^C) has the effect of aborting the current command
 trap 'e_error "Abort the command that is in progress"; exit 1' INT
@@ -32,50 +33,65 @@ Licensed under the MIT license.
 EOT
 
 # Insert newline
-function e_newline() { echo -en "\n"; }
+e_newline() { printf "\n"; }
 # Normal style of writing
-function e_header()  { echo -e "\n\033[1m$*\033[0m"; }
+e_header()  { printf "\n\033[1m%s\033[0m\n" "$*"; }
 # Success
-function e_success() { echo -e " \033[1;32m✔\033[0m  $*"; }
+e_success() { printf " \033[1;32m✔\033[0m  %s\n" "$*"; }
 # Failure
-function e_error()   { echo -e " \033[1;31m✖\033[0m  $*" 1>&2; }
+e_error()   { printf " \033[1;31m✖\033[0m  %s\n" "$*" 1>&2; }
 # Result
-function e_arrow()   { echo -e " \033[1;34m➜\033[0m  $*"; }
+e_arrow()   { printf " \033[1;34m➜\033[0m  %s\n" "$*"; }
 # Check if exists
-function is_exist()  { type "$1" >/dev/null 2>&1; return $?; }
+#is_exist()  { which "$1" >/dev/null 2>&1; return $?; }
+is_exist()  { [ -x "$(which "$1")" ]; }
 
 # Set dotfiles environment valuable
-export DOTFILES=~/.dotfiles
+DOTFILES=~/.dotfiles; export DOTFILES
 
 #
 # $ make init
 #
 # This is a make install, which is functionize
 # To execute all sh files within etc/init/.
-function make_init()
+make_init()
 {
-    local -i i=1
-    local file files=($(echo $DOTFILES/etc/init/{osx/,}*.sh))
-    # No files? abort.
-    if (( ${#files[@]:-} == 0 )); then return; fi
-    for file in "${files[@]}"; do
-        e_header "$i/${#files[@]:-} $(basename $file): running..."
+    #local -i i=1
+    #local file files=($(echo $DOTFILES/etc/init/{osx/,}*.sh))
+    ## No files? abort.
+    #if (( ${#files[@]:-} == 0 )); then return; fi
+    #for file in "${files[@]}"; do
+    #    e_header "$i/${#files[@]:-} $(basename $file): running..."
+    #    if bash "$file"; then
+    #        e_success 'done'
+    #    else
+    #        e_error 'error!'
+    #    fi
+    #    ((i++))
+    #done
+
+    local i=1
+    local files=$(echo $DOTFILES/etc/init/*.sh $DOTFILES/etc/init/osx/*.sh)
+    local c=$(echo "$files" | tr ' ' '\n' | wc -l | tr -d ' ')
+    for file in $files
+    do
+        e_header "[$i/$c] $(basename "$file"): running..."
         if bash "$file"; then
             e_success 'done'
         else
             e_error 'error!'
         fi
-        ((i++))
+        i=$((i+1))
     done
 }
 
-function installing_dotfiles()
+installing_dotfiles()
 {
     # If $DOTFILES already exists, removing the directory
-    if [[ -d $DOTFILES ]]; then
+    if [ -d $DOTFILES ]; then
         e_header "$DOTFILES: already exists, removing..."
-        #rm -rf "$DOTFILES"
-        mv -f "$DOTFILES" "$DOTFILES".old
+        rm -rf "$DOTFILES"
+        #mv -f $DOTFILES ${DOTFILES}.old
     fi
 
     # 1. Download the repository
@@ -119,7 +135,7 @@ function installing_dotfiles()
 
     # 3. Execute all sh files within etc/init/
     # ==> initializing
-    if [[ "${1:-}" == 'init' ]]; then
+    if [ "${1:-}" = 'init' ]; then
         e_header 'Initializing...'
         make_init
     fi
@@ -143,14 +159,14 @@ function installing_dotfiles()
 #
 # A SAFETY system
 # Note: This script is designed to be run from a command line shell.
-if [[ $0 == ${BASH_SOURCE:-} ]]; then
+if [ "$0" = "${BASH_SOURCE:-}" ]; then
     e_error 'WARNING!!'
     e_error 'You should NOT run directly from the command line'
     e_error 'For more info, see https://github.com/b4b4r07/dotfiles'
     e_newline
 
     # Push off the safety catch
-    if [[ "${1:-}" != 'directly' ]]; then
+    if [ "${1:-}" != 'directly' ]; then
         exit 1
     fi
 fi

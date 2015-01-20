@@ -30,6 +30,8 @@ Click this image to see a larger version.
 
 ![](http://cl.ly/image/1f2H0F3U0240/dev-env.png "b4b4r07's environment")
 
+Note: You can clone or fork them freely, but I don't guarantee that they fit you.
+
 ## Installation
 
 Run the installation command below in your terminal.
@@ -39,15 +41,21 @@ Run the installation command below in your terminal.
 | cURL | bash -c "$(curl -fsSL [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
 | Wget | bash -c "$(wget -qO - [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
 
-It is almost the same as the command below except for executing through a Web site directly.
+- :warning: NOTE
 
-	$ make install
+	It is almost the same as the command below except for executing through a Web site directly.
+
+		$ make install
+
+	It is not necessary to perform `make install` at all if this repository was installed by the [installation command](#oneliner).
 
 **what's inside?**
 
 1. Downloads this repository
 2. Deploy (i.e. *copy* or *create symlink*) dot files to your home directory; `make deploy`
 3. Run all programs for setup in `./etc/init/` directory; `make init` (**Optional**: when running the [installation command](#oneliner) specify `-s init` as an argument)
+
+When the [installation command](#oneliner) format is not `curl -L URL | sh` but `sh -c "$(curl -L URL)"`, shell will be restart automatically. If this is not the case, it is necessary to restart your shell manually.
 
 ## Updating
 
@@ -63,7 +71,9 @@ All configuration files for setup is stored within the `etc/init/` directory. By
 
 	$ make init
 
-To run `make init` immediately after running the [installation command](#oneliner).
+To run `make init` immediately after running the [installation command](#oneliner):
+
+	bash -c "$(curl -fsSL dot.b4b4r07.com)" -s init
 
 ### Vim
 
@@ -196,5 +206,3 @@ Licensed under the [MIT license](./doc/LICENSE-MIT.txt).
 Unless attributed otherwise, everything is under the MIT licence (see [LICENCE](./doc/LICENSE-MIT.txt) for more info).
 
 Some stuff is not from me, and without attribution, and I no longer remember where I got it from. I apologize for that.
-
-You can clone or fork them freely, but I don't guarantee that they fit you.

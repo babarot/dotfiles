@@ -59,18 +59,18 @@ function get_battery()
                     fi
 
                     [[ "$1" =~ 'p' ]] && echomsg="$echomsg $percentage%"
-                    [[ "$1" =~ 't' ]] && echomsg="$echomsg $time_remain"
+                    [[ "$1" =~ 't' ]] && echomsg="$echomsg $time_remain" && t_opt=1
 
                     if [[ "$1" =~ 'c' ]]; then
-                        if [[ -z "$2" ]]; then
-                            get_battery_color "$@"
-                        elif [[ "$2" == 'tmux' ]]; then
-                            get_battery_color_tmux "$@"
+                        shift
+                        if [[ -z "$1" ]]; then
+                            shift; get_battery_color "$@"
+                        elif [[ "$1" == 'tmux' ]]; then
+                            shift; get_battery_color_tmux "$@"
                         fi
                         return 0
                     fi
                     echo "$echomsg"
-                    shift
                     ;;
                 *)
                     if [[ -n "${percentage}" ]]; then
@@ -193,6 +193,7 @@ function get_battery_color()
 
 function get_battery_color_tmux()
 {
+    for i in "$@"; do [[ $i =~ t ]] && t_opt=1; done
     if shell_is_osx; then
         if is_exist 'pmset'; then
             # Charging, not 100%
@@ -203,10 +204,19 @@ function get_battery_color_tmux()
 
                 # Discharging and 1% ~ 10%, 10%+
                 if [ "$percentage" -ge "$battery_danger" ]; then
-                    #echo "#[fg=blue]${percentage}%#[default] ($time_remain)"
-                    echo "#[fg=blue]${percentage}%#[default]"
+                    #echo "#[fg=blue]${percentage}%#[default]"
+                    color_tmux_echomsg="#[fg=blue]${percentage}%#[default]"
+                    if [[ -n $t_opt ]]; then
+                        color_tmux_echomsg="$color_tmux_echomsg ($time_remain)"
+                    fi
+                    echo "$color_tmux_echomsg"
                 else
-                    echo "#[fg=red]${percentage}%#[default]"
+                    #echo "#[fg=red]${percentage}%#[default]"
+                    color_tmux_echomsg="#[fg=red]${percentage}%#[default]"
+                    if [[ -n $t_opt ]]; then
+                        color_tmux_echomsg="$color_tmux_echomsg ($time_remain)"
+                    fi
+                    echo "$color_tmux_echomsg"
                 fi
             fi
         elif is_exist 'ioreg'; then
@@ -219,9 +229,19 @@ function get_battery_color_tmux()
 
                 # Discharging and 1% ~ 10%, 10%+
                 if [ $(echo "$percentage" | cut -d. -f1) -ge "$battery_danger" ]; then
-                    echo "#[fg=blue]${percentage}%#[default]"
+                    #echo "#[fg=blue]${percentage}%#[default]"
+                    color_tmux_echomsg="#[fg=blue]${percentage}%#[default]"
+                    if [[ -n $t_opt ]]; then
+                        color_tmux_echomsg="$color_tmux_echomsg ($time_remain)"
+                    fi
+                    echo "$color_tmux_echomsg"
                 else
-                    echo "#[fg=red]${percentage}%#[default]"
+                    #echo "#[fg=red]${percentage}%#[default]"
+                    color_tmux_echomsg="#[fg=red]${percentage}%#[default]"
+                    if [[ -n $t_opt ]]; then
+                        color_tmux_echomsg="$color_tmux_echomsg ($time_remain)"
+                    fi
+                    echo "$color_tmux_echomsg"
                 fi
             fi
         fi
@@ -231,4 +251,5 @@ function get_battery_color_tmux()
     fi
 }
 
+t_opt=
 get_battery "$@"

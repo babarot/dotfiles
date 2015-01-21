@@ -58,17 +58,18 @@ function get_battery()
                         return 0
                     fi
 
-                    [[ "$1" =~ 'p' ]] && echo "$percentage%"
-                    [[ "$1" =~ 't' ]] && echo "$time_remain"
+                    [[ "$1" =~ 'p' ]] && echomsg="$echomsg $percentage%"
+                    [[ "$1" =~ 't' ]] && echomsg="$echomsg $time_remain"
 
                     if [[ "$1" =~ 'c' ]]; then
                         if [[ -z "$2" ]]; then
-                            get_battery_color
+                            get_battery_color "$@"
                         elif [[ "$2" == 'tmux' ]]; then
-                            get_battery_color_tmux
+                            get_battery_color_tmux "$@"
                         fi
                         return 0
                     fi
+                    echo "$echomsg"
                     shift
                     ;;
                 *)
@@ -202,9 +203,10 @@ function get_battery_color_tmux()
 
                 # Discharging and 1% ~ 10%, 10%+
                 if [ "$percentage" -ge "$battery_danger" ]; then
-                    echo "#[fg=blue]${percentage}%#[default] ($time_remain)"
+                    #echo "#[fg=blue]${percentage}%#[default] ($time_remain)"
+                    echo "#[fg=blue]${percentage}%#[default]"
                 else
-                    echo "#[fg=red]${percentage}%#[default] ($time_remain)"
+                    echo "#[fg=red]${percentage}%#[default]"
                 fi
             fi
         elif is_exist 'ioreg'; then
@@ -217,9 +219,9 @@ function get_battery_color_tmux()
 
                 # Discharging and 1% ~ 10%, 10%+
                 if [ $(echo "$percentage" | cut -d. -f1) -ge "$battery_danger" ]; then
-                    echo "#[fg=blue]${percentage}%#[default] ($time_remain)"
+                    echo "#[fg=blue]${percentage}%#[default]
                 else
-                    echo "#[fg=red]${percentage}%#[default] ($time_remain)"
+                    echo "#[fg=red]${percentage}%#[default]"
                 fi
             fi
         fi

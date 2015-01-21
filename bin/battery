@@ -219,7 +219,7 @@ function get_battery_color_tmux()
 
                 # Discharging and 1% ~ 10%, 10%+
                 if [ $(echo "$percentage" | cut -d. -f1) -ge "$battery_danger" ]; then
-                    echo "#[fg=blue]${percentage}%#[default]
+                    echo "#[fg=blue]${percentage}%#[default]"
                 else
                     echo "#[fg=red]${percentage}%#[default]"
                 fi

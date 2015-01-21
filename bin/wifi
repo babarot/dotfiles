@@ -70,13 +70,14 @@ wifi()
         fi
         local color="$blue"
 
-        local s="${signal/ //}"
-        if [[ "${#s}" -le 4 ]]; then
-            color="$red"
-        fi
+        #local s="${signal/ /}"
+        #if [[ "${#s}" -le 4 ]]; then
+        #    color="$red"
+        #fi
     fi
 
-    echo -e "${name} ${bandwidth}Mbs ${color}${signal}${normal}"
+    #echo -e "${name} ${bandwidth}Mbs ${color}${signal}${normal}"
+    echo -e "${name} ${bandwidth}Mbs ${signal}"
 }
 
 if [[ $OSTYPE == darwin* ]]; then

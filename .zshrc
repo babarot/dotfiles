@@ -33,6 +33,7 @@ unalias run-help
 alias help=run-help
 
 # Environment variables {{{2
+export ANTIGEN=~/.antigen
 antigen_plugins=(
 "brew"
 "zsh-users/zsh-completions"
@@ -64,8 +65,6 @@ export CORRECT_IGNORE_FILE='.*'
 export HISTFILE=~/.zsh_history
 export HISTSIZE=1000000
 export SAVEHIST=1000000
-
-export ZSH_PLUGINS_DIR=~/.antigen/repos
 
 export WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 export WORDCHARS='*?.[]~&;!#$%^(){}<>'
@@ -111,7 +110,7 @@ function zsh_at_startup()
     tmux_automatically_attach 2>/dev/null
 
     # Antigen
-    if [[ -f ~/.antigen/antigen.zsh ]]; then
+    if [[ -f $ANTIGEN/antigen.zsh ]]; then
         #echo -e "=> $fg[blue]Setup antigen....$reset_color"
         e_arrow `e_header "Setup antigen...."`
         local plugin
@@ -293,7 +292,7 @@ function zsh_set_utilities()
             #[[ -n ${(M)enabled_plugins:#$1} ]]
             typeset -g -a antigen_plugins
 
-            [[ -n ${(M)antigen_plugins:#$1} ]]
+            [[ -d $ANTIGEN && -n ${(M)antigen_plugins:#$1} ]]
         else
             return 1
         fi

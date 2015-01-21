@@ -4,10 +4,16 @@ trap 'echo Error: $0: stopped' ERR
 set -e
 set -u
 
-if [[ $OSTYPE != darwin* ]]; then
-    echo 'OS X only' 1>&2
-    exit 1
-fi
+# A system that judge if this script is necessary or not
+# {{{
+[[ $OSTYPE != darwin* ]] && exit
+#}}}
+
+#
+# Testing the judgement system
+# {{{
+if [[ -n ${DEBUG:-} ]]; then echo "$0" && exit 0; fi
+#}}}
 
 # Dashboard {{{1
 set_dashboard_preferences()
@@ -259,7 +265,7 @@ set_terminal_preferences()
     # Only use UTF-8 in Terminal.app
     defaults write com.apple.terminal StringEncodings -array 4
 
-    # Enable Ågfocus follows mouseÅh for Terminal.app and all X11 apps
+    # Enable ÔøΩgfocus follows mouseÔøΩh for Terminal.app and all X11 apps
     # i.e. hover over a window and start typing in it without clicking first
     #defaults write com.apple.terminal FocusFollowsMouse -bool true
     #defaults write org.x.X11 wm_ffm -bool true

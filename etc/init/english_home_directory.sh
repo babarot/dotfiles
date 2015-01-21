@@ -4,10 +4,23 @@ trap 'echo Error: $0: stopped' ERR
 set -e
 set -u
 
+#
+# A system that judge if this script is necessary or not
+# {{{
+is_osx() { [[ "$OSTYPE" =~ ^darwin ]] || return 1; }
+is_ubuntu() { [[ "$(cat /etc/issue 2>/dev/null)" =~ Ubuntu ]] || return 1; }
+if ! is_osx || ! is_ubuntu; then exit; fi
+#}}}
+
+#
+# Testing the judgement system
+# {{{
+if [[ -n ${DEBUG:-} ]]; then echo "$0" && exit 0; fi
+#}}}
+
 echo -n "Translate home directory into English? (y/N) "
 read
 if [[ "$REPLY" =~ ^[Yy]$ ]]; then
-    if [[ $OSTYPE == darwin* ]]; then
         rm -vf ~/Desktop/.localized
         rm -vf ~/Documents/.localized
         rm -vf ~/Downloads/.localized
@@ -17,7 +30,7 @@ if [[ "$REPLY" =~ ^[Yy]$ ]]; then
         rm -vf ~/Pictures/.localized
         rm -vf /Applications/.localized
 
-        declare error=0
+        error=0
         sudo -v
 
         # cf. http://qiita.com/is0me/items/0b7b846f1f0860629950
@@ -37,5 +50,6 @@ if [[ "$REPLY" =~ ^[Yy]$ ]]; then
         fi
     else
         LANG=C xdg-user-dirs-gtk-update
-    fi
 fi
+
+# vim:fdm=marker

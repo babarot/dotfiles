@@ -49,40 +49,107 @@ is_exist()  { [ -x "$(which "$1")" ]; }
 # Set dotfiles environment valuable
 DOTFILES=~/.dotfiles; export DOTFILES
 
-#
-# $ make init
-#
 # This is a make install, which is functionize
 # To execute all sh files within etc/init/.
-make_init()
+initialize()
 {
-    #local -i i=1
-    #local file files=($(echo $DOTFILES/etc/init/{osx/,}*.sh))
-    ## No files? abort.
-    #if (( ${#files[@]:-} == 0 )); then return; fi
-    #for file in "${files[@]}"; do
-    #    e_header "$i/${#files[@]:-} $(basename $file): running..."
-    #    if bash "$file"; then
-    #        e_success 'done'
-    #    else
-    #        e_error 'error!'
-    #    fi
-    #    ((i++))
-    #done
-
-    local i=1
-    local files=$(echo $DOTFILES/etc/init/*.sh $DOTFILES/etc/init/osx/*.sh)
-    local c=$(echo "$files" | tr ' ' '\n' | wc -l | tr -d ' ')
-    for file in $files
-    do
-        e_header "[$i/$c] $(basename "$file"): running..."
-        if bash "$file"; then
-            e_success 'done'
-        else
-            e_error 'error!'
+    prompt_menu() {
+        local exitcode prompt choices nums i n
+        e_header "Run the following init scripts."
+        if _prompt_menu_draws "To edit this list, press any key except ENTER. " -1 && read -n 1 -rp "Enter to Go> " && [ -n "$REPLY" ]; then
+            prompt="Press number to toggle, r/R to reverse (Separate options with spaces): "
+            while _prompt_menu_draws "$1" 1 && read -rp "$prompt" nums && [ "$nums" != '' ]; do
+                _prompt_menu_adds "$nums"
+            done
         fi
-        i=$((i+1))
-    done
+        _prompt_menu_adds
+    }
+
+    _prompt_menu_iter() {
+        local i sel state c=0
+        local fn=$1; shift
+        for i in $menu_options; do
+            state=0
+            for sel in $menu_selects; do
+                [ "$sel" = "$i" ] && state=1 && break
+            done
+            $fn $state "$c" "$i" "$@"
+            c=$((c+1))
+        done
+    }
+
+    _prompt_menu_draws() {
+        printf "\r\033[1m%s\033[0m\n" "$1"
+        _prompt_menu_iter _prompt_menu_draw "$2"
+    }
+
+    _prompt_menu_draw()
+    {
+        document() { toupper | sed 's/\.sh//g' | sed 's/_/ /g'; }
+        if [ "$1" -eq 0 ]; then method=e_error; fi
+        if [ "$1" -eq 1 ]; then method=e_success; fi
+
+        if [ -n "$4" ]; then
+            if [ "$4" = '-1' ]; then
+                e_arrow "$(printf "%2d) %s\n" $(($2+1)) "$(basename "$3" | document)")"
+            else
+                $method "$(printf "%2d) %s\n" $(($2+1)) "$(basename "$3" | document)")"
+            fi
+        else
+            $method "$(basename "$2" | document)"
+        fi
+    }
+
+    _prompt_menu_adds() {
+        _prompt_menu_result=""
+        _prompt_menu_iter _prompt_menu_add "$@"
+        menu_selects="${_prompt_menu_result}"
+    }
+
+    _prompt_menu_add() {
+        local state i n keep match
+        state=$1; shift
+        c=$1; shift
+        bun=$1; shift
+        IFS=' '
+        nums="$*"
+        for n in $nums; do
+            if [ "$n" = 'r' -o "$n" = 'R' ]; then
+                match=1; [ "$state" = 0 ] && keep=1
+            elif expr "$n" : "^[0-9][0-9]*$" >/dev/null && [ $((n-1)) = "$c" ]; then
+                match=1; [ "$state" = 0 ] && keep=1
+            fi
+        done
+        [ ! "$match" -a "$state" = 1 -o "$keep" ] || return
+        _prompt_menu_result="$_prompt_menu_result $bun"
+    }
+
+    toupper() { awk '{ print toupper(substr($0, 1, 1)) substr($0, 2, length($0) - 1) }'; }
+    tolower() { awk '{ print tolower(substr($0, 1, 1)) substr($0, 2, length($0) - 1) }'; }
+    init_files() {
+        local i f t dirname oses os opt remove
+        f=""
+        files=$(echo $DOTFILES/etc/init/*.sh $DOTFILES/etc/init/osx/*.sh)
+        for t in $files
+        do
+            f="$f $(DEBUG=1 bash "$t")"
+        done
+
+        menu_options=""
+        menu_selects=""
+        for i in $f
+        do
+            menu_selects="$menu_selects $i"
+            menu_options="$menu_options $i"
+        done
+
+        [ -n "$f" ] && prompt_menu "Press ENTER to run checked files"
+        for i in $menu_selects
+        do
+            echo y | bash "$i"
+        done
+    }
+    init_files "$@"
 }
 
 installing_dotfiles()
@@ -137,7 +204,8 @@ installing_dotfiles()
     # ==> initializing
     if [ "${1:-}" = 'init' ]; then
         e_header 'Initializing...'
-        make_init
+        #make_init
+        initialize "$@"
     fi
 
     e_newline
@@ -154,7 +222,7 @@ installing_dotfiles()
 
 # Main
 #
-# Check if run from a command line
+# Check if run from a command line only bash
 # python-like "if __name__ == '__main__':"
 #
 # A SAFETY system
@@ -173,3 +241,5 @@ fi
 
 installing_dotfiles "$@"
 e_success 'All done'
+
+# vim:fdm=marker

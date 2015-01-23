@@ -146,7 +146,7 @@ initialize()
         [ -n "$f" ] && prompt_menu "Press ENTER to run checked files"
         for i in $menu_selects
         do
-            echo y | bash "$i"
+            bash "$i"
         done
     }
     init_files "$@"

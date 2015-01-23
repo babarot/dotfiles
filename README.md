@@ -2,11 +2,11 @@
 
 [![dotfiles-logo](http://cl.ly/image/2q1a2d0Y2S3y/dotfiles.png "dotfiles")](https://dribbble.com/shots/1466768-dotfiles-logo)
 
-[![issues](http://img.shields.io/github/issues/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/issues)
+[![Build Status](https://travis-ci.org/b4b4r07/dotfiles.svg?branch=master)](https://travis-ci.org/b4b4r07/dotfiles)
+[![GitHub issues](https://img.shields.io/github/issues/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/issues)
 [![tag](http://img.shields.io/github/tag/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/releases/tag/stable)
 [![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt)
 [![platform](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat)](./doc/OSX.md)
-[![endorse](https://api.coderwall.com/b4b4r07/endorsecount.png)](https://coderwall.com/b4b4r07)
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/b4b4r07/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 This is a repository with my [configuration files](http://en.wikipedia.org/wiki/Configuration_file), those that in Linux/OS X normally are these files under the `$HOME` directory that are hidden and preceded by a dot, AKA *dotfiles*.
@@ -41,9 +41,7 @@ Run the installation command below in your terminal.
 | cURL | bash -c "$(curl -fsSL [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
 | Wget | bash -c "$(wget -qO - [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
 
-- :warning: NOTE
-
-	It is almost the same as the command below except for executing through a Web site directly.
+- It is almost the same as the command below except for executing through a Web site directly.
 
 		$ make install
 
@@ -193,7 +191,7 @@ The resulting `/etc/paths` files looks like this:
 
 ## Author
 
-| [![twitter/b4b4r07](http://www.gravatar.com/avatar/8238c3c0be55b887aa9d6d59bfefa504.png)](http://twitter.com/b4b4r07 "Follow @b4b4r07 on Twitter") |
+| [![twitter/b4b4r07](http://www.gravatar.com/avatar/8238c3c0be55b887aa9d6d59bfefa504.png)](https://twitter.com/intent/follow?screen_name=b4b4r07 "Follow @b4b4r07 on Twitter") |
 |:---:|
 | [b4b4r07's Qiita](http://qiita.com/b4b4r07/ "b4b4r07 on Qiita") |
 

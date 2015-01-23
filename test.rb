@@ -28,5 +28,5 @@ def test_initialize
     exit 2 unless err.length == 0
 end
 
-test_deploy
+#test_deploy
 test_initialize

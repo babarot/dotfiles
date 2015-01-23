@@ -4,7 +4,7 @@
 # An interrupt (typically ^C) has the effect of aborting the current command
 trap 'e_error "Abort the command that is in progress"; exit 1' INT
 trap 'e_error "Some error has occurred"; exit 1' ERR
-set -e
+#set -e
 set -u
 
 # Pilot of dotfiles
@@ -56,7 +56,7 @@ initialize()
     prompt_menu() {
         local exitcode prompt choices nums i n
         e_header "Run the following init scripts."
-        if _prompt_menu_draws "To edit this list, press any key except ENTER. " -1 && read -n 1 -rp "Enter to Go> " && [ -n "$REPLY" ]; then
+        if _prompt_menu_draws "To edit this list, press any key except ENTER. " -1 && read -rp "Enter to Go> " && [ -n "$REPLY" ]; then
             prompt="Press number to toggle, r/R to reverse (Separate options with spaces): "
             while _prompt_menu_draws "$1" 1 && read -rp "$prompt" nums && [ "$nums" != '' ]; do
                 _prompt_menu_adds "$nums"
@@ -205,19 +205,21 @@ installing_dotfiles()
     if [ "${1:-}" = 'init' ]; then
         e_header 'Initializing...'
         #make_init
-        initialize "$@"
+        if initialize "$@"; then
+            e_success 'done'
+        fi
     fi
 
     e_newline
-    #if [ -p /dev/stdout ]; then
+    if [ -t 0 ]; then
         # Restart shell if specified "bash -c $(curl -L {URL})"
         # not restart:
         #   curl -L {URL} | bash
         e_arrow 'Restarting your shell...'
         exec "${SHELL:-/bin/zsh}"
-    #else
-    #    e_arrow 'Restart your shell, manually'
-    #fi
+    else
+        e_arrow 'Restart your shell, manually'
+    fi
 }
 
 # Main

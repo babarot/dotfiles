@@ -21,6 +21,7 @@ if [[ -n ${DEBUG:-} ]]; then echo "$0" && exit 0; fi
 echo -n "Translate home directory into English? (y/N) "
 read
 if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+    if is_osx; then
         rm -vf ~/Desktop/.localized
         rm -vf ~/Documents/.localized
         rm -vf ~/Downloads/.localized
@@ -48,8 +49,9 @@ if [[ "$REPLY" =~ ^[Yy]$ ]]; then
             sudo cp ../en.lproj/SystemFolderLocalizations.strings .
             killall Finder
         fi
-    else
+    elif is_ubuntu; then
         LANG=C xdg-user-dirs-gtk-update
+    fi
 fi
 
 # vim:fdm=marker

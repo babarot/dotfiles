@@ -3,6 +3,7 @@
 def test_deploy
     c=0
     list = []
+    `make deploy`
     make_list = `make list 2>&1`
     exit 1 unless $? == 0
 
@@ -28,5 +29,5 @@ def test_initialize
     exit 2 unless err.length == 0
 end
 
-#test_deploy
+test_deploy
 test_initialize

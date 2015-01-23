@@ -16,7 +16,7 @@ if [[ -n ${DEBUG:-} ]]; then echo "$0" && exit 0; fi
 #}}}
 
 echo 'brew: command not found' 1>&2
-echo -n 'Install now? (y/N/) '
+echo -n 'Install now? (y/N) '
 read
 if [[ "$REPLY" =~ ^[Yy]$ ]]; then
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"

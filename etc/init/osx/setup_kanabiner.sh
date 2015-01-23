@@ -15,7 +15,11 @@ set -e
 if [[ -n ${DEBUG:-} ]]; then echo "$0" && exit 0; fi
 #}}}
 
-#exit 0
+echo -n 'Setup Karabiner.app now? (y/N) '
+read
+if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+    echo "setup Karabiner.app"
+fi
 #cli=/Applications/Karabiner.app/Contents/Library/bin/karabiner
 #if [[ ! -d $cli ]]; then
 #    #exit 1

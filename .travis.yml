@@ -1,7 +1,7 @@
 language: perl
 perl:
     - "5.18"
-before_install:
+before_script:
     - make deploy
 script:
     - perl ./etc/test/install_deploy_test.pl

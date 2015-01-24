@@ -5,6 +5,11 @@ DOTFILES_FILES    := $(filter-out $(DOTFILES_EXCLUDES), $(DOTFILES_TARGET))
 
 all: update deploy init
 
+test:
+	@perl ./etc/test/install_deploy_test.pl
+	@perl ./etc/test/install_init_test.pl
+	@python ./etc/test/install_redirect_test.py
+
 help:
 	@echo "make list           #=> List the files"
 	@echo "make update         #=> Fetch changes"

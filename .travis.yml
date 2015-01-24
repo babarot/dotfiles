@@ -1,12 +1,9 @@
-language: perl
-perl:
-    - "5.14"
-    - "5.12"
-    - "5.10"
-    - "5.8"
+language: python
+python:
+    - 2.7
 before_script:
     - "make deploy"
 script:
-    - perl ./etc/test/install_deploy_test.pl
-    - perl ./etc/test/install_init_test.pl
-    - perl ./etc/test/install_redirect_test.pl
+    - perl etc/test/install_deploy_test.pl
+    - perl etc/test/install_init_test.pl
+    - perl etc/test/install_redirect_test.pl

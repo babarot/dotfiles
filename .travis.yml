@@ -1,7 +1,9 @@
-language: ruby
-rvm:
-  - 2.0.0
+language: perl
+perl:
+    - "5.18"
+before_install:
+    - make deploy
 script:
-  - perl ./etc/test/install_deploy_test.pl
-  - ruby ./etc/test/install_init_test.rb
-  - ruby ./etc/test/install_redirect_test.rb
+    - perl ./etc/test/install_deploy_test.pl
+    - perl ./etc/test/install_init_test.pl
+    - perl ./etc/test/install_redirect_test.pl

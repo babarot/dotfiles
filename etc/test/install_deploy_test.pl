@@ -14,7 +14,7 @@ if (-f "Makefile") {
     if ($? != 0) {
         exit 1;
     }
-    #system("make deploy");
+    system("make deploy");
 
     my @list = split(/\n/, $make_list);
     @list = map {$_ =~ s@/$@@; $_} @list;

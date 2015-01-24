@@ -18,7 +18,9 @@ if (-f "Makefile") {
     @list = map {$_ =~ s@/$@@; $_} @list;
 
     foreach my $f (@list) {
-        if ("$root/$f" ne readlink("$ENV{'HOME'}/$f")) {
+        my $a = "$root/$f" ? "$root/$f" : '';
+        my $b = readlink("$ENV{'HOME'}/$f") ? readlink("$ENV{'HOME'}/$f") : '';
+        if ($a ne $b) {
             exit 1;
         }
     }

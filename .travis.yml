@@ -2,4 +2,6 @@ language: ruby
 rvm:
   - 2.0.0
 script:
-  - ruby test.rb
+  - ruby ./etc/test/install_deploy_test.rb
+  - ruby ./etc/test/install_init_test.rb
+  - ruby ./etc/test/install_redirect_test.rb

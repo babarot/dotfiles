@@ -1,6 +1,6 @@
 #!/bin/bash
 
-trap 'echo Error: $0: stopped' ERR INT
+trap 'echo Error: $0: stopped; exit 1' ERR INT
 set -u
 set -e
 

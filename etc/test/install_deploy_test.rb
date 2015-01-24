@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
 def test_deploy
-    c=0
-    list = []
     Dir.chdir("../..") {
         if File.exists?("Makefile")
+            c=0
+            list = []
             `make deploy`
             make_list = `make list 2>&1`
             exit 1 unless $? == 0
@@ -23,7 +23,6 @@ def test_deploy
             exit 1
         end
     }
-
 end
 
 test_deploy

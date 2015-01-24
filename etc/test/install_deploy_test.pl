@@ -17,10 +17,8 @@ if (-f "Makefile") {
     my @list = split(/\n/, $make_list);
     @list = map {$_ =~ s@/$@@; $_} @list;
 
-    foreach my $path (@list) {
-        my $a = "$root/$path";
-        my $b = readlink("$ENV{'HOME'}/$path");
-        if ($a ne $b) {
+    foreach my $f (@list) {
+        if ("$root/$f" ne readlink("$ENV{'HOME'}/$f")) {
             exit 1;
         }
     }

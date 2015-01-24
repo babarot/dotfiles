@@ -2,7 +2,6 @@
 
 use strict;
 use warnings;
-use File::Spec;
 use FindBin;
 use Cwd;
 
@@ -14,15 +13,17 @@ if (-f "Makefile") {
     if ($? != 0) {
         exit 1;
     }
-    system("make deploy");
 
     my @list = split(/\n/, $make_list);
     @list = map {$_ =~ s@/$@@; $_} @list;
 
     foreach my $f (@list) {
-        my $a = "$root/$f" ? "$root/$f" : '';
-        my $b = readlink("$ENV{'HOME'}/$f") ? readlink("$ENV{'HOME'}/$f") : '';
-        if ($a ne $b) {
+        my $a = "$root/$f";
+        my $b = readlink("$ENV{'HOME'}/$f");
+        if ($a eq $b) {
+            print "ok: $a <-> $b\n";
+        } else {
+            print "NG: $a\n";
             exit 1;
         }
     }

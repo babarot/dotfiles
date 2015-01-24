@@ -18,7 +18,9 @@ def test_deploy
                 end
             }
 
-            exit 1 unless c == list.length
+            p c
+            p list.length
+            #exit 1 unless c == list.length
         else
             exit 1
         end

@@ -15,5 +15,7 @@ if ($uri eq $redirect) {
     print "ok: Redirect to the '$uri'\n";
 } else {
     print "NG: Failed to get redirect information about '$url'\n";
+    print "  a[diff] -> $uri\n";
+    print "  b[diff] -> $redirect\n";
     exit 1;
 }

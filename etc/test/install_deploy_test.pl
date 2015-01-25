@@ -27,10 +27,9 @@ print "$cwd\n";
         chdir $ENV{'HOME'};
 print "$cwd\n";
     foreach my $f (@list) {
-        my $a = "$root/$f";
-        my $b = readlink("$f");
-        print "a: $a\n";
-        print "b: $b\n";
+        #my $a = "$root/$f";
+        #my $b = readlink("$f");
+        print "f: $f\n";
         #if ($a eq $b) {
         #    print "ok: $a <-> $b\n";
         #} else {

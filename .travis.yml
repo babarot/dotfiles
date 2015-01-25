@@ -1,12 +1,9 @@
-language: python
+language: perl
 python:
-    - 2.7
+    - 5.18
 install:
     - sudo apt-get install libwww-perl
 before_script:
     - "make deploy"
 script:
-    - "make -s test"
-    #- perl ./etc/test/install_deploy_test.pl
-    #- perl ./etc/test/install_init_test.pl
-    #- perl ./etc/test/install_redirect_test.pl
+    - "make --silent test"

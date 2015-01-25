@@ -1,6 +1,6 @@
 # About [./install](./install)
 
-[Shell script](./install) that is used to install command[*1](#note) has been written in `/bin/sh` in accordance with POSIX standard. In compliance with the POSIX it is possible to write a shell script, the [./install](./install) becomes high portability script and it can be run in any environment.
+[Shell script](http://dot.b4b4r07.com) that is used to install command[*1](#note) has been written in `/bin/sh` in accordance with POSIX standard. In compliance with the POSIX it is possible to write a shell script, the [./install](./install) becomes high portability script and it can be run in any environment.
 
 ## [Unix philosophy](http://en.wikipedia.org/wiki/Unix_philosophy)
 
@@ -25,8 +25,8 @@ Here is my example **basic** `dotfiles/`:
         |-- init
         |   `-- osx
         |-- lib
-        |-- test
-        `-- scripts
+        |-- scripts
+        `-- test
 
 It does not show only the basic directory structure. In the future, there's a possibility that the new directories will be add to `etc/` directory. Even in that case the above directory map would not be rewritten.
 
@@ -72,7 +72,21 @@ Library files of shell script has been saved. When the [`shlib`](./lib/shlib) is
 
 ## etc/test/
 
-Testing codes that used by [`Makefile`](../Makefile) are stored with in `etc/test/`.
+Testing codes that used by [`Makefile`](../Makefile) are stored with in `etc/test/`. The test-run feature by means of [Travis CI](https://travis-ci.org/b4b4r07/dotfiles) enables this dotfiles repository developers to perform test runs of their processes automatically. This allows the user to know which test is executing in case the test hangs for some reasons.
+
+To use it you need to set up a [.travis.yml](../.travis.yml) file in your home directory like this example:
+
+```yaml
+language: perl
+perl:
+    - 5.14
+install:
+    - sudo apt-get install libwww-perl
+before_script:
+    - "make deploy"
+script:
+    - "make --silent test"
+```
 
 To test the setup about this repository:
 
@@ -87,8 +101,6 @@ Whether you go successfully through a test depends on the following items:
 | Build Status |
 |:---:|
 |[![Build Status](https://travis-ci.org/b4b4r07/dotfiles.svg?branch=master)](https://travis-ci.org/b4b4r07/dotfiles)|
-
-
 
 ## etc/scripts/
 

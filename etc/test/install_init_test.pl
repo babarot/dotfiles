@@ -6,13 +6,17 @@ use FindBin;
 use Cwd;
 
 my $root = Cwd::abs_path($FindBin::Bin . "/../");
-my @list = ();
-push(@list, glob "$root/init/*.sh");
-push(@list, glob "$root/init/osx/*.sh");
+my @list = glob "$root/init/{,osx/}*.sh";
 
 foreach my $f (@list) {
+    # Check debug mode init scripts
     system("DEBUG=1 bash $f >/dev/null");
-    if ($? == 0) {
+    my $exit_code = $?;
+
+    # Shorten path
+    $f =~ s/^.*dotfiles\///;
+
+    if ($exit_code == 0) {
         print "ok: $f\n";
     } else {
         print "NG: $f\n";

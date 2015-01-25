@@ -5,9 +5,10 @@ use warnings;
 use FindBin;
 use Cwd;
 
+my $root = getcwd;
 #my $root = Cwd::abs_path($FindBin::Bin . "/../..");
-
 #chdir $root;
+#
 if (-f "Makefile") {
     my $make_list=`make list 2>/dev/null`;
     if ($? != 0) {

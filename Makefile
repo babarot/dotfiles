@@ -8,7 +8,7 @@ all: update deploy init
 test:
 	@perl ./etc/test/install_deploy_test.pl
 	@perl ./etc/test/install_init_test.pl
-	@python ./etc/test/install_redirect_test.py
+	@perl ./etc/test/install_redirect_test.pl
 
 help:
 	@echo "make list           #=> List the files"

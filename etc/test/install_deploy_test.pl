@@ -5,9 +5,9 @@ use warnings;
 use FindBin;
 use Cwd;
 
-my $root = Cwd::abs_path($FindBin::Bin . "/../..");
+#my $root = Cwd::abs_path($FindBin::Bin . "/../..");
 
-chdir $root;
+#chdir $root;
 if (-f "Makefile") {
     my $make_list=`make list 2>/dev/null`;
     if ($? != 0) {
@@ -17,7 +17,6 @@ if (-f "Makefile") {
     my @list = split(/\n/, $make_list);
     @list = map {$_ =~ s@/$@@; $_} @list;
 
-    system("make deploy");
     foreach my $f (@list) {
         my $a = "$root/$f";
         my $b = readlink("$ENV{'HOME'}/$f");

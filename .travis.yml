@@ -6,4 +6,7 @@ install:
 before_script:
     - "make deploy"
 script:
-    - "make test"
+    #- "make test"
+    - perl ./etc/test/install_deploy_test.pl
+    - perl ./etc/test/install_init_test.pl
+    - perl ./etc/test/install_redirect_test.pl

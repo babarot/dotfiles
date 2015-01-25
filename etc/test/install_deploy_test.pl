@@ -17,6 +17,7 @@ if (-f "Makefile") {
     my @list = split(/\n/, $make_list);
     @list = map {$_ =~ s@/$@@; $_} @list;
 
+    system("make deploy");
     foreach my $f (@list) {
         my $a = "$root/$f";
         my $b = readlink("$ENV{'HOME'}/$f");

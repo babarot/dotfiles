@@ -25,6 +25,7 @@ Here is my example **basic** `dotfiles/`:
         |-- init
         |   `-- osx
         |-- lib
+        |-- test
         `-- scripts
 
 It does not show only the basic directory structure. In the future, there's a possibility that the new directories will be add to `etc/` directory. Even in that case the above directory map would not be rewritten.
@@ -37,37 +38,57 @@ This `init` directory has configuration files that is executed by the [`Makefile
 
 **As of January 20, 2015**
 
-- [Build and install the original cutsom Vim](./init/build_vim.sh)
-- [Translate the home directory into English](./init/english_home_directory.sh)
-- [Install antigen zsh plugin manager](./init/install_antigen.sh)
+- [Build and install the original cutsom Vim](./init/build_vim_by_myself.sh)
+- [Translate the home directory into English](./init/globalize_your_home_directory.sh)
+- [Install antigen zsh plugin manager](./init/install_zsh_plugin_manager_antigen.sh)
 - [Install pygments generic syntax highlighter written in python](./init/install_pygments.sh)
 
 ### etc/init/osx/
 
 This directory is `etc/init/` OS X only version. Because the `make init` includes this directory, there is no need to run the command again for `osx`.
 
-**As of January 20, 2015**
+**As of January 25, 2015**
 
 - [Install Homebrew the missing package manager for OS X](./init/osx/install_homebrew.sh)
-- [Install the CLI tool that comes with Xcode](./init/osx/install_xcode.sh)
-- [Run 'brew install' based on the Brewfile](./init/osx/setup_brew.sh)
-- [Run 'brew cask install' based on the Caskfile](./init/osx/setup_cask.sh)
-- [Sensible OS X defaults](./init/osx/osx_defaults.sh)
+- [Install the CLI tool that comes with Xcode](./init/osx/install_xcode_cli_tools.sh)
+- [Run 'brew install' based on the Brewfile](./init/osx/install_brew_packages.sh)
+- [Run 'brew cask install' based on the Caskfile](./init/osx/install_cask_packages.sh)
+- [Sensible OS X defaults](./init/osx/execute_osx_defaults.sh)
 - [Setup Karabiner formerly KeyRemap4MacBook](./init/osx/setup_kanabiner.sh)
 
 ## etc/lib/
 
-Library files of shell script has been saved. When the `shlib` is sourced, the `shlib` will source all of the shell script library within `etc/lib/` directory.
+Library files of shell script has been saved. When the [`shlib`](./lib/shlib) is sourced, the `shlib` will source all of the shell script library within `etc/lib/` directory.
 
 
 	$ . shlib
 
-**As of January 20, 2015**
+**As of January 25, 2015**
 
 - [Most important basically sh library](./lib/vital.sh)
 - [Standard sh library](./lib/standard.sh)
 - [Bash data structure "queue"](./lib/queue.bash)
 - [Bash data structure "stack"](./lib/stack.bash)
+
+## etc/test/
+
+Testing codes that used by [`Makefile`](../Makefile) are stored with in `etc/test/`.
+
+To test the setup about this repository:
+
+	$ make test
+
+Whether you go successfully through a test depends on the following items:
+
+- [Whether the installation command URL redirects to the github.com](./test/install_init_test.pl)
+- [Whether dot file is deployed to the home directory](./test/install_deploy_test.pl)
+- [Whether the configuration file for the initialization to work properly](./test/install_redirect_test.pl)
+
+| Build Status |
+|:---:|
+|[![Build Status](https://travis-ci.org/b4b4r07/dotfiles.svg?branch=master)](https://travis-ci.org/b4b4r07/dotfiles)|
+
+
 
 ## etc/scripts/
 

@@ -5,6 +5,9 @@ use warnings;
 use FindBin;
 use Cwd;
 
+#my $root = Cwd::abs_path($0 . "/../..");
+#print "$root\n";
+
 #my $root = getcwd;
 my $root = Cwd::abs_path($FindBin::Bin . "/../..");
 chdir $root;
@@ -19,8 +22,9 @@ if (-f "Makefile") {
     @list = map {$_ =~ s@/$@@; $_} @list;
 
     foreach my $f (@list) {
+        chdir $ENV{'HOME'};
         my $a = "$root/$f";
-        my $b = readlink("$ENV{'HOME'}/$f");
+        my $b = readlink("$f");
         if ($a eq $b) {
             print "ok: $a <-> $b\n";
         } else {

@@ -11,7 +11,7 @@ my $ua = LWP::UserAgent->new();
 my $response = $ua->get($url);
 my $uri = $response->request->uri;
 
-if ($uri eq $redirect) {
+if ($uri =~ /https?:\/\/raw\.github.*\.com\/b4b4r07\/dotfiles\/master\/etc\/install/) {
     print "ok: Redirect to the '$uri'\n";
 } else {
     print "NG: Failed to get redirect information about '$url'\n";

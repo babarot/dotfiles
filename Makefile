@@ -3,12 +3,10 @@ DOTFILES_TARGET   := $(wildcard .??*) bin
 DOTFILES_DIR      := $(PWD)
 DOTFILES_FILES    := $(filter-out $(DOTFILES_EXCLUDES), $(DOTFILES_TARGET))
 
-all: update deploy init
+all: install
 
 test:
-	@perl ./etc/test/install_deploy_test.pl
-	@perl ./etc/test/install_init_test.pl
-	@perl ./etc/test/install_redirect_test.pl
+	@$(foreach val, $(wildcard ./etc/test/install_*_test.pl), perl $(val);)
 
 help:
 	@echo "make list           #=> List the files"
@@ -17,7 +15,6 @@ help:
 	@echo "make init           #=> Setup environment"
 	@echo "make install        #=> Updating, deploying and initializng"
 	@echo "make clean          #=> Remove the dotfiles"
-	@echo "make homebrew       #=> Install homebrew without it"
 	@echo "make brew           #=> Update brew packages"
 	@echo "make cask           #=> Update cask packages"
 

@@ -1,6 +1,6 @@
 language: perl
-python:
-    - 5.18
+perl:
+    - 5.14
 install:
     - sudo apt-get install libwww-perl
 before_script:

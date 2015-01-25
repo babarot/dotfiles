@@ -25,7 +25,8 @@ sub do_test {
             my $b = readlink("$ENV{'HOME'}/$f");
 
             if ($a eq $b) {
-                print "ok: $a <-> $b\n";
+                $b =~ s/^.*(dotfiles\/.*)/$1/;
+                print "ok: $ENV{'HOME'}/$f -> $b\n";
             } else {
                 print "NG: $a\n";
                 exit 1;

@@ -42,7 +42,7 @@ Note: You can clone or fork them freely, but I don't guarantee that they fit you
 The easiest way to install this dotfiles is to open up a terminal, type the installation command below:
 
 | Tools | <a name="oneliner">The installation command</a> |
-|:-:|:-:|
+|:---:|:---:|
 | cURL | bash -c "$(curl -fsSL [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
 | Wget | bash -c "$(wget -qO - [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
 
@@ -84,16 +84,16 @@ To run `make init` immediately after running the [installation command](#oneline
 
 **Sample: Init scripts**
 
-- [Build and install the original cutsom Vim](./init/build_vim_by_myself.sh)
-- [Translate the home directory into English](./init/globalize_your_home_directory.sh)
-- [Install antigen zsh plugin manager](./init/install_zsh_plugin_manager_antigen.sh)
-- [Install pygments generic syntax highlighter written in python](./init/install_pygments.sh)
-- [Install Homebrew the missing package manager for OS X](./init/osx/install_homebrew.sh)
-- [Install the CLI tool that comes with Xcode](./init/osx/install_xcode_cli_tools.sh)
-- [Run 'brew install' based on the Brewfile](./init/osx/install_brew_packages.sh)
-- [Run 'brew cask install' based on the Caskfile](./init/osx/install_cask_packages.sh)
-- [Sensible OS X defaults](./init/osx/execute_osx_defaults.sh)
-- [Setup Karabiner (formerly KeyRemap4MacBook)](./init/osx/setup_kanabiner.sh)
+- [Build and install the original cutsom Vim](./etc/init/build_vim_by_myself.sh)
+- [Translate the home directory into English](./etc/init/globalize_your_home_directory.sh)
+- [Install antigen zsh plugin manager](./etc/init/install_zsh_plugin_manager_antigen.sh)
+- [Install pygments generic syntax highlighter written in python](./etc/init/install_pygments.sh)
+- [Install Homebrew the missing package manager for OS X](./etc/init/osx/install_homebrew.sh)
+- [Install the CLI tool that comes with Xcode](./etc/init/osx/install_xcode_cli_tools.sh)
+- [Run 'brew install' based on the Brewfile](./etc/init/osx/install_brew_packages.sh)
+- [Run 'brew cask install' based on the Caskfile](./etc/init/osx/install_cask_packages.sh)
+- [Sensible OS X defaults](./etc/init/osx/execute_osx_defaults.sh)
+- [Setup Karabiner (formerly KeyRemap4MacBook)](./etc/init/osx/setup_kanabiner.sh)
 - ...
 
 For more information about initializing, see also [./etc/README.md](./etc/README.md)!!

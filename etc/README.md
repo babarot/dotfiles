@@ -1,5 +1,7 @@
 # About [./install](./install)
 
+[![](./../doc/img/installation.gif "Installation command")](../README.md)
+
 [Shell script](http://dot.b4b4r07.com) that is used to install command[*1](#note) has been written in `/bin/sh` in accordance with POSIX standard. In compliance with the POSIX it is possible to write a shell script, the [./install](./install) becomes high portability script and it can be run in any environment.
 
 ## [Unix philosophy](http://en.wikipedia.org/wiki/Unix_philosophy)
@@ -81,6 +83,11 @@ Library files of shell script has been saved. When the [`shlib`](./lib/shlib) is
 - [Bash data structure "queue"](./lib/queue.bash)
 - [Bash data structure "stack"](./lib/stack.bash)
 
+## etc/scripts/
+
+Shell script that did not become a command has been saved.
+(The commands have been stored in the `/bin` directory, btw)
+
 ## etc/test/
 
 Testing codes that used by [`Makefile`](../Makefile) are stored with in `etc/test/`. The test-run feature by means of [Travis CI](https://travis-ci.org/b4b4r07/dotfiles) enables this dotfiles repository developers to perform test runs of their processes automatically. This allows the user to know which test is executing in case the test hangs for some reasons.
@@ -112,13 +119,6 @@ Whether you go successfully through a test depends on the following items:
 | Build Status |
 |:---:|
 |[![Build Status](https://travis-ci.org/b4b4r07/dotfiles.svg?branch=master)](https://travis-ci.org/b4b4r07/dotfiles)|
-
-## etc/scripts/
-
-Shell script that did not become a command has been saved.
-(The commands have been stored in the `/bin` directory, btw)
-
-
 
 ----
 

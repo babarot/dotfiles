@@ -2,11 +2,11 @@
 
 [![dotfiles-logo](http://cl.ly/image/2q1a2d0Y2S3y/dotfiles.png "dotfiles")](https://dribbble.com/shots/1466768-dotfiles-logo)
 
-[![Build Status](https://travis-ci.org/b4b4r07/dotfiles.svg?branch=master)](https://travis-ci.org/b4b4r07/dotfiles)
-[![GitHub issues](https://img.shields.io/github/issues/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/issues)
-[![tag](http://img.shields.io/github/tag/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/releases/tag/stable)
-[![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt)
-[![platform](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat)](./doc/OSX.md)
+[![Build Status](https://travis-ci.org/b4b4r07/dotfiles.svg?branch=master)](https://travis-ci.org/b4b4r07/dotfiles "Build Status")
+[![GitHub issues](https://img.shields.io/github/issues/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/issues "issue")
+[![tag](http://img.shields.io/github/tag/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/releases/tag/stable "tag")
+[![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt "License")
+[![platform](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat)](./doc/OSX.md "Platform")
 [![doc](https://img.shields.io/badge/doc-etc-red.svg?style=flat)](./etc "etc")
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/b4b4r07/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
@@ -17,10 +17,6 @@ This is a repository with my [configuration files](http://en.wikipedia.org/wiki/
 The primary goal is to increase CLI productivity on OS X, though many scripts run just fine on any POSIX implementation and it is easy to build environment again by running just [installation command](#oneliner) of one liner.
 
 My primary OS is OS X (10.10.x) and some of these configurations are tuned to work on that platform. The bash files are more generic and friendly toward other Unix-based operating systems.
-
-**Download ZIP**
-
-[![](./doc/img/download.png)](https://github.com/b4b4r07/dotfiles/archive/master.zip)
 
 ## Features
 
@@ -37,9 +33,13 @@ Click this image to see a larger version.
 
 Note: You can clone or fork them freely, but I don't guarantee that they fit you.
 
+**Download ZIP**
+
+[![](./doc/img/download.png)](https://github.com/b4b4r07/dotfiles/archive/master.zip "Download ZIP")
+
 ## Installation
 
-Run the installation command below in your terminal.
+The easiest way to install this dotfiles is to open up a terminal, type the installation command below:
 
 | Tools | <a name="oneliner">The installation command</a> |
 |:-:|:-:|
@@ -51,6 +51,8 @@ Run the installation command below in your terminal.
 		$ make install
 
 	It is not necessary to perform `make install` at all if this repository was installed by the [installation command](#oneliner).
+
+- [Installation by Other Means](https://github.com/b4b4r07/dotfiles/wiki/Installation-manually)
 
 **What's inside?**
 
@@ -78,9 +80,23 @@ All configuration files for setup is stored within the `etc/init/` directory. By
 
 To run `make init` immediately after running the [installation command](#oneliner):
 
-	bash -c "$(curl -fsSL dot.b4b4r07.com)" -s init
+	$ bash -c "$(curl -L dot.b4b4r07.com)" -s init
 
-For more information, see [here](./etc/README.md)!
+**Sample: Init scripts**
+
+- [Build and install the original cutsom Vim](./init/build_vim_by_myself.sh)
+- [Translate the home directory into English](./init/globalize_your_home_directory.sh)
+- [Install antigen zsh plugin manager](./init/install_zsh_plugin_manager_antigen.sh)
+- [Install pygments generic syntax highlighter written in python](./init/install_pygments.sh)
+- [Install Homebrew the missing package manager for OS X](./init/osx/install_homebrew.sh)
+- [Install the CLI tool that comes with Xcode](./init/osx/install_xcode_cli_tools.sh)
+- [Run 'brew install' based on the Brewfile](./init/osx/install_brew_packages.sh)
+- [Run 'brew cask install' based on the Caskfile](./init/osx/install_cask_packages.sh)
+- [Sensible OS X defaults](./init/osx/execute_osx_defaults.sh)
+- [Setup Karabiner (formerly KeyRemap4MacBook)](./init/osx/setup_kanabiner.sh)
+- ...
+
+For more information about initializing, see also [./etc/README.md](./etc/README.md)!!
 
 ### Vim
 
@@ -110,47 +126,73 @@ git config --global user.name "$GIT_AUTHOR_NAME"
 git config --global user.email "$GIT_AUTHOR_EMAIL"
 ```
 
-### OS X Hacks
+### Zsh
 
-- Change login shell
+The easiest way to change your shell is to use the `chsh` command. You can also give `chsh` the `-s` option; this will set your shell for you, without requiring you to enter an editor.
 
-	There is configuration for zsh so switch your shell from the default bash to zsh on OS X:
+	$ chsh -s /bin/zsh
 
-	```	
-$ chsh -s /bin/zsh
+Note: The shell that you wish to use must be present in the `/etc/shells` file.
+
+### OS X
+
+**defaults** is a [command line](http://en.wikipedia.org/wiki/Command-line_interface) utility that manipulates [plist](http://en.wikipedia.org/wiki/Property_list) files. It can set many hidden settings and preferences in Mac OS X, and in individual applications. 
+ 
+When setting up a new Mac, you may want to set some sensible OS X defaults:
+
+```bash
+$ make osx
+```
+
+- [OS X Daily](http://osxdaily.com/tag/defaults-write/)
+- [defaults-write](http://www.defaults-write.com)
+
+For more detail, [here](./doc/OSX.md).
+
+###### Homebrew
+
+This is a quick description of one of the most important apps that I use, [Brew](http://brew.sh). Since OS X does not have a native package manager that you can use from the command line, Brew (also known as HomeBrew), has filled in. A number of the applications that I use, from day to day, use Brew for installation.
+
+For example, a simple `brew install coreutils` will install a [whole bunch of stuff](http://en.wikipedia.org/wiki/GNU_Core_Utilities), which is essential if you're used to working on Linux.
+
+Brew is simple to install, and only has one requirement, Xcode Command Line tools:
+
+	$ xcode-select --install
+
+Now that you have the command line tools installed, you can run a single command to install Brew:
+
+	$ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+After Brew is installed, it's considered best practice to run the following commands:
+
+	brew doctor
+	brew update
+	brew upgrade
+
+When setting up a new Mac, you may want to install some common Homebrew formulae (after installing Homebrew, of course):
+
+	make brew
+	make cask
+
+**Notes:**
+
+- The order in `/etc/paths` file
+
+	On those Mac OS machines where I install Homebrew I also edit `/etc/paths` to move the `/usr/local/bin` entry to the top of the list. This ensures that Homebrew-managed programs and libraries occur prior to `/usr/bin` and system-provided programs and libraries. 
+
+	The resulting `/etc/paths` files looks like this:
+
+	```
+/usr/local/bin
+/usr/bin
+/bin
+/usr/sbin
+/sbin
 	```
 
-- How to Install Command Line Tools in OS X Mavericks (Without Xcode)
+	The contents for the `$PATH` and their execute order are specified in the `/etc/paths` file.
 
-	You need to have [Xcode](https://developer.apple.com/downloads/index.action?=xcode) or, at the very minimum, the [Xcode Command Line Tools](https://developer.apple.com/downloads/index.action?=command%20line%20tools), which are available as a much smaller download.
-
-	The easiest way to install the Xcode Command Line Tools in OSX 10.9+ is to open up a terminal, type
-
-	```	
-$ xcode-select --install
-	```
-
-	and [follow the prompts](http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/). _Tested in OS X 10.10_
-
-- Custom OS X defaults
-
-	When setting up a new Mac, you may want to set some sensible OS X defaults:
-
-	```
-$ bash ./etc/init/osx/osx_defaults.sh
-	```
-
-- [Installing Homebrew](http://brew.sh)
-
-	Paste that at a Terminal prompt.
-
-	```
-$ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-	```
-
-### Homebrew
-
-- `brew bundle` is dead.
+- `brew bundle` is dead
 
 	Therefore, cannot use `brew bundle path/to/Brewfile` to set up brews.
 	
@@ -158,28 +200,9 @@ $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/maste
 
 	**Solution**: replace Brewfile with shell script.
 
-When setting up a new Mac, you may want to install some common Homebrew formulae (after installing Homebrew, of course):
-
-	$ make brew
-	$ make cask
-
-**Notes:**
-
-On those Mac OS machines where I install Homebrew I also edit `/etc/paths` to move the `/usr/local/bin` entry to the top of the list. This ensures that Homebrew-managed programs and libraries occur prior to `/usr/bin` and system-provided programs and libraries. 
-
-The resulting `/etc/paths` files looks like this:
-
-```
-/usr/local/bin
-/usr/bin
-/bin
-/usr/sbin
-/sbin
-```
-
 ## Components
 
-- **bin/**: Anything in `bin/` will get added to your `$PATH` and be made available everywhere.
+- **bin/**: This is the primary directory for executable programs.
 - **etc/init/**: Configuration file storage to be executed initially for setup.
 - **etc/init/osx/**: Some configuration files for OS X storage.
 - **etc/lib/**: Shell scripts Libraries
@@ -188,10 +211,10 @@ The resulting `/etc/paths` files looks like this:
 
 ## Credits
 
-* Deeply inspired by [cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/bin/dotfiles)
-* Inspired by [skwp's dotfiles](https://github.com/skwp/dotfiles)
+* Deeply inspired by [@cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/bin/dotfiles)
+* Inspired by [@skwp's dotfiles](https://github.com/skwp/dotfiles)
 * *Installation* section based on [@necolas's dotfiles](https://github.com/necolas/dotfiles)
-* *OS X Hacks* section based on [cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/README.md)
+* *OS X Hacks* section based on [@cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/README.md)
 * *Components* section based on [@holman's dotfiles](https://github.com/holman/dotfiles)
 * *Author* section and [*OS X defaults*](etc/init/osx/osx_defaults.sh) based on [@Mathias's dotfiles](https://github.com/mathiasbynens/dotfiles)
 * My `README.md` layout based on [@zanshin's README.md](https://github.com/zanshin/dotfiles)

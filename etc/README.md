@@ -118,6 +118,8 @@ Whether you go successfully through a test depends on the following items:
 Shell script that did not become a command has been saved.
 (The commands have been stored in the `/bin` directory, btw)
 
+
+
 ----
 
 <a name="note">*1</a>: `bash -c "$(curl -fsSL dot.b4b4r07.com)"`

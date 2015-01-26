@@ -7,6 +7,7 @@
 [![tag](http://img.shields.io/github/tag/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/releases/tag/stable)
 [![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt)
 [![platform](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat)](./doc/OSX.md)
+[![doc](https://img.shields.io/badge/doc-etc-red.svg?style=flat)](./etc "etc")
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/b4b4r07/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 This is a repository with my [configuration files](http://en.wikipedia.org/wiki/Configuration_file), those that in Linux/OS X normally are these files under the `$HOME` directory that are hidden and preceded by a dot, AKA *dotfiles*.
@@ -16,6 +17,10 @@ This is a repository with my [configuration files](http://en.wikipedia.org/wiki/
 The primary goal is to increase CLI productivity on OS X, though many scripts run just fine on any POSIX implementation and it is easy to build environment again by running just [installation command](#oneliner) of one liner.
 
 My primary OS is OS X (10.10.x) and some of these configurations are tuned to work on that platform. The bash files are more generic and friendly toward other Unix-based operating systems.
+
+**Download ZIP**
+
+[![](./doc/img/download.png)](https://github.com/b4b4r07/dotfiles/archive/master.zip)
 
 ## Features
 
@@ -28,7 +33,7 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 
 Click this image to see a larger version.
 
-![](http://cl.ly/image/1f2H0F3U0240/dev-env.png "b4b4r07's environment")
+![](./doc/img/environment.png "b4b4r07's environment")
 
 Note: You can clone or fork them freely, but I don't guarantee that they fit you.
 
@@ -47,7 +52,7 @@ Run the installation command below in your terminal.
 
 	It is not necessary to perform `make install` at all if this repository was installed by the [installation command](#oneliner).
 
-**what's inside?**
+**What's inside?**
 
 1. Downloads this repository
 2. Deploy (i.e. *copy* or *create symlink*) dot files to your home directory; `make deploy`
@@ -65,13 +70,17 @@ In addition, there are several git submodules included in this configuration. On
 
 ## Setup
 
-All configuration files for setup is stored within the `etc/init/` directory. By running this command, you can interactively setup all preferences.
+### Initialize
+
+All configuration files for setup is stored within the `etc/init/` directory. By running the command below, you can interactively setup all preferences.
 
 	$ make init
 
 To run `make init` immediately after running the [installation command](#oneliner):
 
 	bash -c "$(curl -fsSL dot.b4b4r07.com)" -s init
+
+For more information, see [here](./etc/README.md)!
 
 ### Vim
 
@@ -194,6 +203,7 @@ The resulting `/etc/paths` files looks like this:
 | [![twitter/b4b4r07](http://www.gravatar.com/avatar/8238c3c0be55b887aa9d6d59bfefa504.png)](https://twitter.com/intent/follow?screen_name=b4b4r07 "Follow @b4b4r07 on Twitter") |
 |:---:|
 | [b4b4r07's Qiita](http://qiita.com/b4b4r07/ "b4b4r07 on Qiita") |
+
 
 ## Licence
 

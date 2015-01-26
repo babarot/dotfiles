@@ -14,6 +14,17 @@
 8. *Avoid captive user interfaces.*
 9. *Make every program a Filter.*
 
+# Makefile
+
+## make install
+
+On dotfiles, the commands that `make install` run (in the order they are processed) are:
+
+- `make update`
+- `make deploy`
+- `make init`
+- `exec $SHELL`
+
 # Directory map
 
 Here is my example **basic** `dotfiles/`:
@@ -105,7 +116,7 @@ Whether you go successfully through a test depends on the following items:
 ## etc/scripts/
 
 Shell script that did not become a command has been saved.
-(The commands has been stored in the `/bin` directory, btw)
+(The commands have been stored in the `/bin` directory, btw)
 
 ----
 

@@ -35,7 +35,7 @@ Note: You can clone or fork them freely, but I don't guarantee that they fit you
 
 **Download ZIP**
 
-[![](./doc/img/download.svg)](https://github.com/b4b4r07/dotfiles/archive/master.zip "Download ZIP")
+[![](./doc/img/download.eps)](https://github.com/b4b4r07/dotfiles/archive/master.zip "Download ZIP")
 
 ## Installation
 

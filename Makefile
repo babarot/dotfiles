@@ -2,11 +2,12 @@ DOTFILES_EXCLUDES := .DS_Store .git .gitmodules .travis.yml
 DOTFILES_TARGET   := $(wildcard .??*) bin
 DOTFILES_DIR      := $(PWD)
 DOTFILES_FILES    := $(filter-out $(DOTFILES_EXCLUDES), $(DOTFILES_TARGET))
+PROVE_OPT         :=
 
 all: install
 
 test:
-	@$(foreach val, $(wildcard ./etc/test/install_*_test.pl), perl $(val);)
+	@prove $${PROVE_OPT:-$${V:+-v}} $(wildcard ./etc/test/*_test.pl)
 
 help:
 	@echo "make list           #=> List the files"

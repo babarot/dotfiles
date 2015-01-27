@@ -5,47 +5,23 @@ use warnings;
 use FindBin;
 use Cwd;
 use File::Basename;
+use Test::More;
 
-sub do_test {
-    my ($root) = @_;
-    chdir $root;
+my $root = basename(getcwd) eq "dotfiles" ? getcwd : Cwd::abs_path($FindBin::Bin . "/../..");
+is basename($root), "dotfiles", "within dotfiles";
 
-    if (-f "Makefile") {
-        my $make_list=`make list 2>/dev/null`;
-        if ($? != 0) {
-            print "make list: failed\n";
-            exit 1;
-        }
+chdir $root;
+my @list = map {$_ =~ s/\/?\n$//; $_} `make list 2>/dev/null`;
+cmp_ok @list, '>', 1, '@list > 1'
+    or diag('@list is ' . @list);
 
-        my @list = split(/\n/, $make_list);
-        @list = map {$_ =~ s@/$@@; $_} @list;
+foreach my $f (@list) {
+    my $a = "$root/$f";
+    my $b = readlink("$ENV{'HOME'}/$f");
 
-        foreach my $f (@list) {
-            my $a = "$root/$f";
-            my $b = readlink("$ENV{'HOME'}/$f");
-
-            if ($a eq $b) {
-                $b =~ s/^.*(dotfiles\/.*)/$1/;
-                print "ok: $ENV{'HOME'}/$f -> $b\n";
-            } else {
-                print "NG: $a\n";
-                exit 1;
-            }
-        }
-    } else {
-        print "Makefile: not found\n";
-        exit 1;
-    }
+    (my $adash = $a) =~ s/^$ENV{'HOME'}/~/;
+    (my $bdash = $b) =~ s/^.*(dotfiles\/.*)/$1/;
+    is $a, $b, "$adash -> $bdash";
 }
 
-if (basename(getcwd) eq "dotfiles") {
-    &do_test(getcwd);
-} else {
-    my $root = Cwd::abs_path($FindBin::Bin . "/../..");
-    if (basename($root) eq "dotfiles") {
-        &do_test($root);
-    } else {
-        print "This is not dotfiles directory\n";
-        exit 1;
-    }
-}
+done_testing;

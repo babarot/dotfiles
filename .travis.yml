@@ -1,6 +1,8 @@
 language: perl
 perl:
     - 5.14
+env:
+    - PROVE_OPT=-v 
 install:
     - sudo apt-get install libwww-perl
 before_script:

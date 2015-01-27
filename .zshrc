@@ -157,7 +157,7 @@ function tmux_automatically_attach()
     else
         if shell_has_started_interactively && ! is_ssh_running; then
             if ! is_exist 'tmux'; then
-                echo 'Error: tmux command not found' 2>&1
+                echo 'Error: tmux command not found' >/dev/stderr
                 return 1
             fi
 

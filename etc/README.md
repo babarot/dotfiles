@@ -1,7 +1,5 @@
 # About [./install](./install)
 
-[![](./../doc/img/installation.gif "Installation command")](../README.md)
-
 [Shell script](http://dot.b4b4r07.com) that is used to install command[*1](#note) has been written in `/bin/sh` in accordance with POSIX standard. In compliance with the POSIX it is possible to write a shell script, the [./install](./install) becomes high portability script and it can be run in any environment.
 
 ## [Unix philosophy](http://en.wikipedia.org/wiki/Unix_philosophy)

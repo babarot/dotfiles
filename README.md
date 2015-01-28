@@ -3,11 +3,8 @@
 [![dotfiles-logo](http://cl.ly/image/2q1a2d0Y2S3y/dotfiles.png "dotfiles")](https://dribbble.com/shots/1466768-dotfiles-logo)
 
 [![Build Status](https://travis-ci.org/b4b4r07/dotfiles.svg?branch=master)](https://travis-ci.org/b4b4r07/dotfiles "Build Status")
-[![GitHub issues](https://img.shields.io/github/issues/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/issues "issue")
-[![tag](http://img.shields.io/github/tag/b4b4r07/dotfiles.svg?style=flat)](https://github.com/b4b4r07/dotfiles/releases/tag/stable "tag")
 [![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt "License")
 [![platform](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat)](./doc/OSX.md "Platform")
-[![doc](https://img.shields.io/badge/doc-etc-red.svg?style=flat)](./etc "etc")
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/b4b4r07/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 This is a repository with my [configuration files](http://en.wikipedia.org/wiki/Configuration_file), those that in Linux/OS X normally are these files under the `$HOME` directory that are hidden and preceded by a dot, AKA *dotfiles*.
@@ -35,7 +32,7 @@ Note: You can clone or fork them freely, but I don't guarantee that they fit you
 
 **Download ZIP**
 
-[![](./doc/img/download.eps)](https://github.com/b4b4r07/dotfiles/archive/master.zip "Download ZIP")
+[![](./doc/img/download.png)](https://github.com/b4b4r07/dotfiles/archive/master.zip "Download ZIP")
 
 ## Installation
 
@@ -62,6 +59,10 @@ The easiest way to install this dotfiles is to open up a terminal, type the inst
 
 When the [installation command](#oneliner) format is not `curl -L URL | sh` but `sh -c "$(curl -L URL)"`, shell will be restart automatically. If this is not the case, it is necessary to restart your shell manually.
 
+***DEMO:***
+
+![](./doc/img/installation.gif)
+
 ## Updating
 
 To update later on, just run this command.
@@ -82,7 +83,7 @@ To run `make init` immediately after running the [installation command](#oneline
 
 	$ bash -c "$(curl -L dot.b4b4r07.com)" -s init
 
-**Sample: Init scripts**
+**Init scripts**
 
 - [Build and install the original cutsom Vim](./etc/init/build_vim_by_myself.sh)
 - [Translate the home directory into English](./etc/init/globalize_your_home_directory.sh)
@@ -136,69 +137,32 @@ Note: The shell that you wish to use must be present in the `/etc/shells` file.
 
 ### OS X
 
-**defaults** is a [command line](http://en.wikipedia.org/wiki/Command-line_interface) utility that manipulates [plist](http://en.wikipedia.org/wiki/Property_list) files. It can set many hidden settings and preferences in Mac OS X, and in individual applications. 
- 
-When setting up a new Mac, you may want to set some sensible OS X defaults:
+When setting up a new Mac, you may want to perform the following tasks.
 
-```bash
-$ make osx
-```
+- **Install the Xcode Command Line Tools**
 
-- [OS X Daily](http://osxdaily.com/tag/defaults-write/)
-- [defaults-write](http://www.defaults-write.com)
+	You need to have Xcode or, at the very minimum, the Xcode Command Line Tools, which are available as a much smaller download.
+	
+	The easiest way to install the Xcode Command Line Tools in OSX 10.9+ is to open up a terminal, type `xcode-select --install` and follow the prompts.
 
-For more detail, [here](./doc/OSX.md).
+- **Install Homebrew and setup their formulae**
 
-###### Homebrew
-
-This is a quick description of one of the most important apps that I use, [Brew](http://brew.sh). Since OS X does not have a native package manager that you can use from the command line, Brew (also known as HomeBrew), has filled in. A number of the applications that I use, from day to day, use Brew for installation.
-
-For example, a simple `brew install coreutils` will install a [whole bunch of stuff](http://en.wikipedia.org/wiki/GNU_Core_Utilities), which is essential if you're used to working on Linux.
-
-Brew is simple to install, and only has one requirement, Xcode Command Line tools:
-
-	$ xcode-select --install
-
-Now that you have the command line tools installed, you can run a single command to install Brew:
-
-	$ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-
-After Brew is installed, it's considered best practice to run the following commands:
-
-	brew doctor
-	brew update
-	brew upgrade
-
-When setting up a new Mac, you may want to install some common Homebrew formulae (after installing Homebrew, of course):
-
+	Since OS X does not have a native package manager that you can use from the command line, [Brew](http://brew.sh) (also known as Homebrew), has filled in. 
+	
+	After installing Homebrew, you may want to install some common Homebrew formulae:
+	
+	```
 	make brew
 	make cask
-
-**Notes:**
-
-- The order in `/etc/paths` file
-
-	On those Mac OS machines where I install Homebrew I also edit `/etc/paths` to move the `/usr/local/bin` entry to the top of the list. This ensures that Homebrew-managed programs and libraries occur prior to `/usr/bin` and system-provided programs and libraries. 
-
-	The resulting `/etc/paths` files looks like this:
-
 	```
-/usr/local/bin
-/usr/bin
-/bin
-/usr/sbin
-/sbin
-	```
-
-	The contents for the `$PATH` and their execute order are specified in the `/etc/paths` file.
-
-- `brew bundle` is dead
-
-	Therefore, cannot use `brew bundle path/to/Brewfile` to set up brews.
 	
-	> [What? "Warning: brew bundle is unsupported ..." #30815](https://github.com/Homebrew/homebrew/issues/30815)
+- **Run `defaults` command**
 
-	**Solution**: replace Brewfile with shell script.
+	It can set many hidden settings and preferences in Mac OS X, and in individual applications.
+
+- ...
+
+All of these are included in the `make init` for OS X. For more detail, see also [here](./doc/OSX.md).
 
 ## Components
 

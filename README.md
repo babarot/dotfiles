@@ -37,9 +37,10 @@ Note: You can clone or fork them freely, but I don't guarantee that they fit you
 ## Installation
 
 The easiest way to install this dotfiles is to open up a terminal, type the installation command below:
+Run the following command to set up a new machine:
 
 | Tools | <a name="oneliner">The installation command</a> |
-|:---:|:---:|
+|-------|-------------------------------------------------|
 | cURL | bash -c "$(curl -fsSL [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
 | Wget | bash -c "$(wget -qO - [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
 
@@ -81,7 +82,9 @@ All configuration files for setup is stored within the `etc/init/` directory. By
 
 To run `make init` immediately after running the [installation command](#oneliner):
 
-	$ bash -c "$(curl -L dot.b4b4r07.com)" -s init
+```bash
+$ bash -c "$(curl -L dot.b4b4r07.com)" -s init
+```
 
 **Init scripts**
 
@@ -97,7 +100,7 @@ To run `make init` immediately after running the [installation command](#oneline
 - [Setup Karabiner (formerly KeyRemap4MacBook)](./etc/init/osx/setup_kanabiner.sh)
 - ...
 
-For more information about initializing, see also [./etc/README.md](./etc/README.md)!!
+For more information about initializing, see also [./etc/README.md](./etc/README.md).
 
 ### Vim
 
@@ -137,15 +140,15 @@ Note: The shell that you wish to use must be present in the `/etc/shells` file.
 
 ### OS X
 
-When setting up a new Mac, you may want to perform the following tasks.
+When setting up a new Mac, you may want to perform the following tasks mainly.
 
-- **Install the Xcode Command Line Tools**
+- Install the Xcode Command Line Tools
 
 	You need to have Xcode or, at the very minimum, the Xcode Command Line Tools, which are available as a much smaller download.
 	
-	The easiest way to install the Xcode Command Line Tools in OSX 10.9+ is to open up a terminal, type `xcode-select --install` and follow the prompts.
+	The easiest way to install the [Xcode Command Line Tools](https://developer.apple.com/downloads) in OSX 10.9+ is to open up a terminal, type `xcode-select --install` and follow the prompts.
 
-- **Install Homebrew and setup their formulae**
+- Install Homebrew and setup their formulae
 
 	Since OS X does not have a native package manager that you can use from the command line, [Brew](http://brew.sh) (also known as Homebrew), has filled in. 
 	
@@ -156,17 +159,15 @@ When setting up a new Mac, you may want to perform the following tasks.
 	make cask
 	```
 	
-- **Run `defaults` command**
+- Run `defaults` command
 
 	It can set many hidden settings and preferences in Mac OS X, and in individual applications.
-
-- ...
 
 All of these are included in the `make init` for OS X. For more detail, see also [here](./doc/OSX.md).
 
 ## Components
 
-- **bin/**: This is the primary directory for executable programs.
+- **bin/**: Anything in `bin/` will be added to your `$PATH` and be made available everywhere.
 - **etc/init/**: Configuration file storage to be executed initially for setup.
 - **etc/init/osx/**: Some configuration files for OS X storage.
 - **etc/lib/**: Shell scripts Libraries
@@ -175,10 +176,12 @@ All of these are included in the `make init` for OS X. For more detail, see also
 
 ## Credits
 
-* Deeply inspired by [@cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/bin/dotfiles)
+* These dotfiles are heavily based on [@cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/bin/dotfiles)
 * Inspired by [@skwp's dotfiles](https://github.com/skwp/dotfiles)
-* *Installation* section based on [@necolas's dotfiles](https://github.com/necolas/dotfiles)
-* *OS X Hacks* section based on [@cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/README.md)
+* *Installation* section based on [@larsyencken's marelle](https://github.com/larsyencken/marelle)
+* *Installation* section based on [@Cătălin's dotfiles](https://github.com/alrra/dotfiles)
+* *Git* section based on [@necolas's dotfiles](https://github.com/necolas/dotfiles)
+* *OS X* section based on [@cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/README.md)
 * *Components* section based on [@holman's dotfiles](https://github.com/holman/dotfiles)
 * *Author* section and [*OS X defaults*](etc/init/osx/osx_defaults.sh) based on [@Mathias's dotfiles](https://github.com/mathiasbynens/dotfiles)
 * My `README.md` layout based on [@zanshin's README.md](https://github.com/zanshin/dotfiles)

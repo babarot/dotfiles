@@ -9,7 +9,9 @@ set -u
 # {{{
 is_osx() { [[ "$OSTYPE" =~ ^darwin ]] || return 1; }
 is_ubuntu() { [[ "$(cat /etc/issue 2>/dev/null)" =~ Ubuntu ]] || return 1; }
-if ! is_osx || ! is_ubuntu; then exit; fi
+if ! (is_ubuntu || is_osx); then
+    exit 0
+fi
 #}}}
 
 #

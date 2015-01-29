@@ -10,8 +10,11 @@ antigen_dir=${ANTIGEN:-$HOME/.antigen}
 # {{{
 is_osx() { [[ "$OSTYPE" =~ ^darwin ]] || return 1; }
 is_ubuntu() { [[ "$(cat /etc/issue 2>/dev/null)" =~ Ubuntu ]] || return 1; }
-if ! type git >/dev/null 2>&1 || [[ -d $antigen_dir ]]; then
-    exit
+if ! type git >/dev/null 2>&1; then
+    exit 0
+fi
+if [[ -d $antigen_dir ]]; then
+    exit 0
 fi
 #}}}
 

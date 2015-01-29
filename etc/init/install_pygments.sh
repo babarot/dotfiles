@@ -13,8 +13,12 @@ fi
 
 # A system that judge if this script is necessary or not
 # {{{
-type pygmentize >/dev/null 2>&1 && exit
-[[ $installer == 'unknown' ]] && exit
+if type pygmentize >/dev/null 2>&1; then
+    exit 0
+fi
+if [[ $installer == 'unknown' ]]; then
+    exit 0
+fi
 #}}}
 
 #
@@ -31,7 +35,7 @@ if [[ "$REPLY" =~ ^[Yy]$ ]]; then
         exit 1
     fi
 
-    eval sudo "$installer" install Pygments
+    sudo "$installer" install Pygments
     echo ""
     echo "For more information, see <http://pygments.org>"
     echo "For installing solarized style,"

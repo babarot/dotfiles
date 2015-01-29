@@ -7,6 +7,10 @@ set -u
 #
 # A system that judge if this script is necessary or not
 # {{{
+if [[ ! -f "$(dirname "${BASH_SOURCE}")"/vimbuild ]]; then
+    exit 1
+fi
+
 for candidate in $(echo "$PATH" | tr ":" "\n")
 do
     vim_candidate="$candidate/vim"

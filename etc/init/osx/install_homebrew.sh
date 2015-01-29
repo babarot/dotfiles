@@ -6,7 +6,12 @@ set -e
 
 # A system that judge if this script is necessary or not
 # {{{
-type brew >/dev/null 2>&1 && exit
+if [[ $OSTYPE != darwin* ]]; then
+    exit 0
+fi
+if type brew >/dev/null 2>&1; then
+    exit 0
+fi
 #}}}
 
 #

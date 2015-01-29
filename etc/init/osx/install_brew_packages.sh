@@ -7,7 +7,12 @@ set -e
 #
 # A system that judge if this script is necessary or not
 # {{{
-[[ ! -f "$(dirname "${BASH_SOURCE}")"/Brewfile ]] && exit
+if [[ $OSTYPE != darwin* ]]; then
+    exit 0
+fi
+if [[ ! -f "$(dirname "${BASH_SOURCE}")"/Brewfile ]]; then
+    exit 1
+fi
 #}}}
 
 #

@@ -6,8 +6,12 @@ set -u
 
 # A system that judge if this script is necessary or not
 # {{{
-[[ $OSTYPE != darwin* ]] && exit
-type xcode-select >/dev/null 2>&1 && exit
+if [[ $OSTYPE != darwin* ]]; then
+    exit 0
+fi
+if type xcode-select >/dev/null 2>&1; then
+    exit 0
+fi
 #}}}
 
 #

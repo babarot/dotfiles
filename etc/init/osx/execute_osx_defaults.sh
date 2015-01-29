@@ -6,7 +6,9 @@ set -u
 
 # A system that judge if this script is necessary or not
 # {{{
-[[ $OSTYPE != darwin* ]] && exit
+if [[ $OSTYPE != darwin* ]]; then
+    exit 0
+fi
 #}}}
 
 #

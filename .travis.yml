@@ -8,4 +8,4 @@ install:
 before_script:
     - "make deploy"
 script:
-    - "make --silent test"
+    - "make test"

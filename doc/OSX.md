@@ -84,11 +84,11 @@ make cask
 
 ### defaults
 
-**defaults** is a [command line](http://en.wikipedia.org/wiki/Command-line_interface) utility that manipulates [plist](http://en.wikipedia.org/wiki/Property_list) files. It can set many hidden settings and preferences in Mac OS X, and in individual applications. 
+**defaults** is a [command line](http://en.wikipedia.org/wiki/Command-line_interface) utility that manipulates [plist](http://en.wikipedia.org/wiki/Property_list) files. It can set many hidden settings and preferences in Mac OS X, and in individual applications.
 
-[](```bash
+```bash
 $ make osx
-```)
+```
 
 - [OS X Daily](http://osxdaily.com/tag/defaults-write/)
 - [defaults-write](http://www.defaults-write.com)

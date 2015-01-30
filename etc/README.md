@@ -2,16 +2,16 @@
 
 ## Contents
 
-- [About ./install](#about-./install)
+- [About ./install](#about-install)
 - [Makefile](#makefile)
 	- [make install](#make-install)
 - [Directory Map](#directory-map)
-	- [etc/init/](#etc/init/)
+	- [etc/init/](#etcinit)
 		- [How to write the init scripts](#how-to-write-the-init-scripts)
-	- [etc/init/OSX/](#etc/init/osx/)
-	- [etc/lib/](#etc/lib/)
-	- [etc/scripts/](#etc/scripts/)
-	- [etc/test/](#etc/test/)
+	- [etc/init/OSX/](#etcinitosx)
+	- [etc/lib/](#etclib)
+	- [etc/scripts/](#etcscripts)
+	- [etc/test/](#etctest)
 	- [Unix philosophy](#unix-philosophy)
 
 # About [./install](./install)

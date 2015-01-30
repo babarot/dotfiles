@@ -46,7 +46,9 @@ Run the following command to set up a new machine:
 
 - It is almost the same as the command below except for executing through a Web site directly.
 
-		$ make install
+	```bash
+	$ make install
+	```
 
 	It is not necessary to perform `make install` at all if this repository was installed by the [installation command](#oneliner).
 
@@ -68,7 +70,9 @@ When the [installation command](#oneliner) format is not `curl -L URL | sh` but 
 
 To update later on, just run this command.
 
-	$ make update
+```bash
+$ make update
+```
 
 In addition, there are several git submodules included in this configuration. On a new installation these submodules need to be initialized and updated.
 
@@ -78,7 +82,9 @@ In addition, there are several git submodules included in this configuration. On
 
 All configuration files for setup is stored within the `etc/init/` directory. By running the command below, you can interactively setup all preferences.
 
-	$ make init
+```bash
+$ make init
+```
 
 To run `make init` immediately after running the [installation command](#oneliner):
 
@@ -106,7 +112,9 @@ For more information about initializing, see also [./etc/README.md](./etc/README
 
 To install the Vim plugins, run this command.
 
-	$ vim +NeoBundleInit +qall
+```bash
+$ vim +NeoBundleInit +qall
+```
 
 Vim plugins are not installed from you just running the [installation command](#oneliner). To install the plugins, you must specify the `-c 'NeoBundleInit'` as an argument when starting Vim. By doing so, install immediately [neobundle.vim](https://github.com/Shougo/neobundle.vim) and other plugins (**requires**: `git` in `$PATH`, Vim 7.2+, a lot of time, Wi-Fi). 
 
@@ -134,7 +142,9 @@ git config --global user.email "$GIT_AUTHOR_EMAIL"
 
 The easiest way to change your shell is to use the `chsh` command. You can also give `chsh` the `-s` option; this will set your shell for you, without requiring you to enter an editor.
 
-	$ chsh -s /bin/zsh
+```bash
+$ chsh -s /bin/zsh
+```
 
 Note: The shell that you wish to use must be present in the `/etc/shells` file.
 

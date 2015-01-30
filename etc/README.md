@@ -1,6 +1,22 @@
+# Dotfiles ETC Docmentation
+
+## Contents
+
+- [About ./install](#about-./install)
+- [Makefile](#makefile)
+	- [make install](#make-install)
+- [Directory Map](#directory-map)
+	- [etc/init/](#etc/init/)
+		- [How to write the init scripts](#how-to-write-the-init-scripts)
+	- [etc/init/OSX/](#etc/init/osx/)
+	- [etc/lib/](#etc/lib/)
+	- [etc/scripts/](#etc/scripts/)
+	- [etc/test/](#etc/test/)
+	- [Unix philosophy](#unix-philosophy)
+
 # About [./install](./install)
 
-[Shell script](http://dot.b4b4r07.com) that is used to install command[*1](#note) has been written in `/bin/sh` in accordance with POSIX standard. In compliance with the POSIX it is possible to write a shell script, the [./install](./install) becomes high portability script and it can be run in any environment.
+[Shell script](http://dot.b4b4r07.com) that is used to *the installation command*[^1] has been written in `/bin/sh` in accordance with POSIX standard. In compliance with the POSIX it is possible to write a shell script, the [./install](./install) becomes high portability script and it can be run in any environment.
 
 # Makefile
 
@@ -33,7 +49,9 @@ It does not show only the basic directory structure. In the future, there's a po
 
 This `init` directory has configuration files that is executed by the [`Makefile`](../Makefile).
 
-	$ make init
+```bash	
+$ make init
+```
 
 ### How to write the init scripts
 
@@ -89,7 +107,7 @@ This `init` directory has configuration files that is executed by the [`Makefile
 - [Install antigen zsh plugin manager](./init/install_zsh_plugin_manager_antigen.sh)
 - [Install pygments generic syntax highlighter written in python](./init/install_pygments.sh)
 
-### etc/init/osx/
+## etc/init/osx/
 
 This directory is `etc/init/` OS X only version. Because the `make init` includes this directory, there is no need to run the command again for `osx`.
 
@@ -106,8 +124,9 @@ This directory is `etc/init/` OS X only version. Because the `make init` include
 
 Library files of shell script has been saved. When the [`shlib`](./lib/shlib) is sourced, the `shlib` will source all of the shell script library within `etc/lib/` directory.
 
-
-	$ . shlib
+```bash
+$ . shlib
+```
 
 **As of January 25, 2015**
 
@@ -141,7 +160,9 @@ script:
 
 To test the setup about this repository:
 
-	$ make test
+```bash
+$ make test
+```
 
 Whether you go successfully through a test depends on the following items:
 
@@ -166,6 +187,4 @@ Whether you go successfully through a test depends on the following items:
 8. *Avoid captive user interfaces.*
 9. *Make every program a Filter.*
 
-----
-
-<a name="note">*1</a>: `bash -c "$(curl -fsSL dot.b4b4r07.com)"`
+[^1]: `bash -c "$(curl -fsSL dot.b4b4r07.com)"`

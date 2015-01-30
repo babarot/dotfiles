@@ -345,6 +345,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
 
   NeoBundle 'mopp/googlesuggest-source.vim'
   NeoBundle 'mattn/googlesuggest-complete-vim'
+  NeoBundle 'hotchpotch/perldoc-vim'
 
   " Japanese help
   NeoBundle 'vim-jp/vimdoc-ja'

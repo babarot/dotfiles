@@ -259,7 +259,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   NeoBundle 'ujihisa/neco-look', { 'external_commands' : 'look' }
   NeoBundle 'ujihisa/unite-colorscheme'
   NeoBundle 'b4b4r07/mru.vim'
-  NeoBundle 'b4b4r07/vim-autocdls'
+  "NeoBundle 'b4b4r07/vim-autocdls'
   NeoBundle 'b4b4r07/vim-shellutils'
   NeoBundle 'b4b4r07/vim-favdir'
   NeoBundle has('gui_running') ? 'itchyny/lightline.vim' : 'b4b4r07/vim-buftabs'

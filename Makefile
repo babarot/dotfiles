@@ -6,7 +6,6 @@ DOTFILES_FILES    := $(filter-out $(DOTFILES_EXCLUDES), $(DOTFILES_TARGET))
 all: install
 
 test:
-	@#prove $${PROVE_OPT:-$${V:+-v}} $(wildcard ./etc/test/*_test.pl)
 	@prove $(PROVE_OPT) $(wildcard ./etc/test/*_test.pl)
 
 help:

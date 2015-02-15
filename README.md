@@ -7,11 +7,11 @@
 [![platform](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat)](./doc/OSX.md "Platform")
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/b4b4r07/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
-This is a repository with my [configuration files](http://en.wikipedia.org/wiki/Configuration_file), those that in Linux/OS X normally are these files under the `$HOME` directory that are hidden and preceded by a dot, AKA *dotfiles*.
+This is a repository with my [configuration files](http://en.wikipedia.org/wiki/Configuration_file), those that in Linux/OS X normally are these files under the `$HOME` directory that are hidden and preceded by a dot, AKA **dotfiles**.
 
 ## Overview
 
-The primary goal is to increase CLI productivity on OS X, though many scripts run just fine on any POSIX implementation and it is easy to build environment again by running just [installation command](#oneliner) of one liner.
+The primary goal is to increase CLI productivity on OS X, though many scripts run just fine on any POSIX implementation and it is easy to build environment again by running just the [installation command](#oneliner) of one-liner.
 
 My primary OS is OS X (10.10.x) and some of these configurations are tuned to work on that platform. The bash files are more generic and friendly toward other Unix-based operating systems.
 
@@ -24,15 +24,15 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 - **Terminal.app** (Full-screen)
 - **Solarized** ([base 16](https://github.com/chriskempson/base16))
 
-Click this image to see a larger version.
+***DEMO***
 
 ![](./doc/img/environment.png "b4b4r07's environment")
 
 Note: You can clone or fork them freely, but I don't guarantee that they fit you.
 
-**Download ZIP**
-
-[![](./doc/img/download.png)](https://github.com/b4b4r07/dotfiles/archive/master.zip "Download ZIP")
+| Download ZIP |
+|:---:|
+| [![](./doc/img/download.png)](https://github.com/b4b4r07/dotfiles/archive/master.zip "Download ZIP") |
 
 ## Installation
 
@@ -198,19 +198,14 @@ All of these are included in the `make init` for OS X. For more detail, see also
 * My `Makefile` based on [@Tetsuji's dotfiles](https://github.com/xtetsuji/dotfiles)
 * My `bootstrap.sh` based on [@Rocha's dotfiles](https://github.com/zenorocha/old-dotfiles)
 
-## Author
-
-| [![twitter/b4b4r07](http://www.gravatar.com/avatar/8238c3c0be55b887aa9d6d59bfefa504.png)](https://twitter.com/intent/follow?screen_name=b4b4r07 "Follow @b4b4r07 on Twitter") |
-|:---:|
-| [b4b4r07's Qiita](http://qiita.com/b4b4r07/ "b4b4r07 on Qiita") |
-
-
 ## Licence
+
+[![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt "License")
 
 Copyright (c) 2014 "BABAROT" b4b4r07
 
 Licensed under the [MIT license](./doc/LICENSE-MIT.txt).
 
-Unless attributed otherwise, everything is under the MIT licence (see [LICENCE](./doc/LICENSE-MIT.txt) for more info).
+Unless attributed otherwise, everything is under the MIT licence. Some stuff is not from me, and without attribution, and I no longer remember where I got it from. I apologize for that.
 
-Some stuff is not from me, and without attribution, and I no longer remember where I got it from. I apologize for that.
+[![b4b4r07](http://www.gravatar.com/avatar/8238c3c0be55b887aa9d6d59bfefa504.png)](https://twitter.com/intent/follow?screen_name=b4b4r07 "Follow @b4b4r07 on Twitter")

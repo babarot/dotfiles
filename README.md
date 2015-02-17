@@ -95,9 +95,9 @@ $ bash -c "$(curl -L dot.b4b4r07.com)" -s init
 **Init scripts**
 
 - [Build and install the original cutsom Vim](./etc/init/build_vim_by_myself.sh)
-- [Translate the home directory into English](./etc/init/globalize_your_home_directory.sh)
-- [Install antigen zsh plugin manager](./etc/init/install_zsh_plugin_manager_antigen.sh)
-- [Install pygments generic syntax highlighter written in python](./etc/init/install_pygments.sh)
+- [Translate your home directory into English](./etc/init/globalize_your_home_directory.sh)
+- [Install antigen the zsh plugin manager](./etc/init/install_zsh_plugin_manager_antigen.sh)
+- [Install pygments the generic syntax highlighter written in python](./etc/init/install_pygments.sh)
 - [Install Homebrew the missing package manager for OS X](./etc/init/osx/install_homebrew.sh)
 - [Install the CLI tool that comes with Xcode](./etc/init/osx/install_xcode_cli_tools.sh)
 - [Run 'brew install' based on the Brewfile](./etc/init/osx/install_brew_packages.sh)

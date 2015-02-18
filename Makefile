@@ -1,3 +1,4 @@
+DOTFILES_GITHUB   := "http://github.com/b4b4r07/dotfiles.git"
 DOTFILES_EXCLUDES := .DS_Store .git .gitmodules .travis.yml
 DOTFILES_TARGET   := $(wildcard .??*) bin
 DOTFILES_DIR      := $(PWD)

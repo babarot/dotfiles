@@ -56,7 +56,7 @@ Run the following command to set up a new machine:
 
 **What's inside?**
 
-1. Downloads this repository
+1. Download this repository
 2. Deploy (i.e. *copy* or *create symlink*) dot files to your home directory; `make deploy`
 3. Run all programs for setup in `./etc/init/` directory; `make init` (**Optional**: when running the [installation command](#oneliner) specify `-s init` as an argument)
 

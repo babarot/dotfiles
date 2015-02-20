@@ -3506,14 +3506,6 @@ endfunction
 " Make directory for colorscheme
 call s:mkdir('$HOME/.vim/colors')
 
-" Don't exit vim when closing last tab with :q and :wq, :qa, :wqa
-if has('gui_running') && exists('s:vimrc_nil_dummy_variables')
-  cabbrev q   <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 && tabpagenr('$') == 1 && winnr('$') == 1 ? 'enew' : 'q')<CR>
-  cabbrev wq  <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 && tabpagenr('$') == 1 && winnr('$') == 1 ? 'w\|enew' : 'wq')<CR>
-  cabbrev qa  <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 ? 'tabonly\|only\|enew' : 'qa')<CR>
-  cabbrev wqa <C-r>=(getcmdtype() == ':' && getcmdpos() == 1 ? 'wa\|tabonly\|only\|enew' : 'wqa')<CR>
-endif
-
 augroup vim-startup-nomodified "{{{
   autocmd!
   autocmd VimEnter * set nomodified

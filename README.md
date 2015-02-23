@@ -1,10 +1,10 @@
 # The [B4B4R07](https://twitter.com/b4b4r07)'s dotfiles
 
-[![dotfiles-logo](http://cl.ly/image/2q1a2d0Y2S3y/dotfiles.png "dotfiles")](https://dribbble.com/shots/1466768-dotfiles-logo)
+[![Dotfiles Logo](http://cl.ly/image/2q1a2d0Y2S3y/dotfiles.png)](https://dribbble.com/shots/1466768-dotfiles-logo "b4b4r07's dotfiles")
 
 [![Build Status](https://travis-ci.org/b4b4r07/dotfiles.svg?branch=master)](https://travis-ci.org/b4b4r07/dotfiles "Build Status")
-[![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt "License")
-[![platform](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat)](./doc/OSX.md "Platform")
+[![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt "License")
+[![Platform](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat)](./doc/OSX.md "Platform")
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/b4b4r07/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 This is a repository with my [configuration files](http://en.wikipedia.org/wiki/Configuration_file), those that in Linux/OS X normally are these files under the `$HOME` directory that are hidden and preceded by a dot, AKA **dotfiles**.
@@ -52,7 +52,18 @@ Run the following command to set up a new machine:
 
 	It is not necessary to perform `make install` at all if this repository was installed by the [installation command](#oneliner).
 
-- [Installation by Other Means](https://github.com/b4b4r07/dotfiles/wiki/Installation-manually)
+- Other installation methods. General manual method using the `git` command
+
+	```bash
+	git clone https://github.com/b4b4r07/dotfiles.git ~/.dotfiles
+	cd ~/.dotfiles && make install
+	```
+	
+	Incidentally, `make install` will perform the following tasks.
+	
+	- `make update`; Updating dotfiles repository
+	- `make deploy`; Deploying dot files
+	- `make init`; Initializing some settings
 
 **What's inside?**
 
@@ -169,13 +180,15 @@ When setting up a new Mac, you may want to perform the following tasks mainly.
 	make cask
 	```
 	
-- Run `defaults` command
+- Run some `defaults` commands
 
 	It can set many hidden settings and preferences in Mac OS X, and in individual applications.
 
-All of these are included in the `make init` for OS X. For more detail, see also [here](./doc/OSX.md).
+All of these are included in the `make init` for OS X. For more detail, see also [here](./doc/OSX.md) of documentation of OS X operation.
 
 ## Components
+
+The main directory that the user will use are the following list.
 
 - **bin/**: Anything in `bin/` will be added to your `$PATH` and be made available everywhere.
 - **etc/init/**: Configuration file storage to be executed initially for setup.
@@ -185,6 +198,8 @@ All of these are included in the `make init` for OS X. For more detail, see also
 - **.loading/**: Any files ending in `.sh` get loaded into your environment.
 
 ## Credits
+
+Acknowledgment; I established this dotfiles referring to the following user's repositories. Thus, I would appreciate it if you used my repository for reference. Thanks.
 
 * These dotfiles are heavily based on [@cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/bin/dotfiles)
 * Inspired by [@skwp's dotfiles](https://github.com/skwp/dotfiles)

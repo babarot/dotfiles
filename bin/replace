@@ -4,8 +4,8 @@
 #
 # replace foo bar **/*.rb
 
-find_this=$1;    shift
-replace_with=$1; shift
+find_this=$(echo $1 | sed "s / \\\/ g");    shift
+replace_with=$(echo $1 | sed "s / \\\/ g"); shift
 
 if type ag >/dev/null 2>&1; then
     searcher='ag'

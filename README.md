@@ -28,11 +28,23 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 
 ![](./doc/img/environment.png "b4b4r07's environment")
 
-Note: You can clone or fork them freely, but I don't guarantee that they fit you.
-
+<!--
 | Download ZIP |
 |:---:|
 | [![](./doc/img/download.png)](https://github.com/b4b4r07/dotfiles/archive/master.zip "Download ZIP") |
+-->
+
+<table style="text-align:center; border:none;">
+  <tr style="border:none;">
+    <td style="border:none;"><strong>Download ZIP</strong></td>
+  </tr>
+  <tr style="border:none;">
+    <td style="border:none;"><p><a href="https://github.com/b4b4r07/dotfiles/archive/master.zip" title="Download ZIP"><img src="./doc/img/download.png" alt="" /></a></p>
+</td>
+  </tr>
+</table>
+
+Note: You can clone or fork them freely, but I don't guarantee that they fit you.
 
 ## Installation
 
@@ -82,6 +94,23 @@ When the [installation command](#oneliner) format is not `curl -L URL | sh` but 
 ```bash
 $ curl -sL dot.b4b4r07.com | sh
 ```
+
+Difference of *Installation* and *Quick Installation* is that the latter is shorter than the former one-liner and number of type shift key. However, because when you install in the *quick installation* shell is not re-boot, it is necessary to perform the `exec sh` yourself.
+
+<table style="border:none;">
+  <tr style="border:none;">
+    <td style="border:none;"><strong>37 chars</strong></td>
+    <td style="border:none;"><code>bash -c "$(curl -sL dot.b4b4r07.com)"</code></td>
+  </tr>
+  <tr style="border:none;">
+    <td style="border:none;"><strong>29 chars</strong></td>
+    <td style="border:none;"><code>curl -sL dot.b4b4r07.com | sh</code></td>
+  </tr>
+</table>
+
+Actually notation of the shell may be `sh` instead of `bash`. Because the [script file](etc/install) that is used to the [installation command](#oneliner) is a shell script that conforms to POSIX, regardless of the sh realities, it is possible to do the same installation process.
+
+Note: If you want to use the [`curl`](http://curl.haxx.se), in order to follow the redirect `-L` flag is essential.
 
 ## Updating
 
@@ -230,7 +259,3 @@ Licensed under the [MIT license](./doc/LICENSE-MIT.txt).
 Unless attributed otherwise, everything is under the MIT licence. Some stuff is not from me, and without attribution, and I no longer remember where I got it from. I apologize for that.
 
 [![b4b4r07](http://www.gravatar.com/avatar/8238c3c0be55b887aa9d6d59bfefa504.png)](https://twitter.com/intent/follow?screen_name=b4b4r07 "Follow @b4b4r07 on Twitter")
-
-<script src="doc/js/ZeroClipboard.min.js"></script>
-<script src="doc/js/sample.js"></script>
-<a id="btn" data-clipboard-text="success" href='#'><img src="doc/img/clipboard.png" alt="test"></a>

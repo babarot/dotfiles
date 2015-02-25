@@ -24,7 +24,7 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 - **Terminal.app** (Full-screen)
 - **Solarized** ([base 16](https://github.com/chriskempson/base16))
 
-***DEMO***
+***DEMO:***
 
 ![](./doc/img/environment.png "b4b4r07's environment")
 
@@ -76,6 +76,12 @@ When the [installation command](#oneliner) format is not `curl -L URL | sh` but 
 ***DEMO:***
 
 ![](./doc/img/installation.gif)
+
+### Quick installation
+
+```bash
+$ curl -sL dot.b4b4r07.com | sh
+```
 
 ## Updating
 
@@ -224,3 +230,7 @@ Licensed under the [MIT license](./doc/LICENSE-MIT.txt).
 Unless attributed otherwise, everything is under the MIT licence. Some stuff is not from me, and without attribution, and I no longer remember where I got it from. I apologize for that.
 
 [![b4b4r07](http://www.gravatar.com/avatar/8238c3c0be55b887aa9d6d59bfefa504.png)](https://twitter.com/intent/follow?screen_name=b4b4r07 "Follow @b4b4r07 on Twitter")
+
+<script src="doc/js/ZeroClipboard.min.js"></script>
+<script src="doc/js/sample.js"></script>
+<a id="btn" data-clipboard-text="success" href='#'><img src="doc/img/clipboard.png" alt="test"></a>

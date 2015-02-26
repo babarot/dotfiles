@@ -64,7 +64,7 @@ Run the following command to set up a new machine:
 
 	It is not necessary to perform `make install` at all if this repository was installed by the [installation command](#oneliner).
 
-- Other installation methods. General manual method using the `git` command
+- General download method using the `git` command:
 
 	```bash
 	git clone https://github.com/b4b4r07/dotfiles.git ~/.dotfiles
@@ -91,24 +91,26 @@ When the [installation command](#oneliner) format is not `curl -L URL | sh` but 
 
 ### Quick installation
 
+To quickly install:
+
 ```bash
 $ curl -sL dot.b4b4r07.com | sh
 ```
 
-Difference of *Installation* and *Quick Installation* is that the latter is shorter than the former one-liner and number of type shift key. However, because when you install in the *Quick installation* shell is not re-boot, it is necessary to perform the `exec sh` yourself.
+Difference of *Installation* and *Quick Installation* is that the latter is shorter than the former one-liner (including typing the number of shift key). However, because when you install in the *Quick installation* shell is not re-boot, it is necessary to perform the `exec sh` yourself.
 
 <table style="border:none;">
   <tr style="border:none;">
-    <td style="border:none;"><strong>37 chars</strong></td>
+    <td style="border:none;"><strong>42 chars</strong></td>
     <td style="border:none;"><code>bash -c "$(curl -sL dot.b4b4r07.com)"</code></td>
   </tr>
   <tr style="border:none;">
-    <td style="border:none;"><strong>29 chars</strong></td>
+    <td style="border:none;"><strong>30 chars</strong></td>
     <td style="border:none;"><code>curl -sL dot.b4b4r07.com | sh</code></td>
   </tr>
 </table>
 
-Actually notation of the shell may be `sh` instead of `bash`. Because the [script file](etc/install) that is used to the [installation command](#oneliner) is a shell script that conforms to POSIX, regardless of the sh realities, it is possible to do the same installation process.
+Actually notation of the shell may be `sh` instead of `bash`. Because the [script file](etc/install) that is used to the [installation command](#oneliner) is a shell script that conforms to POSIX, regardless of the `sh` realities, it is possible to do the same installation process.
 
 **Note:** If you want to use the [`curl`](http://curl.haxx.se), in order to follow the redirect `-L` flag is essential. On the other hand, it is possible to omit it because `-s` flag that means silent or quiet mode makes `curl` mute.
 
@@ -248,9 +250,9 @@ Acknowledgment; I established this dotfiles referring to the following user's re
 * My `Makefile` based on [@Tetsuji's dotfiles](https://github.com/xtetsuji/dotfiles)
 * My `bootstrap.sh` based on [@Rocha's dotfiles](https://github.com/zenorocha/old-dotfiles)
 
-## Licence
+## Licence [![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt "License")
 
-[![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt "License")
+[![b4b4r07](http://www.gravatar.com/avatar/8238c3c0be55b887aa9d6d59bfefa504.png)](https://twitter.com/intent/follow?screen_name=b4b4r07 "Follow @b4b4r07 on Twitter")
 
 Copyright (c) 2014 "BABAROT" b4b4r07
 

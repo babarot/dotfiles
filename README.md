@@ -44,7 +44,7 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 </table>
 -->
 
-Note: You can clone or fork them freely, but I don't guarantee that they fit you.
+**Note:** You can clone or fork them freely, but I don't guarantee that they fit you.
 
 ## Installation
 
@@ -110,7 +110,7 @@ Difference of *Installation* and *Quick Installation* is that the latter is shor
 
 Actually notation of the shell may be `sh` instead of `bash`. Because the [script file](etc/install) that is used to the [installation command](#oneliner) is a shell script that conforms to POSIX, regardless of the sh realities, it is possible to do the same installation process.
 
-Note: If you want to use the [`curl`](http://curl.haxx.se), in order to follow the redirect `-L` flag is essential. -s flag that means silent or quiet mode makes curl mute.
+**Note:** If you want to use the [`curl`](http://curl.haxx.se), in order to follow the redirect `-L` flag is essential. On the other hand, it is possible to omit it because `-s` flag that means silent or quiet mode makes `curl` mute.
 
 ## Updating
 
@@ -192,7 +192,7 @@ The easiest way to change your shell is to use the `chsh` command. You can also 
 $ chsh -s /bin/zsh
 ```
 
-Note: The shell that you wish to use must be present in the `/etc/shells` file.
+**Note:** The shell that you wish to use must be present in the `/etc/shells` file.
 
 ### OS X
 

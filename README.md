@@ -28,12 +28,11 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 
 ![](./doc/img/environment.png "b4b4r07's environment")
 
-<!--
 | Download ZIP |
 |:---:|
 | [![](./doc/img/download.png)](https://github.com/b4b4r07/dotfiles/archive/master.zip "Download ZIP") |
--->
 
+<!--
 <table style="text-align:center; border:none;">
   <tr style="border:none;">
     <td style="border:none;"><strong>Download ZIP</strong></td>
@@ -43,6 +42,7 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 </td>
   </tr>
 </table>
+-->
 
 Note: You can clone or fork them freely, but I don't guarantee that they fit you.
 
@@ -95,7 +95,7 @@ When the [installation command](#oneliner) format is not `curl -L URL | sh` but 
 $ curl -sL dot.b4b4r07.com | sh
 ```
 
-Difference of *Installation* and *Quick Installation* is that the latter is shorter than the former one-liner and number of type shift key. However, because when you install in the *quick installation* shell is not re-boot, it is necessary to perform the `exec sh` yourself.
+Difference of *Installation* and *Quick Installation* is that the latter is shorter than the former one-liner and number of type shift key. However, because when you install in the *Quick installation* shell is not re-boot, it is necessary to perform the `exec sh` yourself.
 
 <table style="border:none;">
   <tr style="border:none;">
@@ -110,7 +110,7 @@ Difference of *Installation* and *Quick Installation* is that the latter is shor
 
 Actually notation of the shell may be `sh` instead of `bash`. Because the [script file](etc/install) that is used to the [installation command](#oneliner) is a shell script that conforms to POSIX, regardless of the sh realities, it is possible to do the same installation process.
 
-Note: If you want to use the [`curl`](http://curl.haxx.se), in order to follow the redirect `-L` flag is essential.
+Note: If you want to use the [`curl`](http://curl.haxx.se), in order to follow the redirect `-L` flag is essential. -s flag that means silent or quiet mode makes curl mute.
 
 ## Updating
 

@@ -58,7 +58,7 @@ Run the following command to set up a new machine:
 
 - It is almost the same as the command below except for executing through a Web site directly.
 
-	```bash
+	```console
 	$ make install
 	```
 
@@ -66,9 +66,9 @@ Run the following command to set up a new machine:
 
 - General download method using the `git` command:
 
-	```bash
-	git clone https://github.com/b4b4r07/dotfiles.git ~/.dotfiles
-	cd ~/.dotfiles && make install
+	```console
+	$ git clone https://github.com/b4b4r07/dotfiles.git ~/.dotfiles
+	$ cd ~/.dotfiles && make install
 	```
 	
 	Incidentally, `make install` will perform the following tasks.
@@ -93,11 +93,11 @@ When the [installation command](#oneliner) format is not `curl -L URL | sh` but 
 
 To quickly install:
 
-```bash
+```console
 $ curl -sL dot.b4b4r07.com | sh
 ```
 
-Difference of *Installation* and *Quick Installation* is that the latter is shorter than the former one-liner (including typing the number of shift key). However, because when you install in the *Quick installation* shell is not re-boot, it is necessary to perform the `exec sh` yourself.
+Difference of *Installation* and *Quick Installation* is that the latter one-liner is shorter than the former one (including typing the number of shift key). However, because when you install in the *Quick installation* shell is not re-boot, it is necessary to perform the `exec sh` yourself.
 
 <table style="border:none;">
   <tr style="border:none;">
@@ -110,15 +110,15 @@ Difference of *Installation* and *Quick Installation* is that the latter is shor
   </tr>
 </table>
 
-Actually notation of the shell may be `sh` instead of `bash`. Because the [script file](etc/install) that is used to the [installation command](#oneliner) is a shell script that conforms to POSIX, regardless of the `sh` realities, it is possible to do the same installation process.
+Actually notation of the shell may be `sh` instead of `bash`. Regardless of the `sh` realities, it is possible to do the same installation process because the [script file](etc/install) that is used to the [installation command](#oneliner) is a shell script that conforms to POSIX.
 
-**Note:** If you want to use the [`curl`](http://curl.haxx.se), in order to follow the redirect `-L` flag is essential. On the other hand, it is possible to omit it because `-s` flag that means silent or quiet mode makes `curl` mute.
+**Note:** If you want to use the [`curl`](http://curl.haxx.se), in order to follow the redirect `-L` flag is essential. On the other hand, it is possible to omit `-s` flag because it is meant that silent or quiet mode makes `curl` mute.
 
 ## Updating
 
 To update later on, just run this command.
 
-```bash
+```console
 $ make update
 ```
 
@@ -130,13 +130,13 @@ In addition, there are several git submodules included in this configuration. On
 
 All configuration files for setup is stored within the `etc/init/` directory. By running the command below, you can interactively setup all preferences.
 
-```bash
+```console
 $ make init
 ```
 
 To run `make init` immediately after running the [installation command](#oneliner):
 
-```bash
+```console
 $ bash -c "$(curl -L dot.b4b4r07.com)" -s init
 ```
 
@@ -160,7 +160,7 @@ For more information about initializing, see also [./etc/README.md](./etc/README
 
 To install the Vim plugins, run this command.
 
-```bash
+```console
 $ vim +NeoBundleInit +qall
 ```
 
@@ -190,7 +190,7 @@ git config --global user.email "$GIT_AUTHOR_EMAIL"
 
 The easiest way to change your shell is to use the `chsh` command. You can also give `chsh` the `-s` option; this will set your shell for you, without requiring you to enter an editor.
 
-```bash
+```console
 $ chsh -s /bin/zsh
 ```
 
@@ -212,9 +212,9 @@ When setting up a new Mac, you may want to perform the following tasks mainly.
 	
 	After installing Homebrew, you may want to install some common Homebrew formulae:
 	
-	```
-	make brew
-	make cask
+	```console
+	$ make brew
+	$ make cask
 	```
 	
 - Run some `defaults` commands

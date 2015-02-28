@@ -228,10 +228,10 @@ All of these are included in the `make init` for OS X. For more detail, see also
 The main directory that the user will use are the following list.
 
 - **bin/**: Anything in `bin/` will be added to your `$PATH` and be made available everywhere.
-- **etc/init/**: Configuration file storage to be executed initially for setup.
-- **etc/init/osx/**: Some configuration files for OS X storage.
-- **etc/lib/**: Shell scripts Libraries
-- **doc/man/**: Self-written program's manuals.
+- **etc/init/**: A storage of Configuration files to be executed initially.
+- **etc/init/osx/**: Some configuration files for OS X are stored.
+- **etc/lib/**: Shell scripts Libraries.
+- **doc/man/**: A manual of my own making sctipts
 - **.loading/**: Any files ending in `.sh` get loaded into your environment.
 
 ## Credits

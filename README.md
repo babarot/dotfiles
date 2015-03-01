@@ -51,7 +51,7 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 The easiest way to install this dotfiles is to open up a terminal, type the installation command below:
 Run the following command to set up a new machine:
 
-| Tools | <a name="oneliner">The installation command</a> |
+| Tools | <a name="oneliner">Installation command</a> |
 |-------|-------------------------------------------------|
 | cURL | bash -c "$(curl -fsSL [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
 | Wget | bash -c "$(wget -qO - [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
@@ -228,7 +228,7 @@ All of these are included in the `make init` for OS X. For more detail, see also
 The main directory that the user will use are the following list.
 
 - **bin/**: Anything in `bin/` will be added to your `$PATH` and be made available everywhere.
-- **etc/init/**: A storage of Configuration files to be executed initially.
+- **etc/init/**: A storage of configuration files to be executed initially.
 - **etc/init/osx/**: Some configuration files for OS X are stored.
 - **etc/lib/**: Shell scripts Libraries.
 - **doc/man/**: A manual of my own making sctipts

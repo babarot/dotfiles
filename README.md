@@ -1,6 +1,6 @@
 # The [B4B4R07](https://twitter.com/b4b4r07)'s dotfiles
 
-[![Dotfiles Logo](http://cl.ly/image/2q1a2d0Y2S3y/dotfiles.png)](https://dribbble.com/shots/1466768-dotfiles-logo "b4b4r07's dotfiles")
+[![https://dribbble.com/shots/1466768-dotfiles-logo](./doc/img/dotfiles.png)](https://b4b4r07.github.io/dotfiles "b4b4r07 dotfiles gh-pages")
 
 [![Build Status](https://travis-ci.org/b4b4r07/dotfiles.svg?branch=master)](https://travis-ci.org/b4b4r07/dotfiles "Build Status")
 [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt "License")
@@ -18,11 +18,11 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 ## Features
 
 - **OS X** Yosemite (MacBook Air)
-- **Zsh** 5.0.5
-- **Vim** 7.4
-- **Tmux** 1.9a
 - **Terminal.app** (Full-screen)
 - **Solarized** ([base 16](https://github.com/chriskempson/base16))
+- **Tmux** 1.9a
+- **Zsh** 5.0.5
+- **Vim** 7.4
 
 ***DEMO:***
 
@@ -51,7 +51,7 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 The easiest way to install this dotfiles is to open up a terminal, type the installation command below:
 Run the following command to set up a new machine:
 
-| Tools | <a name="oneliner">Installation command</a> |
+| 　 | <a name="oneliner">Installation command</a> |
 |-------|-------------------------------------------------|
 | cURL | bash -c "$(curl -fsSL [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
 | Wget | bash -c "$(wget -qO - [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
@@ -259,4 +259,3 @@ Copyright (c) 2014 "BABAROT" b4b4r07
 Licensed under the [MIT license](./doc/LICENSE-MIT.txt).
 
 Unless attributed otherwise, everything is under the MIT licence. Some stuff is not from me, and without attribution, and I no longer remember where I got it from. I apologize for that.
-

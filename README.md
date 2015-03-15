@@ -51,10 +51,31 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 The easiest way to install this dotfiles is to open up a terminal, type the installation command below:
 Run the following command to set up a new machine:
 
-| 　 | <a name="oneliner">Installation command</a> |
+<!--
+| Tools | <a name="oneliner">Installation command</a> |
 |-------|-------------------------------------------------|
 | cURL | bash -c "$(curl -fsSL [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
 | Wget | bash -c "$(wget -qO - [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
+-->
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th><a name="oneliner">Installation command</a></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>cURL</strong></td>
+<td>bash -c "$(curl -fsSL <a href="https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install">dot.b4b4r07.com</a>)"</td>
+</tr>
+<tr>
+<td><strong>Wget</strong></td>
+<td>bash -c "$(wget -qO - <a href="https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install">dot.b4b4r07.com</a>)"</td>
+</tr>
+</tbody>
+</table>
 
 - It is almost the same as the command below except for executing through a Web site directly.
 

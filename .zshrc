@@ -340,6 +340,14 @@ function zsh_set_utilities()
 
     function gte() { google_translate "$*" "en-ja" | sed -n -e 20p; }
     function gtj() { google_translate "$*" "ja-en" | sed -n -e 21p; }
+
+    function r()
+    {
+        local f
+        f=(~/.zsh/Completion/*(.))
+        unfunction $f:t 2> /dev/null
+        autoload -U $f:t
+    }
 }
 
 # vim-like iab global alias {{{2

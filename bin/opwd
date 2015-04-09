@@ -1,31 +1,27 @@
 #!/bin/bash
 
-function opposite_side_pwd()
+function opwd()
 {
-    local datafile=~/.tmux.info
-    if [[ -f $datafile ]]; then
-        local opposite
-        if [[ $(tmux list-panes | wc -l) -eq 2 ]]; then
-            opposite=$(tmux list-panes | grep -v "active" | cut -d":" -f1)
-        else
-            tmux display-panes &
-            echo -n 'Which pane? '
-            read
-            if expr "$REPLY" : '^[0-9]$' >/dev/null; then
-                opposite=$(tmux list-panes | cut -d":" -f1 | grep -x "$REPLY" 2>/dev/null)
-            fi
-        fi
-        awk -F':' -v o="${opposite:-NONE}" '$2 == o{print $3}' $datafile | tail -1
-    else
-        echo 'Write the following to your .zshrc'
-        echo 'chpwd() {'
-        echo '    echo $(tmux display -p "#I:#P"):$PWD >>|' "$datafile"
-        echo '}'
+    local current_pane_number="$(tmux list-panes | grep 'active' | cut -d: -f1)"
+    local current_window_number="$(tmux display -p '#I')"
+
+    if [[ ! -f ~/.tmux.info ]]; then
+        :
     fi
+
+    cat < ~/.tmux.info |
+    if (($# > 0)) &&
+        expr "$1" : '^[0-9]$' >/dev/null &&
+        tmux list-panes | grep -q "^$1"
+    then
+        grep "$current_window_number:$1"
+    else
+        grep -v "$current_window_number:$current_pane_number"
+    fi | tail -1 | cut -d: -f3
 }
 
 if [[ -n $TMUX ]]; then
-    opposite_side_pwd
+    opwd "$@"
 else
     pwd
 fi

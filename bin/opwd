@@ -6,7 +6,7 @@ function opwd()
     local current_window_number="$(tmux display -p '#I')"
 
     if [[ ! -f ~/.tmux.info ]]; then
-        :
+        return 1
     fi
 
     cat < ~/.tmux.info |

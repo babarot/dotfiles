@@ -17,7 +17,12 @@ function opwd()
         grep "$current_window_number:$1"
     else
         grep -v "$current_window_number:$current_pane_number"
-    fi | tail -1 | cut -d: -f3
+    fi | tail -1 |
+    if [[ "$1" == "-n" ]]; then
+        cut -d: -f2
+    else
+        cut -d: -f3
+    fi
 }
 
 if [[ -n $TMUX ]]; then

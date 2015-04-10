@@ -230,22 +230,17 @@ function zsh_set_utilities()
         }
     fi
 
-    #autoload -Uz add-zsh-hook
-    #add-zsh-hook precmd my_chpwd
-    #
-    #function my_chpwd()
-    #{
-    #    if [[ $PWD != $OLDPWD ]]; then
-    #        OLDPWD=$PWD
-    #        ls_abbrev
-    #    fi
-    #}
+    function record_opwd()
+    {
+        echo "$(tmux display -p "#I:#P"):$PWD" >>~/.tmux.info
+    }
+    autoload -Uz add-zsh-hook
+    add-zsh-hook precmd record_opwd
 
     function chpwd()
     {
         #ls_abbrev
         ls -F
-        echo "$(tmux display -p "#I:#P"):$PWD" >>~/.tmux.info
     }
 
     function ls_abbrev()
@@ -1071,3 +1066,6 @@ if zsh_at_startup; then
 fi
 
 # vim:fdm=marker fdc=3 ft=zsh ts=4 sw=4 sts=4:
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"

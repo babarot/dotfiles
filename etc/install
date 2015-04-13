@@ -1,60 +1,36 @@
-#!/bin/sh
-# This shell script conforms to POSIX.
+#!/bin/bash
 
-# An interrupt (typically ^C) has the effect of aborting the current command
-trap 'e_error "Abort the command that is in progress"; exit 1' INT
-trap 'e_error "Some error has occurred"; exit 1' ERR
-#set -e
-set -u
-
-# Pilot of dotfiles
-# It shows the use of dotfiles and describe what is inside
-# regardless of execution or non-execution
-#
-cat <<-'EOT'
-
-    | |     | |  / _(_) |           
-  __| | ___ | |_| |_ _| | ___  ___  
- / _` |/ _ \| __|  _| | |/ _ \/ __| 
-| (_| | (_) | |_| | | | |  __/\__ \ 
- \__,_|\___/ \__|_| |_|_|\___||___/ 
-
-*** WHAT'S INSIDE? ***
-  1. Download https://github.com/b4b4r07/dotfiles.git
-  2. Symlinking dot files to your home directory
-  3. Execute all sh files within 'etc/init/` (optional)
-
-See the README for documentation.
-https://github.com/b4b4r07/dotfiles
-
-Copyright (c) 2014 "BABAROT" aka @b4b4r07
-Licensed under the MIT license.
-
-EOT
-
-# Insert newline
+### Utilities {{{
+### Insert newline
 e_newline() { printf "\n"; }
-# Normal style of writing
+### Normal style of writing
 #e_header()  { printf "\n\033[1m%s\033[0m\n" "$*"; }
 e_header()  { printf "\033[1m%s\033[0m\n" "$*"; }
-# Success
+### Success
 e_success() { printf " \033[1;32m✔\033[0m  %s\n" "$*"; }
-# Failure
+### Failure
 e_error()   { printf " \033[1;31m✖\033[0m  %s\n" "$*" 1>&2; }
-# Result
+### Result
 e_arrow()   { printf " \033[1;34m➜\033[0m  %s\n" "$*"; }
-# Check if exists
-#is_exist()  { which "$1" >/dev/null 2>&1; return $?; }
-is_exist()  { [ -x "$(which "$1")" ]; }
 
-# Set dotfiles environment valuable
-DOTFILES=~/.dotfiles; export DOTFILES
+is_exists() {
+    local i
+    for i in "$@"
+    do
+        if which "$i" >/dev/null 2>&1; then
+            return 0
+        fi
+    done
+    return 1
+}
 
-# This is a make install, which is functionize
-# To execute all sh files within etc/init/.
-# Also, this initialize function has interactive system and works as a selector
-initialize()
-{
+interrupt() {
+    e_error "$1"
+    e_error "Interrupt the processing..."
+    exit 1
+}
+
+initialize() {
     prompt_menu() {
         local prompt nums
         e_header "Run the following init scripts."
@@ -158,101 +134,159 @@ initialize()
     }
     init_files "$@"
 }
+#}}}
 
-installing_dotfiles()
-{
-    # If $DOTFILES already exists, removing the directory
+### Environment valuable
+DOTFILES=~/.dotfiles; export DOTFILES
+
+dotfiles_download() {
+    e_header "Downloading dotfiles..."
+    [ "$DEBUG" = 1 ] && return 0
+
+    local tarball="https://github.com/b4b4r07/dotfiles/archive/master.tar.gz"
+    local zipball="https://github.com/b4b4r07/dotfiles/archive/master.zip"
+
+    ### Check if $DOTFILES exists
     if [ -d $DOTFILES ]; then
         e_header "$DOTFILES: already exists, removing..."
-        rm -rf "$DOTFILES"
-        #mv -f $DOTFILES ${DOTFILES}.old
+        mv -f "$DOTFILES" "${DOTFILES}.old"
     fi
 
-    # 1. Download the repository
-    # ==> downloading
-    # Priority: git > curl > wget
-    e_newline
-    e_header 'Downloading dotfiles...'
-    if is_exist 'git'; then
-        # --recursive equals to ...
-        # git submodule init
-        # git submodule update
-        git clone --recursive https://github.com/b4b4r07/dotfiles.git "$DOTFILES"
+    if is_exists "git"; then
+        ### --recursive equals to ...
+        ### git submodule init
+        ### git submodule update
+        git clone --recursive "$GITHUB_DOTFILES" "$DOTFILES"
 
+    elif is_exists "curl" "wget"; then
+        ### curl or wget
+        if is_exists "curl"; then
+            curl -L "$tarball"
+        elif is_exists "wget"; then
+            wget -O - "$tarball"
+        fi | tar xv -
     else
-        local zip_url='https://github.com/b4b4r07/dotfiles/archive/master.zip'
 
-        # Ensure the workplace
-        mkdir -p /tmp/$$ && cd /tmp/$$
+        ### requirement
+        interrupt "Require git, curl or wget!"
+    fi
 
-        if is_exist 'curl'; then
-            curl -L -o dotfiles.zip "$zip_url"
-        elif is_exist 'wget'; then
-            wget -O dotfiles.zip "$zip_url"
-        else
-            e_error 'git,curl,wget: not found'
-            return 1
-        fi
+    mv -f dotfiles-master "$DOTFILES"
+}
 
-        # Expand the zip to dotfiles directory
-        # and move to $DOTFILES
-        unzip dotfiles.zip
-        mv dotfiles-master "$DOTFILES"
-    fi && e_success 'done'
+dotfiles_deploy() {
+    e_header "Deploying dotfiles..."
+    [ "$DEBUG" = 1 ] && return 0
 
-    # 2. Deploy dotfiles to your home directory
-    # ==> deploying
+    ### Check if $DOTFILES exists
+    if [ ! -d $DOTFILES ]; then
+        interrupt "Not found: $DOTFILES"
+    fi
     cd "$DOTFILES"
-    e_newline
-    e_header 'Deploying dotfiles...'
+
     if make deploy; then
-        e_success 'done'
-    fi
-
-    # 3. Execute all sh files within etc/init/
-    # ==> initializing
-    if [ "${1:-}" = 'init' ]; then
-        e_header 'Initializing...'
-        if [ -t 0 ]; then
-            initialize "$@"
-        else
-            cd "$DOTFILES"
-            make init
-        fi && e_success 'done'
-    fi
-
-    e_newline
-    if [ -t 0 ]; then
-        # Restart shell if specified "bash -c $(curl -L {URL})"
-        # not restart:
-        #   curl -L {URL} | bash
-        e_arrow 'Restarting your shell...'
-        exec "${SHELL:-/bin/zsh}"
-    else
-        e_arrow 'Restart your shell, manually'
+        e_success "done"
     fi
 }
 
-# Main
-#
-# Check if run from a command line only bash
-# python-like "if __name__ == '__main__':"
-#
-# A SAFETY system
-# Note: This script is designed to be run from a command line shell.
+dotfiles_initialize() {
+    if [ "${1:-}" != "init" ]; then
+        return 0
+    fi
+
+    e_header "Initializing..."
+    [ "$DEBUG" = 1 ] && return 0
+
+    ### Check if $DOTFILES exists
+    if [ ! -d $DOTFILES ]; then
+        interrupt "Not found: $DOTFILES"
+    fi
+    cd "$DOTFILES"
+
+    ### Check if the pipe is valid
+    if [ -t 0 ]; then
+        ### equals to `make init`
+        initialize "$@"
+    else
+        make init
+    fi && e_success "done"
+}
+
+dotfiles_install() {
+    ### 1. Download the repository
+    ### ==> downloading
+    ###
+    ### Priority: git > curl > wget
+    dotfiles_download
+
+    ### 2. Deploy dotfiles to your home directory
+    ### ==> deploying
+    dotfiles_deploy
+
+    ### 3. Execute all sh files within etc/init/
+    ### ==> initializing
+    dotfiles_initialize "$@"
+}
+
+### Main
+###
+main() {
+cat <<-'EOT'
+
+    | |     | |  / _(_) |           
+  __| | ___ | |_| |_ _| | ___  ___  
+ / _` |/ _ \| __|  _| | |/ _ \/ __| 
+| (_| | (_) | |_| | | | |  __/\__ \ 
+ \__,_|\___/ \__|_| |_|_|\___||___/ 
+
+*** WHAT'S INSIDE? ***
+  1. Download https://github.com/b4b4r07/dotfiles.git
+  2. Symlinking dot files to your home directory
+  3. Execute all sh files within 'etc/init/` (optional)
+
+See the README for documentation.
+https://github.com/b4b4r07/dotfiles
+
+Copyright (c) 2014 "BABAROT" aka @b4b4r07
+Licensed under the MIT license.
+EOT
+
+    e_newline
+    dotfiles_install "$@"
+    e_newline
+    [ "$DEBUG" = 1 ] && return 0
+
+    if [ -t 0 ]; then
+        ### Restart shell if specified "bash -c $(curl -L {URL})"
+        ### not restart:
+        ###   curl -L {URL} | bash
+        e_arrow "Restarting your shell..."
+        exec "${SHELL:-/bin/zsh}"
+    else
+        e_arrow "Restart your shell, manually"
+    fi && e_success "All done. Success!"
+}
+
+
+
+### A SAFETY system
+### Note: This script is designed to be run from a command line shell.
+###
+### Check if run from a command line only bash
+### python-like "if __name__ == '__main__':"
+###
 if [ "$0" = "${BASH_SOURCE:-}" ]; then
-    e_error 'WARNING!!'
-    e_error 'You should NOT run directly from the command line'
-    e_error 'For more info, see https://github.com/b4b4r07/dotfiles'
+    e_error "WARNING!!"
+    e_error "You should NOT run directly from the command line"
+    e_error "For more information, see https://github.com/b4b4r07/dotfiles"
     e_newline
 
-    # Push off the safety catch
-    if [ "${1:-}" != 'directly' ]; then
+    ### Push the safety catch off
+    if [ "${1:-}" != "directly" ]; then
         exit 1
     fi
 fi
 
-installing_dotfiles "$@"
-e_success 'All done'
+main "$@"
 
 # vim:fdm=marker

@@ -138,17 +138,18 @@ initialize() {
 
 ### Environment valuable
 DOTFILES=~/.dotfiles; export DOTFILES
+GITHUB_DOTFILES="https://github.com/b4b4r07/dotfiles.git"; export GITHUB_DOTFILES
 
 dotfiles_download() {
     e_header "Downloading dotfiles..."
     [ "$DEBUG" = 1 ] && return 0
 
     local tarball="https://github.com/b4b4r07/dotfiles/archive/master.tar.gz"
-    local zipball="https://github.com/b4b4r07/dotfiles/archive/master.zip"
+    #local zipball="https://github.com/b4b4r07/dotfiles/archive/master.zip"
 
     ### Check if $DOTFILES exists
     if [ -d $DOTFILES ]; then
-        e_header "$DOTFILES: already exists, removing..."
+        e_arrow "$DOTFILES: already exists, removing..."
         mv -f "$DOTFILES" "${DOTFILES}.old"
     fi
 
@@ -165,13 +166,12 @@ dotfiles_download() {
         elif is_exists "wget"; then
             wget -O - "$tarball"
         fi | tar xv -
-    else
+        mv -f dotfiles-master "$DOTFILES"
 
+    else
         ### requirement
         interrupt "Require git, curl or wget!"
     fi
-
-    mv -f dotfiles-master "$DOTFILES"
 }
 
 dotfiles_deploy() {
@@ -217,11 +217,11 @@ dotfiles_install() {
     ### ==> downloading
     ###
     ### Priority: git > curl > wget
-    dotfiles_download
+    dotfiles_download &&
 
     ### 2. Deploy dotfiles to your home directory
     ### ==> deploying
-    dotfiles_deploy
+    dotfiles_deploy &&
 
     ### 3. Execute all sh files within etc/init/
     ### ==> initializing

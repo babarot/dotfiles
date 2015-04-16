@@ -151,7 +151,7 @@ dotfiles_download() {
     if [ -d $DOTFILES ]; then
         e_newline
         e_arrow "$DOTFILES: already exists, removing..."
-        mv -f "$DOTFILES" "${DOTFILES}.old"
+        mv -f "$DOTFILES" "${DOTFILES}.$(date "+%Y%m%d%S")"
     fi
 
     e_newline

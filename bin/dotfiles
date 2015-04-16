@@ -2,6 +2,7 @@
 
 set -eu
 
+#git rev-parse --show-toplevel
 root=$(cd $(cd "$(dirname "${BASH_SOURCE}")" && pwd -P)/.. && pwd)
 if echo "$root" | grep -qv -E "dotfiles$"; then
     root=""

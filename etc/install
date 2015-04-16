@@ -149,9 +149,12 @@ dotfiles_download() {
 
     ### Check if $DOTFILES exists
     if [ -d $DOTFILES ]; then
+        e_newline
         e_arrow "$DOTFILES: already exists, removing..."
         mv -f "$DOTFILES" "${DOTFILES}.old"
     fi
+
+    e_newline
 
     if is_exists "git"; then
         ### --recursive equals to ...
@@ -172,6 +175,7 @@ dotfiles_download() {
         ### requirement
         interrupt "Require git, curl or wget!"
     fi
+    e_newline
 }
 
 dotfiles_deploy() {
@@ -187,6 +191,7 @@ dotfiles_deploy() {
     if make deploy; then
         e_success "done"
     fi
+    e_newline
 }
 
 dotfiles_initialize() {
@@ -253,7 +258,7 @@ EOT
 
     e_newline
     dotfiles_install "$@"
-    e_newline
+
     [ "$DEBUG" = 1 ] && return 0
 
     if [ -t 0 ]; then

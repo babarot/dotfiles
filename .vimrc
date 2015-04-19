@@ -349,6 +349,15 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   NeoBundle 'kana/vim-vspec'
   NeoBundle 'tell-k/vim-browsereload-mac'
   NeoBundle 'kchmck/vim-coffee-script'
+  NeoBundle 'elzr/vim-json'
+  "NeoBundle 'majutsushi/tagbar'
+  "NeoBundle 'Shougo/vimfiler'
+  "NeoBundle 'Shougo/vimproc'
+  "NeoBundle 'Shougo/unite.vim'
+  "NeoBundle 'Shougo/unite-outline'
+  "NeoBundle 'dgryski/vim-godef'
+  "NeoBundle 'vim-jp/vim-go-extra'
+  "NeoBundle 'google/vim-ft-go'
 
   " Japanese help
   NeoBundle 'vim-jp/vimdoc-ja'

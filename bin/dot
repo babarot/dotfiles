@@ -1,0 +1,21 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use FindBin;
+use File::Find;
+use File::chdir;
+
+
+my $dir = 'Makefile';
+my $limit = 4;
+
+chdir $FindBin::Bin;
+while ($limit) {
+    if (-f $dir) {
+        print "$CWD\n";
+        last;
+    }
+    $CWD = '..';
+    $limit--;
+}

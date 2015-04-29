@@ -3,10 +3,11 @@
 d=" "
 rmr_trash=$HOME/.rmtrash
 rmr_logfile=$rmr_trash/log
+rmr_ignore=$rmr_trash/ignore
 
 delete() {
-    if [[ ! -d "$rmr_trash" ]]; then
-        mkdir -p "$rmr_trash"
+    if [[ ! -d "$rmr_trash/$(date +'%Y/%m/%d')" ]]; then
+        mkdir -p "$rmr_trash/$(date +'%Y/%m/%d')"
     fi
 
     local err=0
@@ -15,7 +16,7 @@ delete() {
     for f in "$@"
     do
         if [[ -e "$f" ]]; then
-            f_trashpath="$rmr_trash/$(basename "$f").$(date '+%H_%M_%S')"
+            f_trashpath="$rmr_trash/$(date +'%Y/%m/%d')/$(basename "$f").$(date '+%H_%M_%S')"
             f_abspath="$(cd "$(dirname "$f")" && pwd)/$(basename "$f")"
 
             if /bin/mv -f "$f" "$f_trashpath"; then
@@ -55,22 +56,25 @@ EOF
         done | sort -nr -u | head -n 1
     )
 
-    local cp_mates
-    cp_mates=($(
+    local cp_mates cp_mates2
+    cp_mates=$(
         reverse "$rmr_logfile" |
         sed "s $HOME ~ g" |
-        awk '{ printf("%-'"$max"'s %s\n",$3,$4) }' |
+        #awk '{ printf("%s %s %-'"$max"'s %s\n",$1,$2,$3,$4) }' |
+        awk '{ printf("%s %s %s\n",$1,$2,$3) }' |
         peco |
-        sed "s ~ $HOME g" |
-        awk '{print $2,$1}'
-    ))
+        sed "s ~ $HOME g"
+    )
 
-    if (("${#cp_mates[@]}" > 0)); then
-        cp "${cp_mates[0]}" "${1:-${cp_mates[1]}}"
+    if (("${#cp_mates}" > 0)); then
+        cp_mates2=($(cat "$rmr_logfile" | grep "${cp_mates}" | awk '{print $4,$3}'))
+        cp -R "${cp_mates2[0]}" "${1:-${cp_mates2[1]}}"
+        #ln "${cp_mates2[0]}" "${1:-${cp_mates2[1]}}"
     fi
 }
 
 logging() {
+    touch "$rmr_logfile"
     # log format
     # 2011-04-01 12:34:59 source-file destination-file.12_34_59
     local line
@@ -86,8 +90,7 @@ logging() {
 }
 
 main() {
-    if [[ "$1" == "-r" || "$1" == "--restore" ]]; then
-        shift
+    if [[ "$1" == "-r" || "$1" == "--restore" ]] && shift; then
         restore "$@"
         return
     fi

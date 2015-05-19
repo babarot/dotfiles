@@ -54,7 +54,8 @@ export LC_CTYPE="${LANGUAGE}"
 # environment variables
 export PATH=/usr/local/vim/build/7.4/vim74/src:$PATH
 export PYTHONSTARTUP=~/.pythonrc.py
-export GOPATH=$HOME/go
+#export GOPATH=$HOME/go
+export GOPATH=$HOME
 export PATH=$PATH:$GOPATH/bin
 
 # Correct
@@ -1064,6 +1065,17 @@ if zsh_at_startup; then
     zsh_set_alias
     zsh_set_keybind
 fi
+
+function peco-src () {
+  local selected_dir=$(ghq list -p | peco --query "$LBUFFER")
+  if [ -n "$selected_dir" ]; then
+    BUFFER="cd ${selected_dir}"
+    zle accept-line
+  fi
+  zle clear-screen
+}
+zle -N peco-src
+bindkey '^]' peco-src
 
 # vim:fdm=marker fdc=3 ft=zsh ts=4 sw=4 sts=4:
 

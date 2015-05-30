@@ -27,3 +27,5 @@
 [diff]
     tool = vimdiff
     algorithm = histogram
+[ghq]
+	root = ~/src

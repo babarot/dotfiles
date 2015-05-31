@@ -1,0 +1,15 @@
+#!/bin/zsh
+
+list() {
+    echo "$HOME"
+    echo "$GOPATH"/src/github.com
+    echo "$GOPATH"/src/github.com/**/*(/)
+    echo ~/Dropbox/etc/dotfiles
+    echo ~/Dropbox/etc/dotfiles/**/*(/)
+}
+
+to() {
+    list | tr ' ' '\n' | peco
+}
+
+to

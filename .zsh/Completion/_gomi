@@ -1,0 +1,27 @@
+#compdef gomi
+
+# Copyright (c) 2015 b4b4r07
+# License: MIT
+
+function _gomi() {
+    local context curcontext=$curcontext state line
+    typeset -A opt_args
+    local ret=1
+
+    _arguments -C \
+        '(-h --help)'{-h,--help}'[show this help and exit]' \
+        '(-r --restore -s --system)'{-r,--restore}'[restore files from gomi box]' \
+        '(-r --restore -s --system)'{-s,--system}'[use system-trashcan instead gomi-trashcan]' \
+        '(-)*:files:->file' \
+        && ret=0
+
+    case $state in
+      file)
+        _files && ret=0
+        ;;
+    esac
+
+    return ret
+}
+
+_gomi "$@"

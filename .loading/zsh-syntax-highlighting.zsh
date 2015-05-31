@@ -1,0 +1,1 @@
+/Users/b4b4r07/src/github.com/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

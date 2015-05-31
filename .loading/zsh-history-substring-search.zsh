@@ -1,0 +1,1 @@
+/Users/b4b4r07/src/github.com/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh

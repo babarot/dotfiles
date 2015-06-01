@@ -1,0 +1,23 @@
+tap 'homebrew/bundle'
+
+brew 'ack'
+brew 'gdbm'
+brew 'git'
+brew 'go', args: ['cross-compile-common']
+brew 'hub'
+brew 'jq'
+brew 'libevent'
+brew 'mercurial'
+brew 'openssl'
+brew 'peco'
+brew 'python'
+brew 'readline'
+brew 'reattach-to-user-namespace'
+brew 'sqlite'
+brew 'tig'
+brew 'tmux'
+brew 'tree'
+brew 'vim', args: ['with-lua', 'with-luajit']
+brew 'wget'
+brew 'zsh', args: ['disable-etcdir']
+brew 'zsh-completions'

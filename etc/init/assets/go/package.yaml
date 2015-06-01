@@ -1,0 +1,33 @@
+package:
+    - name: github.com/b4b4r07/gch
+    - name: github.com/b4b4r07/brionac
+    - name: github.com/b4b4r07/go-pipe
+      noinstall: true
+    - name: github.com/b4b4r07/gomi
+    - name: github.com/b4b4r07/xtime
+      noinstall: true
+    - name: github.com/cheggaaa/pb
+      noinstall: true
+    - name: github.com/codegangsta/cli
+      noinstall: true
+    - name: github.com/daviddengcn/go-colortext
+    - name: github.com/douglarek/gist
+    - name: github.com/jessevdk/go-flags
+      noinstall: true
+    - name: github.com/k0kubun/pp
+      noinstall: true
+    - name: github.com/kyokomi/emoji
+      noinstall: true
+    - name: github.com/mattn/go-scan
+      noinstall: true
+    - name: github.com/mattn/gof
+    - name: github.com/mattn/gom
+    - name: github.com/mgutz/ansi
+    - name: github.com/mitchellh/gox
+    - name: github.com/monochromegane/hoi
+    - name: github.com/motemen/ghq
+    - name: github.com/motemen/go-colorine
+      noinstall: true
+    - name: github.com/nsf/godit
+    - name: github.com/peco/peco
+    - name: github.com/tcnksm/ghr

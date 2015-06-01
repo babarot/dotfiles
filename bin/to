@@ -1,15 +1,23 @@
 #!/bin/zsh
 
+db=~/.to
+
 list() {
     echo "$HOME"
     echo "$GOPATH"/src/github.com
     echo "$GOPATH"/src/github.com/**/*(/)
     echo ~/Dropbox/etc/dotfiles
     echo ~/Dropbox/etc/dotfiles/**/*(/)
+    [[ -f "$db" ]] && cat "$db"
 }
 
 to() {
+    if [[ "$1" == "add" ]]; then
+        touch "$db"
+        pwd >>|"$db"
+        return
+    fi
     list | tr ' ' '\n' | peco
 }
 
-to
+to "$@"

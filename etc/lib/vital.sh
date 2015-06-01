@@ -48,3 +48,7 @@ is_ssh_running() { [ ! -z "$SSH_CONECTION" ]; }
 
 # Check if exists and sourcing file
 import() { eval "[[ -${2:-f} $1 ]]" && source "$1"; }
+
+cwd() {
+    cd "$(dirname "${1:-${BASH_SOURCE:-$0}}")" && pwd
+}

@@ -1,7 +1,5 @@
-DOTFILES_GITHUB   := "http://github.com/b4b4r07/dotfiles.git"
 DOTFILES_EXCLUDES := .DS_Store .git .gitmodules .travis.yml
 DOTFILES_TARGET   := $(wildcard .??*) bin
-DOTFILES_DIR      := $(PWD)
 DOTFILES_FILES    := $(filter-out $(DOTFILES_EXCLUDES), $(DOTFILES_TARGET))
 
 all: install
@@ -10,14 +8,12 @@ test:
 	@prove $(PROVE_OPT) $(wildcard ./etc/test/*_test.pl)
 
 help:
-	@echo "make list           #=> List the files"
-	@echo "make update         #=> Fetch changes"
-	@echo "make deploy         #=> Create symlink"
-	@echo "make init           #=> Setup environment"
-	@echo "make install        #=> Updating, deploying and initializng"
-	@echo "make clean          #=> Remove the dotfiles"
-	@echo "make brew           #=> Update brew packages"
-	@echo "make cask           #=> Update cask packages"
+	@echo "make list           #=> Show file list for deployment"
+	@echo "make update         #=> Fetch changes for this repo"
+	@echo "make deploy         #=> Create symlink to home directory"
+	@echo "make init           #=> Setup environment settings"
+	@echo "make install        #=> Run make update, deploy, init"
+	@echo "make clean          #=> Remove the dotfiles and this repo"
 
 list:
 	@$(foreach val, $(DOTFILES_FILES), ls -dF $(val);)
@@ -29,25 +25,13 @@ update:
 	git submodule foreach git pull origin master
 
 deploy:
-	@echo 'Start deploy dotfiles current directory.'
-	@echo 'If this is "dotdir", curretly it is ignored and copy your hand.'
+	@echo 'Copyright (c) 2013-2015 BABAROT All Rights Reserved.'
+	@echo '==> Start to deploy dotfiles to home directory.'
 	@echo ''
 	@$(foreach val, $(DOTFILES_FILES), ln -sfnv $(abspath $(val)) $(HOME)/$(val);)
 
 init:
-	@$(foreach val, $(wildcard ./etc/init/*.sh), bash $(val);)
-ifeq ($(shell uname), Darwin)
-	@$(foreach val, $(wildcard ./etc/init/osx/*.sh), bash $(val);)
-
-homebrew:
-	@bash $(DOTFILES_DIR)/etc/init/osx/install_homebrew.sh
-
-brew: homebrew
-	@bash $(DOTFILES_DIR)/etc/init/osx/Brewfile
-
-cask: homebrew
-	@bash $(DOTFILES_DIR)/etc/init/osx/Caskfile
-endif
+	@$(foreach val, $(wildcard ./etc/init/*.sh), DOTPATH=$(PWD) bash $(val);)
 
 install: update deploy init
 	@exec $$SHELL
@@ -55,4 +39,4 @@ install: update deploy init
 clean:
 	@echo 'Remove dot files in your home directory...'
 	@-$(foreach val, $(DOTFILES_FILES), rm -vrf $(HOME)/$(val);)
-	-rm -rf $(DOTFILES_DIR)
+	-rm -rf $(PWD)

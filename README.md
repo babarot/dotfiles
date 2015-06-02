@@ -1,5 +1,3 @@
-# The [B4B4R07](https://twitter.com/b4b4r07)'s dotfiles
-
 [![https://dribbble.com/shots/1466768-dotfiles-logo](./doc/img/dotfiles.png)](https://b4b4r07.github.io/dotfiles "b4b4r07 dotfiles gh-pages")
 
 [![Build Status](https://travis-ci.org/b4b4r07/dotfiles.svg?branch=master)](https://travis-ci.org/b4b4r07/dotfiles "Build Status")

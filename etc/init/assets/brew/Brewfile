@@ -1,6 +1,8 @@
 tap 'homebrew/bundle'
 
 brew 'ack'
+brew 'cowsay'
+brew 'figlet'
 brew 'gdbm'
 brew 'git'
 brew 'go', args: ['cross-compile-common']

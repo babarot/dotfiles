@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -eu
+
+new() {
+    local go="$GOPATH"/src/github.com/b4b4r07
+    if [ -z "${1:-}" ]; then
+        echo "$go"
+    else
+        local new="$go"/"$1"
+        if [ ! -d "$new" ]; then
+            mkdir -p "$new"
+        fi &&
+        echo "$new"
+    fi
+}
+
+new "$@"

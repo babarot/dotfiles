@@ -1,14 +1,37 @@
 log=~/.cdlog
 
 cd() {
+    makelog "acceleration"
     makelog "refresh"
 
-    if [ -d "$1" ]; then
+    if [ -p /dev/stdin ]; then
+        a=$(accept)
+        builtin cd "${a:-$1}"
+    elif [ -f "$1" ]; then
+        c=$(count "$1")
+        if [[ "$c" -eq 0 ]]; then
+            builtin cd "$(dirname "$1")"
+        else
+            interface "$1"
+        fi
+    elif [ -d "$1" ]; then
         builtin cd "$1"
     else
         interface "$1"
     fi &&
     makelog "assemble"
+}
+
+accept() {
+    exists "peco" || return 1
+    line=$(cat -)
+    if [[ $(echo "$line" | grep -c "") > 1 ]]; then
+        line=$(echo "$line" | peco --layout=bottom-up)
+    fi
+    if [ ! -d "$line" ]; then
+        line=$(dirname "$line")
+    fi
+    echo "$line"
 }
 
 exists() {
@@ -28,12 +51,14 @@ interface() {
                 exists "ghq" && ghq list -p
                 cat "$log"
                 echo "$HOME"
-            } | reverse2 | unique | peco
+            } | reverse2 | unique | peco --layout=bottom-up
         )
         [[ -n "$target" ]] && builtin cd "$target"
     else
         if [[ "$1" = "-" ]]; then
-            builtin cd "$(tail "$log" | head -9 | tail -1)" && return 0
+            target=$(list | head | peco --layout=bottom-up)
+            [[ -n "$target" ]] && builtin cd "$target"
+            return 0
         fi
 
         c=$(count "$1")
@@ -43,7 +68,7 @@ interface() {
         elif [[ "$c" -eq 1 ]]; then
             builtin cd $(narrow "$1")
         else
-            builtin cd $(narrow "$1"| peco)
+            builtin cd $(narrow "$1"| peco --layout=bottom-up)
         fi
     fi
     return 0
@@ -61,7 +86,7 @@ list() {
 }
 
 narrow() {
-    list | awk '/\/.?'"$1"'[^\/]*$/{print $0}'
+    list | awk '/\/.?'"$1"'[^\/]*$/{print $0}' 2>/dev/null
 }
 
 count() {
@@ -109,6 +134,10 @@ assemble() {
     enumrate
     cat "$log"
     pwd
+}
+
+acceleration() {
+    list | reverse2
 }
 
 reverse2() {

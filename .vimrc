@@ -3220,10 +3220,10 @@ if s:has_plugin('vim-splash') "{{{
 endif
 "}}}
 if s:has_plugin('vim-anzu') "{{{
-  nmap n <Plug>(anzu-n-with-echo)zz
-  nmap N <Plug>(anzu-N-with-echo)zz
-  nmap * <Plug>(anzu-star-with-echo)zz
-  nmap # <Plug>(anzu-sharp-with-echo)zz
+  nmap n <Plug>(anzu-n-with-echo)
+  nmap N <Plug>(anzu-N-with-echo)
+  nmap * <Plug>(anzu-star-with-echo)
+  nmap # <Plug>(anzu-sharp-with-echo)
   "nmap n <Plug>(anzu-mode-n)
   "nmap N <Plug>(anzu-mode-N)
 endif

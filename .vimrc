@@ -805,9 +805,10 @@ endfunction "}}}
 
 " Handle buffers.
 function! s:buf_delete(bang) "{{{
-  let g:buf_delete_safety_mode = 1
-
   let file = fnamemodify(expand('%'), ':p')
+  let g:buf_delete_safety_mode = 1
+  let g:buf_delete_custom_command = "system(printf('%s %s', 'gomi', shellescape(file)))"
+
   if filereadable(file)
     if empty(a:bang)
       redraw | echo 'Delete "' . file . '"? [y/N]: '
@@ -817,7 +818,7 @@ function! s:buf_delete(bang) "{{{
       if g:buf_delete_safety_mode == 1
         silent! execute has('clipboard') ? '%yank "*' : '%yank'
       endif
-      if delete(file) == 0
+      if eval(g:buf_delete_custom_command == "" ? delete(file) : g:buf_delete_custom_command) == 0
         let bufname = bufname(fnamemodify(file, ':p'))
         if bufexists(bufname) && buflisted(bufname)
           execute "bwipeout" bufname

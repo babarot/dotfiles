@@ -2953,12 +2953,14 @@ if s:has_plugin('unite.vim') "{{{
   nnoremap <silent> ,r  :<C-u>UniteResume search-buffer<CR>
 
   " Use ag(The Silver Searcher) as unite grep
-  if executable('ag')
-    let g:unite_source_grep_command = 'ag'
-    let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
+  if executable('pt')
+    "let g:unite_source_grep_command = 'ag'
+    "let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
+    "let g:unite_source_grep_recursive_opt = ''
+    let g:unite_source_grep_command = 'pt'
+    let g:unite_source_grep_default_opts = '--nogroup --nocolor'
     let g:unite_source_grep_recursive_opt = ''
   endif
-
 endif
 "}}}
 if s:has_plugin('neocomplete') "{{{

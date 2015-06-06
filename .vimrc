@@ -10,31 +10,38 @@
 "    ~~~~         \/__/         /:/  /       |:|  |        \:\__\     
 "                               \/__/         \|__|         \/__/     
 
-" Initial: {{{
-" Author.....<B4B4R07> BABAROT
-" Contacts...<b4b4r07@gmail.com>
+" README:
+" Copyright (c) 2013-2015 b4b4r07 (aka BABAROT) All Rights Reserved
 "
-" # INTRODUCTION
-" This vimrc are built with two pillars mainly.
-" One is mru(b4b4r07/mru.vim), another is buftabs(b4b4r07/vim-buftabs). 
-" Although these are implemented using plugins, in order to be available
-" in the plain vim, defines the following functions.
-" 
+" BABAROT
+" GitHub -> https://github.com/b4b4r07
+"
+" # Description
+" I'm a Vim beginner. Therefore , this vimrc is incomplete.
+" I appreciate your understanding in this matter.
+" Well, in this vimrc, two useful features have been incorporated.
+"
 " - s:get_buflists()
 " - s:MRU (the internal vimrc)
-" 
-" The former is a function that emulates the buftabs.
-" The latter is the mru.
-" Focusing on these two functions, this vimrc is composed of many utilities.
 "
-" *Useful priorities*
+" `s:get_buflists()` is a function that manages the buffer in this Vim.
+" Thus, you can grasp the status of the buffer unintentionally.
+" Next, `s:MRU()` is a function that manage a file that was used recently.
+" In recent years, it's features with any editor by default.
+" By embedding the vimrc, because it is not affected by the external plugins,
+" it is possible to use these features if you have this vimrc.
+"
+" Otherwise, there is some useful functions that were embedded in this vimrc.
+"
 " - s:ls()
 " - s:smart_bwipeout()
 " - s:win_tab_switcher()
+" - ...
 "
 " Thank you.
 "==============================================================================
 
+" Initial: {{{
 " Skip initialization for vim-tiny or vim-small
 if !1 | finish | endif
 

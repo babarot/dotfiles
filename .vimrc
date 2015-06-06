@@ -365,6 +365,8 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   "NeoBundle 'dgryski/vim-godef'
   "NeoBundle 'vim-jp/vim-go-extra'
   "NeoBundle 'google/vim-ft-go'
+  NeoBundle 'cespare/vim-toml'
+  "NeoBundle 'ctrlpvim/ctrlp.vim'
 
   " Japanese help
   NeoBundle 'vim-jp/vimdoc-ja'

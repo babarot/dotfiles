@@ -1,23 +1,58 @@
 #!/bin/zsh
+#
+# @(#) to v0.0.1 2015.06.06
+#
+# Usage:
+#   cp file `to`
+# Description:
+#   Destination command
+#
+# Copyright (c) 2015 b4b4r07 (a.k.a. BABAROT)
+# see also <https://github.com/b4b4r07>
+#
+# License:
+#   GNU General Public License version 3
+#
+######################################################################
+
+set -eu
+
+. $DOTPATH/etc/lib/standard.sh
+
+usage=$(cat <<-'HELP'
+usage: cp file `to`
+HELP
+)
 
 db=~/.to
 
 list() {
-    echo "$HOME"
-    echo "$GOPATH"/src/github.com
-    echo "$GOPATH"/src/github.com/**/*(/)
-    echo ~/Dropbox/etc/dotfiles
-    echo ~/Dropbox/etc/dotfiles/**/*(/)
-    [[ -f "$db" ]] && cat "$db"
+    {
+        if [ -n "$TOLIST" ]; then
+            cat "$TOLIST"
+        else
+            {
+                echo "$HOME"
+                echo "$GOPATH"/src/github.com
+                echo "$GOPATH"/src/github.com/**/*(/)
+                echo ~/Dropbox/etc/dotfiles
+                echo ~/Dropbox/etc/dotfiles/**/*(/)
+            } | perl -pe 's/ \//\n\//g'
+        fi
+        [[ -f "$db" ]] && cat "$db"
+    } | unique
 }
 
-to() {
-    if [[ "$1" == "add" ]]; then
+main() {
+    if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+        die "$usage"
+    fi
+
+    if [[ "${1:-}" == "add" ]]; then
         touch "$db"
         pwd >>|"$db"
         return
     fi
-    list | tr ' ' '\n' | peco
+   list | reverse | peco
 }
-
-to "$@"
+main ${@+"$@"}

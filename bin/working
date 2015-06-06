@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# @(#) new v0.0.1 2015.06.06
+# @(#) working v0.0.1 2015.06.06
 #
 # Usage:
-#   new TODO:
+#   working TODO:
 # Description:
 #   DESCRIPTION TODO:
 #
@@ -18,27 +18,22 @@
 set -eu
 
 . $DOTPATH/etc/lib/vital.sh
-. $DOTPATH/etc/lib/standard.sh
 
 usage=$(cat <<-HELP
-usage: new
+usage: working
 HELP
 )
 
 main() {
-    if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
         die "$usage"
     fi
     :
-    local go="$GOPATH"/src/github.com/b4b4r07
-    if [ -z "${1:-}" ]; then
-        echo "$go"
-    else
-        local new="$go"/"$1"
-        if [ ! -d "$new" ]; then
-            mkdir -p "$new"
-        fi &&
-        echo "$new"
+    cd "$PWD"
+    if ! is_git_repo; then
+        git init &&
+        git commit --allow-empty -m "Initial commit"
     fi
+    touch .working
 }
 main ${@+"$@"}

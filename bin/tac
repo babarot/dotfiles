@@ -1,16 +1,36 @@
 #!/bin/bash
 #
-# @(#) tac ver.0.1 2014.10.2
+# @(#) tac v0.0.1 2015.06.06
 #
 # Usage:
 #   tac file...
-#
 # Description:
-#   GNU tac command. Same as 'tail -r'.
+#   DESCRIPTION
+#
+# Copyright (c) 2015 b4b4r07 (a.k.a. BABAROT)
+# see also <https://github.com/b4b4r07>
+#
+# License:
+#   MIT
 #
 ######################################################################
 
-ex -s "$1" <<-EOF
-g/^/mo0
-%p
-EOF
+set -eu
+
+. $DOTPATH/etc/lib/vital.sh
+. $DOTPATH/etc/lib/standard.sh
+
+
+usage=$(cat <<-HELP
+usage: tac file...
+HELP
+)
+
+main() {
+    if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+        die "$usage"
+    fi
+
+    reverse ${@+"$@"}
+}
+main ${@+"$@"}

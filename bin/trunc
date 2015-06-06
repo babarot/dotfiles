@@ -1,8 +1,39 @@
 #!/bin/bash
-# usage: trunc FILE...
-# truncate files
+#
+# @(#) trunc v0.0.1 2015.06.06
+#
+# Usage:
+#   trunc file...
+# Description:
+#   truncate files
 
-for f in "$@"
-do
-    cat </dev/null >"$f"
-done
+#
+# Copyright (c) 2015 b4b4r07 (a.k.a. BABAROT)
+# see also <https://github.com/b4b4r07>
+#
+# License:
+#   GNU General Public License version 3
+#
+######################################################################
+
+set -eu
+
+. $DOTPATH/etc/lib/vital.sh
+. $DOTPATH/etc/lib/standard.sh
+
+usage=$(cat <<-HELP
+usage: trunc file...
+HELP
+)
+
+main() {
+    if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+        die "$usage"
+    fi
+    :
+    for f in "$@"
+    do
+        cat </dev/null >"$f"
+    done
+}
+main ${@+"$@"}

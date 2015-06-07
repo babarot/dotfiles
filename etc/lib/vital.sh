@@ -37,7 +37,7 @@ is_exists() {
 is_login_shell() { [[ $SHLVL == 1 ]]; }
 
 # Test whether we're in a git repo
-is_git_repo() { $(git rev-parse --is-inside-work-tree &> /dev/null); }
+is_git_repo() { git rev-parse --is-inside-work-tree &>/dev/null; }
 
 # Check if running the screen or tmux
 is_screen_running() { [ ! -z "$STY" ]; }
@@ -51,4 +51,13 @@ import() { eval "[[ -${2:-f} $1 ]]" && source "$1"; }
 
 cwd() {
     cd "$(dirname "${1:-${BASH_SOURCE:-$0}}")" && pwd
+}
+
+has() {
+    type "$1" >/dev/null 2>&1
+    return $?
+}
+
+is_help() {
+    [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]
 }

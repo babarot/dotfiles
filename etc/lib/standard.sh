@@ -104,6 +104,51 @@ function abs_path()
     IFS="$_IFS"
 }
 
+function rel_path()
+{
+    if [ -z "$1" ]; then
+        echo 'too few arguments' 1>&2
+        return 1
+    fi
+
+    if [ `expr x"$1" : x'/'` -eq 0 ]; then
+        echo "$1: not an absolute path" 1>&2
+        return 1
+    fi
+
+    local org=`expr x"$PWD" : x'/\(.*\)'`
+    local abs=`expr x"$1"   : x'/\(.*\)'`
+    local rel="."
+    local org1=""
+    local abs1=""
+
+    while true; do
+        org1=`expr x"$org" : x'\([^/]*\)'`
+        abs1=`expr x"$abs" : x'\([^/]*\)'`
+
+        [ "$org1" != "$abs1" ] && break
+
+        org=`expr x"$org" : x'[^/]*/\(.*\)'`
+        abs=`expr x"$abs" : x'[^/]*/\(.*\)'`
+    done
+
+    if [ -n "$org" ]; then
+        local _IFS="$IFS"; IFS='/'
+        for c in $org; do
+            rel="$rel/.."
+        done
+        IFS="$_IFS"
+    fi
+
+    if [ -n "$abs" ]; then
+        rel="$rel/$abs"
+    fi
+
+    rel=`expr x"$rel" : x'\./\(.*\)'`
+    echo "$rel"
+    return 0
+}
+
 function calc() { awk "BEGIN{ print $* }"; }
 
 function nonewline()
@@ -360,4 +405,56 @@ function path_remove()
 
     echo "$path"
     return 0
+}
+
+unique() {
+    awk '!a[$0]++' "${1:--}"
+}
+
+reverse() {
+    awk '
+    BEGIN {
+        sort_exe = "sort -t \"\034\" -nr"
+    }
+    
+    {
+        printf("%d\034%s\n", NR, $0) |& sort_exe;
+    }
+    
+    END {
+        close(sort_exe, "to");
+    
+        while ((sort_exe |& getline var) > 0) {
+            split(var, arr, /\034/);
+    
+            print arr[2];
+        }
+        close(sort_exe);
+    }' ${@+"$@"}
+}
+
+die() {
+    echo "$1" 1>&2
+    exit 1
+}
+
+readlinkf() {
+    TARGET_FILE="$1"
+
+    builtin cd `dirname $TARGET_FILE`
+    TARGET_FILE=`basename $TARGET_FILE`
+
+    # Iterate down a (possible) chain of symlinks
+    while [ -L "$TARGET_FILE" ]
+    do
+        TARGET_FILE=`readlink $TARGET_FILE`
+        cd `dirname $TARGET_FILE`
+        TARGET_FILE=`basename $TARGET_FILE`
+    done
+
+    # Compute the canonicalized name by finding the physical path 
+    # for the directory we're in and appending the target file.
+    PHYS_DIR=`pwd -P`
+    RESULT=$PHYS_DIR/$TARGET_FILE
+    echo $RESULT
 }

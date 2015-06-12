@@ -5,9 +5,11 @@ brew 'gorionac'
 
 brew 'ack'
 brew 'cowsay'
+brew 'ffmpeg'
 brew 'figlet'
 brew 'gawk'
 brew 'gdbm'
+brew 'gifsicle'
 brew 'git'
 brew 'go', args: ['cross-compile-common']
 brew 'hub'

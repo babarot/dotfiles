@@ -23,7 +23,7 @@ set -eu
 function get_path()
 {
     local -a args
-    [[ -z "$1" ]] && args+=(".")
+    [[ -z "${1:-}" ]] && args+=(".")
     while (( $# > 0 ))
     do
         case "$1" in
@@ -50,7 +50,7 @@ function get_path()
         esac
     done
     
-    if [[ "$option_r" == 'true' ]]; then
+    if [[ "${option_r:-}" == 'true' ]]; then
         rel_path "$args"
     else
         abs_path "$args"

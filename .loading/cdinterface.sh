@@ -1,5 +1,9 @@
 log=~/.cdlog
 
+FILTER_COMMAND=fzf
+#FILTER_OPTION="--layout=bottom-up"
+FILTER="$FILTER_COMMAND $FILTER_OPTION"
+
 cd() {
     makelog "acceleration"
     makelog "refresh"
@@ -23,10 +27,10 @@ cd() {
 }
 
 accept() {
-    exists "peco" || return 1
+    exists "$FILTER_COMMAND" || return 1
     line=$(cat -)
     if [[ $(echo "$line" | grep -c "") > 1 ]]; then
-        line=$(echo "$line" | peco --layout=bottom-up)
+        line=$(echo "$line" | $FILTER_COMMAND )
     fi
     if [ ! -d "$line" ]; then
         line=$(dirname "$line")
@@ -40,7 +44,7 @@ exists() {
 }
 
 interface() {
-    if ! exists "peco"; then
+    if ! exists "$FILTER_COMMAND"; then
         builtin cd "$1"
         return 0
     fi
@@ -51,12 +55,12 @@ interface() {
                 exists "ghq" && ghq list -p
                 cat "$log"
                 echo "$HOME"
-            } | reverse2 | unique | peco --layout=bottom-up
+            } | reverse2 | unique | $FILTER
         )
         [[ -n "$target" ]] && builtin cd "$target"
     else
         if [[ "$1" = "-" ]]; then
-            target=$(list | head | peco --layout=bottom-up)
+            target=$(list | head | $FILTER)
             [[ -n "$target" ]] && builtin cd "$target"
             return 0
         fi
@@ -68,7 +72,7 @@ interface() {
         elif [[ "$c" -eq 1 ]]; then
             builtin cd $(narrow "$1")
         else
-            builtin cd $(narrow "$1"| peco --layout=bottom-up)
+            builtin cd $(narrow "$1"| $FILTER)
         fi
     fi
     return 0

@@ -10,6 +10,7 @@ set -eu
 # Mac OS X only!!
 is_osx || exit
 
-if ! is_exist "brew"; then
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+if hasnt "brew"; then
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" &&
+        brew doctor
 fi

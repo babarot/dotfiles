@@ -7,9 +7,12 @@ set -eu
 . $DOTPATH/etc/lib/standard.sh
 
 if is_exist "python"; then
+    has "pygmentize" && exit
+
     sudo easy_install pip
     pip install Pygments
     pip install pygments-style-solarized
+
     cd $DOTPATH/etc/init/assets/pygments
     if [ -d solarized-pygment ]; then
         cd solarized-pygment

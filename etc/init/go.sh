@@ -10,9 +10,9 @@ set -eu
 # Mac OS X only!!
 is_osx || exit
 
-if is_exist "gorionac"; then
+if is_exist "goal"; then
     cd $DOTPATH/etc/init/assets/go
-    if [ -f package.yaml ]; then
-        gorionac
+    if [ -f config.toml ]; then
+        goal
     fi
 fi

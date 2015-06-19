@@ -16,6 +16,17 @@
 " BABAROT
 " GitHub -> https://github.com/b4b4r07
 "
+
+" To write this vimrc, the most important thing is to observe the following
+" decencies.
+"
+" - !! Portability and Multi-platform !!
+" - !! Don't rely on plugins too much !!
+"
+" By integrating many useful functions as much as possible　into this vimrc,
+" it is possible to construct the highly versatile Vim without Vim plugins
+" and Network.
+"
 " # Description
 " I'm a Vim beginner. Therefore, this vimrc is incomplete.
 " I appreciate your understanding in this matter.
@@ -41,21 +52,23 @@
 " Thank you.
 "==============================================================================
 
-" Initial: {{{1
+" Startup: {{{1
 " Skip initialization for vim-tiny or vim-small
-if !1 | finish | endif
+" take account of '-eval'
+"if !1 | finish | endif
+if 0 | endif
 
 " Use plain vim
-" when vim was invoked by 'sudo' command.
+" when vim was invoked by 'sudo' command
 " or, invoked as 'git difftool'
 if exists('$SUDO_USER') || exists('$GIT_DIR')
   finish
 endif
 
-" Starting Vim. {{{2
 if has('vim_starting')
   " Necesary for lots of cool vim things
-  set nocompatible
+  "set nocompatible
+  " http://rbtnn.hateblo.jp/entry/2014/11/30/174749
   " Define the entire vimrc encoding
   scriptencoding utf-8
   " Initialize runtimepath
@@ -71,8 +84,12 @@ if has('vim_starting')
   endif
 endif
 
-" Variables {{{2
-" Operating System.
+" Script variables {{{2
+" boolean
+let s:true  = 1
+let s:false = 0
+
+" platform
 let s:is_windows = has('win16') || has('win32') || has('win64')
 let s:is_cygwin = has('win32unix')
 let s:is_mac = !s:is_windows && !s:is_cygwin
@@ -84,7 +101,7 @@ let s:is_linux = !s:is_mac && has('unix')
 let s:vimrc = expand("<sfile>:p")
 let $MYVIMRC = s:vimrc
 
-" Define neobundle runtimepath.
+" NeoBundle path
 if s:is_windows
   let $DOTVIM = expand('~/vimfiles')
 else
@@ -93,14 +110,7 @@ endif
 let $VIMBUNDLE = $DOTVIM . '/bundle'
 let $NEOBUNDLEPATH = $VIMBUNDLE . '/neobundle.vim'
 
-" Script local variables.
-let s:is_tabpage = (&showtabline == 1 && tabpagenr('$') >= 2)
-      \ || (&showtabline == 2 && tabpagenr('$') >= 1)
-
-let s:true  = 1
-let s:false = 0
-
-" Vimrc management variables.
+" vimrc management variables
 let s:vimrc_plugin_on                  = get(g:, 'vimrc_plugin_on',                  s:true)
 let s:vimrc_suggest_neobundleinit      = get(g:, 'vimrc_suggest_neobundleinit',      s:true)
 let s:vimrc_goback_to_eof2bof          = get(g:, 'vimrc_goback_to_eof2bof',          s:false)
@@ -112,31 +122,32 @@ let s:vimrc_colorize_statusline_insert = get(g:, 'vimrc_colorize_statusline_inse
 let s:vimrc_manage_rtp_manually        = get(g:, 's:vimrc_manage_rtp_manually',      s:false)
 let s:vimrc_auto_cd_file_parentdir     = get(g:, 's:vimrc_auto_cd_file_parentdir',   s:false)
 
-" HOW TO USE:
+" misc
+let s:is_tabpage = (&showtabline == 1 && tabpagenr('$') >= 2)
+      \ || (&showtabline == 2 && tabpagenr('$') >= 1)
+let s:cwd = getcwd()
+" if s:vimrc_manage_rtp_manually is s:true, s:vimrc_plugin_on is disabled.
+let s:vimrc_plugin_on = s:vimrc_manage_rtp_manually == s:true ? s:false : s:vimrc_plugin_on
+
+" nil variables
+" Usage:
 " if exists('s:vimrc_nil_dummy_variables')
 "   execute ...
 " This variable is used to disable the feature intentionally.
 unlet! s:vimrc_nil_dummy_variables
 
-" If s:vimrc_manage_rtp_manually is s:true, s:vimrc_plugin_on is disabled.
-let s:vimrc_plugin_on = s:vimrc_manage_rtp_manually == s:true ? s:false : s:vimrc_plugin_on
-"}}}
-
-if has('vim_starting')
-  if isdirectory($VIMBUNDLE) && s:vimrc_manage_rtp_manually == s:true
-    set runtimepath&
-    for plug in split(glob($VIMBUNDLE . "/*"), '\n')
-      execute 'set runtimepath+=' . plug
-    endfor
-  endif
-endif
-
-if len(findfile("dev.vim", ".;")) > 0
+" Depelopment for Vim plugin {{{2
+if len(findfile("Vimpfile", ".;")) > 0
   let s:vimrc_plugin_on = s:false
-  execute "set rtp+=" . getcwd()
+  set runtimepath&
+  execute "set runtimepath+=" . s:cwd
+  execute "set runtimepath+=" . s:cwd . "/.vimp"
+  for s:plugin in split(glob(s:cwd . "/.vimp/*"), '\n')
+    execute 'set runtimepath+=' . s:plugin
+  endfor
 endif
 
-" NeoBundle: {{{2
+" NeoBundle: {{{1
 " Next generation Vim package manager settings.
 " Use the NeoBundle (if installed and found on the default search runtimepath).
 " If it is not installed, suggest executing ':NeoBundleInit' command.
@@ -150,7 +161,8 @@ if has('vim_starting') && isdirectory($NEOBUNDLEPATH)
   endif
 endif
 
-if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
+" neobundle {{{
+if stridx(&runtimepath, $NEOBUNDLEPATH) != -1
   let g:neobundle#enable_tail_path = 1
   let g:neobundle#default_options = {
         \ 'same' : { 'stay_same' : 1, 'overwrite' : 0 },
@@ -263,6 +275,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   NeoBundle 'ujihisa/neco-look', { 'external_commands' : 'look' }
   NeoBundle 'ujihisa/unite-colorscheme'
   NeoBundle 'b4b4r07/mru.vim'
+  "NeoBundle 'b4b4r07/vim-vimp'
   "NeoBundle 'b4b4r07/vim-autocdls'
   NeoBundle 'b4b4r07/vim-shellutils'
   NeoBundle 'b4b4r07/vim-favdir'
@@ -298,6 +311,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
         \ 'lazy': 1,
         \ 'commands': 'Agit',
         \ }
+  NeoBundle 'cohama/lexima.vim'
   NeoBundle 'LeafCage/yankround.vim'
   NeoBundle 'LeafCage/foldCC'
   NeoBundle 'junegunn/vim-easy-align'
@@ -356,7 +370,6 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   NeoBundle 'elzr/vim-json'
   "NeoBundle 'majutsushi/tagbar'
   "NeoBundle 'Shougo/vimfiler'
-  "NeoBundle 'Shougo/vimproc'
   "NeoBundle 'Shougo/unite.vim'
   "NeoBundle 'Shougo/unite-outline'
   "NeoBundle 'dgryski/vim-godef'
@@ -364,6 +377,9 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
   "NeoBundle 'google/vim-ft-go'
   NeoBundle 'cespare/vim-toml'
   "NeoBundle 'ctrlpvim/ctrlp.vim'
+  NeoBundle 'junegunn/vim-emoji'
+  "NeoBundle 'toyamarinyon/hatenablog-vim'
+  "NeoBundle 'b4b4r07/vim-ezoe'
 
   " Japanese help
   NeoBundle 'vim-jp/vimdoc-ja'
@@ -391,14 +407,14 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1 "{{{
 
   " Manually manage rtp
   "NeoBundle 'vim-mru', {'type' : 'nosync', 'base' : '~/.vim/manual'}
+  "NeoBundle 'vim-curbuf', {'type' : 'nosync', 'base' : '~/src/github.com/b4b4r07'}
+
   call neobundle#end()
 
   " Check.
   NeoBundleCheck
-
 else
-  " No neobundle {{{2
-  " If the NeoBundle doesn't exist.
+  " no neobundle {{{2
   command! NeoBundleInit try | call s:neobundle_init()
         \| catch /^neobundleinit:/
           \|   echohl ErrorMsg
@@ -446,36 +462,43 @@ else
   else
     NeoBundleInit
   endif
-endif "}}}
+endif
+"}}}
 
-" Filetype start.
+" nessesary
 filetype plugin indent on
 
-" Utilities: {{{1
+" Library: in vimrc {{{1
 " Functions that are described in this section is general functions.
 " It is not general, for example, functions used in a dedicated purpose
 " has been described in the setting position.
 "==============================================================================
 
-" Some utilities.
-function! s:bundled(bundle) "{{{2
+" func s:bundle() {{{2
+" @params string
+" @return bool
+"
+function! s:bundled(bundle)
   if !isdirectory($VIMBUNDLE)
-    return 0
+    return s:false
   endif
   if stridx(&runtimepath, $NEOBUNDLEPATH) == -1
-    return 0
+    return s:false
   endif
 
   if a:bundle ==# 'neobundle.vim'
-    return 1
+    return s:true
   else
     return neobundle#is_installed(a:bundle)
   endif
 endfunction
 
-function! s:has_plugin(name) "{{{2
+" func s:has_plugin() {{{2
+" @params string
+" @return bool
+"
+function! s:has_plugin(name)
   " Check {name} plugin whether there is in the runtime path
-
   let nosuffix = a:name =~? '\.vim$' ? a:name[:-5] : a:name
   let suffix   = a:name =~? '\.vim$' ? a:name      : a:name . '.vim'
   return &rtp =~# '\c\<' . nosuffix . '\>'
@@ -485,7 +508,11 @@ function! s:has_plugin(name) "{{{2
         \   || globpath(&rtp, 'autoload/' . tolower(suffix), 1) != ''
 endfunction
 
-function! s:b4b4r07() "{{{2
+" func s:b4b4r07() {{{2
+" @params -
+" @return -
+"
+function! s:b4b4r07()
   hide enew
   setlocal buftype=nofile nowrap nolist nonumber bufhidden=wipe
   setlocal modifiable nocursorline nocursorcolumn
@@ -518,7 +545,11 @@ function! s:b4b4r07() "{{{2
   call feedkeys(type(char) == type(0) ? nr2char(char) : char)
 endfunction
 
-function! s:escape_filename(fname) "{{{2
+" func s:escape_filename() {{{2
+" @params string
+" @return string
+"
+function! s:escape_filename(fname)
   let esc_filename_chars = ' *?[{`$%#"|!<>();&' . "'\t\n"
   if exists("*fnameescape")
     return fnameescape(a:fname)
@@ -527,7 +558,11 @@ function! s:escape_filename(fname) "{{{2
   endif
 endfunction
 
-function! s:is_exist(path) "{{{2
+" func s:has() {{{2
+" @params string
+" @return bool
+"
+function! s:has(path)
   let save_wildignore = &wildignore
   setlocal wildignore=
   let path = glob(simplify(a:path))
@@ -535,14 +570,22 @@ function! s:is_exist(path) "{{{2
   if exists("*s:escape_filename")
     let path = s:escape_filename(path)
   endif
-  return empty(path) ? 0 : 1
+  return empty(path) ? s:false : s:true
 endfunction
 
-function! s:get_dir_separator() "{{{2
+" func s:get_dir_separator() {{{2
+" @params -
+" @return string
+"
+function! s:get_dir_separator()
   return fnamemodify('.', ':p')[-1 :]
 endfunction
 
-function! s:echomsg(hl, msg) "{{{2
+" func s:echomsg() {{{2
+" @params string, string
+" @return -
+"
+function! s:echomsg(hl, msg)
   execute 'echohl' a:hl
   try
     echomsg a:msg
@@ -551,46 +594,68 @@ function! s:echomsg(hl, msg) "{{{2
   endtry
 endfunction
 
-function! s:error(msg) "{{{2
+" func s:error() {{{2
+" @params string
+" @return bool
+"
+function! s:error(msg)
   echohl ErrorMsg
   echo 'ERROR: ' . a:msg
   echohl None
+  return s:false
 endfunction
 
-function! s:warning(msg) "{{{2
+" func s:warning() {{{2
+" @params string
+" @return -
+"
+function! s:warning(msg)
   echohl WarningMsg
   echo 'WARNING: ' . a:msg
   echohl None
 endfunction
 
-function! s:confirm(msg) "{{{2
+" func s:confirm() {{{2
+" @params string
+" @return bool
+"
+function! s:confirm(msg)
   return input(printf('%s [y/N]: ', a:msg)) =~? '^y\%[es]$'
 endfunction
 
-"function! s:mkdir(file, ...) "{{{2
-"  let f = a:0 ? fnamemodify(a:file, a:1) : a:file
-"  if !isdirectory(f)
-"    call mkdir(f, 'p')
-"  endif
-"endfunction
-
-function! s:mkdir(dir) "{{{2
-  let dir = expand(a:dir)
-  if !isdirectory(dir)
-    call mkdir(dir, "p")
-    return 1
+" func s:mkdir() {{{2
+" @params string...
+" @return bool
+"
+function! s:mkdir(dir)
+  if !exists("*mkdir")
+    return s:false
   endif
-  return 0
+
+  let dir = expand(a:dir)
+  if isdirectory(dir)
+    return s:true
+  endif
+
+  return mkdir(dir, "p")
 endfunction
 
-function! s:auto_mkdir(dir, force) "{{{2
+" func s:auto_mkdir() {{{2
+" @params string, bool
+" @return bool
+"
+function! s:auto_mkdir(dir, force)
   if !isdirectory(a:dir) && (a:force ||
         \ input(printf('"%s" does not exist. Create? [y/N] ', a:dir)) =~? '^y\%[es]$')
-    call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+    return mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
   endif
 endfunction
 
-function! s:smart_foldcloser() "{{{2
+" func s:smart_foldcloser() {{{2
+" @params -
+" @return -
+"
+function! s:smart_foldcloser()
   if foldlevel('.') == 0
     normal! zM
     return
@@ -608,18 +673,31 @@ function! s:smart_foldcloser() "{{{2
   normal! zM
 endfunction
 
-function! s:smart_execute(expr) "{{{2
+" func s:smart_execute() {{{2
+" @params string
+" @return -
+"
+function! s:smart_execute(expr)
   let wininfo = winsaveview()
   execute a:expr
   call winrestview(wininfo)
 endfunction
 
-function! s:rand(n) "{{{2
+" func s:rand() {{{2
+" @params int
+" @return int
+"
+function! s:rand(n)
   let match_end = matchend(reltimestr(reltime()), '\d\+\.') + 1
   return reltimestr(reltime())[match_end : ] % (a:n + 1)
 endfunction
 
-function! s:random_string(n) "{{{2
+" func s:random_string() {{{2
+" @params int
+" @return string
+" desc: portability
+"
+function! s:random_string(n)
   let n = a:n ==# '' ? 8 : a:n
   let s = []
   let chars = split('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', '\ze')
@@ -628,10 +706,14 @@ function! s:random_string(n) "{{{2
     call add(s, (chars[s:rand(max)]))
   endfor
   let @+ = join(s, '')
-  echo join(s, '')
+  return join(s, '')
 endfunction
 
-function! s:move_left_center_right(...) "{{{2
+" func s:move_left_center_right() {{{2
+" @params ...
+" @return -
+"
+function! s:move_left_center_right(...)
   let curr_pos = getpos('.')
   let curr_line_len = len(getline('.'))
   let curr_pos[3] = 0
@@ -658,24 +740,36 @@ function! s:move_left_center_right(...) "{{{2
   call setpos('.',curr_pos)
 endfunction
 
-function! s:toggle_option(option_name) "{{{2
+" func s:toggle_option() {{{2
+" @params string
+" @return -
+" Usage: s:toggle_option("relativenumber")
+"
+function! s:toggle_option(option_name)
   if exists('&' . a:option_name)
     execute 'setlocal' a:option_name . '!'
     execute 'setlocal' a:option_name . '?'
   endif
 endfunction
 
-function! s:toggle_variable(variable_name) "{{{2
+" func s:toggle_variable() {{{2
+" @params string
+" @return -
+"
+function! s:toggle_variable(variable_name)
   if eval(a:variable_name)
     execute 'let' a:variable_name . ' = 0'
   else
     execute 'let' a:variable_name . ' = 1'
   endif
   echo printf('%s = %s', a:variable_name, eval(a:variable_name))
-endfunction "}}}
+endfunction
 
-  " Handle files.
-function! s:rename(new, type) "{{{2
+" func s:rename() {{{2
+" @params string, string
+" @return bool
+"
+function! s:rename(new, type)
   if a:type ==# 'file'
     if empty(a:new)
       let new = input('New filename: ', expand('%:p:h') . '/', 'file')
@@ -700,7 +794,7 @@ function! s:rename(new, type) "{{{2
     if nr2char(getchar()) ==? 'y'
       silent call delete(new)
     else
-      return
+      return s:false
     endif
   endif
 
@@ -715,10 +809,14 @@ function! s:rename(new, type) "{{{2
   endif
 endfunction
 
-function! s:make_junkfile() "{{{2
+" func s:make_junkfile() {{{2
+" @params -
+" @return -
+"
+function! s:make_junkfile()
   let junk_dir = $HOME . '/.vim/junk'. strftime('/%Y/%m/%d')
   if !isdirectory(junk_dir)
-    call mkdir(junk_dir, 'p')
+    call s:mkdir(junk_dir)
   endif
 
   let ext = input('Junk Ext: ')
@@ -729,7 +827,11 @@ function! s:make_junkfile() "{{{2
   execute 'edit ' . filename
 endfunction
 
-function! s:copy_current_path(...) "{{{2
+" func s:copy_current_path() {{{2
+" @params -
+" @return -
+"
+function! s:copy_current_path(...)
   let path = a:0 ? expand('%:p:h') : expand('%:p')
   if s:is_windows
     let @* = substitute(path, '\\/', '\\', 'g')
@@ -739,36 +841,47 @@ function! s:copy_current_path(...) "{{{2
   echo path
 endfunction
 
-function! s:load_source(path) "{{{2
+" func s:load_source() {{{2
+" @params string
+" @return -
+"
+function! s:load_source(path)
   let path = expand(a:path)
   if filereadable(path)
     execute 'source ' . path
   endif
 endfunction
 
-function! s:open(file) "{{{2
+" func s:open() {{{2
+" @params string
+" @return bool
+"
+function! s:open(file)
   if !executable('open')
-    call s:error('open: your platform is not supported.')
-    return 0
+    return s:error('open: not supported yet.')
   endif
   let file = empty(a:file) ? expand('%') : fnamemodify(a:file, ':p')
   call system(printf('%s %s &', 'open', shellescape(file)))
-  return 1
+  return v:shell_error ? s:false : s:true
 endfunction
 
-function! s:ls(path, bang) "{{{2
+" func s:ls() {{{2
+" @params string, string
+" @return bool
+"
+function! s:ls(path, bang)
   let path = empty(a:path) ? getcwd() : expand(a:path)
   if filereadable(path)
     if executable("ls")
       echo system("ls -l " . path)
+      return v:shell_error ? s:false : s:true
     else
-      call s:warning('ls: command not found')
+      return s:error('ls: command not found')
     endif
-    return 1
   endif
+
   if !isdirectory(path)
-    echohl ErrorMsg | echo path . ": No such file or directory" | echohl NONE
-    return 0
+    return s:error(path.":No such file or directory")
   endif
 
   let save_ignore = &wildignore
@@ -781,8 +894,7 @@ function! s:ls(path, bang) "{{{2
   let filelist = substitute(filelist, '', '^M', 'g')
 
   if empty(filelist)
-    echo "no file"
-    return 0
+    return s:error("no file")
   endif
 
   let lists = []
@@ -819,10 +931,15 @@ function! s:ls(path, bang) "{{{2
       echon item . " "
     endif
   endfor
-  return 1
+
+  return s:true
 endfunction
 
-function! s:buf_delete(bang) "{{{2
+" func s:buf_delete() {{{2
+" @params string
+" @return bool
+"
+function! s:buf_delete(bang)
   let file = fnamemodify(expand('%'), ':p')
   let g:buf_delete_safety_mode = 1
   let g:buf_delete_custom_command = "system(printf('%s %s', 'gomi', shellescape(file)))"
@@ -842,18 +959,24 @@ function! s:buf_delete(bang) "{{{2
           execute "bwipeout" bufname
         endif
         echo "Deleted '" . file . "', successfully!"
-        return 1
+        return s:true
       endif
-      echo "Could not delete '" . file . "'"
+      "echo "Could not delete '" . file . "'"
+      return s:error("Could not delete '" . file . "'")
     else
       echo "Do nothing."
     endif
   else
-    echohl WarningMsg | echo "The '" . file . "' does not exist." | echohl NONE
+    "echohl WarningMsg | echo "The '" . file . "' does not exist." | echohl NONE
+    return s:error(echo "The '" . file . "' does not exist")
   endif
 endfunction
 
-function! s:count_buffers() "{{{2
+" func s:count_buffers() {{{2
+" @params -
+" @return int
+"
+function! s:count_buffers()
   let l:count = 0
   for i in range(1, bufnr('$'))
     if bufexists(i) && buflisted(i)
@@ -863,7 +986,11 @@ function! s:count_buffers() "{{{2
   return l:count
 endfunction
 
-function! s:get_buflists(...) "{{{2
+" func s:get_buflists() {{{2
+" @params string...
+" @return -
+"
+function! s:get_buflists(...)
   if a:0 && a:1 ==# 'n'
     silent bnext
   elseif a:0 && a:1 ==# 'p'
@@ -887,7 +1014,11 @@ function! s:get_buflists(...) "{{{2
   redraw | echo join(lists, "")
 endfunction
 
-function! s:smart_bwipeout(mode) "{{{2
+" func s:smart_bwipeout() {{{2
+" @params int
+" @return return
+"
+function! s:smart_bwipeout(mode)
   " Bwipeout! all buffers except current buffer.
   if a:mode == 1
     for i in range(1, bufnr('$'))
@@ -944,7 +1075,11 @@ function! s:smart_bwipeout(mode) "{{{2
   endif
 endfunction
 
-function! s:smart_bchange(mode) "{{{2
+" func s:smart_bchange() {{{2
+" @params int
+" @return return
+"
+function! s:smart_bchange(mode)
   let mode = a:mode
 
   " If window splitted, no working
@@ -981,7 +1116,11 @@ function! s:smart_bchange(mode) "{{{2
   endif
 endfunction
 
-function! s:bufnew(buf, bang) "{{{2
+" func s:smart_bchange() {{{2
+" @params string, string
+" @return -
+"
+function! s:bufnew(buf, bang)
   let buf = empty(a:buf) ? '' : a:buf
   execute "new" buf | only
   if !empty(a:bang)
@@ -994,7 +1133,11 @@ function! s:bufnew(buf, bang) "{{{2
   endif
 endfunction
 
-function! s:buf_enqueue(buf) "{{{2
+" func s:buf_enqueue() {{{2
+" @params string
+" @return -
+"
+function! s:buf_enqueue(buf)
   let buf = fnamemodify(a:buf, ':p')
   if bufexists(buf) && buflisted(buf) && filereadable(buf)
     let idx = match(s:bufqueue ,buf)
@@ -1005,7 +1148,11 @@ function! s:buf_enqueue(buf) "{{{2
   endif
 endfunction
 
-function! s:buf_dequeue(buf) "{{{2
+" func s:buf_dequeue() {{{2
+" @params string
+" @return []
+"
+function! s:buf_dequeue(buf)
   if empty(s:bufqueue)
     throw 'bufqueue: Empty queue.'
   endif
@@ -1017,17 +1164,26 @@ function! s:buf_dequeue(buf) "{{{2
   endif
 endfunction
 
-function! s:buf_restore() "{{{2
+" func s:buf_restore() {{{2
+" @params -
+" @return -
+"
+function! s:buf_restore()
   try
     execute 'edit' s:buf_dequeue(-1)
   catch /^bufqueue:/
-    echohl ErrorMsg
-    echomsg v:exception
-    echohl None
+    "echohl ErrorMsg
+    "echomsg v:exception
+    "echohl None
+    call s:error(v:exception)
   endtry
 endfunction
 
-function! s:all_buffers_bwipeout() "{{{2
+" func s:all_buffers_bwipeout() {{{2
+" @params -
+" @return -
+"
+function! s:all_buffers_bwipeout()
   for i in range(1, bufnr('$'))
     if bufexists(i) && buflisted(i)
       execute 'bwipeout' i
@@ -1035,7 +1191,11 @@ function! s:all_buffers_bwipeout() "{{{2
   endfor
 endfunction
 
-function! s:win_tab_switcher(...) "{{{2
+" func s:win_tab_switcher() {{{2
+" @params string...
+" @return -
+"
+function! s:win_tab_switcher(...)
   let minus = 0
   if &laststatus == 1 && winnr('$') != 1
     let minus += 1
@@ -1168,30 +1328,41 @@ function! s:win_tab_switcher(...) "{{{2
   endif
 
   if s:has_plugin("vim-buftabs")
-
   else
     redraw
     call <SID>get_buflists()
   endif
 endfunction
 
-function! s:tabdrop(target) "{{{2
+" func s:tabdrop() {{{2
+" @params string
+" @return -
+"
+function! s:tabdrop(target)
   let target = empty(a:target) ? expand('%:p') : bufname(a:target + 0)
   if !empty(target) && bufexists(target) && buflisted(target)
     execute 'tabedit' target
   else
-    echohl WarningMsg | echo "Could not tabedit" | echohl None
+    call s:warning("Could not tabedit")
   endif
 endfunction
 
-function! s:tabnew(num) "{{{2
+" func s:tabnew() {{{2
+" @params int
+" @return -
+"
+function! s:tabnew(num)
   let num = empty(a:num) ? 1 : a:num
   for i in range(1, num)
     tabnew
   endfor
 endfunction
 
-function! s:move_tabpage(dir) "{{{2
+" func s:move_tabpage() {{{2
+" @params string
+" @return -
+"
+function! s:move_tabpage(dir)
   if a:dir == "right"
     let num = tabpagenr()
   elseif a:dir == "left"
@@ -1202,7 +1373,11 @@ function! s:move_tabpage(dir) "{{{2
   endif
 endfunction
 
-function! s:close_all_right_tabpages() "{{{2
+" func s:close_all_right_tabpages() {{{2
+" @params -
+" @return -
+"
+function! s:close_all_right_tabpages()
   let current_tabnr = tabpagenr()
   let last_tabnr = tabpagenr("$")
   let num_close = last_tabnr - current_tabnr
@@ -1213,7 +1388,11 @@ function! s:close_all_right_tabpages() "{{{2
   endwhile
 endfunction
 
-function! s:close_all_left_tabpages() "{{{2
+" func s:close_all_left_tabpages() {{{2
+" @params -
+" @return -
+"
+function! s:close_all_left_tabpages()
   let current_tabnr = tabpagenr()
   let num_close = current_tabnr - 1
   let i = 0
@@ -1223,7 +1402,11 @@ function! s:close_all_left_tabpages() "{{{2
   endwhile
 endfunction
 
-function! s:find_tabnr(bufnr) "{{{2
+" func s:find_tabnr() {{{2
+" @params int
+" @return int
+"
+function! s:find_tabnr(bufnr)
   for tabnr in range(1, tabpagenr("$"))
     if index(tabpagebuflist(tabnr), a:bufnr) !=# -1
       return tabnr
@@ -1232,7 +1415,11 @@ function! s:find_tabnr(bufnr) "{{{2
   return -1
 endfunction
 
-function! s:find_winnr(bufnr) "{{{2
+" func s:find_winnr() {{{2
+" @params int
+" @return int
+"
+function! s:find_winnr(bufnr)
   for winnr in range(1, winnr("$"))
     if a:bufnr ==# winbufnr(winnr)
       return winnr
@@ -1241,7 +1428,11 @@ function! s:find_winnr(bufnr) "{{{2
   return 1
 endfunction
 
-function! s:recycle_open(default_open, path) "{{{2
+" func s:find_winnr() {{{2
+" @params string, string
+" @return return
+"
+function! s:recycle_open(default_open, path)
   let default_action = a:default_open . ' ' . a:path
   if bufexists(a:path)
     let bufnr = bufnr(a:path)
@@ -1258,205 +1449,7 @@ function! s:recycle_open(default_open, path) "{{{2
   endif
 endfunction
 
-function! S(f, ...) "{{{2
-  " cf: http://goo.gl/S4JFkn
-  " Call a script local function.
-  " usage:
-  " - S('local_func')
-  "   -> call s:local_func() in current file.
-  " - S('plugin/hoge.vim:local_func', 'string', 10)
-  "   -> call s:local_func('string', 10) in *plugin/hoge.vim.
-  " - S('plugin/hoge:local_func("string", 10)')
-  "   -> call s:local_func("string", 10) in *plugin/hoge(.vim)?.
-  let [file, func] =a:f =~# ':' ?  split(a:f, ':') : [expand('%:p'), a:f]
-  let fname = matchstr(func, '^\w*')
-
-  " Get sourced scripts.
-  redir =>slist
-  silent scriptnames
-  redir END
-
-  let filepat = '\V' . substitute(file, '\\', '/', 'g') . '\v%(\.vim)?$'
-  for s in split(slist, "\n")
-    let p = matchlist(s, '^\s*\(\d\+\):\s*\(.*\)$')
-    if empty(p)
-      continue
-    endif
-    let [nr, sfile] = p[1 : 2]
-    let sfile = fnamemodify(sfile, ':p:gs?\\?/?')
-    if sfile =~# filepat &&
-          \    exists(printf("*\<SNR>%d_%s", nr, fname))
-      let cfunc = printf("\<SNR>%d_%s", nr, func)
-      break
-    endif
-  endfor
-
-  if !exists('nr')
-    echoerr 'Not sourced: ' . file
-    return
-  elseif !exists('cfunc')
-    let file = fnamemodify(file, ':p')
-    echoerr printf(
-          \    'File found, but function is not defined: %s: %s()', file, fname)
-    return
-  endif
-
-  return 0 <= match(func, '^\w*\s*(.*)\s*$')
-        \      ? eval(cfunc) : call(cfunc, a:000)
-endfunction
-
-function! HomedirOrBackslash() "{{{2
-  if getcmdtype() == ':' && (getcmdline() =~# '^e ' || getcmdline() =~? '^r\?!' || getcmdline() =~? '^cd ')
-    return '~/'
-  else
-    return '\'
-  endif
-endfunction
-
-function! GetDate() "{{{2
-  return strftime("%Y/%m/%d %H:%M")
-endfunction
-
-function! GetDocumentPosition() "{{{2
-  return float2nr(str2float(line('.')) / str2float(line('$')) * 100) . "%"
-endfunction
-
-function! GetTildaPath(tail) "{{{2
-  return a:tail ? expand('%:h:~') : expand('%:~')
-endfunction
-
-function! GetCharacterCode() "{{{2
-  let str = iconv(matchstr(getline('.'), '.', col('.') - 1), &enc, &fenc)
-  let out = '0x'
-  for i in range(strlen(str))
-    let out .= printf('%02X', char2nr(str[i]))
-  endfor
-  if str ==# ''
-    let out .= '00'
-  endif
-  return out
-endfunction
-
-function! GetFileSize() "{{{2
-  let size = &encoding ==# &fileencoding || &fileencoding ==# ''
-        \        ? line2byte(line('$') + 1) - 1 : getfsize(expand('%'))
-
-  if size < 0
-    let size = 0
-  endif
-  for unit in ['B', 'KB', 'MB']
-    if size < 1024
-      return size . unit
-    endif
-    let size = size / 1024
-  endfor
-  return size . 'GB'
-endfunction
-
-function! GetBufname(bufnr, ...) "{{{2
-  let bufname = bufname(a:bufnr)
-  if bufname =~# '^[[:alnum:].+-]\+:\\\\'
-    let bufname = substitute(bufname, '\\', '/', 'g')
-  endif
-  let buftype = getbufvar(a:bufnr, '&buftype')
-  if bufname ==# ''
-    if buftype ==# ''
-      return '[No Name]'
-    elseif buftype ==# 'quickfix'
-      return '[Quickfix List]'
-    elseif buftype ==# 'nofile' || buftype ==# 'acwrite'
-      return '[Scratch]'
-    endif
-  endif
-  if buftype ==# 'nofile' || buftype ==# 'acwrite'
-    return bufname
-  endif
-  if a:0 && a:1 ==# 't'
-    return fnamemodify(bufname, ':t')
-  elseif a:0 && a:1 ==# 'f'
-    return (fnamemodify(bufname, ':~:p'))
-  elseif a:0 && a:1 ==# 's'
-    return pathshorten(fnamemodify(bufname, ':~:h')).'/'.fnamemodify(bufname, ':t')
-  endif
-  return bufname
-endfunction
-
-function! GetFileInfo() "{{{2
-  let line  = ''
-  if bufname(bufnr("%")) == ''
-    let line .= 'No name'
-  else
-    let line .= '"'
-    let line .= expand('%:p:~')
-    let line .= ' (' . line('.') . '/' . line('$') . ') '
-    "let line .= '--' . 100 * line('.') / line('$') . '%--'
-    let line .= GetDocumentPosition()
-    let line .= '"'
-  endif
-  return line
-endfunction
-
-function! GetHighlight(hi) "{{{2
-  redir => hl
-  silent execute 'highlight ' . a:hi
-  redir END
-  return substitute(hl, '.*xxx ', '', '')
-endfunction
-
-function! Scouter(file, ...) "{{{2
-  " Measure fighting power of Vim!
-  " :echo len(readfile($MYVIMRC))
-  let pat = '^\s*$\|^\s*"'
-  let lines = readfile(a:file)
-  if !a:0 || !a:1
-    let lines = split(substitute(join(lines, "\n"), '\n\s*\\', '', 'g'), "\n")
-  endif
-  return len(filter(lines,'v:val !~ pat'))
-endfunction
-
-function! WordCount(...) "{{{2
-  if a:0 == 0
-    if exists("s:WordCountStr")
-      return s:WordCountStr
-    endif
-    return
-  endif
-  let cidx = 3
-  silent! let cidx = s:WordCountDict[a:1]
-  let s:WordCountStr = ''
-  let s:saved_status = v:statusmsg
-  exec "silent normal! g\<c-g>"
-  if v:statusmsg !~ '^--'
-    let str = ''
-    silent! let str = split(v:statusmsg, ';')[cidx]
-    let cur = str2nr(matchstr(str, '\d\+'))
-    let end = str2nr(matchstr(str, '\d\+\s*$'))
-    if a:1 == 'char'
-      let cr = &ff == 'dos' ? 2 : 1
-      let cur -= cr * (line('.') - 1)
-      let end -= cr * line('$')
-    endif
-    let s:WordCountStr = printf('%d/%d', cur, end)
-    let s:WordCountStr = printf('%d', end)
-  endif
-  let v:statusmsg = s:saved_status
-  return s:WordCountStr
-endfunction
-
-function! TrailingSpaceWarning() "{{{2
-  if !exists("b:trailing_space_warning")
-    if search('\s\+$', 'nw') != 0
-      let b:trailing_space_warning = '[SPC:' . search('\s\+$', 'nw') . ']'
-    else
-      let b:trailing_space_warning = ''
-    endif
-  endif
-  return b:trailing_space_warning
-endfunction
-" Recalculate the trailing whitespace warning when idle, and after saving
-autocmd CursorHold,BufWritePost * unlet! b:trailing_space_warning
-
-" Priority: {{{1
+" Utility: in vimrc {{{1
 " In this section, the settings a higher priority than the setting items
 " of the other sections will be described.
 "==============================================================================
@@ -1779,7 +1772,7 @@ if s:is_mac && executable("qlmanage")
   command! -nargs=? -complete=file QuickLook call s:quicklook(<f-args>)
   function! s:quicklook(...)
     let file = a:0 ? expand(a:1) : expand('%:p')
-    if !s:is_exist(file)
+    if !s:has(file)
       echo printf('%s: No such file or directory', file)
       return 0
     endif
@@ -1815,6 +1808,157 @@ endif
 call s:mkdir('~/.vim/swap')
 set noswapfile
 set directory=~/.vim/swap
+
+function! HomedirOrBackslash() "{{{2
+  if getcmdtype() == ':' && (getcmdline() =~# '^e ' || getcmdline() =~? '^r\?!' || getcmdline() =~? '^cd ')
+    return '~/'
+  else
+    return '\'
+  endif
+endfunction
+
+function! GetDate() "{{{2
+  return strftime("%Y/%m/%d %H:%M")
+endfunction
+
+function! GetDocumentPosition() "{{{2
+  return float2nr(str2float(line('.')) / str2float(line('$')) * 100) . "%"
+endfunction
+
+function! GetTildaPath(tail) "{{{2
+  return a:tail ? expand('%:h:~') : expand('%:~')
+endfunction
+
+function! GetCharacterCode() "{{{2
+  let str = iconv(matchstr(getline('.'), '.', col('.') - 1), &enc, &fenc)
+  let out = '0x'
+  for i in range(strlen(str))
+    let out .= printf('%02X', char2nr(str[i]))
+  endfor
+  if str ==# ''
+    let out .= '00'
+  endif
+  return out
+endfunction
+
+function! GetFileSize() "{{{2
+  let size = &encoding ==# &fileencoding || &fileencoding ==# ''
+        \        ? line2byte(line('$') + 1) - 1 : getfsize(expand('%'))
+
+  if size < 0
+    let size = 0
+  endif
+  for unit in ['B', 'KB', 'MB']
+    if size < 1024
+      return size . unit
+    endif
+    let size = size / 1024
+  endfor
+  return size . 'GB'
+endfunction
+
+function! GetBufname(bufnr, ...) "{{{2
+  let bufname = bufname(a:bufnr)
+  if bufname =~# '^[[:alnum:].+-]\+:\\\\'
+    let bufname = substitute(bufname, '\\', '/', 'g')
+  endif
+  let buftype = getbufvar(a:bufnr, '&buftype')
+  if bufname ==# ''
+    if buftype ==# ''
+      return '[No Name]'
+    elseif buftype ==# 'quickfix'
+      return '[Quickfix List]'
+    elseif buftype ==# 'nofile' || buftype ==# 'acwrite'
+      return '[Scratch]'
+    endif
+  endif
+  if buftype ==# 'nofile' || buftype ==# 'acwrite'
+    return bufname
+  endif
+  if a:0 && a:1 ==# 't'
+    return fnamemodify(bufname, ':t')
+  elseif a:0 && a:1 ==# 'f'
+    return (fnamemodify(bufname, ':~:p'))
+  elseif a:0 && a:1 ==# 's'
+    return pathshorten(fnamemodify(bufname, ':~:h')).'/'.fnamemodify(bufname, ':t')
+  endif
+  return bufname
+endfunction
+
+function! GetFileInfo() "{{{2
+  let line  = ''
+  if bufname(bufnr("%")) == ''
+    let line .= 'No name'
+  else
+    let line .= '"'
+    let line .= expand('%:p:~')
+    let line .= ' (' . line('.') . '/' . line('$') . ') '
+    "let line .= '--' . 100 * line('.') / line('$') . '%--'
+    let line .= GetDocumentPosition()
+    let line .= '"'
+  endif
+  return line
+endfunction
+
+function! GetHighlight(hi) "{{{2
+  redir => hl
+  silent execute 'highlight ' . a:hi
+  redir END
+  return substitute(hl, '.*xxx ', '', '')
+endfunction
+
+function! Scouter(file, ...) "{{{2
+  " Measure fighting power of Vim!
+  " :echo len(readfile($MYVIMRC))
+  let pat = '^\s*$\|^\s*"'
+  let lines = readfile(a:file)
+  if !a:0 || !a:1
+    let lines = split(substitute(join(lines, "\n"), '\n\s*\\', '', 'g'), "\n")
+  endif
+  return len(filter(lines,'v:val !~ pat'))
+endfunction
+
+function! WordCount(...) "{{{2
+  if a:0 == 0
+    if exists("s:WordCountStr")
+      return s:WordCountStr
+    endif
+    return
+  endif
+  let cidx = 3
+  silent! let cidx = s:WordCountDict[a:1]
+  let s:WordCountStr = ''
+  let s:saved_status = v:statusmsg
+  exec "silent normal! g\<c-g>"
+  if v:statusmsg !~ '^--'
+    let str = ''
+    silent! let str = split(v:statusmsg, ';')[cidx]
+    let cur = str2nr(matchstr(str, '\d\+'))
+    let end = str2nr(matchstr(str, '\d\+\s*$'))
+    if a:1 == 'char'
+      let cr = &ff == 'dos' ? 2 : 1
+      let cur -= cr * (line('.') - 1)
+      let end -= cr * line('$')
+    endif
+    let s:WordCountStr = printf('%d/%d', cur, end)
+    let s:WordCountStr = printf('%d', end)
+  endif
+  let v:statusmsg = s:saved_status
+  return s:WordCountStr
+endfunction
+
+function! TrailingSpaceWarning() "{{{2
+  if !exists("b:trailing_space_warning")
+    if search('\s\+$', 'nw') != 0
+      let b:trailing_space_warning = '[SPC:' . search('\s\+$', 'nw') . ']'
+    else
+      let b:trailing_space_warning = ''
+    endif
+  endif
+  return b:trailing_space_warning
+endfunction
+" Recalculate the trailing whitespace warning when idle, and after saving
+autocmd CursorHold,BufWritePost * unlet! b:trailing_space_warning
 
 " Appearance: {{{1
 " In this section, interface of Vim, that is, colorscheme, statusline and
@@ -2658,11 +2802,13 @@ nnoremap <silent> tc :<C-u>tabclose<CR>
 nnoremap <silent> to :<C-u>tabonly<CR>
 
 " Inser matching bracket automatically {{{2
-inoremap [ []<LEFT>
-inoremap ( ()<LEFT>
-inoremap " ""<LEFT>
-inoremap ' ''<LEFT>
-inoremap ` ``<LEFT>
+if s:has_plugin("lexima.vim")
+  inoremap [ []<LEFT>
+  inoremap ( ()<LEFT>
+  inoremap " ""<LEFT>
+  inoremap ' ''<LEFT>
+  inoremap ` ``<LEFT>
+endif
 
 " Make cursor-moving useful {{{2
 inoremap <C-h> <Backspace>
@@ -3468,6 +3614,9 @@ command! -complete=file Tex call s:tex()
 
 "nnoremap <silent> <Space>o :<C-u>for i in range(1, v:count1) \| call append(line('.'),   '') \| endfor \| silent! call repeat#set("<Space>o", v:count1)<CR>
 "nnoremap <silent> <Space>O :<C-u>for i in range(1, v:count1) \| call append(line('.')-1, '') \| endfor \| silent! call repeat#set("<Space>O", v:count1)<CR>
+
+autocmd FileType go :highlight goErr cterm=bold ctermfg=214
+autocmd FileType go :match goErr /\<err\>/
 
 " Help for Vim settings {{{2
 function! s:help_for_vim()

@@ -6,6 +6,7 @@
 # /___|___/_| |_|_|  \___|
 #                         
 #
+
 umask 022
 limit coredumpsize 0
 bindkey -d
@@ -81,6 +82,10 @@ export LESS_TERMCAP_so=$'\E[00;44;37m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
+if [ -f ~/.cdlog ]; then
+    export TOLIST=~/.cdlog
+fi
+
 if [ -f ~/.localrc ]; then
     source ~/.localrc
 fi
@@ -105,7 +110,7 @@ loading() {
 tmux_automatically_attach() {
     if is_screen_or_tmux_running; then
         if is_tmux_runnning; then
-            if is_exist 'cowsay'; then
+            if has 'cowsay'; then
                 #cowsay -f ghostbusters "$fg[blue]Starting $SHELL....$reset_color"
                 if [[ $(( $RANDOM % 5 )) == 1 ]]; then
                     cowsay -f ghostbusters "G,g,g,ghostbusters!!!"
@@ -125,7 +130,7 @@ tmux_automatically_attach() {
         fi
     else
         if shell_has_started_interactively && ! is_ssh_running; then
-            if ! is_exist 'tmux'; then
+            if ! has 'tmux'; then
                 echo 'Error: tmux command not found' >/dev/stderr
                 return 1
             fi
@@ -150,7 +155,7 @@ tmux_automatically_attach() {
                 fi
             fi
 
-            if is_osx && is_exist 'reattach-to-user-namespace'; then
+            if is_osx && has 'reattach-to-user-namespace'; then
                 # on OS X force tmux's default command
                 # to spawn a shell in the user's namespace
                 tmux_login_shell="/bin/zsh"
@@ -414,17 +419,17 @@ zsh_set_alias()
         alias ls='/bin/ls -GF'
     fi
 
-    if is_exist 'git'; then
+    if has 'git'; then
         alias gst='git status'
     fi
 
     if is_osx; then
-        if is_exist 'qlmanage'; then
+        if has 'qlmanage'; then
             alias ql='qlmanage -p "$@" >&/dev/null'
         fi
     fi
 
-    if is_exist 'richpager'; then
+    if has 'richpager'; then
         #alias cl='richpager -s solarized'
         alias cl='richpager'
     fi
@@ -459,7 +464,7 @@ zsh_set_alias()
     alias egrep='egrep --color=auto'
 
     # Use if colordiff exists
-    if is_exist 'colordiff'; then
+    if has 'colordiff'; then
         alias diff='colordiff -u'
     else
         alias diff='diff -u'
@@ -685,7 +690,7 @@ zsh_set_prompt() {
     # Automatically hidden rprompt
     setopt transient_rprompt
 
-    if is_exist '__git_ps1'; then
+    if has '__git_ps1'; then
         function r-prompt()
         {
             export GIT_PS1_SHOWDIRTYSTATE=1
@@ -784,7 +789,7 @@ peco-select-git-add() {
 
 start-tmux-if-it-is-not-already-started() {
     BUFFER='tmux'
-    if is_exist 'tmux_automatically_attach'; then
+    if has 'tmux_automatically_attach'; then
         BUFFER='tmux_automatically_attach'
     fi
     CURSOR=$#BUFFER
@@ -798,7 +803,7 @@ zsh_set_keybind() {
     zle -N peco-select-path
     zle -N start-tmux-if-it-is-not-already-started
 
-    if is_exist 'autosuggest-start'; then
+    if has 'autosuggest-start'; then
         zle-line-init() {
             zle autosuggest-start
         }
@@ -822,21 +827,21 @@ zsh_set_keybind() {
     bindkey '^W' backward-kill-word
 
     # bind P and N for EMACS mode
-    is_exist 'history-substring-search-up' &&
+    has 'history-substring-search-up' &&
         bindkey -M emacs '^P' history-substring-search-up
-    is_exist 'history-substring-search-down' &&
+    has 'history-substring-search-down' &&
         bindkey -M emacs '^N' history-substring-search-down
 
     # bind k and j for VI mode
-    is_exist 'history-substring-search-up' &&
+    has 'history-substring-search-up' &&
         bindkey -M vicmd 'k' history-substring-search-up
-    is_exist 'history-substring-search-down' &&
+    has 'history-substring-search-down' &&
         bindkey -M vicmd 'j' history-substring-search-down
 
     # bind P and N keys
-    is_exist 'history-substring-search-up' &&
+    has 'history-substring-search-up' &&
         bindkey '^P' history-substring-search-up
-    is_exist 'history-substring-search-down' &&
+    has 'history-substring-search-down' &&
         bindkey '^N' history-substring-search-down
 
     # bind UP and DOWN arrow keys
@@ -876,13 +881,13 @@ zsh_utilities() {
     is_osx || unfunction op 2>/dev/null
     
     tex() {
-        if ! is_exist 'platex' || ! is_exist 'dvipdfmx'; then
+        if ! has 'platex' || ! has 'dvipdfmx'; then
             return 1
         fi
         platex "$1" && dvipdfmx "${1/.tex/.dvi}"
         if [ $? -eq 0 ]; then
             echo -e "\n\033[31mCompile complete!\033[m"
-            if is_exist 'open'; then
+            if has 'open'; then
                 open "${1/.tex/.pdf}"
             fi
         fi

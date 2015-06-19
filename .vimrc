@@ -3832,6 +3832,60 @@ set fileformats=unix,dos,mac
 "au FileType go compiler go
 ""}}}
 
+" Test: {{{1
+
+let s:vimp = {
+      \ "list": [
+      \   "ctrlp.vim",
+      \   "vim-surround",
+      \ ],
+      \ "dir":  ".vimp",
+      \ "file": "Vimpfile",
+      \}
+
+function! s:vimp.parse()
+  let list = []
+
+  for dep in readfile(self.file)
+    if isdirectory(dep)
+      let res = fnamemodify(dep, ":p")
+      call add(list, res)
+    else
+      let res = finddir(fnamemodify(dep, ":t"), expand("$HOME/.vim/bundle"))
+      if !empty(res)
+        call add(list, res)
+      endif
+    endif
+  endfor
+
+  return list
+endfunction
+
+function! s:vimp.symbolic()
+  if !isdirectory(self.dir)
+    call s:mkdir(self.dir)
+  endif
+
+  for link in s:vimp.parse()
+    call system(printf("ln -snf %s %s", link, self.dir))
+  endfor
+endfunction
+
+function! s:vimp.gen()
+  call writefile(self.list, self.file)
+endfunction
+
+function! s:vimp.vimp()
+  if !filereadable(self.file)
+    call s:vimp.gen()
+  endif
+  call s:vimp.symbolic()
+  echo readfile(self.file)
+endfunction
+
+command! Vimp call s:vimp.vimp()
+
+" __END__ {{{1
 " Must be written at the last.  see :help 'secure'.
 set secure
 

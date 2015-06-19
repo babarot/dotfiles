@@ -25,7 +25,7 @@ determine_os()
 shell_is_linux() { [[ $SHELL_PLATFORM == 'linux' || $SHELL_PLATFORM == 'bsd' ]]; }
 shell_is_osx()   { [[ $SHELL_PLATFORM == 'osx' ]]; }
 shell_is_bsd()   { [[ $SHELL_PLATFORM == 'bsd' || $SHELL_PLATFORM == 'osx' ]]; }
-is_exist()       { type $1 >/dev/null 2>&1; return $?; }
+has()       { type $1 >/dev/null 2>&1; return $?; }
 
 declare battery_danger=20
 declare get_battery_help=$(
@@ -89,13 +89,13 @@ function get_battery_initialize()
     determine_os
 
     if shell_is_osx; then
-        if is_exist 'pmset'; then
+        if has 'pmset'; then
             percentage=$(pmset -g ps | grep -E -o '[0-9]+%' | tr -d '%')
             time_remain=$(pmset -g ps | grep -E -o '[0-9]+:[0-9]+')
             if [ -z "$time_remain" ]; then
                 time_remain='no estimate'
             fi
-        elif is_exist 'ioreg'; then
+        elif has 'ioreg'; then
             local max_capacity=$(ioreg -n AppleSmartBattery | awk '/MaxCapacity/{ print $5 }')
             local current_capacity=$(ioreg -n AppleSmartBattery | awk '/CurrentCapacity/{ print $5 }')
             local instant_time_to_empty=$(ioreg -n AppleSmartBattery | awk '/InstantTimeToEmpty/{ print $5 }')
@@ -155,7 +155,7 @@ function get_battery_initialize()
 function get_battery_color()
 {
     if shell_is_osx; then
-        if is_exist 'pmset'; then
+        if has 'pmset'; then
             # Charging, not 100%
             if (pmset -g ps | grep -q 'AC Power') && ! (pmset -g ps | grep -q 'charged;'); then
                 [[ -n "$percentage" ]] && echo -e "\033[32m${percentage}%\033[0m"
@@ -169,7 +169,7 @@ function get_battery_color()
                     echo -e "\033[31m${percentage}%\033[0m"
                 fi
             fi
-        elif is_exist 'ioreg'; then
+        elif has 'ioreg'; then
             # Charging, not 100%
             if ioreg -c AppleSmartBattery | grep IsCharging | grep Yes >/dev/null 2>&1; then
                 [[ -n "$percentage" ]] && echo -e "\033[32m${percentage}%\033[0m"
@@ -195,7 +195,7 @@ function get_battery_color_tmux()
 {
     for i in "$@"; do [[ $i =~ t ]] && t_opt=1; done
     if shell_is_osx; then
-        if is_exist 'pmset'; then
+        if has 'pmset'; then
             # Charging, not 100%
             if (pmset -g ps | grep -q 'AC Power') && ! (pmset -g ps | grep -q 'charged;'); then
                 [[ -n "$percentage" ]] && echo "#[fg=colour46]${percentage}%#[default]"
@@ -219,7 +219,7 @@ function get_battery_color_tmux()
                     echo "$color_tmux_echomsg"
                 fi
             fi
-        elif is_exist 'ioreg'; then
+        elif has 'ioreg'; then
             # Charging, not 100%
             if ioreg -c AppleSmartBattery | grep IsCharging | grep Yes >/dev/null 2>&1; then
                 [[ -n "$percentage" ]] && echo "#[fg=colour46]${percentage}%#[default]"

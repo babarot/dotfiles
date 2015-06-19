@@ -10,6 +10,6 @@ set -eu
 # Mac OS X only!!
 is_osx || exit
 
-if is_exist "xcode-select"; then
+if has "xcode-select"; then
     xcode-select --install
 fi

@@ -6,7 +6,7 @@ set -eu
 . $DOTPATH/etc/lib/vital.sh
 . $DOTPATH/etc/lib/standard.sh
 
-if is_exist "python"; then
+if has "python"; then
     has "pygmentize" && exit
 
     sudo easy_install pip

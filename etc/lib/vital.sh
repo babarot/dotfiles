@@ -19,19 +19,19 @@ is_osx()   { [[ $SHELL_PLATFORM == 'osx' ]]; }
 is_bsd()   { [[ $SHELL_PLATFORM == 'bsd' || $SHELL_PLATFORM == 'osx' ]]; }
 
 # Check if exists
-is_exist() { type "$1" >/dev/null 2>&1; return $?; }
-is_exists() {
-    if [[ ${1[1,1]} =~ / ]]; then
-        if [[ -e "$1" ]]; then
-            return 0
-        fi
-    else
-        if type "$1" >/dev/null 2>&1; then
-            return 0
-        fi
-    fi
-    return 1
-}
+#has() { type "$1" >/dev/null 2>&1; return $?; }
+#has() {
+#    if [[ ${1[1,1]} =~ / ]]; then
+#        if [[ -e "$1" ]]; then
+#            return 0
+#        fi
+#    else
+#        if type "$1" >/dev/null 2>&1; then
+#            return 0
+#        fi
+#    fi
+#    return 1
+#}
 
 # Whether first login shell
 is_login_shell() { [[ $SHLVL == 1 ]]; }
@@ -57,6 +57,13 @@ has() {
     type "$1" >/dev/null 2>&1
     return $?
 }
+alias is_exist=has
+alias is_exists=has
+
+hasnt() {
+    has "$1" && return 1 || return 0
+}
+alias hasnot=hasnt
 
 is_help() {
     [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]

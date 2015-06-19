@@ -10,7 +10,7 @@ set -eu
 # Mac OS X only!!
 is_osx || exit
 
-if is_exist "goal"; then
+if has "goal"; then
     cd $DOTPATH/etc/init/assets/go
     if [ -f config.toml ]; then
         goal

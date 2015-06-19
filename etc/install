@@ -13,7 +13,7 @@ e_error()   { printf " \033[1;31m✖\033[0m  %s\n" "$*" 1>&2; }
 ### Result
 e_arrow()   { printf " \033[1;34m➜\033[0m  %s\n" "$*"; }
 
-is_exists() {
+has() {
     local i
     for i in "$@"
     do
@@ -157,17 +157,17 @@ dotfiles_download() {
 
     e_newline
 
-    if is_exists "git"; then
+    if has "git"; then
         ### --recursive equals to ...
         ### git submodule init
         ### git submodule update
         git clone --recursive "$GITHUB_DOTFILES" "$DOTFILES"
 
-    elif is_exists "curl" "wget"; then
+    elif has "curl" "wget"; then
         ### curl or wget
-        if is_exists "curl"; then
+        if has "curl"; then
             curl -L "$tarball"
-        elif is_exists "wget"; then
+        elif has "wget"; then
             wget -O - "$tarball"
         fi | tar xv -
         mv -f dotfiles-master "$DOTFILES"

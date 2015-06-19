@@ -10,7 +10,7 @@ set -eu
 # Mac OS X only!!
 is_osx || exit
 
-if is_exist "brew"; then
+if has "brew"; then
     brew tap Homebrew/bundle 2>/dev/null
 
     cd $DOTPATH/etc/init/assets/brew

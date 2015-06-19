@@ -43,7 +43,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # Check existing.
-function is_exist()
+function has()
 {
 	type $1 >/dev/null 2>&1; return $?;
 }
@@ -114,7 +114,7 @@ for ((i=0; i<${#all_ls_path[@]}; i++)); do
 	fi
 done
 unset i all_ls_path
-if $(is_exist 'gls'); then
+if $(has 'gls'); then
 	alias ls="gls --color=auto -F -b"
 else
 	alias ls="$LSPATH --color=auto -F -b"
@@ -253,7 +253,7 @@ date
 # execute handler:
 # > nowon_on=1
 if [ "$nowon_on"x == 'x' ]; then
-	if $(is_exist 'fortune'); then
+	if $(has 'fortune'); then
 		`which fortune` -s
 	fi
 fi
@@ -277,12 +277,12 @@ if $is_mac; then
 
 	function tex()
 	{
-		if ! $(is_exist 'platex') || ! $(is_exist 'dvipdfmx'); then
+		if ! $(has 'platex') || ! $(has 'dvipdfmx'); then
 			return 1
 		fi
 		platex "$1" && dvipdfmx "${1/.tex/.dvi}" && {
 		echo -e "\n\033[31mCompile complete!\033[m"
-			} && if $(is_exist 'open'); then
+			} && if $(has 'open'); then
 		open "${1/.tex/.pdf}"; fi
 	}
 
@@ -793,7 +793,7 @@ function _exit()
 }
 trap _exit EXIT
 
-if ! $is_mac && $(is_exist 'dircolors'); then
+if ! $is_mac && $(has 'dircolors'); then
 	eval `dircolors -b ~/.dir_colors`
 fi
 
@@ -907,7 +907,7 @@ else
 fi
 
 PS1=
-if $(is_exist '__git_ps1'); then
+if $(has '__git_ps1'); then
 	GIT_PS1_SHOWDIRTYSTATE=true
 	GIT_PS1_SHOWSTASHSTATE=true
 	GIT_PS1_SHOWUNTRACKEDFILES=true
@@ -968,12 +968,12 @@ alias vi="$EDITOR"
 alias vim="$EDITOR"
 
 # Git.
-if $(is_exist 'git'); then
+if $(has 'git'); then
 	alias gst='git status'
 fi
 
 if $is_mac; then
-	if $(is_exist 'qlmanage'); then
+	if $(has 'qlmanage'); then
 		alias ql='qlmanage -p "$@" >& /dev/null'
 	fi
 fi
@@ -1008,7 +1008,7 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 # Use if colordiff exists
-if $(is_exist 'colordiff'); then
+if $(has 'colordiff'); then
 	alias diff='colordiff -u'
 else
 	if [ -f ~/.bin/colordiff ]; then

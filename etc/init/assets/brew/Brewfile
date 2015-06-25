@@ -38,3 +38,7 @@ brew 'vim', args: ['with-lua', 'with-luajit']
 brew 'wget'
 brew 'zsh', args: ['disable-etcdir']
 brew 'zsh-completions'
+
+tap 'caskroom/cask'
+brew 'brew-cask'
+cask 'appcleaner'

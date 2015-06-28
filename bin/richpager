@@ -24,7 +24,7 @@ if has 'python'; then
     #
     get_styles="from pygments.styles import get_all_styles
     styles = list(get_all_styles())
-    print '\n'.join(styles)"
+    print('\n'.join(styles))"
     # See also <http://pygments.org/docs/styles/>
 
     # Getting a list of styles for shell script

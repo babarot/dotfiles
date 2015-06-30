@@ -1,0 +1,27 @@
+#!/bin/bash
+
+readlinkf() {
+    target="$1"
+    builtin cd $(dirname $target)
+    target=$(basename $target)
+
+    # Iterate down a (possible) chain of symlinks
+    while [ -L "$target" ]
+    do
+        target=$(readlink $target)
+        builtin cd $(dirname $target)
+        target=$(basename $target)
+    done
+
+    # Compute the canonicalized name by finding the physical path 
+    # for the directory we're in and appending the target file.
+    realpath=$(pwd -P)
+    result="$realpath"/"$target"
+    echo "$result"
+}
+
+dotpath=$(builtin cd $(dirname $(readlinkf "$0")) && pwd)
+builtin cd "$dotpath" &&
+    if [[ -f Makefile ]]; then
+        export DOTPATH="$dotpath"
+    fi

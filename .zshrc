@@ -973,6 +973,8 @@ zsh_disable_function() {
 
 # main {{{1
 zsh_at_startup() {
+    [ -f .files ] && source .files
+
     loading
     tmux_automatically_attach
     antigen

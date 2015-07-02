@@ -865,6 +865,38 @@ function! s:open(file)
   return v:shell_error ? s:false : s:true
 endfunction
 
+" func s:rm() {{{2
+" @params string
+" @return -
+"
+function! s:rm(...)
+  let files = []
+  for file in a:0 ? map(copy(a:000), 'expand(v:val)') : split(simplify(expand('%:p')))
+
+    let file = fnamemodify(file, ":p")
+    if isdirectory(file)
+      let dest = "/tmp/".s:random_string(20)
+      if rename(file, dest) == 0
+        call add(files, file)
+      else
+        call s:error("not support a directory")
+      endif
+    elseif filereadable(file)
+      if delete(file) == 0
+        call add(files, file)
+        let bufname = bufname(fnamemodify(file, ':p'))
+        if bufexists(bufname) && buflisted(bufname)
+          execute "bwipeout" bufname
+        endif
+      endif
+    else
+      echohl WarningMsg | echo "The '" . file . "' does not exist" | echohl NONE
+    endif
+  endfor
+
+  echo len(files) ? "Removed " . string(files) . "!" : "Removed nothing"
+endfunction
+
 " func s:ls() {{{2
 " @params string, string
 " @return bool

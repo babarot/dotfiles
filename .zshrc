@@ -683,7 +683,8 @@ git_prompt_internal() {
 
 zsh_set_prompt() {
     # 1. Prompt
-    PROMPT='[%F{yellow}%n%f]%% '
+    #PROMPT='[%F{yellow}%n%f]%% '
+    PROMPT='[%(?.%{${fg[green]}%}.%{${fg[red]}%})%n%{${reset_color}%}]%# '
 
     # 2. R prompt
     setopt prompt_subst

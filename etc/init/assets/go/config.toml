@@ -23,6 +23,6 @@ repos = [
     "github.com/motemen/go-colorine",
     "github.com/nsf/gocode",
     "github.com/nsf/godit",
-    "github.com/peco/peco",
+    "github.com/peco/peco/...",
     #"github.com/tcnksm/ghr",
 ]

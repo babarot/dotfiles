@@ -8,7 +8,7 @@ e_newline() {
 }
 
 e_header() {
-    printf " \033[37;1m%s\033[m\n" "$*" 1>&2
+    printf " \033[37;1m%s\033[m\n" "$*"
 }
 
 e_error() {
@@ -16,7 +16,11 @@ e_error() {
 }
 
 e_done() {
-    printf " \033[37;1m%s\033[m...\033[32mOK\033[m\n" "✔ $*" 1>&2
+    printf " \033[37;1m%s\033[m...\033[32mOK\033[m\n" "✔ $*"
+}
+
+e_arrow() {
+    printf " \033[37;1m%s\033[m...\033[32mOK\033[m\n" "➜ $*"
 }
 
 is_exists() {
@@ -273,7 +277,8 @@ else
         ### Restart shell if specified "bash -c $(curl -L {URL})"
         ### not restart:
         ###   curl -L {URL} | bash
-        e_header "Restarting your shell..."
+        e_newline
+        e_arrow "Restarting your shell..."
         exec "${SHELL:-/bin/zsh}"
     fi
 fi

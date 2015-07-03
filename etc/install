@@ -207,9 +207,7 @@ dotfiles_deploy() {
     if is_debug; then
         :
     else
-        if make deploy; then
-            e_success "done"
-        fi
+        make deploy
     fi &&
 
         e_newline && e_done "Deploy"

@@ -1,27 +1,25 @@
-# Dotfiles OS X Documentation
+OS X Documentation
+===
 
-![](./img/OSX_logo.png)
+This is a recipe that building method was written on OS X.
 
-All of the stuff in this repository have been optimized to the latest OS X 10.10.x. If the user is on any other operating system, whether it works can not be guaranteed, and it has not been extensively tested.
+# Initialization
 
-## Setup
+## Automatically (make init)
 
-When setting up a new Mac, please perform the following tasks.
+`make init` perform init scripts that are in `/etc/init`.
 
-### Initialize
+It may perform the following:
 
-By running this command, you can interactively setup all preferences for osx.
+1. Install Homebrew the missing package manager for OS X
+2. Install some Formulas from `Brewfile` (`brew bundle`; of course, you need to `tap` this)
+3. Install Go packages via `goal` command in `config.toml` that has been installed by the Homebrew
+4. Some important settings:
+	- Install `xcode-select`
+	- Unlocalize directory name in `$HOME`
+	- Install other software packages (e.g., Pygments)
 
-```bash
-$ make init
-```
-
-- [Install Homebrew the missing package manager for OS X](./init/osx/install_homebrew.sh)
-- [Install the CLI tool that comes with Xcode](./init/osx/install_xcode.sh)
-- [Run 'brew install' based on the Brewfile](./init/osx/setup_brew.sh)
-- [Run 'brew cask install' based on the Caskfile](./init/osx/setup_cask.sh)
-- [Sensible OS X defaults](./init/osx/osx_defaults.sh)
-- [Setup Karabiner (or formerly KeyRemap4MacBook)](./init/osx/setup_kanabiner.sh)
+## Manually
 
 ### Homebrew
 
@@ -31,29 +29,29 @@ For example, a simple `brew install coreutils` will install a [whole bunch of st
 
 Brew is simple to install, and only has one requirement, Xcode Command Line tools:
 
-```bash
+```console
 $ xcode-select --install
 ```
 
 Now that you have the command line tools installed, you can run a single command to install Brew:
 
-```bash
+```console
 $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
 After Brew is installed, it's considered best practice to run the following commands:
 
-```bash
-brew doctor
-brew update
-brew upgrade
+```console
+$ brew doctor
+$ brew update
+$ brew upgrade
 ```
 
 When setting up a new Mac, you may want to install some common Homebrew formulae (after installing Homebrew, of course):
 
-```bash
-make brew
-make cask
+```console
+$ brew tap Homebrew/bundle
+$ brew bundle
 ```
 
 **Note:**
@@ -82,6 +80,36 @@ make cask
 
 	**Solution**: replace Brewfile with shell script.
 
+Example: [Brewfile](../etc/init/assets/brew/Brewfile)
+
+### Golang
+
+Go can be installed by Brew, and the Go packages you use everyday can be installed by `goal` command.
+
+```console
+$ brew install go --cross-compile-common
+$ brew tap b4b4r07/goal
+$ brew install goal
+```
+
+`goal` command will install based on the package list written in TOML format such as the following:
+
+```toml
+repos = [
+	"github.com/b4b4r07/gch",
+	"github.com/b4b4r07/go-pipe",
+	"github.com/b4b4r07/gomi/...",
+]
+```
+
+Incidentally, `goal` is cross platform CLI application, this means that it can work even Linux and Windows.
+
+***`goal` DEMO:***
+
+[![](https://raw.githubusercontent.com/b4b4r07/goal/master/goal.gif)](https://github.com/b4b4r07/goal "b4b4r07/goal")
+
+Example: [config.toml](../etc/init/assets/go/config.toml)
+
 ### defaults
 
 **defaults** is a [command line](http://en.wikipedia.org/wiki/Command-line_interface) utility that manipulates [plist](http://en.wikipedia.org/wiki/Property_list) files. It can set many hidden settings and preferences in Mac OS X, and in individual applications.
@@ -93,6 +121,8 @@ $ make osx
 - [OS X Daily](http://osxdaily.com/tag/defaults-write/)
 - [defaults-write](http://www.defaults-write.com)
 
-### Karabiner
+### Unlocalize
 
-[Karabiner](https://github.com/tekezo/Karabiner) (or formerly KeyRemap4MacBook) is a great tool that allows you to remap keyboard in OS X. I'm using it to remap left command as option key except a few Mac key combinations in Terminal.app, and Esc to switch back to English IM in Vim to make life easier.
+### Solarized (Terminal.app)
+
+### Install other software

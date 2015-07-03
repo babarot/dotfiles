@@ -267,7 +267,15 @@ else
     # -> cat a.sh | bash
     # -> bash -c "$(cat a.sh)"
     echo "$dotfiles_logo"
-    dotfiles_install "$@"
+    dotfiles_install "$@" &&
+
+    if [ -t 0 ]; then
+        ### Restart shell if specified "bash -c $(curl -L {URL})"
+        ### not restart:
+        ###   curl -L {URL} | bash
+        e_header "Restarting your shell..."
+        exec "${SHELL:-/bin/zsh}"
+    fi
 fi
 
 # __END__ {{{1

@@ -214,20 +214,22 @@ dotfiles_deploy() {
 }
 
 dotfiles_initialize() {
-    e_newline
-    e_header "Initializing dotfiles..."
+    if [ "$1" = "init" ]; then
+        e_newline
+        e_header "Initializing dotfiles..."
 
-    if is_debug; then
-        :
-    else
-        if [ -f Makefile ]; then
-            make init
+        if is_debug; then
+            :
         else
-            die "Makefile: not found"
-        fi
-    fi &&
+            if [ -f Makefile ]; then
+                make init
+            else
+                die "Makefile: not found"
+            fi
+        fi &&
 
-        e_newline && e_done "Initialize"
+            e_newline && e_done "Initialize"
+    fi
 }
 
 # A script for the file named "install"
@@ -269,4 +271,4 @@ else
 fi
 
 # __END__ {{{1
-#vim:fdm=marker
+# vim:fdm=marker

@@ -1,0 +1,298 @@
+#!/bin/bash
+
+### Utilities {{{
+### Insert newline
+e_newline() { printf "\n"; }
+### Normal style of writing
+#e_header()  { printf "\n\033[1m%s\033[0m\n" "$*"; }
+e_header()  { printf "\033[1m%s\033[0m\n" "$*"; }
+### Success
+e_success() { printf " \033[1;32m✔\033[0m  %s\n" "$*"; }
+### Failure
+e_error()   { printf " \033[1;31m✖\033[0m  %s\n" "$*" 1>&2; }
+### Result
+e_arrow()   { printf " \033[1;34m➜\033[0m  %s\n" "$*"; }
+
+has() {
+    local i
+    for i in "$@"
+    do
+        if which "$i" >/dev/null 2>&1; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+interrupt() {
+    e_error "$1"
+    e_error "Interrupt the processing..."
+    exit 1
+}
+
+initialize() {
+    prompt_menu() {
+        local prompt nums
+        e_header "Run the following init scripts."
+        if _prompt_menu_draws "To edit this list, press any key except ENTER. " -1 && read -rp "Enter to Go> " && [ -n "$REPLY" ]; then
+            prompt="Press number to toggle, r/R to reverse (Separate options with spaces): "
+            while _prompt_menu_draws "$1" 1 && read -rp "$prompt" nums && [ "$nums" != '' ]; do
+                _prompt_menu_adds "$nums"
+            done
+        fi
+        _prompt_menu_adds
+    }
+
+    _prompt_menu_iter() {
+        local fn i sel state c=0
+        local fn=$1; shift
+        for i in $menu_options; do
+            state=0
+            for sel in $menu_selects; do
+                [ "$sel" = "$i" ] && state=1 && break
+            done
+            $fn $state "$c" "$i" "$@"
+            c=$((c+1))
+        done
+    }
+
+    _prompt_menu_draws() {
+        # carriage return printf
+        printf "\r\033[1m%s\033[0m\n" "$1"
+        _prompt_menu_iter _prompt_menu_draw "$2"
+    }
+
+    _prompt_menu_draw()
+    {
+        local method
+        document() { toupper | sed 's/\.sh//g' | sed 's/_/ /g'; }
+        if [ "$1" -eq 0 ]; then method=e_error; fi
+        if [ "$1" -eq 1 ]; then method=e_success; fi
+
+        if [ -n "$4" ]; then
+            if [ "$4" = '-1' ]; then
+                e_arrow "$(printf "%2d) %s\n" $(($2+1)) "$(basename "$3" | document)")"
+            else
+                $method "$(printf "%2d) %s\n" $(($2+1)) "$(basename "$3" | document)")"
+            fi
+        else
+            $method "$(basename "$2" | document)"
+        fi
+    }
+
+    _prompt_menu_adds() {
+        _prompt_menu_result=""
+        _prompt_menu_iter _prompt_menu_add "$@"
+        menu_selects="${_prompt_menu_result}"
+    }
+
+    _prompt_menu_add() {
+        local state c file nums n keep match
+        state=$1; shift
+        c=$1; shift
+        file=$1; shift
+        IFS=' '
+        nums="$*"
+        for n in $nums; do
+            if [ "$n" = 'r' -o "$n" = 'R' ]; then
+                match=1; [ "$state" = 0 ] && keep=1
+            elif expr "$n" : "^[0-9][0-9]*$" >/dev/null && [ $((n-1)) = "$c" ]; then
+                match=1; [ "$state" = 0 ] && keep=1
+            fi
+        done
+        [ ! "$match" -a "$state" = 1 -o "$keep" ] || return
+        _prompt_menu_result="$_prompt_menu_result $file"
+    }
+
+    # Capitalization based on the POSIX standards
+    toupper() { awk '{ print toupper(substr($0, 1, 1)) substr($0, 2, length($0) - 1) }'; }
+    tolower() { awk '{ print tolower(substr($0, 1, 1)) substr($0, 2, length($0) - 1) }'; }
+
+    # main function in initialize
+    init_files() {
+        local f files i
+        f=""
+        files=$(echo $DOTFILES/etc/init/*.sh $DOTFILES/etc/init/osx/*.sh)
+        for i in $files
+        do
+            f="$f $(DEBUG=1 bash "$i")"
+        done
+
+        menu_options=""
+        menu_selects=""
+        for i in $f
+        do
+            menu_selects="$menu_selects $i"
+            menu_options="$menu_options $i"
+        done
+
+        [ -n "$f" ] && prompt_menu "Press ENTER to run checked files"
+        for i in $menu_selects
+        do
+            bash "$i"
+        done
+    }
+    init_files "$@"
+}
+#}}}
+
+### Environment valuable
+DOTFILES=~/.dotfiles; export DOTFILES
+GITHUB_DOTFILES="https://github.com/b4b4r07/dotfiles.git"; export GITHUB_DOTFILES
+
+dotfiles_download() {
+    e_header "Downloading dotfiles..."
+    [ "$DEBUG" = 1 ] && return 0
+
+    local tarball="https://github.com/b4b4r07/dotfiles/archive/master.tar.gz"
+    #local zipball="https://github.com/b4b4r07/dotfiles/archive/master.zip"
+
+    ### Check if $DOTFILES exists
+    if [ -d $DOTFILES ]; then
+        cd
+        e_newline
+        e_arrow "$DOTFILES: already exists, removing..."
+        mv -f "$DOTFILES" "${DOTFILES}.$(date "+%Y%m%d%S")"
+    fi
+
+    e_newline
+
+    if has "git"; then
+        ### --recursive equals to ...
+        ### git submodule init
+        ### git submodule update
+        git clone --recursive "$GITHUB_DOTFILES" "$DOTFILES"
+
+    elif has "curl" "wget"; then
+        ### curl or wget
+        if has "curl"; then
+            curl -L "$tarball"
+        elif has "wget"; then
+            wget -O - "$tarball"
+        fi | tar xv -
+        mv -f dotfiles-master "$DOTFILES"
+
+    else
+        ### requirement
+        interrupt "Require git, curl or wget!"
+    fi
+    e_newline
+}
+
+dotfiles_deploy() {
+    e_header "Deploying dotfiles..."
+    [ "$DEBUG" = 1 ] && return 0
+
+    ### Check if $DOTFILES exists
+    if [ ! -d $DOTFILES ]; then
+        interrupt "Not found: $DOTFILES"
+    fi
+    cd "$DOTFILES"
+
+    if make deploy; then
+        e_success "done"
+    fi
+    e_newline
+}
+
+dotfiles_initialize() {
+    if [ "${1:-}" != "init" ]; then
+        return 0
+    fi
+
+    e_header "Initializing..."
+    [ "$DEBUG" = 1 ] && return 0
+
+    ### Check if $DOTFILES exists
+    if [ ! -d $DOTFILES ]; then
+        interrupt "Not found: $DOTFILES"
+    fi
+    cd "$DOTFILES"
+
+    ### Check if the pipe is valid
+    if [ -t 0 ]; then
+        ### equals to `make init`
+        initialize "$@"
+    else
+        make init
+    fi && e_success "done"
+}
+
+dotfiles_install() {
+    ### 1. Download the repository
+    ### ==> downloading
+    ###
+    ### Priority: git > curl > wget
+    dotfiles_download &&
+
+    ### 2. Deploy dotfiles to your home directory
+    ### ==> deploying
+    dotfiles_deploy &&
+
+    ### 3. Execute all sh files within etc/init/
+    ### ==> initializing
+    dotfiles_initialize "$@"
+}
+
+### Main
+###
+main() {
+cat <<-'EOT'
+
+    | |     | |  / _(_) |           
+  __| | ___ | |_| |_ _| | ___  ___  
+ / _` |/ _ \| __|  _| | |/ _ \/ __| 
+| (_| | (_) | |_| | | | |  __/\__ \ 
+ \__,_|\___/ \__|_| |_|_|\___||___/ 
+
+*** WHAT'S INSIDE? ***
+  1. Download https://github.com/b4b4r07/dotfiles.git
+  2. Symlinking dot files to your home directory
+  3. Execute all sh files within 'etc/init/` (optional)
+
+See the README for documentation.
+https://github.com/b4b4r07/dotfiles
+
+Copyright (c) 2014 "BABAROT" aka @b4b4r07
+Licensed under the MIT license.
+EOT
+
+    e_newline
+    dotfiles_install "$@"
+
+    [ "$DEBUG" = 1 ] && return 0
+
+    if [ -t 0 ]; then
+        ### Restart shell if specified "bash -c $(curl -L {URL})"
+        ### not restart:
+        ###   curl -L {URL} | bash
+        e_arrow "Restarting your shell..."
+        exec "${SHELL:-/bin/zsh}"
+    else
+        e_arrow "Restart your shell, manually"
+    fi && e_success "All done. Success!"
+}
+
+
+
+### A SAFETY system
+### Note: This script is designed to be run from a command line shell.
+###
+### Check if run from a command line only bash
+### python-like "if __name__ == '__main__':"
+###
+if [ "$0" = "${BASH_SOURCE:-}" ]; then
+    e_error "WARNING!!"
+    e_error "You should NOT run directly from the command line"
+    e_error "For more information, see https://github.com/b4b4r07/dotfiles"
+    e_newline
+
+    ### Push the safety catch off
+    if [ "${1:-}" != "directly" ]; then
+        exit 1
+    fi
+fi
+
+main "$@"
+
+# vim:fdm=marker

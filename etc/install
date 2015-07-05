@@ -2,6 +2,11 @@
 
 export PLATFORM
 
+readonly _TAB_=$(printf "\t")
+readonly _SPACE_=' '
+readonly _BLANK_="${_SPACE_}${_TAB_}"
+readonly _IFS_="$IFS"
+
 # Gerenal utilities {{{1
 e_newline() {
     printf "\n"
@@ -291,7 +296,7 @@ dotfiles_install() {
     dotfiles_initialize "$@"
 }
 
-if echo "$-" | grep -q "i"; then
+if echo "$-" | grep -q "i" || [ "${1:-}" = "" ]; then
     # -> source a.sh
     : return
 else

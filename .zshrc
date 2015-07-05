@@ -981,8 +981,30 @@ zsh_disable_function() {
 }
 
 # main {{{1
+
+readlinkf() {
+    TARGET_FILE=$1
+
+    builtin cd `dirname $TARGET_FILE`
+    TARGET_FILE=`basename $TARGET_FILE`
+
+    # Iterate down a (possible) chain of symlinks
+    while [ -L "$TARGET_FILE" ]
+    do
+        TARGET_FILE=`readlink $TARGET_FILE`
+        cd `dirname $TARGET_FILE`
+        TARGET_FILE=`basename $TARGET_FILE`
+    done
+
+    # Compute the canonicalized name by finding the physical path 
+    # for the directory we're in and appending the target file.
+    PHYS_DIR=`pwd -P`
+    RESULT=$PHYS_DIR/$TARGET_FILE
+    echo $RESULT
+}
+
 zsh_at_startup() {
-    [ -f .path ] && source .path
+    [ -f ~/.path ] && source ~/.path
 
     loading
     tmux_automatically_attach
@@ -991,7 +1013,9 @@ zsh_at_startup() {
     # Hello, Zsh!!
     echo -e "\n$fg_bold[cyan]This is ZSH $fg_bold[red]${ZSH_VERSION}$fg_bold[cyan] - DISPLAY on $fg_bold[red]$DISPLAY$reset_color\n"
 
-    has "rbenv" && eval "$(rbenv init -)"
+    if is_osx; then
+        has "rbenv" && eval "$(rbenv init -)"
+    fi
 }
 
 if zsh_at_startup; then

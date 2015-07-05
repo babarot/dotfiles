@@ -31,4 +31,4 @@ do
     bash $i
 done || true
 
-echo $(e_success "$0: Finish!!")
+echo $(e_done "$0: Finish!!")

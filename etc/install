@@ -168,15 +168,15 @@ upper() {
     fi | tr "[:lower:]" "[:upper:]"
 }
 
-contains() {<
-    if [ -f "$1" -a -r "$1" ]; then<
-        #cat "$1"<
-        echo "$1"<
-    else<
-        echo "$1"<
-    fi | grep "$2" >/dev/null 2>&1<
-    return $?<
-}<
+contains() {
+    if [ -f "$1" -a -r "$1" ]; then
+        #cat "$1"
+        echo "$1"
+    else
+        echo "$1"
+    fi | grep "$2" >/dev/null 2>&1
+    return $?
+}
 
 # Dotfiles {{{1
 

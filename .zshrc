@@ -778,7 +778,7 @@ do-enter() {
         git status
     else
         #ls_abbrev
-        ls
+        has "gch" && gch || ls
     fi
     zle reset-prompt
     return 0
@@ -982,7 +982,7 @@ zsh_disable_function() {
 
 # main {{{1
 zsh_at_startup() {
-    [ -f .files ] && source .files
+    [ -f .path ] && source .path
 
     loading
     tmux_automatically_attach
@@ -990,6 +990,8 @@ zsh_at_startup() {
 
     # Hello, Zsh!!
     echo -e "\n$fg_bold[cyan]This is ZSH $fg_bold[red]${ZSH_VERSION}$fg_bold[cyan] - DISPLAY on $fg_bold[red]$DISPLAY$reset_color\n"
+
+    has "rbenv" && eval "$(rbenv init -)"
 }
 
 if zsh_at_startup; then

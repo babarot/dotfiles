@@ -1,0 +1,32 @@
+#!/bin/bash
+
+readlink() {
+    if [ $# -eq 0 ] ; then
+        return 1
+    fi
+
+    file="$1"
+    cd "$(dirname "$1")"
+    file="$(basename "$file")"
+    while [ -L "$file" ]; do
+        file="$(command readlink "$file")"
+        cd "$(dirname "$file")"
+        file="$(basename "$file")"
+    done
+    phys="$(pwd -P)"
+    result="$phys/$file"
+    echo "$result"
+}
+
+dotpath="$(dirname "$(readlink "$0")")"
+
+if echo "$-" | grep -q "i"; then
+    # -> source a.sh
+    DOTPATH="$dotpath"
+    export DOTPATH
+else
+    if [ "$0" = "${BASH_SOURCE:-}" ]; then
+        # -> bash a.sh
+        echo "$dotpath"
+    fi
+fi

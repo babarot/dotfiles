@@ -20,7 +20,7 @@ e_done() {
 }
 
 e_arrow() {
-    printf " \033[37;1m%s\033[m...\033[32mOK\033[m\n" "➜ $*"
+    printf " \033[37;1m%s\033[m\n" "➜ $*"
 }
 
 is_exists() {
@@ -37,9 +37,14 @@ die() {
     exit "${2:-1}"
 }
 
-is_login_shell() { [[ $SHLVL == 1 ]]; }
+is_login_shell() {
+    [ "$SHLVL" = 1 ]
+}
 
-is_git_repo() { git rev-parse --is-inside-work-tree &>/dev/null; }
+is_git_repo() {
+    git rev-parse --is-inside-work-tree &>/dev/null
+    return $?
+}
 
 is_screen_running() {
     [ ! -z "$STY" ]
@@ -59,6 +64,14 @@ shell_has_started_interactively() {
 
 is_ssh_running() {
     [ ! -z "$SSH_CONECTION" ]
+}
+
+is_debug() {
+    if [ "$DEBUG" = 1 ]; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 ostype() {
@@ -153,14 +166,6 @@ Licensed under the MIT license.
 '
 
 dotfiles_download() {
-    is_debug() {
-        if [ "$DEBUG" = 1 ]; then
-            return 0
-        else
-            return 1
-        fi
-    }
-
     if [ -d "$DOTFILES" ]; then
         die "$DOTFILES: already exists"
     fi

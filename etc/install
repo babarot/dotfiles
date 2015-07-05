@@ -75,6 +75,7 @@ is_debug() {
 }
 
 ostype() {
+    # shellcheck disable=SC2119
     uname | lower
 }
 
@@ -132,13 +133,45 @@ noecho() {
     fi
 }
 
+# shellcheck disable=SC2120
 lower() {
-    tr "[:upper:]" "[:lower:]"
+    if [ $# -eq 0 ]; then
+        cat <&0
+    elif [ $# -eq 1 ]; then
+        if [ -f "$1" -a -r "$1" ]; then
+            cat "$1"
+        else
+            echo "$1"
+        fi
+    else
+        return 1
+    fi | tr "[:upper:]" "[:lower:]"
 }
 
+# shellcheck disable=SC2120
 upper() {
-    tr "[:lower:]" "[:upper:]"
+    if [ $# -eq 0 ]; then
+        cat <&0
+    elif [ $# -eq 1 ]; then
+        if [ -f "$1" -a -r "$1" ]; then
+            cat "$1"
+        else
+            echo "$1"
+        fi
+    else
+        return 1
+    fi | tr "[:lower:]" "[:upper:]"
 }
+
+contains() {<
+    if [ -f "$1" -a -r "$1" ]; then<
+        #cat "$1"<
+        echo "$1"<
+    else<
+        echo "$1"<
+    fi | grep "$2" >/dev/null 2>&1<
+    return $?<
+}<
 
 # Dotfiles {{{1
 

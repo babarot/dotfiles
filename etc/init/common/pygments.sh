@@ -18,7 +18,9 @@ if has "python"; then
         cd solarized-pygment
         git submodule update
         sudo ./setup.py install
+    else
+        die
     fi
 else
-    e_error "install python before Pygments"
+    die "install python before Pygments"
 fi

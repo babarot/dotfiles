@@ -10,6 +10,7 @@ repos = [
     "github.com/codegangsta/cli",
     "github.com/daviddengcn/go-colortext",
     "github.com/jessevdk/go-flags",
+    "github.com/junegunn/fzf/...",
     "github.com/k0kubun/pp",
     "github.com/kyokomi/emoji",
     "github.com/mattn/go-scan",

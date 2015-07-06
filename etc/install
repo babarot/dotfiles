@@ -296,7 +296,8 @@ dotfiles_install() {
     dotfiles_initialize "$@"
 }
 
-if echo "$-" | grep -q "i" && [ "${1:-}" = "" ]; then
+#if echo "$-" | grep -q "i" || [ "${1:-}" = "vital" ]; then
+if echo "$-" | grep -q "i"; then
     # -> source a.sh
     : return
 else

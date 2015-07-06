@@ -29,9 +29,9 @@ done 2>/dev/null &
 for i in $DOTPATH/etc/init/"$(get_os)"/*[^init].sh
 do
     if [ "${DEBUG:-}" = 1 ]; then
-        echo $i
+        echo "$i"
     else
-        bash $i
+        bash "$i"
     fi
 done || true
 

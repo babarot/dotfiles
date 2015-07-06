@@ -5,7 +5,10 @@ DOTFILES_FILES    := $(filter-out $(DOTFILES_EXCLUDES), $(DOTFILES_TARGET))
 all: install
 
 test:
-	@prove $(PROVE_OPT) $(wildcard ./etc/test/*_test.pl)
+	@#prove $(PROVE_OPT) $(wildcard ./etc/test/*_test.pl)
+	@#$(foreach val, $(PWD)/etc/test/sh/*_test.sh, echo $(val);)
+	@#bash $(PWD)/etc/test/sh/test.sh
+	@DOTPATH=$(PWD) bash $(PWD)/etc/test/test.sh
 
 help:
 	@echo "make list           #=> Show file list for deployment"
@@ -32,7 +35,7 @@ deploy:
 
 init:
 	@#$(foreach val, $(wildcard ./etc/init/*.sh), DOTPATH=$(PWD) bash $(val);)
-	@DOTPATH=$(PWD) bash ./etc/init/init.sh
+	@DOTPATH=$(PWD) bash $(PWD)/etc/init/init.sh
 
 install: update deploy init
 	@exec $$SHELL

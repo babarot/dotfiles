@@ -26,9 +26,13 @@ done 2>/dev/null &
 # main
 #cd $(dirname $0)
 
-for i in $DOTPATH/etc/init/*[^init].sh
+for i in $DOTPATH/etc/init/"$(get_os)"/*[^init].sh
 do
-    bash $i
+    if [ "${DEBUG:-}" = 1 ]; then
+        echo $i
+    else
+        bash $i
+    fi
 done || true
 
-echo $(e_done "$0: Finish!!")
+e_done "$0: Finish!!"

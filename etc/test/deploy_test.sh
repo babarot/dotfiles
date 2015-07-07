@@ -2,17 +2,17 @@
 
 . $DOTPATH/etc/lib/vital.sh
 
+trap "die $0: $LINENO" INT ERR
+
 unit1() {
     cd $DOTPATH
     make deploy >/dev/null
     if [ $? -eq 0 ]; then
         e_done "deploying dot files"
     else
-        e_error "$0: $LINENO: $FUNCNAME"
+        failure "$0: $LINENO: $FUNCNAME"
     fi
 }
-
-unit1
 
 readlink() {
     if [ $# -eq 0 ] ; then
@@ -36,11 +36,12 @@ readlink() {
 }
 
 unit2() {
+    err=0
     cd $DOTPATH
     for i in $(make list | sed "s|/$||g")
     do
         if [ $(readlink $HOME/"$i") = $DOTPATH/"$i" ]; then
-            err=0
+            :
         else
             err=1
         fi
@@ -49,8 +50,9 @@ unit2() {
     if [ "$err" = 0 ]; then
         e_done "linking valid paths"
     else
-        e_error "$0: $LINENO: $FUNCNAME"
+        failure "$0: $LINENO: $FUNCNAME"
     fi
 }
 
+unit1
 unit2

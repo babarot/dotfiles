@@ -42,6 +42,11 @@ die() {
     exit "${2:-1}"
 }
 
+failure() {
+    e_error "${1:-error}"
+    exit "${2:-1}"
+}
+
 is_login_shell() {
     [ "$SHLVL" = 1 ]
 }

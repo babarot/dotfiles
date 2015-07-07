@@ -42,8 +42,12 @@ die() {
     exit "${2:-1}"
 }
 
+success() {
+    printf " \033[37;1m%s\033[m%s...\033[32mOK\033[m\n" "✔ " "$*"
+}
+
 failure() {
-    e_error "${1:-error}"
+    e_error "${1:-$FUNCNAME}"
     exit "${2:-1}"
 }
 
@@ -83,6 +87,22 @@ is_debug() {
         return 1
     fi
 }
+
+is_number() {
+    if [ $# -eq 0 ]; then
+        cat <&0
+    else
+        echo "$1"
+    fi | grep -E '^[0-9]+$' >/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+alias is_int=is_number
+alias is_num=is_number
 
 ostype() {
     # shellcheck disable=SC2119
@@ -141,6 +161,12 @@ noecho() {
     else
         echo -n "${@:-> }"
     fi
+}
+
+echon() {
+    # echon - a script to emulate the -n flag functionality with 'echo' 
+    #   for Unix systems that don't have that available.
+    echo "$*" | tr -d '\n'
 }
 
 # shellcheck disable=SC2120

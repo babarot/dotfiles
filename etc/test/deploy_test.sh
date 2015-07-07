@@ -38,7 +38,7 @@ readlink() {
 unit2() {
     err=0
     cd $DOTPATH
-    for i in $(make list | sed "s|/$||g")
+    for i in $(make --silent list | sed "s|/$||g")
     do
         if [ $(readlink $HOME/"$i") = $DOTPATH/"$i" ]; then
             :

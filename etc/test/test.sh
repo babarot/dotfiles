@@ -7,8 +7,9 @@ do
     bash "$i" || err=1
 done
 
-for i in $DOTPATH/etc/test/$(get_os)/*.sh
+for i in $DOTPATH/etc/test/$(get_os)/*_test.sh
 do
+    [ -f "$i" ] || continue
     bash "$i" || err=1
 done
 

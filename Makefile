@@ -7,7 +7,6 @@ all: install
 test:
 	@#prove $(PROVE_OPT) $(wildcard ./etc/test/*_test.pl)
 	@#$(foreach val, $(PWD)/etc/test/sh/*_test.sh, echo $(val);)
-	@#bash $(PWD)/etc/test/sh/test.sh
 	@DOTPATH=$(PWD) bash $(PWD)/etc/test/test.sh
 
 help:

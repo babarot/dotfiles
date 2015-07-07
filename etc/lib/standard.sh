@@ -48,10 +48,6 @@ readonly FAILURE=2
 readonly ON='ON'
 readonly OFF='OFF'
 
-readonly _TAB_=`printf "\t"`
-readonly _SPACE_=' '
-readonly _BLANK_="${_SPACE_}${_TAB_}"
-readonly OLDIFS="$IFS"
 #==========================================================================
 
 # Logging stuff.

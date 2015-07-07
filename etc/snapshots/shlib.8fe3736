@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# @(#) shlib ver.0.1 2015.1.19
+#
+# Usage:
+#   . shlib
+# Description:
+#   Source all shell script libraris
+#
+# Copyright (C) 2013-2014 b4b4r07, aka BABAROT
+#               <b4b4r07@gmail.com>
+#               <https://github.com/b4b4r07>
+#
+# License:
+#   GNU General Public License version 3
+#
+######################################################################
+
+real=$(cd "$(dirname "${BASH_SOURCE:-$0}")" && pwd)
+cd "$real"
+library_file=(vital.sh *[^vital].sh)
+
+for file in "${library_file[@]}"
+do
+    . "$real/$file"
+done

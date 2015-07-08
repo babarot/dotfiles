@@ -1,8 +1,15 @@
 #!/bin/bash
 
-. $DOTPATH/etc/lib/vital.sh
+# -- START sh test
+#
+trap 'echo Error: $0: stopped; exit 1' ERR INT
 
-trap "die $0: $LINENO" INT ERR
+. "$DOTPATH"/etc/lib/vital.sh
+
+ERR=0
+export ERR
+#
+# -- END
 
 unit1() {
     e_arrow "test brew.sh..."

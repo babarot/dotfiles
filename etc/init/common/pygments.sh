@@ -3,8 +3,7 @@
 trap 'echo Error: $0: stopped; exit 1' ERR INT
 set -eu
 
-. $DOTPATH/etc/lib/vital.sh
-. $DOTPATH/etc/lib/standard.sh
+. "$DOTPATH"/etc/lib/vital.sh
 
 if has "python"; then
     has "pygmentize" && exit
@@ -13,7 +12,7 @@ if has "python"; then
     pip install Pygments
     pip install pygments-style-solarized
 
-    cd $DOTPATH/etc/init/assets/pygments
+    cd "$DOTPATH"/etc/init/assets/pygments
     if [ -d solarized-pygment ]; then
         cd solarized-pygment
         git submodule update

@@ -1,6 +1,9 @@
 language: objective-c
 os:
   - osx
+before_install:
+    - brew update
+    - brew install shellcheck
 before_script:
     - make deploy
 script:

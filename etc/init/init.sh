@@ -4,12 +4,12 @@ trap 'echo Error: $0: stopped; exit 1' ERR INT
 set -eu
 
 if [ -z "$DOTPATH" ]; then
+    # shellcheck disable=SC2016
     echo '$DOTPATH not set' >&2
     exit 1
 fi
 
-. $DOTPATH/etc/lib/vital.sh
-. $DOTPATH/etc/lib/standard.sh
+. "$DOTPATH"/etc/lib/vital.sh
 
 # Ask for the administrator password upfront
 sudo -v
@@ -24,9 +24,9 @@ do
 done 2>/dev/null &
 
 # main
-#cd $(dirname $0)
 
-for i in $DOTPATH/etc/init/"$(get_os)"/*[^init].sh
+# shellcheck disable=SC2102
+for i in "$DOTPATH"/etc/init/"$(get_os)"/*[^init].sh
 do
     if [ "${DEBUG:-}" = 1 ]; then
         echo "$i"

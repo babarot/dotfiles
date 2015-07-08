@@ -1,8 +1,15 @@
 #!/bin/bash
 
-. $DOTPATH/etc/lib/vital.sh
+# -- START sh test
+#
+trap 'echo Error: $0: stopped; exit 1' ERR INT
 
-trap "die $0: $LINENO" INT ERR
+. "$DOTPATH"/etc/lib/vital.sh
+
+ERR=0
+export ERR
+#
+# -- END
 
 unit1() {
     diff -qs \
@@ -13,7 +20,7 @@ unit1() {
     if [ $? -eq 0 ]; then
         e_done "redirecting dot.b4b4r07.com to github.com"
     else
-        failure "$0: $LINENO: $FUNCNAME"
+        e_failure "$0: $LINENO: $FUNCNAME"
     fi
 }
 

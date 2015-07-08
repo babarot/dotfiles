@@ -1,16 +1,23 @@
 #!/bin/bash
 
-. $DOTPATH/etc/lib/vital.sh
+# -- START sh test
+#
+trap 'echo Error: $0: stopped; exit 1' ERR INT
 
-trap "die $0: $LINENO" INT ERR
+. "$DOTPATH"/etc/lib/vital.sh
+
+ERR=0
+export ERR
+#
+# -- END
 
 unit1() {
-    cd $DOTPATH
+    cd "$DOTPATH"
     make deploy >/dev/null
     if [ $? -eq 0 ]; then
         e_done "deploying dot files"
     else
-        failure "$0: $LINENO: $FUNCNAME"
+        e_failure "$0: $LINENO: $FUNCNAME"
     fi
 }
 
@@ -36,21 +43,20 @@ readlink() {
 }
 
 unit2() {
-    err=0
-    cd $DOTPATH
+    cd "$DOTPATH"
     for i in $(make --silent list | sed "s|/$||g")
     do
-        if [ $(readlink $HOME/"$i") = $DOTPATH/"$i" ]; then
+        if [ "$(readlink "$HOME/$i")" = "$DOTPATH/$i" ]; then
             :
         else
-            err=1
+            ERR=1
         fi
     done
 
-    if [ "$err" = 0 ]; then
+    if [ "$ERR" = 0 ]; then
         e_done "linking valid paths"
     else
-        failure "$0: $LINENO: $FUNCNAME"
+        e_failure "$0: $LINENO: $FUNCNAME"
     fi
 }
 

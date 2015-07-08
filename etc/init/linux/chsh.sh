@@ -3,7 +3,7 @@
 trap 'echo Error: $0: stopped; exit 1' ERR INT
 set -eu
 
-. $DOTPATH/etc/lib/vital.sh
+. "$DOTPATH"/etc/lib/vital.sh
 
 if ! contains "${SHELL:-}" "${1:-zsh}"; then
     path="$(which "${1:-zsh}")"

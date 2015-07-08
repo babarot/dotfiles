@@ -1,11 +1,7 @@
-language: perl
-perl:
-    - 5.14
-env:
-    - PROVE_OPT=-v 
-install:
-    - sudo apt-get install libwww-perl
+language: objective-c
+os:
+  - osx
 before_script:
-    - "make deploy"
+    - make deploy
 script:
-    - "make --silent test"
+    - make --silent test

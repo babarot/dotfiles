@@ -2,6 +2,9 @@
 
 export PLATFORM
 
+readonly _LF=$(printf "\n")
+readonly _CR_=$(printf "\r")
+readonly _CRLF_=$(printf "\r\n")
 readonly _TAB_=$(printf "\t")
 readonly _SPACE_=' '
 readonly _BLANK_="${_SPACE_}${_TAB_}"
@@ -9,7 +12,7 @@ readonly _IFS_="$IFS"
 
 # Gerenal utilities {{{1
 e_newline() {
-    printf "\n"
+    printf "$_LF_"
 }
 
 e_header() {
@@ -28,6 +31,26 @@ e_arrow() {
     printf " \033[37;1m%s\033[m\n" "➜ $*"
 }
 
+e_indent() {
+    for ((i=0; i<${1:-4}; i++)); do
+        echon " "
+    done
+    if [ -n "$2" ]; then
+        echo "$2"
+    else
+        cat <&0
+    fi
+}
+
+e_success() {
+    printf " \033[37;1m%s\033[m%s...\033[32mOK\033[m\n" "✔ " "$*"
+}
+
+e_failure() {
+    e_error "${1:-$FUNCNAME}"
+    exit "${2:-1}"
+}
+
 is_exists() {
     which "$1" >/dev/null 2>&1
     return $?
@@ -39,15 +62,6 @@ has() {
 
 die() {
     echo "$1" 1>&2
-    exit "${2:-1}"
-}
-
-success() {
-    printf " \033[37;1m%s\033[m%s...\033[32mOK\033[m\n" "✔ " "$*"
-}
-
-failure() {
-    e_error "${1:-$FUNCNAME}"
     exit "${2:-1}"
 }
 

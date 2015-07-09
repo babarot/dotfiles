@@ -1,8 +1,6 @@
 etc Documentation
 ===
 
-![](https://img.shields.io/travis/b4b4r07/dotfiles.svg?style=flat-square)
-
 [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][License]
 
 [License]: ../doc/LICENSE-MIT.txt
@@ -24,7 +22,7 @@ etc Documentation
 > 	- [init.sh: deal with all init scripts](#url)
 > - [Testing in dotfiles](#testing-in-dotfiles)
 > 	- [Travis CI](#travis-ci)
-> 	- [How-to-write-an-unit-testing](#how-to-write-an-unit-testing)
+> 	- [How to write an unit testing](#how-to-write-an-unit-testing)
 > 	- [test.sh: deal with all tests](#testsh-deal-with-all-tests)
 > - [A-script:-neither-bin-nor-lib](#a-script-neither-bin-nor-lib)
 > 

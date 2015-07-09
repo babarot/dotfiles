@@ -1,9 +1,10 @@
-[![https://dribbble.com/shots/1466768-dotfiles-logo](./doc/img/dotfiles.png)](https://b4b4r07.github.io/dotfiles "b4b4r07 dotfiles gh-pages")
+[![https://dribbble.com/shots/1466768-dotfiles-logo](./doc/img/dotfiles.png)](https://b4b4r07.com/dotfiles "b4b4r07/dotfiles - gh-pages")
 
-[![Build Status](https://travis-ci.org/b4b4r07/dotfiles.svg?branch=master)](https://travis-ci.org/b4b4r07/dotfiles "Build Status")
-[![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt "License")
-[![Platform](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat)](./doc/OSX.md "Platform")
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/b4b4r07/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+[![](https://img.shields.io/travis/b4b4r07/dotfiles.svg?style=flat-square)][travis]
+[![](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][license]
+[![](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat-square)][platform]
+[![Vote](https://voting-badge.herokuapp.com/img?url=https://github.com/b4b4r07/dotfiles)][vote]
+[![](https://img.shields.io/badge/documentation-etc-red.svg?style=flat-square)][doc]
 
 This is a repository with my [configuration files](http://en.wikipedia.org/wiki/Configuration_file), those that in Linux/OS X normally are these files under the `$HOME` directory that are hidden and preceded by a dot, AKA **dotfiles**.
 
@@ -15,12 +16,12 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 
 ## Features
 
-- **OS X** Yosemite (MacBook Air)
+- **OS X** Yosemite (MacBook, Retina 12-inch, Early 2015)
 - **Terminal.app** (Full-screen)
 - **Solarized** ([base 16](https://github.com/chriskempson/base16))
 - **Tmux** 1.9a
 - **Zsh** 5.0.5
-- **Vim** 7.4
+- **Vim** 7.4 Huge +clipboard +lua
 
 ***DEMO:***
 
@@ -30,31 +31,12 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 |:---:|
 | [![](./doc/img/download.png)](https://github.com/b4b4r07/dotfiles/archive/master.zip "Download ZIP") |
 
-<!--
-<table style="text-align:center; border:none;">
-  <tr style="border:none;">
-    <td style="border:none;"><strong>Download ZIP</strong></td>
-  </tr>
-  <tr style="border:none;">
-    <td style="border:none;"><p><a href="https://github.com/b4b4r07/dotfiles/archive/master.zip" title="Download ZIP"><img src="./doc/img/download.png" alt="" /></a></p>
-</td>
-  </tr>
-</table>
--->
-
 **Note:** You can clone or fork them freely, but I don't guarantee that they fit you.
 
 ## Installation
 
 The easiest way to install this dotfiles is to open up a terminal, type the installation command below:
 Run the following command to set up a new machine:
-
-<!--
-| Tools | <a name="oneliner">Installation command</a> |
-|-------|-------------------------------------------------|
-| cURL | bash -c "$(curl -fsSL [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
-| Wget | bash -c "$(wget -qO - [dot.b4b4r07.com](https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install))" |
--->
 
 <table>
 <thead>
@@ -232,8 +214,7 @@ When setting up a new Mac, you may want to perform the following tasks mainly.
 	After installing Homebrew, you may want to install some common Homebrew formulae:
 	
 	```console
-	$ make brew
-	$ make cask
+	$ make init
 	```
 	
 - Run some `defaults` commands
@@ -269,7 +250,7 @@ Acknowledgment; I established this dotfiles referring to the following user's re
 * My `Makefile` based on [@Tetsuji's dotfiles](https://github.com/xtetsuji/dotfiles)
 * My `bootstrap.sh` based on [@Rocha's dotfiles](https://github.com/zenorocha/old-dotfiles)
 
-## Licence [![license](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./doc/LICENSE-MIT.txt "License")
+## Licence [![](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][license]
 
 [![b4b4r07](http://www.gravatar.com/avatar/8238c3c0be55b887aa9d6d59bfefa504.png)](https://twitter.com/intent/follow?screen_name=b4b4r07 "Follow @b4b4r07 on Twitter")
 
@@ -278,3 +259,12 @@ Copyright (c) 2014 "BABAROT" b4b4r07
 Licensed under the [MIT license](./doc/LICENSE-MIT.txt).
 
 Unless attributed otherwise, everything is under the MIT licence. Some stuff is not from me, and without attribution, and I no longer remember where I got it from. I apologize for that.
+
+[![](https://d2weczhvl823v0.cloudfront.net/b4b4r07/dotfiles/trend.png)][bitdeli]
+
+[travis]: https://travis-ci.org/b4b4r07/dotfiles
+[license]: ./doc/LICENSE-MIT.txt
+[platform]: ./doc/OSX.md
+[vote]: https://voting-badge.herokuapp.com/vote?url=https://github.com/b4b4r07/dotfiles
+[doc]: ./etc/README.md
+[bitdeli]: https://bitdeli.com/free

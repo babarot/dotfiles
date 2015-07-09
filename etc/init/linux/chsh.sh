@@ -7,10 +7,14 @@ set -eu
 
 if ! contains "${SHELL:-}" "${1:-zsh}"; then
     path="$(which "${1:-zsh}")"
-    sudo chsh -s "${path:-}"
-    if [ $? -eq 0 ]; then
-        echo "[verbose] chsh -s ${path:-\"\"}"
+    if [ -f "$path" -a -x "$path" ]; then
+        sudo chsh -s "${path:-}"
+        if [ $? -eq 0 ]; then
+            echo "[verbose] chsh -s ${path:-\"\"}"
+        else
+            die "run chsh -l; chsh"
+        fi
     else
-        die "run chsh -l; chsh"
+        die "$path: invalid path"
     fi
 fi

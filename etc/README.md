@@ -1,6 +1,8 @@
 etc Documentation
 ===
 
+![](https://img.shields.io/travis/b4b4r07/dotfiles.svg?style=flat-square)
+
 [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][License]
 
 [License]: ../doc/LICENSE-MIT.txt
@@ -199,6 +201,8 @@ else
     fi
 
     if [ -n "${BASH_EXECUTION_STRING:-}" ] || [ -p /dev/stdin ]; then
+        # -> cat a.sh | bash
+        # -> bash -c "$(cat a.sh)"
         do_as_install
     fi
 fi
@@ -210,7 +214,7 @@ Thanks to above mechanism, this file can be used for both `install` (installatio
 
 By making full use of these mechanisms, you can easily (only two-step) install dotfiles, and immediately reproduce the same environment that you always use. Probably it will not take 5 minutes.
 
-1. Go to [dotfiles gh-pages](http://b4b4r07.com/dotfiles), and click CURL or WGET button.
+1. Go to [gh-pages](http://b4b4r07.com/dotfiles), and click CURL or WGET button.
 2. Paste that to your terminal.
 
 	***DEMO:***
@@ -220,6 +224,8 @@ By making full use of these mechanisms, you can easily (only two-step) install d
 When the installation command is executed, it will download the dotfiles repository, deploy files with a name starting with dot (`.`) (aka dot files) to your home directory, and restart your current shell.
 
 If you pass the installation command `-s init`, also it will initialize dotfiles. For more information, please see [README.md](../README.md).
+
+	$ bash -c "$(curl -L dot.b4b4r07.com)" -s init
 
 # Library
 

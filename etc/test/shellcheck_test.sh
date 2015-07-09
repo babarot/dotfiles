@@ -20,7 +20,7 @@ unit1() {
     f+=("$DOTPATH"/etc/init/osx/*.sh)
     f+=("$DOTPATH"/etc/init/linux/*.sh)
 
-    e_arrow "check shellcheck..."
+    e_arrow "check POSIX..."
     for i in "${f[@]}"
     do
         shellcheck "$i">/dev/null

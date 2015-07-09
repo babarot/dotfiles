@@ -14,8 +14,8 @@ fi
 # Ask for the administrator password upfront
 sudo -v
 
-# Keep-alive: update existing `sudo` time stamp until this script has finished
-#while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+# Keep-alive: update existing `sudo` time stamp
+#             until this script has finished
 while true
 do
     sudo -n true
@@ -23,16 +23,19 @@ do
     kill -0 "$$" || exit
 done 2>/dev/null &
 
-# main
-
 # shellcheck disable=SC2102
 for i in "$DOTPATH"/etc/init/"$(get_os)"/*[^init].sh
 do
-    if [ "${DEBUG:-}" = 1 ]; then
-        echo "$i"
+    if [ -f "$i" ]; then
+        if [ "${DEBUG:-}" = 1 ]; then
+            echo "$i"
+        else
+            e_arrow "$(basename "$i")"
+            bash "$i"
+        fi
     else
-        bash "$i"
+        continue
     fi
-done || true
+done
 
-e_done "$0: Finish!!"
+e_done "$0: Finish!!" | sed "s $DOTPATH \$DOTPATH g"

@@ -2,7 +2,9 @@
 set expand-tilde on
 
 # Ignore the small and capital letter
+$if Bash
 set completion-ignore-case on
+$endif
 
 # Auto scroll
 set horizontal-scroll-mode off

@@ -1,6 +1,6 @@
 language: objective-c
 os:
-  - osx
+    - osx
 before_install:
     - brew update
     - brew install shellcheck

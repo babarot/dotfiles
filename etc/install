@@ -1,18 +1,24 @@
 #!/bin/bash
+#                                    
+#         _ _        _       _       
+#        (_) |      | |     | |      
+#  __   ___| |_ __ _| |  ___| |__    
+#  \ \ / / | __/ _` | | / __| '_ \   
+#   \ V /| | || (_| | |_\__ \ | | |  
+#    \_/ |_|\__\__,_|_(_)___/_| |_|  
+#                                    
+#                                    
 
 export PLATFORM
 
-readonly _LF=$(printf "\n")
-readonly _CR_=$(printf "\r")
-readonly _CRLF_=$(printf "\r\n")
-readonly _TAB_=$(printf "\t")
+readonly _TAB_="$(printf "\t")"
 readonly _SPACE_=' '
 readonly _BLANK_="${_SPACE_}${_TAB_}"
 readonly _IFS_="$IFS"
 
 # Gerenal utilities {{{1
 e_newline() {
-    printf "$_LF_"
+    printf "\n"
 }
 
 e_header() {
@@ -47,8 +53,9 @@ e_success() {
 }
 
 e_failure() {
-    e_error "${1:-$FUNCNAME}"
-    exit "${2:-1}"
+    #e_error "${1:-$FUNCNAME}" 1>&2
+    #exit "${2:-1}"
+    die "${1:-$FUNCNAME}"
 }
 
 is_exists() {
@@ -61,7 +68,7 @@ has() {
 }
 
 die() {
-    echo "$1" 1>&2
+    e_error "$1" 1>&2
     exit "${2:-1}"
 }
 

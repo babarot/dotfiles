@@ -45,7 +45,9 @@ function opwd()
 function record_opwd()
 {
     touch ~/.tmux.info
-    echo "$(tmux display -p "#I:#P"):$PWD" >>~/.tmux.info
+    if [ -n "$TMUX" ]; then
+        echo "$(tmux display -p "#I:#P"):$PWD" >>~/.tmux.info
+    fi
 }
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd record_opwd

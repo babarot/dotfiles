@@ -205,7 +205,7 @@ When setting up a new Mac, you may want to perform the following tasks mainly.
 
 	You need to have Xcode or, at the very minimum, the Xcode Command Line Tools, which are available as a much smaller download.
 	
-	The easiest way to install the [Xcode Command Line Tools](https://developer.apple.com/downloads) in OSX 10.9+ is to open up a terminal, type `xcode-select --install` and follow the prompts.
+	The easiest way to install the [Xcode Command Line Tools](https://developer.apple.com/downloads) in OS X 10.9+ is to open up a terminal, type `xcode-select --install` and follow the prompts.
 
 - Install Homebrew and setup their formulae
 
@@ -221,7 +221,7 @@ When setting up a new Mac, you may want to perform the following tasks mainly.
 
 	It can set many hidden settings and preferences in Mac OS X, and in individual applications.
 
-All of these are included in the `make init` for OS X. For more detail, see also [here](./doc/OSX.md) of documentation of OS X operation.
+All of these are included in the `make init` for OS X. For more detail, see also [here][platform] of documentation of OS X operation.
 
 ## Components
 
@@ -264,7 +264,7 @@ Unless attributed otherwise, everything is under the MIT licence. Some stuff is 
 
 [travis]: https://travis-ci.org/b4b4r07/dotfiles
 [license]: ./doc/LICENSE-MIT.txt
-[platform]: ./doc/OSX.md
+[platform]: ./doc/OS_X.md
 [vote]: https://voting-badge.herokuapp.com/vote?url=https://github.com/b4b4r07/dotfiles
 [doc]: ./etc/README.md
 [bitdeli]: https://bitdeli.com/free

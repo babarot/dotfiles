@@ -108,6 +108,8 @@ loading() {
 
 # tmux_automatically_attach {{{1
 tmux_automatically_attach() {
+    is_ssh_running && return
+
     if is_screen_or_tmux_running; then
         if is_tmux_runnning; then
             if has 'cowsay'; then

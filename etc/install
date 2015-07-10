@@ -53,52 +53,60 @@ e_success() {
 }
 
 e_failure() {
-    #e_error "${1:-$FUNCNAME}" 1>&2
-    #exit "${2:-1}"
     die "${1:-$FUNCNAME}"
 }
 
+# is_exists returns true if executable $1 exists in $PATH
 is_exists() {
     which "$1" >/dev/null 2>&1
     return $?
 }
 
+# has is wrapper function
 has() {
     is_exists "$@"
 }
 
+# die returns exit code error and echo error message
 die() {
     e_error "$1" 1>&2
     exit "${2:-1}"
 }
 
+# is_login_shell returns true if current shell is first shell
 is_login_shell() {
     [ "$SHLVL" = 1 ]
 }
 
+# is_git_repo returns true if cwd is in git repository
 is_git_repo() {
     git rev-parse --is-inside-work-tree &>/dev/null
     return $?
 }
 
+# is_screen_running returns true if GNU screen is running
 is_screen_running() {
     [ ! -z "$STY" ]
 }
 
+# is_tmux_runnning returns true if tmux is running
 is_tmux_runnning() {
     [ ! -z "$TMUX" ]
 }
 
+# is_screen_or_tmux_running returns true if GNU screen or tmux is running
 is_screen_or_tmux_running() {
     is_screen_running || is_tmux_runnning
 }
 
+# shell_has_started_interactively returns true if the current shell is
+# running from command line
 shell_has_started_interactively() {
     [ ! -z "$PS1" ]
 }
 
 is_ssh_running() {
-    [ ! -z "$SSH_CONECTION" ]
+    [ ! -z "$SSH_CLIENT" ]
 }
 
 is_debug() {
@@ -190,6 +198,7 @@ echon() {
     echo "$*" | tr -d '\n'
 }
 
+# lower returns a copy of the string with all letters mapped to their lower case.
 # shellcheck disable=SC2120
 lower() {
     if [ $# -eq 0 ]; then
@@ -205,6 +214,7 @@ lower() {
     fi | tr "[:upper:]" "[:lower:]"
 }
 
+# upper returns a copy of the string with all letters mapped to their upper case.
 # shellcheck disable=SC2120
 upper() {
     if [ $# -eq 0 ]; then
@@ -220,13 +230,10 @@ upper() {
     fi | tr "[:lower:]" "[:upper:]"
 }
 
+# contains returns true if $2 is within $1.
 contains() {
-    if [ -f "$1" -a -r "$1" ]; then
-        #cat "$1"
-        echo "$1"
-    else
-        echo "$1"
-    fi | grep "$2" >/dev/null 2>&1
+    echo "$1" |
+    grep "$2" >/dev/null 2>&1
     return $?
 }
 
@@ -237,22 +244,22 @@ DOTFILES_GITHUB="https://github.com/b4b4r07/dotfiles.git"; export DOTFILES_GITHU
 
 # shellcheck disable=SC1078,SC1079,SC2016
 dotfiles_logo='
-    | |     | |  / _(_) |           
-  __| | ___ | |_| |_ _| | ___  ___  
- / _` |/ _ \| __|  _| | |/ _ \/ __| 
-| (_| | (_) | |_| | | | |  __/\__ \ 
- \__,_|\___/ \__|_| |_|_|\___||___/ 
+      | |     | |  / _(_) |           
+    __| | ___ | |_| |_ _| | ___  ___  
+   / _` |/ _ \| __|  _| | |/ _ \/ __| 
+  | (_| | (_) | |_| | | | |  __/\__ \ 
+   \__,_|\___/ \__|_| |_|_|\___||___/ 
 
-*** WHAT IS INSIDE? ***
+  *** WHAT IS INSIDE? ***
   1. Download https://github.com/b4b4r07/dotfiles.git
   2. Symlinking dot files to your home directory
   3. Execute all sh files within `etc/init/` (optional)
 
-See the README for documentation.
-https://github.com/b4b4r07/dotfiles
+  See the README for documentation.
+  https://github.com/b4b4r07/dotfiles
 
-Copyright (c) 2014 "BABAROT" aka @b4b4r07
-Licensed under the MIT license.
+  Copyright (c) 2014 "BABAROT" aka @b4b4r07
+  Licensed under the MIT license.
 '
 
 dotfiles_download() {
@@ -333,22 +340,21 @@ dotfiles_initialize() {
 
 # A script for the file named "install"
 dotfiles_install() {
-    ### 1. Download the repository
-    ### ==> downloading
-    ###
-    ### Priority: git > curl > wget
+    # 1. Download the repository
+    # ==> downloading
+    #
+    # Priority: git > curl > wget
     dotfiles_download &&
 
-    ### 2. Deploy dotfiles to your home directory
-    ### ==> deploying
+    # 2. Deploy dotfiles to your home directory
+    # ==> deploying
     dotfiles_deploy &&
 
-    ### 3. Execute all sh files within etc/init/
-    ### ==> initializing
+    # 3. Execute all sh files within etc/init/
+    # ==> initializing
     dotfiles_initialize "$@"
 }
 
-#if echo "$-" | grep -q "i" || [ "${1:-}" = "vital" ]; then
 if echo "$-" | grep -q "i"; then
     # -> source a.sh
     : return
@@ -363,19 +369,20 @@ else
     fi
 
     if [ -n "${BASH_EXECUTION_STRING:-}" ] || [ -p /dev/stdin ]; then
-    trap "e_error 'terminated'; exit 1" INT ERR
-    # -> cat a.sh | bash
-    # -> bash -c "$(cat a.sh)"
-    echo "$dotfiles_logo"
-    dotfiles_install "$@" &&
+        trap "e_error 'terminated'; exit 1" INT ERR
+        # -> cat a.sh | bash
+        # -> bash -c "$(cat a.sh)"
+        echo "$dotfiles_logo"
+        dotfiles_install "$@"
 
-    #if [ -t 0 ]; then
-        ### Restart shell if specified "bash -c $(curl -L {URL})"
-        ### not restart:
-        ###   curl -L {URL} | bash
-        e_newline
-        e_arrow "Restarting your shell..."
-        exec "${SHELL:-/bin/zsh}"
+        # Restart shell if specified "bash -c $(curl -L {URL})"
+        # not restart:
+        #   curl -L {URL} | bash
+        if [ ! -p /dev/stdin ]; then
+            e_newline
+            e_arrow "Restarting your shell..."
+            exec "${SHELL:-/bin/zsh}"
+        fi
     fi
 fi
 

@@ -110,205 +110,205 @@ bash_exit() { #{{{1
     trap _exit EXIT
 }
 
-bash_shopt() { #{{{1
-    #set -o nounset     # These  two options are useful for debugging.
-    #set -o xtrace
-    alias debug="set -o nounset; set -o xtrace"
-
-    ulimit -S -c 0      # Don't want coredumps.
-    set -o notify
-    set -o noclobber
-    set -o ignoreeof
-
-
-    # Enable options:
-    shopt -s cdspell
-    shopt -s cdable_vars
-    shopt -s checkhash
-    shopt -s checkwinsize
-    shopt -s sourcepath
-    shopt -s no_empty_cmd_completion
-    shopt -s cmdhist
-    shopt -s histappend histreedit histverify
-    shopt -s extglob       # Necessary for programmable completion.
-
-    # Disable options:
-    shopt -u mailwarn
-    unset MAILCHECK        # Don't want my shell to warn me of incoming mail.
-}
-
-bash_alias() {
-    alias vi=vim
-}
-
-bash_function() {
-    if is_osx; then
-        op() {
-            if [ -p /dev/stdin ]; then
-                open $(cat -) "$@"
-            elif [ -z "$1" ]; then
-                open .
-            else
-                open "$@"
-            fi
-        }
-
-        tex() {
-            if ! $(has 'platex') || ! $(has 'dvipdfmx'); then
-                return 1
-            fi
-            platex "$1" && dvipdfmx "${1/.tex/.dvi}" && {
-            echo -e "\n\033[31mCompile complete!\033[m"
-        } && if $(has 'open'); then
-        open "${1/.tex/.pdf}"; fi
-    }
-
-    deadlink() {
-        local f
-        for f in `command ls -A "${1:-$PWD}"`; do
-            local fpath="${1:-$PWD}/$f"
-            if [ -h "$fpath" ]; then
-                [ -a "$fpath" ] || command rm -i "$fpath"
-            fi
-        done
-        unset f fpath
-    }
-
-    strlen() {
-        local length=`echo "$1" | wc -c | sed -e 's/ *//'`
-        echo `expr $length - 1`
-    }
-
-    sort() {
-        if [ "$1" = '--help' ]
-        then
-            command sort --help
-            echo -e '\n\nOptions that are described below is an additional option that was made by b4b4r07.\n'
-            echo -e '  -p, --particular-field    sort an optional field; if not given arguments, 2 as a default\n'
-            return 0
-        elif [ "$1" = '-p' -o "$1" = '--particular-field' ]
-        then
-            shift
-            gawk '
-            {
-                line[NR] = $'${1:-2}' "\t" $0;
-            }
-
-            END {
-            asort(line);
-            for (i = 1; i <= NR; i++) {
-                print substr(line[i], index(line[i], "\t") + 1);
-            }
-        }' 2>/dev/null
-        return 0
-        fi
-        command sort "$@"
-    }
-
-    repeat() {
-        local i max
-        max=$1; shift;
-        for ((i=1; i <= max ; i++)); do
-            eval "$@";
-        done
-    }
-
-    richpager()
-    # By the file number of lines, switch using cat or less.
-    # If the pygmentize exists, use it instead of cat.
-    {
-        # Use cat as default pager.
-        Pager='cat'
-        if type pygmentize >/dev/null 2>&1; then
-            # Use pygmentize, if exist.
-            Pager='pygmentize'
-        fi
-        # Less option.
-        Less='less -R +Gg'
-        # Get display lines.
-        DispLines=$[ $( stty 'size' < '/dev/tty' | cut -d' ' -f1 ) - 2 ]
-
-        # Normal case.
-        # Can use pygmentize to syntax highlight, if exist.
-        # ex) user$ ./richpager file
-        if [ $# -eq 1 ]; then
-            if [ -f $1 ]; then
-                Filename="$1"
-                FileLines=$(wc -l <$Filename)
-                if (( FileLines > DispLines )); then
-                    export LESSOPEN='| pygmentize %s'
-                    ${Less} $Filename
-                    unset LESSOPEN
-                else
-                    ${Pager} $Filename
-                fi
-            fi
-            return 0
-        else
-            # Many argument.
-            # Cannot use pygmentize bacause cannot judge filetype from extension.
-            # ex) user$ ./richpager file1 file2
-            while (( $# > 0 )) ; do
-                case "$1" in
-                    '-n')
-                        nflag='-n'
-                        shift && continue
-                        ;;
-                esac
-
-                # Directory.
-                if [[ -d "$1" ]] ; then
-                    ls "$1"
-                    exit 0
-
-                    # Readable files.
-                elif [[ -r "$1" ]] ; then
-                    List[${#List[@]}]=$( < "$1" )
-
-                    # Enigma.
-                else
-                    List[${#List[@]}]=$1
-                fi
-
-                shift
-            done
-
-            # Get file contents.
-            if (( ${#List[@]} > 0 )) ; then
-                File=$( for i in "${List[@]}" ; do echo "$i"; done )
-
-                # No argument, no pipe.
-            elif [[ -t 0 ]] ; then
-                echo "error: No argument." 1>&2
-                return 1
-
-                # Pipe detected.
-                # Cannot use pygmentize even if it exists.
-                # See also pygmentize -h (help file).
-            else
-                File=$( cat - )
-            fi
-
-            # Count file chars.
-            FileLines=$( echo -n "$File" | grep -c '' )
-
-            # File is empty.
-            if (( FileLines < 0 )); then
-                echo "error: No entry." 1>&2
-                return 1
-            fi
-        fi
-
-        # Judgement cat or less.
-        if (( FileLines > DispLines )); then
-            echo "$File" | cat ${nflag} |${Less}
-        else
-            echo "$File" | cat ${nflag}
-        fi
-
-        return 0
-    }
-}
+#bash_shopt() { #{{{1
+#    #set -o nounset     # These  two options are useful for debugging.
+#    #set -o xtrace
+#    alias debug="set -o nounset; set -o xtrace"
+#
+#    ulimit -S -c 0      # Don't want coredumps.
+#    set -o notify
+#    set -o noclobber
+#    set -o ignoreeof
+#
+#
+#    # Enable options:
+#    shopt -s cdspell
+#    shopt -s cdable_vars
+#    shopt -s checkhash
+#    shopt -s checkwinsize
+#    shopt -s sourcepath
+#    shopt -s no_empty_cmd_completion
+#    shopt -s cmdhist
+#    shopt -s histappend histreedit histverify
+#    shopt -s extglob       # Necessary for programmable completion.
+#
+#    # Disable options:
+#    shopt -u mailwarn
+#    unset MAILCHECK        # Don't want my shell to warn me of incoming mail.
+#}
+#
+#bash_alias() {
+#    alias vi=vim
+#}
+#
+#bash_function() {
+#    if is_osx; then
+#        op() {
+#            if [ -p /dev/stdin ]; then
+#                open $(cat -) "$@"
+#            elif [ -z "$1" ]; then
+#                open .
+#            else
+#                open "$@"
+#            fi
+#        }
+#
+#        tex() {
+#            if ! $(has 'platex') || ! $(has 'dvipdfmx'); then
+#                return 1
+#            fi
+#            platex "$1" && dvipdfmx "${1/.tex/.dvi}" && {
+#            echo -e "\n\033[31mCompile complete!\033[m"
+#        } && if $(has 'open'); then
+#        open "${1/.tex/.pdf}"; fi
+#    }
+#
+#    deadlink() {
+#        local f
+#        for f in `command ls -A "${1:-$PWD}"`; do
+#            local fpath="${1:-$PWD}/$f"
+#            if [ -h "$fpath" ]; then
+#                [ -a "$fpath" ] || command rm -i "$fpath"
+#            fi
+#        done
+#        unset f fpath
+#    }
+#
+#    strlen() {
+#        local length=`echo "$1" | wc -c | sed -e 's/ *//'`
+#        echo `expr $length - 1`
+#    }
+#
+#    sort() {
+#        if [ "$1" = '--help' ]
+#        then
+#            command sort --help
+#            echo -e '\n\nOptions that are described below is an additional option that was made by b4b4r07.\n'
+#            echo -e '  -p, --particular-field    sort an optional field; if not given arguments, 2 as a default\n'
+#            return 0
+#        elif [ "$1" = '-p' -o "$1" = '--particular-field' ]
+#        then
+#            shift
+#            gawk '
+#            {
+#                line[NR] = $'${1:-2}' "\t" $0;
+#            }
+#
+#            END {
+#            asort(line);
+#            for (i = 1; i <= NR; i++) {
+#                print substr(line[i], index(line[i], "\t") + 1);
+#            }
+#        }' 2>/dev/null
+#        return 0
+#        fi
+#        command sort "$@"
+#    }
+#
+#    repeat() {
+#        local i max
+#        max=$1; shift;
+#        for ((i=1; i <= max ; i++)); do
+#            eval "$@";
+#        done
+#    }
+#
+#    richpager()
+#    # By the file number of lines, switch using cat or less.
+#    # If the pygmentize exists, use it instead of cat.
+#    {
+#        # Use cat as default pager.
+#        Pager='cat'
+#        if type pygmentize >/dev/null 2>&1; then
+#            # Use pygmentize, if exist.
+#            Pager='pygmentize'
+#        fi
+#        # Less option.
+#        Less='less -R +Gg'
+#        # Get display lines.
+#        DispLines=$[ $( stty 'size' < '/dev/tty' | cut -d' ' -f1 ) - 2 ]
+#
+#        # Normal case.
+#        # Can use pygmentize to syntax highlight, if exist.
+#        # ex) user$ ./richpager file
+#        if [ $# -eq 1 ]; then
+#            if [ -f $1 ]; then
+#                Filename="$1"
+#                FileLines=$(wc -l <$Filename)
+#                if (( FileLines > DispLines )); then
+#                    export LESSOPEN='| pygmentize %s'
+#                    ${Less} $Filename
+#                    unset LESSOPEN
+#                else
+#                    ${Pager} $Filename
+#                fi
+#            fi
+#            return 0
+#        else
+#            # Many argument.
+#            # Cannot use pygmentize bacause cannot judge filetype from extension.
+#            # ex) user$ ./richpager file1 file2
+#            while (( $# > 0 )) ; do
+#                case "$1" in
+#                    '-n')
+#                        nflag='-n'
+#                        shift && continue
+#                        ;;
+#                esac
+#
+#                # Directory.
+#                if [[ -d "$1" ]] ; then
+#                    ls "$1"
+#                    exit 0
+#
+#                    # Readable files.
+#                elif [[ -r "$1" ]] ; then
+#                    List[${#List[@]}]=$( < "$1" )
+#
+#                    # Enigma.
+#                else
+#                    List[${#List[@]}]=$1
+#                fi
+#
+#                shift
+#            done
+#
+#            # Get file contents.
+#            if (( ${#List[@]} > 0 )) ; then
+#                File=$( for i in "${List[@]}" ; do echo "$i"; done )
+#
+#                # No argument, no pipe.
+#            elif [[ -t 0 ]] ; then
+#                echo "error: No argument." 1>&2
+#                return 1
+#
+#                # Pipe detected.
+#                # Cannot use pygmentize even if it exists.
+#                # See also pygmentize -h (help file).
+#            else
+#                File=$( cat - )
+#            fi
+#
+#            # Count file chars.
+#            FileLines=$( echo -n "$File" | grep -c '' )
+#
+#            # File is empty.
+#            if (( FileLines < 0 )); then
+#                echo "error: No entry." 1>&2
+#                return 1
+#            fi
+#        fi
+#
+#        # Judgement cat or less.
+#        if (( FileLines > DispLines )); then
+#            echo "$File" | cat ${nflag} |${Less}
+#        else
+#            echo "$File" | cat ${nflag}
+#        fi
+#
+#        return 0
+#    }
+#}
 
 bash_zshlike() {
     shopt -s globstar
@@ -343,7 +343,7 @@ if bash_at_startup; then
     PS1="[${Yellow}\u${NC}]:${Blue}\w${NC}\$ "
     export PS1
 
-    bash_shopt
+    #bash_shopt
     bash_exit
 
     if ! is_osx && has "dircolors"; then

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-trap 'echo Error: $0: stopped; exit 1' ERR INT
+trap 'echo Error: $0:$LINENO stopped; exit 1' ERR INT
 set -eu
 
 if [ ! -d ~/.antigen ]; then

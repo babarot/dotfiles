@@ -335,7 +335,7 @@ bash_at_startup() { #{{{1
 
     bash_loading
 
-    cowsay -f ghostbusters "$(fortune -s)"
+    #cowsay -f ghostbusters "$(fortune -s)"
     echo
 }
 
@@ -344,11 +344,11 @@ if bash_at_startup; then
     export PS1
 
     #bash_shopt
-    bash_exit
+    #bash_exit
 
-    if ! is_osx && has "dircolors"; then
-        $(dircolors -b ~/.dir_colors)
-    fi
+    #if ! is_osx && has "dircolors"; then
+    #    $(dircolors -b ~/.dir_colors)
+    #fi
 fi
 
 # __END__{{{1

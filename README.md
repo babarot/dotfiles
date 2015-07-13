@@ -1,9 +1,33 @@
-[![https://dribbble.com/shots/1466768-dotfiles-logo](./doc/img/dotfiles.png)](https://b4b4r07.com/dotfiles "b4b4r07/dotfiles - gh-pages")
+<a href="top"></a>
+
+<p align="center">
+<img src="doc/img/dotfiles.png">
+</p>
+
+<p align="center">
+<b><a href="#overview">Overview</a></b>
+|
+<b><a href="#features">Features</a></b>
+|
+<b><a href="#installation">Installation</a></b>
+|
+<b><a href="#updating">Updating</a></b>
+|
+<b><a href="#setup">Setup</a></b>
+|
+<b><a href="#components">Components</a></b>
+|
+<b><a href="#credits">Credits</a></b>
+|
+<b><a href="#license">License</a></b>
+</p>
+
+<br>
 
 [![](https://img.shields.io/travis/b4b4r07/dotfiles.svg?style=flat-square)][travis]
 [![](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][license]
 [![](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat-square)][platform]
-[![Vote](https://voting-badge.herokuapp.com/img?url=https://github.com/b4b4r07/dotfiles)][vote]
+[![](https://voting-badge.herokuapp.com/img?url=https://github.com/b4b4r07/dotfiles)][vote]
 [![](https://img.shields.io/badge/documentation-etc-red.svg?style=flat-square)][doc]
 
 This is a repository with my [configuration files](http://en.wikipedia.org/wiki/Configuration_file), those that in Linux/OS X normally are these files under the `$HOME` directory that are hidden and preceded by a dot, AKA **dotfiles**.
@@ -14,6 +38,8 @@ The primary goal is to increase CLI productivity on OS X, though many scripts ru
 
 My primary OS is OS X (10.10.x) and some of these configurations are tuned to work on that platform. The bash files are more generic and friendly toward other Unix-based operating systems.
 
+<p align="right"><a href="#top">:arrow_up:</a></p>
+
 ## Features
 
 - **OS X** Yosemite (MacBook, Retina 12-inch, Early 2015)
@@ -21,17 +47,15 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 - **Solarized** ([base 16](https://github.com/chriskempson/base16))
 - **Tmux** 1.9a
 - **Zsh** 5.0.5
-- **Vim** 7.4 Huge +clipboard +lua
+- **Vim** (7.4 Huge +clipboard +lua)
 
 ***DEMO:***
 
 ![](./doc/img/environment.png "b4b4r07's environment")
 
-| Download ZIP |
-|:---:|
-| [![](./doc/img/download.png)](https://github.com/b4b4r07/dotfiles/archive/master.zip "Download ZIP") |
-
 **Note:** You can clone or fork them freely, but I don't guarantee that they fit you.
+
+<p align="right"><a href="#top">:arrow_up:</a></p>
 
 ## Installation
 
@@ -92,6 +116,8 @@ When the [installation command](#oneliner) format is not `curl -L URL | sh` but 
 
 ### Quick installation
 
+![](doc/img/curl.png)
+
 To quickly install:
 
 ```console
@@ -115,6 +141,8 @@ Actually notation of the shell may be `sh` instead of `bash`. Regardless of the 
 
 **Note:** If you want to use the [`curl`](http://curl.haxx.se), in order to follow the redirect `-L` flag is essential. On the other hand, it is possible to omit `-s` flag because it is meant that silent or quiet mode makes `curl` mute.
 
+<p align="right"><a href="#top">:arrow_up:</a></p>
+
 ## Updating
 
 To update later on, just run this command.
@@ -124,6 +152,8 @@ $ make update
 ```
 
 In addition, there are several git submodules included in this configuration. On a new installation these submodules need to be initialized and updated.
+
+<p align="right"><a href="#top">:arrow_up:</a></p>
 
 ## Setup
 
@@ -143,14 +173,13 @@ $ bash -c "$(curl -L dot.b4b4r07.com)" -s init
 
 **Init scripts**
 
-- Build and install the original cutsom Vim
-- Translate your home directory into English
+- Build and install customized Vim (+clipboard, +lua)
+- Globalize your home directory name
 - Install antigen the zsh plugin manager
 - Install pygments the generic syntax highlighter written in python
 - Install Homebrew the missing package manager for OS X
 - Install the CLI tool that comes with Xcode
 - Run 'brew install' based on the Brewfile
-- Run 'brew cask install' based on the Caskfile
 - Sensible OS X defaults
 - Setup Karabiner (formerly KeyRemap4MacBook)
 - ...
@@ -223,6 +252,8 @@ When setting up a new Mac, you may want to perform the following tasks mainly.
 
 All of these are included in the `make init` for OS X. For more detail, see also [here][platform] of documentation of OS X operation.
 
+<p align="right"><a href="#top">:arrow_up:</a></p>
+
 ## Components
 
 The main directory that the user will use are the following list.
@@ -233,6 +264,8 @@ The main directory that the user will use are the following list.
 - **etc/lib/**: Shell scripts Libraries.
 - **doc/man/**: A manual of my own making sctipts
 - **.loading/**: Any files ending in `.sh` get loaded into your environment.
+
+<p align="right"><a href="#top">:arrow_up:</a></p>
 
 ## Credits
 
@@ -249,6 +282,8 @@ Acknowledgment; I established this dotfiles referring to the following user's re
 * My `README.md` layout based on [@zanshin's README.md](https://github.com/zanshin/dotfiles)
 * My `Makefile` based on [@Tetsuji's dotfiles](https://github.com/xtetsuji/dotfiles)
 * My `bootstrap.sh` based on [@Rocha's dotfiles](https://github.com/zenorocha/old-dotfiles)
+
+<p align="right"><a href="#top">:arrow_up:</a></p>
 
 ## Licence [![](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][license]
 
@@ -268,3 +303,5 @@ Unless attributed otherwise, everything is under the MIT licence. Some stuff is 
 [vote]: https://voting-badge.herokuapp.com/vote?url=https://github.com/b4b4r07/dotfiles
 [doc]: ./etc/README.md
 [bitdeli]: https://bitdeli.com/free
+
+<p align="right"><a href="#top">:arrow_up:</a></p>

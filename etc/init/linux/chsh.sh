@@ -5,8 +5,11 @@ set -eu
 
 . "$DOTPATH"/etc/lib/vital.sh
 
-if ! contains "${SHELL:-}" "${1:-zsh}"; then
-    path="$(which "${1:-zsh}")"
+has "bash" && shell="bash"
+has "zsh"  && shell="zsh"
+
+if ! contains "${SHELL:-}" "${1:-"$shell"}"; then
+    path="$(which "${1:-"$shell"}")"
     if [ -f "$path" -a -x "$path" ]; then
         sudo chsh -s "${path:-}"
         if [ $? -eq 0 ]; then

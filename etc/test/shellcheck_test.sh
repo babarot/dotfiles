@@ -12,7 +12,10 @@ export ERR
 # -- END
 
 unit1() {
-    has "shellcheck" || return
+    has "shellcheck" && :
+    if [ $? -ne 0 ]; then
+        return
+    fi
 
     f=()
     f+=("$DOTPATH"/etc/init/*.sh)

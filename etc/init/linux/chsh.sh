@@ -11,8 +11,7 @@ has "zsh"  && shell="zsh"
 if ! contains "${SHELL:-}" "${1:-"$shell"}"; then
     path="$(which "${1:-"$shell"}")"
     if [ -f "$path" -a -x "$path" ]; then
-        sudo chsh -s "${path:-}"
-        if [ $? -eq 0 ]; then
+        if sudo chsh -s "${path:-}"; then
             echo "[verbose] chsh -s ${path:-\"\"}"
         else
             die "run chsh -l; chsh"

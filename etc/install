@@ -328,7 +328,7 @@ dotfiles_initialize() {
             :
         else
             if [ -f Makefile ]; then
-                make init
+                bash "$DOTPATH"/etc/init/init.sh
             else
                 die "Makefile: not found"
             fi

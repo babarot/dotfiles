@@ -8,7 +8,7 @@ set -eu
 if has "goal"; then
     cd "$DOTPATH"/etc/init/assets/go
     if [ -f config.toml ]; then
-        goal
+        goal --verbose
     else
         exit 1
     fi

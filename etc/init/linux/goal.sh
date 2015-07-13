@@ -11,7 +11,7 @@ if ! has "goal"; then
 fi
 
 if cd "$DOTPATH"/etc/init/assets/go; then
-    goal
+    goal --verbose
 else
     exit 1
 fi

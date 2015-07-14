@@ -239,7 +239,10 @@ contains() {
 
 # Dotfiles {{{1
 
-DOTFILES=~/.dotfiles; export DOTFILES
+if [ -z "${DOTPATH:-}" ]; then
+    DOTPATH=~/.dotfiles; export DOTPATH
+fi
+
 DOTFILES_GITHUB="https://github.com/b4b4r07/dotfiles.git"; export DOTFILES_GITHUB
 
 # shellcheck disable=SC1078,SC1079,SC2016
@@ -263,8 +266,8 @@ dotfiles_logo='
 '
 
 dotfiles_download() {
-    if [ -d "$DOTFILES" ]; then
-        die "$DOTFILES: already exists"
+    if [ -d "$DOTPATH" ]; then
+        die "$DOTPATH: already exists"
     fi
 
     e_newline
@@ -277,7 +280,7 @@ dotfiles_download() {
             # --recursive equals to ...
             # git submodule init
             # git submodule update
-            git clone --recursive "$DOTFILES_GITHUB" "$DOTFILES"
+            git clone --recursive "$DOTFILES_GITHUB" "$DOTPATH"
 
         elif is_exists "curl" || is_exists "wget"; then
             # curl or wget
@@ -289,7 +292,7 @@ dotfiles_download() {
                 wget -O - "$tarball"
 
             fi | tar xv -
-            mv -f dotfiles-master "$DOTFILES"
+            mv -f dotfiles-master "$DOTPATH"
 
         else
             die "curl or wget required"
@@ -304,11 +307,11 @@ dotfiles_deploy() {
     e_newline
     e_header "Deploying dotfiles..."
 
-    if [ ! -d $DOTFILES ]; then
-        die "$DOTFILES: not found"
+    if [ ! -d $DOTPATH ]; then
+        die "$DOTPATH: not found"
     fi
 
-    cd "$DOTFILES"
+    cd "$DOTPATH"
 
     if is_debug; then
         :
@@ -370,7 +373,6 @@ else
         # -> bash a.sh
         exit
     fi
-    [ -n "${VITAL:-}" ] && exit
 
     if [ -n "${BASH_EXECUTION_STRING:-}" ] || [ -p /dev/stdin ]; then
         trap "e_error 'terminated'; exit 1" INT ERR

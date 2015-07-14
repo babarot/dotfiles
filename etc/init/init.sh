@@ -3,13 +3,13 @@
 trap 'echo Error: $0:$LINENO stopped; exit 1' ERR INT
 set -eu
 
+[ -z "${PS1:-}" ] && . "$DOTPATH"/etc/lib/vital.sh
+
 if [ -z "$DOTPATH" ]; then
     # shellcheck disable=SC2016
     echo '$DOTPATH not set' >&2
     exit 1
 fi
-
-[ -z "${PS1:-}" ] && . "$DOTPATH"/etc/lib/vital.sh
 
 # Ask for the administrator password upfront
 sudo -v

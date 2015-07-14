@@ -20,3 +20,5 @@ if ! contains "${SHELL:-}" "${1:-"$shell"}"; then
         die "$path: invalid path"
     fi
 fi
+
+echo "\$SHELL=$SHELL"

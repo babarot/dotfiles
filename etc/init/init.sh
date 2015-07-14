@@ -9,7 +9,7 @@ if [ -z "$DOTPATH" ]; then
     exit 1
 fi
 
-[ -z "$PS1" ] && . "$DOTPATH"/etc/lib/vital.sh
+[ -z "${PS1:-}" ] && . "$DOTPATH"/etc/lib/vital.sh
 
 # Ask for the administrator password upfront
 sudo -v

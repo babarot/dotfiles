@@ -1,7 +1,5 @@
-<a href="top"></a>
-
 <p align="center">
-<img src="doc/img/dotfiles.png">
+<a name="top" href="http://b4b4r07.com/dotfiles"><img src="https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/logo.png"></a>
 </p>
 
 <p align="center">
@@ -51,7 +49,7 @@ My primary OS is OS X (10.10.x) and some of these configurations are tuned to wo
 
 ***DEMO:***
 
-![](./doc/img/environment.png "b4b4r07's environment")
+[![](https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/demo_retina.png)][dotfiles]
 
 **Note:** You can clone or fork them freely, but I don't guarantee that they fit you.
 
@@ -67,16 +65,19 @@ Run the following command to set up a new machine:
 <tr>
 <th></th>
 <th><a name="oneliner">Installation command</a></th>
+<th>Copy</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>cURL</strong></td>
 <td>bash -c "$(curl -fsSL <a href="https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install">dot.b4b4r07.com</a>)"</td>
+<td><a href="http://b4b4r07.com/dotfiles">:clipboard:</a></td>
 </tr>
 <tr>
 <td><strong>Wget</strong></td>
 <td>bash -c "$(wget -qO - <a href="https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install">dot.b4b4r07.com</a>)"</td>
+<td><a href="http://b4b4r07.com/dotfiles">:clipboard:</a></td>
 </tr>
 </tbody>
 </table>
@@ -112,11 +113,11 @@ When the [installation command](#oneliner) format is not `curl -L URL | sh` but 
 
 ***DEMO:***
 
-![](./doc/img/installation.gif)
+[![](https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/demo.gif)][dotfiles]
 
 ### Quick installation
 
-![](doc/img/curl.png)
+[![](https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/curl.png)][dotfiles]
 
 To quickly install:
 
@@ -256,14 +257,7 @@ All of these are included in the `make init` for OS X. For more detail, see also
 
 ## Components
 
-The main directory that the user will use are the following list.
-
-- **bin/**: Anything in `bin/` will be added to your `$PATH` and be made available everywhere.
-- **etc/init/**: A storage of configuration files to be executed initially.
-- **etc/init/osx/**: Some configuration files for OS X are stored.
-- **etc/lib/**: Shell scripts Libraries.
-- **doc/man/**: A manual of my own making sctipts
-- **.loading/**: Any files ending in `.sh` get loaded into your environment.
+[![](https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/components.png)][dotfiles]
 
 <p align="right"><a href="#top">:arrow_up:</a></p>
 
@@ -303,5 +297,6 @@ Unless attributed otherwise, everything is under the MIT licence. Some stuff is 
 [vote]: https://voting-badge.herokuapp.com/vote?url=https://github.com/b4b4r07/dotfiles
 [doc]: ./etc/README.md
 [bitdeli]: https://bitdeli.com/free
+[dotfiles]: http://b4b4r07.com/dotfiles
 
 <p align="right"><a href="#top">:arrow_up:</a></p>

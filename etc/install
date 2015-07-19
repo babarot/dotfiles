@@ -9,6 +9,8 @@
 #                                    
 #                                    
 
+# PLATFORM is the environment variable that
+# retrieves the name of the running platform
 export PLATFORM
 
 readonly _TAB_="$(printf "\t")"
@@ -17,6 +19,63 @@ readonly _BLANK_="${_SPACE_}${_TAB_}"
 readonly _IFS_="$IFS"
 
 # Gerenal utilities {{{1
+# ostype returns the lowercase OS name
+ostype() {
+    # shellcheck disable=SC2119
+    uname | lower
+}
+
+# os_detect export the PLATFORM variable as you see fit
+os_detect() {
+    export PLATFORM
+    case "$(ostype)" in
+        *'linux'*)  PLATFORM='linux'   ;;
+        *'darwin'*) PLATFORM='osx'     ;;
+        *'bsd'*)    PLATFORM='bsd'     ;;
+        *)          PLATFORM='unknown' ;;
+    esac
+}
+
+# is_osx returns true if running OS is Macintosh
+is_osx() {
+    os_detect
+    if [ "$PLATFORM" = "osx" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# is_linux returns true if running OS is GNU/Linux
+is_linux() {
+    os_detect
+    if [ "$PLATFORM" = "linux" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# is_bsd returns true if running OS is FreeBSD
+is_bsd() {
+    os_detect
+    if [ "$PLATFORM" = "bsd" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# get_os returns OS name of the platform that is running
+get_os() {
+    local os
+    for os in osx linux bsd; do
+        if is_$os; then
+            echo $os
+        fi
+    done
+}
+
 e_newline() {
     printf "\n"
 }
@@ -27,6 +86,10 @@ e_header() {
 
 e_error() {
     printf " \033[31m%s\033[m\n" "✖ $*" 1>&2
+}
+
+e_warning() {
+    printf " \033[31m%s\033[m\n" "$*"
 }
 
 e_done() {
@@ -105,10 +168,12 @@ shell_has_started_interactively() {
     [ ! -z "$PS1" ]
 }
 
+# is_ssh_running returns true if the ssh deamon is available
 is_ssh_running() {
     [ ! -z "$SSH_CLIENT" ]
 }
 
+# is_debug returns true if $DEBUG is set
 is_debug() {
     if [ "$DEBUG" = 1 ]; then
         return 0
@@ -117,6 +182,7 @@ is_debug() {
     fi
 }
 
+# is_number returns true if $1 is int type
 is_number() {
     if [ $# -eq 0 ]; then
         cat <&0
@@ -133,69 +199,19 @@ is_number() {
 alias is_int=is_number
 alias is_num=is_number
 
-ostype() {
-    # shellcheck disable=SC2119
-    uname | lower
+# echon is a script to emulate the -n flag functionality with 'echo'
+# for Unix systems that don't have that available.
+echon() {
+    echo "$*" | tr -d '\n'
 }
 
-os_detect() {
-    export PLATFORM
-    case "$(ostype)" in
-        *'linux'*)  PLATFORM='linux'   ;;
-        *'darwin'*) PLATFORM='osx'     ;;
-        *'bsd'*)    PLATFORM='bsd'     ;;
-        *)          PLATFORM='unknown' ;;
-    esac
-}
-
-is_osx() {
-    os_detect
-    if [ "$PLATFORM" = "osx" ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-is_linux() {
-    os_detect
-    if [ "$PLATFORM" = "linux" ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-is_bsd() {
-    os_detect
-    if [ "$PLATFORM" = "bsd" ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-get_os() {
-    local os
-    for os in osx linux bsd; do
-        if is_$os; then
-            echo $os
-        fi
-    done
-}
-
+# noecho is the same as echon
 noecho() {
     if [ "$(echo -n)" = "-n" ]; then
         echo "${*:-> }\c"
     else
         echo -n "${@:-> }"
     fi
-}
-
-echon() {
-    # echon - a script to emulate the -n flag functionality with 'echo' 
-    #   for Unix systems that don't have that available.
-    echo "$*" | tr -d '\n'
 }
 
 # lower returns a copy of the string with all letters mapped to their lower case.
@@ -237,8 +253,51 @@ contains() {
     return $?
 }
 
+# len returns the length of $1
+len() {
+    local length="$(echo "$1" | wc -c | sed -e 's/ *//')"
+    echo $(expr $length - 1)
+}
+
+# is_empty returns true if $1 consists of $_BLANK_
+is_empty() {
+    if [ $# -eq 0 ]; then
+        cat <&0
+    else
+        echo "$1"
+    fi | grep -E "^[$_BLANK_]*$" >/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# path_remove returns new $PATH trailing $1 in $PATH removed
+# It was heavily inspired by http://stackoverflow.com/a/2108540/142339
+path_remove() {
+    if [ $# -eq 0 ]; then
+        die "too few arguments"
+    fi
+
+    local arg path
+
+    path=":$PATH:"
+
+    for arg in "$@"
+    do
+        path="${path//:$arg:/:}"
+    done
+
+    path="${path%:}"
+    path="${path#:}"
+
+    echo "$path"
+}
+
 # Dotfiles {{{1
 
+# Set DOTPATH as default variable
 if [ -z "${DOTPATH:-}" ]; then
     DOTPATH=~/.dotfiles; export DOTPATH
 fi
@@ -384,7 +443,9 @@ else
         # Restart shell if specified "bash -c $(curl -L {URL})"
         # not restart:
         #   curl -L {URL} | bash
-        if [ ! -p /dev/stdin ]; then
+        if [ -p /dev/stdin ]; then
+            e_warning "Now continue with Rebooting your shell"
+        else
             e_newline
             e_arrow "Restarting your shell..."
             exec "${SHELL:-/bin/zsh}"

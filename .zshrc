@@ -1,4 +1,3 @@
-#!/bin/zsh
 #          _              
 #  _______| |__  _ __ ___ 
 # |_  / __| '_ \| '__/ __|
@@ -30,163 +29,6 @@ autoload run-help-svn
 autoload run-help-svk
 unalias run-help
 alias help=run-help
-
-export ANTIGEN=~/.antigen
-antigen_plugins=(
-"brew"
-"zsh-users/zsh-completions"
-"zsh-users/zsh-history-substring-search"
-"zsh-users/zsh-syntax-highlighting"
-"hchbaw/opp.zsh"
-#"tarruda/zsh-autosuggestions"
-#"b4b4r07/enhancd"
-#"b4b4r07/favdir"
-#"b4b4r07/zsh-vi-mode-visual"
-)
-
-export LANGUAGE="en_US.UTF-8"
-export LANG="${LANGUAGE}"
-export LC_ALL="${LANGUAGE}"
-export LC_CTYPE="${LANGUAGE}"
-
-# environment variables
-export PYTHONSTARTUP=~/.pythonrc.py
-export GOPATH=$HOME
-export PATH=$PATH:$GOPATH/bin
-
-export CORRECT_IGNORE='_*'
-export CORRECT_IGNORE_FILE='.*'
-
-export HISTFILE=~/.zsh_history
-export HISTSIZE=1000000
-export SAVEHIST=1000000
-
-export WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
-export WORDCHARS='*?.[]~&;!#$%^(){}<>'
-
-export EDITOR=vim
-export CVSEDITOR="${EDITOR}"
-export SVN_EDITOR="${EDITOR}"
-export GIT_EDITOR="${EDITOR}"
-
-export PAGER=less
-export LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
-export LESSCHARSET='utf-8'
-
-# LESS man page colors (makes Man pages more readable).
-export LESS_TERMCAP_mb=$'\E[01;31m'
-export LESS_TERMCAP_md=$'\E[01;31m'
-export LESS_TERMCAP_me=$'\E[0m'
-export LESS_TERMCAP_se=$'\E[0m'
-export LESS_TERMCAP_so=$'\E[00;44;37m'
-export LESS_TERMCAP_ue=$'\E[0m'
-export LESS_TERMCAP_us=$'\E[01;32m'
-
-if [ -f ~/.cdlog ]; then
-    export TOLIST=~/.cdlog
-fi
-
-if [ -f ~/.localrc ]; then
-    source ~/.localrc
-fi
-
-# loading {{{1
-loading() {
-    echo -e "$fg[blue]Starting $SHELL....$reset_color\n"
-    if [[ -d  ~/.loading ]]; then
-        for f in ~/.loading/**/*.(sh|zsh)
-        do
-            if [[ ! -x "$f" ]]; then
-                source "$f" 2>/dev/null &&
-                    echo "  loading $f"
-            fi
-            unset f
-        done
-        echo ""
-    fi
-}
-
-# tmux_automatically_attach {{{1
-tmux_automatically_attach() {
-    is_ssh_running && return
-
-    if is_screen_or_tmux_running; then
-        if is_tmux_runnning; then
-            if has 'cowsay'; then
-                #cowsay -f ghostbusters "$fg[blue]Starting $SHELL....$reset_color"
-                if [[ $(( $RANDOM % 5 )) == 1 ]]; then
-                    cowsay -f ghostbusters "G,g,g,ghostbusters!!!"
-                    echo ""
-                fi
-            else
-                echo "$fg_bold[red] _____ __  __ _   ___  __ $reset_color"
-                echo "$fg_bold[red]|_   _|  \/  | | | \ \/ / $reset_color"
-                echo "$fg_bold[red]  | | | |\/| | | | |\  /  $reset_color"
-                echo "$fg_bold[red]  | | | |  | | |_| |/  \  $reset_color"
-                echo "$fg_bold[red]  |_| |_|  |_|\___//_/\_\ $reset_color"
-            fi
-            export DISPLAY="$TMUX"
-        elif is_screen_running; then
-            # For GNU screen
-            :
-        fi
-    else
-        if shell_has_started_interactively && ! is_ssh_running; then
-            if ! has 'tmux'; then
-                echo 'Error: tmux command not found' >/dev/stderr
-                return 1
-            fi
-
-            if tmux has-session >/dev/null 2>&1 && tmux list-sessions | grep -qE '.*]$'; then
-                # detached session exists
-                tmux list-sessions
-                echo -n "Tmux: attach? (y/N/num) "
-                read
-                if [[ "$REPLY" =~ ^[Yy]$ ]] || [[ "$REPLY" == '' ]]; then
-                    tmux attach-session
-                    if [ $? -eq 0 ]; then
-                        echo "$(tmux -V) attached session"
-                        return 0
-                    fi
-                elif [[ "$REPLY" =~ ^[0-9]+$ ]]; then
-                    tmux attach -t "$REPLY"
-                    if [ $? -eq 0 ]; then
-                        echo "$(tmux -V) attached session"
-                        return 0
-                    fi
-                fi
-            fi
-
-            if is_osx && has 'reattach-to-user-namespace'; then
-                # on OS X force tmux's default command
-                # to spawn a shell in the user's namespace
-                tmux_login_shell="/bin/zsh"
-                tmux_config=$(cat ~/.tmux.conf <(echo 'set-option -g default-command "reattach-to-user-namespace -l' $tmux_login_shell'"'))
-                tmux -f <(echo "$tmux_config") new-session && echo "$(tmux -V) created new session supported OS X"
-            else
-                tmux new-session && echo "tmux created new session"
-            fi
-        fi
-    fi
-}
-
-# antigen {{{1
-antigen() {
-    if [[ -f $ANTIGEN/antigen.zsh ]]; then
-        e_arrow `e_header "Setup antigen...."`
-        local plugin
-
-        source ~/.antigen/antigen.zsh
-        for plugin in "${antigen_plugins[@]}"
-        do
-            echo "checking... $plugin"
-            antigen bundle "$plugin"
-        done
-
-        antigen apply
-        e_heartful 'done'
-    fi
-}
 
 # Options {{{1
 zsh_set_setopt()
@@ -425,14 +267,11 @@ zsh_set_alias()
         alias gst='git status'
     fi
 
-    if is_osx; then
-        if has 'qlmanage'; then
-            alias ql='qlmanage -p "$@" >&/dev/null'
-        fi
+    if is_osx && has 'qlmanage'; then
+        alias ql='qlmanage -p "$@" >&/dev/null'
     fi
 
     if has 'richpager'; then
-        #alias cl='richpager -s solarized'
         alias cl='richpager'
     fi
 
@@ -494,7 +333,7 @@ zsh_set_alias()
     alias -g X='| xargs'
 }
 
-# prompt {{{1
+# Prompt {{{1
 git_prompt_internal() {
     autoload -Uz is-at-least
     if is-at-least 4.3.10; then
@@ -715,14 +554,16 @@ zsh_set_prompt() {
     SPROMPT="%{${fg[red]}%}Did you mean?: %R -> %r [nyae]? %{${reset_color}%}"
 }
 
-# Key binds {{{1
+# Keybinds {{{1
 peco-src() {
-    local selected_dir=$(ghq list -p | peco --query "$LBUFFER")
-    if [ -n "$selected_dir" ]; then
-        BUFFER="cd ${selected_dir}"
-        zle accept-line
+    if has "peco"; then
+        local selected_dir=$(ghq list -p | peco --query "$LBUFFER")
+        if [ -n "$selected_dir" ]; then
+            BUFFER="cd ${selected_dir}"
+            zle accept-line
+        fi
+        zle clear-screen
     fi
-    zle clear-screen
 }
 
 peco-select-history() {
@@ -741,27 +582,29 @@ peco-select-history() {
 }
 
 peco-select-path() {
-    if [ "$LBUFFER" -eq "" ]; then
-        if is_git_repo; then
-            local SELECTED_FILE_TO_ADD="$(git status --porcelain | \
-                peco --query "$LBUFFER" | \
-                awk -F ' ' '{print $NF}')"
-            if [ -n "$SELECTED_FILE_TO_ADD" ]; then
-                BUFFER="git add $(echo "$SELECTED_FILE_TO_ADD" | tr '\n' ' ')"
+    if has "peco"; then
+        if [ "$LBUFFER" -eq "" ]; then
+            if is_git_repo; then
+                local SELECTED_FILE_TO_ADD="$(git status --porcelain | \
+                    peco --query "$LBUFFER" | \
+                    awk -F ' ' '{print $NF}')"
+                if [ -n "$SELECTED_FILE_TO_ADD" ]; then
+                    BUFFER="git add $(echo "$SELECTED_FILE_TO_ADD" | tr '\n' ' ')"
+                fi
+            else
+                local filepath="$(find . | grep -v '/\.' | peco --prompt 'PATH>')"
+                if [ -d "$filepath" ]; then
+                    BUFFER="cd $filepath"
+                elif [ -f "$filepath" ]; then
+                    BUFFER="$EDITOR $filepath"
+                fi
             fi
         else
-            local filepath="$(find . | grep -v '/\.' | peco --prompt 'PATH>')"
-            if [ -d "$filepath" ]; then
-                BUFFER="cd $filepath"
-            elif [ -f "$filepath" ]; then
-                BUFFER="$EDITOR $filepath"
-            fi
+            BUFFER="$LBUFFER$filepath"
         fi
-    else
-        BUFFER="$LBUFFER$filepath"
+        CURSOR=$#BUFFER
+        zle clear-screen
     fi
-    CURSOR=$#BUFFER
-    zle clear-screen
 }
 
 do-enter() {
@@ -769,21 +612,14 @@ do-enter() {
         zle accept-line
         return 0
     fi
-    #if [ "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = 'true' ]; then
-    #    echo
-    #    echo -e "\e[0;33m--- git status ---\e[0m"
-    #    git status -sb 2> /dev/null
-    #fi
-    #call_precmd
-    echo
+
     if is_git_repo; then
         git status
     else
-        #ls_abbrev
         has "gch" && gch || ls
     fi
+
     zle reset-prompt
-    return 0
 }
 
 peco-select-git-add() {
@@ -877,7 +713,7 @@ zsh_set_keybind() {
     fi
 }
 
-# Some functions {{{1
+# Functions {{{1
 
 zsh_utilities() {
     op() {
@@ -890,7 +726,7 @@ zsh_utilities() {
         fi
     }
     is_osx || unfunction op 2>/dev/null
-    
+
     tex() {
         if ! has 'platex' || ! has 'dvipdfmx'; then
             return 1
@@ -904,25 +740,11 @@ zsh_utilities() {
         fi
     }
     is_osx || unfunction tex 2>/dev/null
-    
+
     chpwd() {
         ls -F
     }
-    
-    has_plugin() {
-        if [[ -n $1 ]]; then
-            #local -a enabled_plugins
-            #enabled_plugins=(${antigen_plugins:#\#*})
-            #[[ -n ${(M)enabled_plugins:#$1} ]]
-            typeset -g -a antigen_plugins
-    
-            [[ -d $ANTIGEN && -n ${(M)antigen_plugins:#$1} ]] ||
-                [[ -f ~/.loading/${(M)antigen_plugins:#$1} ]]
-        else
-            return 1
-        fi
-    }
-    
+
     reload() {
         local f
         f=(~/.zsh/Completion/*(.))
@@ -937,87 +759,208 @@ zsh_disable_function() {
     aaaliases=(
     "ll"    "ls"
     )
-    
+
     self-insert-aa() {
         local self_insert_next
         zstyle -s ":self-insert-aa" self-insert-next self_insert_next
-    
+
         local aamatch
         local aastroke
         local aacommand
         local aacontext
         local aakey
-    
+
         aamatch=0
         for aastroke in "${(@k)aaaliases}"; do
             aacommand=$aaaliases[$aastroke]
             aacontext=$aastroke[0,-2]
             aakey=$aastroke[-1]
-    
+
             if [[ $LBUFFER == $aacontext && $KEYS == $aakey ]]; then
                 LBUFFER=$aacommand
                 zle .accept-line
-    
+
                 aamatch=1
                 break
             fi
         done
-    
+
         if [[ $aamatch == 0 ]]; then
             zle "$self_insert_next"
         fi
     }
-    
+
     self-insert-aa.on() {
-        # Find self-insert wrapper
-        # reference: knu/zsh-git-escape-magic (https://github.com/knu/zsh-git-escape-magic)
-        emulate -L zsh
-        local self_insert_next="${$(zle -lL | awk '$1=="zle"&&$2=="-N"&&$3=="self-insert"{print $4;exit}'):-.self-insert}"
-        
-        zle -la "$self_insert_next" || zle -N "$self_insert_next"
-        zstyle ":self-insert-aa" self-insert-next "$self_insert_next"
-        zle -A self-insert-aa self-insert
-    }
-    zle -N self-insert-aa
-    self-insert-aa.on
+    # Find self-insert wrapper
+    # reference: knu/zsh-git-escape-magic (https://github.com/knu/zsh-git-escape-magic)
+    emulate -L zsh
+    local self_insert_next="${$(zle -lL | awk '$1=="zle"&&$2=="-N"&&$3=="self-insert"{print $4;exit}'):-.self-insert}"
+
+    zle -la "$self_insert_next" || zle -N "$self_insert_next"
+    zstyle ":self-insert-aa" self-insert-next "$self_insert_next"
+    zle -A self-insert-aa self-insert
+}
+zle -N self-insert-aa
+self-insert-aa.on
 }
 
 # main {{{1
 
-readlinkf() {
-    TARGET_FILE=$1
+# load_modules {{{2
+load_modules() {
+    local f
 
-    builtin cd `dirname $TARGET_FILE`
-    TARGET_FILE=`basename $TARGET_FILE`
+    # vitalize
+    echo -e "$fg[blue]Starting $SHELL....$reset_color\n"
+    if [[ -d  ~/.loading ]]; then
+        for f in ~/.loading/**/*.(sh|zsh)
+        do
+            if [[ ! -x $f ]]; then
+                source "$f" 2>/dev/null &&
+                    echo "  loading $f"
+            fi
+            unset f
+        done
+        echo ""
+    fi
 
-    # Iterate down a (possible) chain of symlinks
-    while [ -L "$TARGET_FILE" ]
-    do
-        TARGET_FILE=`readlink $TARGET_FILE`
-        cd `dirname $TARGET_FILE`
-        TARGET_FILE=`basename $TARGET_FILE`
-    done
+    # failure of vitalize
+    # this means that zsh cannnot initialize
+    if ! vitalize 2>/dev/null; then
+        echo -e "$fg[red]Cannot vitalize ...$reset_color\n"
+        return 1
+    fi
 
-    # Compute the canonicalized name by finding the physical path 
-    # for the directory we're in and appending the target file.
-    PHYS_DIR=`pwd -P`
-    RESULT=$PHYS_DIR/$TARGET_FILE
-    echo $RESULT
+    [ -f ~/.path ] && source ~/.path
 }
 
-zsh_at_startup() {
-    [ -f ~/.path ] && source ~/.path
+# tmux_automatically_attach {{{2
+tmux_automatically_attach() {
+    is_ssh_running && return
 
-    loading
+    if is_screen_or_tmux_running; then
+        if is_tmux_runnning; then
+            if has 'cowsay'; then
+                #cowsay -f ghostbusters "$fg[blue]Starting $SHELL....$reset_color"
+                if [[ $(( $RANDOM % 5 )) == 1 ]]; then
+                    cowsay -f ghostbusters "G,g,g,ghostbusters!!!"
+                    echo ""
+                fi
+            else
+                echo "$fg_bold[red] _____ __  __ _   ___  __ $reset_color"
+                echo "$fg_bold[red]|_   _|  \/  | | | \ \/ / $reset_color"
+                echo "$fg_bold[red]  | | | |\/| | | | |\  /  $reset_color"
+                echo "$fg_bold[red]  | | | |  | | |_| |/  \  $reset_color"
+                echo "$fg_bold[red]  |_| |_|  |_|\___//_/\_\ $reset_color"
+            fi
+            export DISPLAY="$TMUX"
+        elif is_screen_running; then
+            # For GNU screen
+            :
+        fi
+    else
+        if shell_has_started_interactively && ! is_ssh_running; then
+            if ! has 'tmux'; then
+                echo 'Error: tmux command not found' >/dev/stderr
+                return 1
+            fi
+
+            if tmux has-session >/dev/null 2>&1 && tmux list-sessions | grep -qE '.*]$'; then
+                # detached session exists
+                tmux list-sessions
+                echo -n "Tmux: attach? (y/N/num) "
+                read
+                if [[ "$REPLY" =~ ^[Yy]$ ]] || [[ "$REPLY" == '' ]]; then
+                    tmux attach-session
+                    if [ $? -eq 0 ]; then
+                        echo "$(tmux -V) attached session"
+                        return 0
+                    fi
+                elif [[ "$REPLY" =~ ^[0-9]+$ ]]; then
+                    tmux attach -t "$REPLY"
+                    if [ $? -eq 0 ]; then
+                        echo "$(tmux -V) attached session"
+                        return 0
+                    fi
+                fi
+            fi
+
+            if is_osx && has 'reattach-to-user-namespace'; then
+                # on OS X force tmux's default command
+                # to spawn a shell in the user's namespace
+                tmux_login_shell="/bin/zsh"
+                tmux_config=$(cat ~/.tmux.conf <(echo 'set-option -g default-command "reattach-to-user-namespace -l' $tmux_login_shell'"'))
+                tmux -f <(echo "$tmux_config") new-session && echo "$(tmux -V) created new session supported OS X"
+            else
+                tmux new-session && echo "tmux created new session"
+            fi
+        fi
+    fi
+}
+
+# setup plugins {{{2
+
+export ANTIGEN=~/.antigen
+antigen_plugins=(
+"brew"
+"zsh-users/zsh-completions"
+"zsh-users/zsh-history-substring-search"
+"zsh-users/zsh-syntax-highlighting"
+#"tarruda/zsh-autosuggestions"
+"b4b4r07/enhancd"
+"Tarrasch/zsh-bd"
+#"b4b4r07/zsh-vi-mode-visual"
+)
+
+setup_antigen() {
+    has_plugin() {
+        if [[ -n $1 ]]; then
+            typeset -g -a antigen_plugins
+
+            [[ -n ${(M)antigen_plugins:#$1} ]] ||
+                [[ -n ${(M)antigen_plugins:#*/$1} ]]
+        else
+            return 1
+        fi
+    }
+
+    if [[ ! -d $ANTIGEN ]]; then
+        # install antigen
+        :
+    fi
+
+    if [[ -f $ANTIGEN/antigen.zsh ]]; then
+        e_arrow $(e_header "Setup antigen....")
+        local plugin
+
+        source ~/.antigen/antigen.zsh
+        for plugin in "${antigen_plugins[@]}"
+        do
+            echo "checking... $plugin" | e_indent 2
+            antigen bundle "$plugin"
+        done
+
+        antigen apply &&
+            e_heartful 'ready'
+    else
+        unfunction has_plugin 2>/dev/null
+    fi
+}
+
+# Startup {{{2
+zsh_at_startup() {
+    if ! load_modules; then
+        # If zsh can't load vital library,
+        # zsh cannot work normally.
+        return 1
+    fi
+
     tmux_automatically_attach
-    antigen
+    setup_antigen
 
     # Hello, Zsh!!
+    # The fact that display this message means that the initialization of zsh is almost finished.
     echo -e "\n$fg_bold[cyan]This is ZSH $fg_bold[red]${ZSH_VERSION}$fg_bold[cyan] - DISPLAY on $fg_bold[red]$DISPLAY$reset_color\n"
-
-    if is_osx; then
-        has "rbenv" && eval "$(rbenv init -)"
-    fi
 }
 
 if zsh_at_startup; then
@@ -1027,6 +970,63 @@ if zsh_at_startup; then
     zsh_set_prompt
     zsh_set_keybind
     zsh_utilities
+
+    if is_osx; then
+        has "rbenv" && eval "$(rbenv init -)"
+    fi
+
+    # declare the environment variables
+    export LANGUAGE="en_US.UTF-8"
+    export LANG="${LANGUAGE}"
+    export LC_ALL="${LANGUAGE}"
+    export LC_CTYPE="${LANGUAGE}"
+
+    export CORRECT_IGNORE='_*'
+    export CORRECT_IGNORE_FILE='.*'
+
+    export WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+    export WORDCHARS='*?.[]~&;!#$%^(){}<>'
+
+    # History
+    export HISTFILE=~/.zsh_history
+    export HISTSIZE=1000000
+    export SAVEHIST=1000000
+
+    # Editor
+    export EDITOR=vim
+    export CVSEDITOR="${EDITOR}"
+    export SVN_EDITOR="${EDITOR}"
+    export GIT_EDITOR="${EDITOR}"
+
+    # Pager
+    export PAGER=less
+    export LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
+    export LESSCHARSET='utf-8'
+
+    # LESS man page colors (makes Man pages more readable).
+    export LESS_TERMCAP_mb=$'\E[01;31m'
+    export LESS_TERMCAP_md=$'\E[01;31m'
+    export LESS_TERMCAP_me=$'\E[0m'
+    export LESS_TERMCAP_se=$'\E[0m'
+    export LESS_TERMCAP_so=$'\E[00;44;37m'
+    export LESS_TERMCAP_ue=$'\E[0m'
+    export LESS_TERMCAP_us=$'\E[01;32m'
+
+    # PATH
+    export PYTHONSTARTUP=~/.pythonrc.py
+    export GOPATH=$HOME
+    export PATH=$PATH:$GOPATH/bin
+
+    # LS
+    export LSCOLORS=exfxcxdxbxegedabagacad
+
+    if [ -f ~/.cdlog ]; then
+        export TOLIST=~/.cdlog
+    fi
+
+    if [ -f ~/.localrc ]; then
+        source ~/.localrc
+    fi
 fi
 
 # vim:fdm=marker fdc=3 ft=zsh ts=4 sw=4 sts=4:

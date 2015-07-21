@@ -18,6 +18,10 @@ readonly _SPACE_=' '
 readonly _BLANK_="${_SPACE_}${_TAB_}"
 readonly _IFS_="$IFS"
 
+vitalize() {
+    return 0
+}
+
 # Gerenal utilities {{{1
 # ostype returns the lowercase OS name
 ostype() {

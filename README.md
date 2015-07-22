@@ -257,7 +257,7 @@ All of these are included in the `make init` for OS X. For more detail, see also
 
 ## Components
 
-[![](https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/components.png)][dotfiles]
+[![](https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/components.png)](https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/components.png)
 
 <p align="right"><a href="#top">:arrow_up:</a></p>
 

@@ -24,7 +24,7 @@ etc Documentation
 > 	- [Travis CI](#travis-ci)
 > 	- [How to write an unit testing](#how-to-write-an-unit-testing)
 > 	- [test.sh: deal with all tests](#testsh-deal-with-all-tests)
-> - [A-script:-neither-bin-nor-lib](#a-script-neither-bin-nor-lib)
+> - [A script: neither bin nor lib](#a script neither bin nor lib)
 > 
 
 # Directory map

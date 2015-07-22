@@ -17,5 +17,6 @@ if has "brew"; then
 
     brew bundle
 else
-    die "you should install brew"
+    log_fail "brew: not found"
+    exit 1
 fi

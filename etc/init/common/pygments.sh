@@ -18,8 +18,10 @@ if has "python"; then
         git submodule update
         sudo ./setup.py install
     else
-        die
+        log_fail "something is wrong"
+        exit 1
     fi
 else
-    die "install python before Pygments"
+    log_fail "install python before Pygments"
+    exit 1
 fi

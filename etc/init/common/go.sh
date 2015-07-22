@@ -13,7 +13,7 @@ if has "go"; then
     fi
     go get -u github.com/b4b4r07/gotcha
     if [ $? -eq 0 ]; then
-        PATH=$PATH:$GOPATH/bin
+        PATH=$GOPATH/bin:$PATH
         export PATH
     else
         die "go get: failure"

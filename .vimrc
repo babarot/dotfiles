@@ -23,7 +23,7 @@
 " - !! Portability and Multi-platform !!
 " - !! Don't rely on plugins too much !!
 "
-" By integrating many useful functions as much as possible　into this vimrc,
+" By integrating many useful functions as much as possible into this vimrc,
 " it is possible to construct the highly versatile Vim without Vim plugins
 " and Network.
 "
@@ -273,9 +273,10 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1
   NeoBundle 'fatih/vim-go'
   NeoBundle 'jnwhiteh/vim-golang'
   NeoBundle 'zaiste/tmux.vim'
-  NeoBundle "CORDEA/vim-glue"
-  "NeoBundle "haya14busa/incsearch.vim"
-
+  NeoBundle 'CORDEA/vim-glue'
+  NeoBundle 'dag/vim-fish'
+  "NeoBundle 'haya14busa/incsearch.vim'
+  NeoBundle 'rhysd/try-colorscheme.vim'
   " Japanese help
   NeoBundle 'vim-jp/vimdoc-ja'
   " Vital
@@ -1737,6 +1738,7 @@ let s:vimp = {
       \     "vim-shellutils",
       \     "vim-surround",
       \     "yankround.vim",
+      \     "neocomplete.vim",
       \   ],
       \   "dir":  ".vimp",
       \   "file": "Vimpfile",
@@ -4353,6 +4355,37 @@ if s:neobundled('vim-toml')
   call neobundle#untap()
 endif
 
+" dag/vim-fish {{{2
+if s:neobundled('vim-fish')
+  call neobundle#config({
+        \   "lazy" : 1,
+        \   "autoload" : {
+        \     "filetypes" : [ "fish" ],
+        \   }
+        \ })
+
+  " Options
+  " Commands
+  " Mappings
+
+  call neobundle#untap()
+endif
+
+" CORDEA/vim-glue {{{2
+if s:neobundled('vim-glue')
+  call neobundle#config({
+        \   "lazy" : 1,
+        \   "autoload" : {
+        \     "filetypes" : [ "glue" ],
+        \   }
+        \ })
+
+  " Options
+  " Commands
+  " Mappings
+
+  call neobundle#untap()
+endif
 " elzr/vim-json {{{2
 if s:neobundled('vim-json')
   call neobundle#config({

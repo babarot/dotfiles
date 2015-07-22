@@ -6,6 +6,9 @@ set -eu
 . "$DOTPATH"/etc/lib/vital.sh
 
 if has "go"; then
+    if [ -z "$GOPATH" ]; then
+        GOPATH=$HOME
+    fi
     go get -u github.com/b4b4r07/gotcha
 else
     if has "curl"; then

@@ -27,10 +27,8 @@ done 2>/dev/null &
 for i in "$DOTPATH"/etc/init/"$(get_os)"/*[^init].sh
 do
     if [ -f "$i" ]; then
-        if [ "${DEBUG:-}" = 1 ]; then
-            echo "$i"
-        else
-            e_arrow "$(basename "$i")"
+        log_info "$(e_arrow "$(basename "$i")")"
+        if [ "${DEBUG:-}" != 1 ]; then
             bash "$i"
         fi
     else
@@ -38,4 +36,4 @@ do
     fi
 done
 
-e_done "$0: Finish!!" | sed "s $DOTPATH \$DOTPATH g"
+log_pass "$0: Finish!!" | sed "s $DOTPATH \$DOTPATH g"

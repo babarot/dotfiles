@@ -1,8 +1,0 @@
-#!/bin/bash
-
-trap 'echo Error: $0:$LINENO stopped; exit 1' ERR INT
-set -eu
-
-if [ ! -d ~/.antigen ]; then
-    git clone https://github.com/zsh-users/antigen ~/.antigen
-fi

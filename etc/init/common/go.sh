@@ -38,7 +38,6 @@ if has "gotcha"; then
     if [ -f config.toml ]; then
         log_echo "Grab go packages"
         gotcha --verbose
-        log_pass "Gotcha!"
     else
         log_fail "something is wrong"
         exit 1
@@ -47,3 +46,5 @@ else
     log_fail "gotcha: not found"
     exit 
 fi
+
+log_pass "Gotcha!"

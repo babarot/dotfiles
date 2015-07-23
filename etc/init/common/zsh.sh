@@ -5,6 +5,12 @@ set -eu
 
 . "$DOTPATH"/etc/lib/vital.sh
 
+if [ ${EUID:-${UID}} != 0 ]; then
+    log_fail "${0:-zsh.sh} must be executed as user root."
+    log_info "you should run 'su root; chsh -s $(which zsh)'"
+    exit 1
+fi
+
 if ! has "zsh"; then
     if is_osx; then
         if has "brew"; then
@@ -50,3 +56,5 @@ if ! contains "${SHELL:-}" "zsh"; then
         exit 1
     fi
 fi
+
+log_pass "ok: changing SHELL to zsh"

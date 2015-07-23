@@ -6,3 +6,5 @@ set -eu
 . "$DOTPATH"/etc/lib/vital.sh
 
 is_osx || die "osx only"
+
+log_pass "ok: globalize"

@@ -25,3 +25,5 @@ else
     log_fail "install python before Pygments"
     exit 1
 fi
+
+log_pass "ok: installing pygmentize"

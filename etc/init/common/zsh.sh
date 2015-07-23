@@ -46,10 +46,10 @@ if ! contains "${SHELL:-}" "zsh"; then
         if sudo chsh -s "$path"; then
             echo "[verbose] chsh -s $path"
         else
-            log_fail "cannot set '$path' as \$SHELL"
+            log_info "cannot set '$path' as \$SHELL"
             log_info "Is '$path' described in /etc/shells?"
             log_info "you should run 'chsh -l' now"
-            exit 1
+            exit
         fi
     else
         log_fail "$path: invalid path or something is wrong"

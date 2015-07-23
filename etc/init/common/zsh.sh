@@ -6,9 +6,9 @@ set -eu
 . "$DOTPATH"/etc/lib/vital.sh
 
 if [ ${EUID:-${UID}} != 0 ]; then
-    log_fail "${0:-zsh.sh} must be executed as user root."
-    log_info "you should run 'su root; chsh -s $(which zsh)'"
-    exit 1
+    log_info "${0:-zsh.sh} must be executed as user root."
+    log_info "you should run 'su root; chsh -s \$(which zsh)'"
+    exit
 fi
 
 if ! has "zsh"; then

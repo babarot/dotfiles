@@ -21,7 +21,7 @@ if ! has "gotcha"; then
             exit 1
         fi
     else
-        log_echo "install gotcha"
+        log_echo "Download and install gotcha"
         if has "curl"; then
             curl -L git.io/gotcha | sh
         elif has "wget"; then

@@ -16,22 +16,60 @@ fpath=($HOME/.zsh/functions/*(N-/) $fpath)
 fpath=($HOME/.zsh/plugins/zsh-completions(N-/) $fpath)
 fpath=(/usr/local/share/zsh/site-functions(N-/) $fpath)
 
-autoload -Uz add-zsh-hook
-autoload -Uz compinit
-compinit
-
-autoload -Uz colors
-colors
-
+# Load modules
 autoload -U run-help
+autoload -Uz add-zsh-hook
+autoload -Uz cdr
+autoload -Uz chpwd_recent_dirs
+autoload -Uz colors; colors
+autoload -Uz compinit; compinit -u
+autoload -Uz history-search-end
+autoload -Uz modify-current-argument
+autoload -Uz smart-insert-last-word
+autoload -Uz terminfo
+autoload -Uz vcs_info
+autoload -Uz zcalc
+autoload -Uz zmv
 autoload run-help-git
-autoload run-help-svn
 autoload run-help-svk
+autoload run-help-svn
 unalias run-help
 alias help=run-help
 
+export LANGUAGE="en_US.UTF-8"
+export LANG="${LANGUAGE}"
+export LC_ALL="${LANGUAGE}"
+export LC_CTYPE="${LANGUAGE}"
+
+# Editor
+export EDITOR=vim
+export CVSEDITOR="${EDITOR}"
+export SVN_EDITOR="${EDITOR}"
+export GIT_EDITOR="${EDITOR}"
+
+# Pager
+export PAGER=less
+export LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
+export LESSCHARSET='utf-8'
+
+# LESS man page colors (makes Man pages more readable).
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[00;44;37m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+
+# PATH
+export GOPATH=$HOME
+export PATH=$GOPATH/bin:/usr/local/bin/$PATH
+
+# LS
+export LSCOLORS=exfxcxdxbxegedabagacad
+
 # Options {{{1
-zsh_set_setopt()
+zshrc_setopt()
 {
     setopt auto_cd
     setopt auto_pushd
@@ -200,64 +238,168 @@ zsh_set_setopt()
     setopt bang_hist
 }
 
-# Completion {{{1
-zsh_set_completion()
-{
-    # cf. http://voidy21.hatenablog.jp/entry/20090902/1251918174
-    setopt auto_param_slash
-    setopt mark_dirs
-    setopt list_types
-    setopt auto_menu
-    setopt auto_param_keys
-    setopt interactive_comments
-    setopt magic_equal_subst
+# Functions {{{1
 
-    setopt complete_in_word
-    setopt always_last_prompt
-    setopt print_eight_bit
-    setopt extended_glob
-    setopt globdots
+# helper functions
+get_filter() {
+    if test -z "$FILTER"; then
+        FILTER="fzf:peco:percol:gof:pick:icepick:sentaku:selecta"
+        export FILTER
+    fi
 
-    bindkey "^I" menu-complete
+    # Narrows the FILTER environment variables down to one
+    # and sets it to the variables filter
+    typeset -g filter
+    filter="$(available "$FILTER")"
+    if test -z "$FILTER"; then
+        die '$FILTER not set'
+        return 1
+    elif test -z "$filter"; then
+        die "$FILTER is invalid \$FILTER"
+        return 1
+    fi
+}
 
-    # Completing Highlighting
-    autoload -U compinit
-    compinit
-    zstyle ':completion:*:default' menu select=2
+ask() {
+    local ans
 
-    # Completing Selectable
-    zmodload -i zsh/complist
-    bindkey -M menuselect 'h' vi-backward-char
-    bindkey -M menuselect 'j' vi-down-line-or-history
-    bindkey -M menuselect 'k' vi-up-line-or-history
-    bindkey -M menuselect 'l' vi-forward-char
-    bindkey -M menuselect '^k' accept-and-infer-next-history 
+    printf "%s [y/N]: " "$1"
+    read ans
+    case "$ans" in
+        y|Y|yes|YES)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
 
-    # Completing Groping
-    zstyle ':completion:*:options' description 'yes'
-    zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'
-    zstyle ':completion:*' group-name ''
+zshrc_functions() {
+    op() {
+        if [ -p /dev/stdin ]; then
+            open $(cat -) "$@"
+        elif [ -z "$1" ]; then
+            open .
+        else
+            open "$@"
+        fi
+    }
+    is_osx || unfunction op 2>/dev/null
 
-    # Completing misc
-    zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-    zstyle ':completion:*' verbose yes
-    zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
-    zstyle ':completion:*:*files' ignored-patterns '*?.o' '*?~' '*\#'
-    zstyle ':completion:*' use-cache true
-    zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
+    tex() {
+        if ! has 'platex' || ! has 'dvipdfmx'; then
+            return 1
+        fi
+        platex "$1" && dvipdfmx "${1/.tex/.dvi}"
+        if [ $? -eq 0 ]; then
+            echo -e "\n\033[31mCompile complete!\033[m"
+            if has 'open'; then
+                open "${1/.tex/.pdf}"
+            fi
+        fi
+    }
+    is_osx || unfunction tex 2>/dev/null
 
-    # Directory
-    zstyle ':completion:*:cd:*' ignore-parents parent pwd
-    export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
-    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+    chpwd() {
+        ls -F
+    }
 
-    # default: --
-    zstyle ':completion:*' list-separator '-->'
-    zstyle ':completion:*:manuals' separate-sections true
+    reload() {
+        local f
+        f=(~/.zsh/Completion/*(.))
+        unfunction $f:t 2>/dev/null
+        autoload -U $f:t
+    }
+}
+
+peco-src() {
+    local selected_dir=$(ghq list -p | "$filter" --query "$LBUFFER")
+    if [ -n "$selected_dir" ]; then
+        BUFFER="cd ${selected_dir}"
+        zle accept-line
+    fi
+    zle clear-screen
+}
+
+peco-select-history() {
+    if true; then
+        BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | "$filter" --query "$LBUFFER")
+
+        CURSOR=${#BUFFER}
+        #zle accept-line
+        zle clear-screen
+    else
+        if is-at-least 4.3.9; then
+            zle -la history-incremental-pattern-search-backward && bindkey "^r" history-incremental-pattern-search-backward
+        else
+            history-incremental-search-backward
+        fi
+    fi
+}
+
+peco-select-path() {
+        if [ "$LBUFFER" -eq "" ]; then
+            if is_git_repo; then
+                local SELECTED_FILE_TO_ADD="$(git status --porcelain | \
+                    "$filter" --query "$LBUFFER" | \
+                    awk -F ' ' '{print $NF}')"
+                if [ -n "$SELECTED_FILE_TO_ADD" ]; then
+                    BUFFER="git add $(echo "$SELECTED_FILE_TO_ADD" | tr '\n' ' ')"
+                fi
+            else
+                local filepath="$(find . | grep -v '/\.' | "$filter" --prompt 'PATH>')"
+                if [ -d "$filepath" ]; then
+                    BUFFER="cd $filepath"
+                elif [ -f "$filepath" ]; then
+                    BUFFER="$EDITOR $filepath"
+                fi
+            fi
+        else
+            BUFFER="$LBUFFER$filepath"
+        fi
+        CURSOR=$#BUFFER
+        zle clear-screen
+}
+
+peco-select-git-add() {
+    local SELECTED_FILE_TO_ADD="$(git status --porcelain | \
+        "$filter" --query "$LBUFFER" | \
+        awk -F ' ' '{print $NF}')"
+    if [ -n "$SELECTED_FILE_TO_ADD" ]; then
+        BUFFER="git add $(echo "$SELECTED_FILE_TO_ADD" | tr '\n' ' ')"
+        CURSOR=$#BUFFER
+    fi
+    zle accept-line
+    # zle clear-screen
+}
+
+start-tmux-if-it-is-not-already-started() {
+    BUFFER='tmux'
+    if has 'tmux_automatically_attach'; then
+        BUFFER='tmux_automatically_attach'
+    fi
+    CURSOR=$#BUFFER
+    zle accept-line
+}
+
+do-enter() {
+    if [ -n "$BUFFER" ]; then
+        zle accept-line
+        return 0
+    fi
+
+    if is_git_repo; then
+        git status
+    else
+        has "gch" && gch || ls
+    fi
+
+    zle reset-prompt
 }
 
 # Aliases {{{1
-zsh_set_alias()
+zshrc_aliases()
 {
     if is_osx; then
         alias ls='/bin/ls -GF'
@@ -295,7 +437,7 @@ zsh_set_alias()
     alias mv="${ZSH_VERSION:+nocorrect} mv -i"
     alias mkdir="${ZSH_VERSION:+nocorrect} mkdir"
 
-    autoload -Uz zmv
+    #autoload -Uz zmv
     alias zmv='noglob zmv -W'
 
     alias du='du -h'
@@ -336,6 +478,7 @@ zsh_set_alias()
 # Prompt {{{1
 git_prompt_internal() {
     autoload -Uz is-at-least
+
     if is-at-least 4.3.10; then
         autoload -Uz vcs_info
         autoload -Uz add-zsh-hook
@@ -522,12 +665,62 @@ git_prompt_internal() {
     fi
 }
 
-zsh_set_prompt() {
-    # 1. Prompt
-    #PROMPT='[%F{yellow}%n%f]%% '
-    PROMPT='[%(?.%{${fg[green]}%}.%{${fg[red]}%})%n%{${reset_color}%}]%# '
+zshrc_prompt() {
+    #   # 1. Prompt
+    #   PROMPT='[%(?.%{${fg[green]}%}.%{${fg[red]}%})%n%{${reset_color}%}]%# '
 
-    # 2. R prompt
+    #   # 2. R prompt
+    #   setopt prompt_subst
+    #   # Automatically hidden rprompt
+    #   setopt transient_rprompt
+
+    #   if has '__git_ps1'; then
+    #       function r-prompt()
+    #       {
+    #           export GIT_PS1_SHOWDIRTYSTATE=1
+    #           export GIT_PS1_SHOWSTASHSTATE=1
+    #           export GIT_PS1_SHOWUNTRACKEDFILES=1
+    #           export GIT_PS1_SHOWUPSTREAM="auto"
+    #           export GIT_PS1_DESCRIBE_STYLE="branch"
+    #           export GIT_PS1_SHOWCOLORHINTS=0
+    #           RPROMPT='%{'${fg[red]}'%}'`echo $(__git_ps1 "(%s)")|sed -e s/%/%%/|sed -e s/%%%/%%/|sed -e 's/\\$/\\\\$/'`'%{'${reset_color}'%}'
+    #           RPROMPT+=$' at %{${fg[blue]}%}[%~]%{${reset_color}%}'
+    #           RPROMPT+='${p_buffer_stack}'
+    #       }
+    #       add-zsh-hook precmd r-prompt
+    #   else
+    #       git_prompt_internal
+    #   fi
+
+    # New
+    terminfo_down_sc=$terminfo[cud1]$terminfo[cuu1]$terminfo[sc]$terminfo[cud1]
+    function _left_down_prompt_preexec () { print -rn -- $terminfo[el]; }
+    add-zsh-hook preexec _left_down_prompt_preexec
+
+
+    # [zsh vi mode status line](http://stackoverflow.com/questions/3622943/zsh-vi-mode-status-line)
+    function zle-keymap-select zle-line-init zle-line-finish
+    {
+        #PROMPT_2="${${KEYMAP/vicmd/-- NORMAL --}/(main|viins)/-- INSERT --} `vcs_info_precmd`"
+        case $KEYMAP in
+            main)  PROMPT_2="$fg[black]-- INSERT --$reset_color $(git_prompt_internal)" ;;
+            vicmd) PROMPT_2="$fg[white]-- NORMAL --$reset_color $(git_prompt_internal)" ;;
+            viins) PROMPT_2="$fg[green]-- INSERT --$reset_color $(git_prompt_internal)" ;;
+        esac
+        PROMPT="%{$terminfo_down_sc$PROMPT_2$terminfo[rc]%}[%(?.%{${fg[green]}%}.%{${fg[red]}%})${HOST}%{${reset_color}%}]%# "
+        zle reset-prompt
+    }
+
+    zle -N zle-line-init
+    zle -N zle-line-finish
+    zle -N zle-keymap-select
+    zle -N edit-command-line
+
+    PROMPT="%{$terminfo_down_sc$PROMPT_2$terminfo[rc]%}[%(?.%{${fg[green]}%}.%{${fg[red]}%})${HOST}%{${reset_color}%}]%# "
+    #PROMPT='%{$fg[blue]%}%~%{$reset_color%} %% '
+
+    # R Prompt
+
     setopt prompt_subst
     # Automatically hidden rprompt
     setopt transient_rprompt
@@ -548,6 +741,7 @@ zsh_set_prompt() {
         add-zsh-hook precmd r-prompt
     else
         git_prompt_internal
+        #RPROMPT='[%{$fg[blue]%}%~%{$reset_color%}]'
     fi
 
     # 3. Other prompt
@@ -555,95 +749,9 @@ zsh_set_prompt() {
 }
 
 # Keybinds {{{1
-peco-src() {
-    if has "peco"; then
-        local selected_dir=$(ghq list -p | peco --query "$LBUFFER")
-        if [ -n "$selected_dir" ]; then
-            BUFFER="cd ${selected_dir}"
-            zle accept-line
-        fi
-        zle clear-screen
-    fi
-}
+zshrc_keymappings() {
+    bindkey -v
 
-peco-select-history() {
-    if has "peco"; then
-        BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$LBUFFER")
-        CURSOR=${#BUFFER}
-        zle accept-line
-        zle clear-screen
-    else
-        if is-at-least 4.3.9; then
-            zle -la history-incremental-pattern-search-backward && bindkey "^r" history-incremental-pattern-search-backward
-        else
-            history-incremental-search-backward
-        fi
-    fi
-}
-
-peco-select-path() {
-    if has "peco"; then
-        if [ "$LBUFFER" -eq "" ]; then
-            if is_git_repo; then
-                local SELECTED_FILE_TO_ADD="$(git status --porcelain | \
-                    peco --query "$LBUFFER" | \
-                    awk -F ' ' '{print $NF}')"
-                if [ -n "$SELECTED_FILE_TO_ADD" ]; then
-                    BUFFER="git add $(echo "$SELECTED_FILE_TO_ADD" | tr '\n' ' ')"
-                fi
-            else
-                local filepath="$(find . | grep -v '/\.' | peco --prompt 'PATH>')"
-                if [ -d "$filepath" ]; then
-                    BUFFER="cd $filepath"
-                elif [ -f "$filepath" ]; then
-                    BUFFER="$EDITOR $filepath"
-                fi
-            fi
-        else
-            BUFFER="$LBUFFER$filepath"
-        fi
-        CURSOR=$#BUFFER
-        zle clear-screen
-    fi
-}
-
-do-enter() {
-    if [ -n "$BUFFER" ]; then
-        zle accept-line
-        return 0
-    fi
-
-    if is_git_repo; then
-        git status
-    else
-        has "gch" && gch || ls
-    fi
-
-    zle reset-prompt
-}
-
-peco-select-git-add() {
-    local SELECTED_FILE_TO_ADD="$(git status --porcelain | \
-        peco --query "$LBUFFER" | \
-        awk -F ' ' '{print $NF}')"
-    if [ -n "$SELECTED_FILE_TO_ADD" ]; then
-        BUFFER="git add $(echo "$SELECTED_FILE_TO_ADD" | tr '\n' ' ')"
-        CURSOR=$#BUFFER
-    fi
-    zle accept-line
-    # zle clear-screen
-}
-
-start-tmux-if-it-is-not-already-started() {
-    BUFFER='tmux'
-    if has 'tmux_automatically_attach'; then
-        BUFFER='tmux_automatically_attach'
-    fi
-    CURSOR=$#BUFFER
-    zle accept-line
-}
-
-zsh_set_keybind() {
     zle -N peco-select-git-add
     zle -N do-enter
     zle -N peco-select-history
@@ -673,6 +781,40 @@ zsh_set_keybind() {
     bindkey '^U' kill-whole-line
     bindkey '^W' backward-kill-word
 
+    # Emacs Keybindings in vi ins mode
+    bindkey -M viins '^F'    forward-char
+    bindkey -M viins '^B'    backward-char
+    bindkey -M viins '^P'    up-line-or-history
+    bindkey -M viins '^N'    down-line-or-history
+    bindkey -M viins '^A'    beginning-of-line
+    bindkey -M viins '^E'    end-of-line
+    bindkey -M viins '^K'    kill-line
+    bindkey -M viins '^R'    history-incremental-pattern-search-backward
+    bindkey -M viins '\er'   history-incremental-pattern-search-forward
+    bindkey -M viins '^Y'    yank
+    bindkey -M viins '^W'    backward-kill-word
+    bindkey -M viins '^U'    backward-kill-line
+    bindkey -M viins '^H'    backward-delete-char
+    bindkey -M viins '^?'    backward-delete-char
+    bindkey -M viins '^G'    send-break
+    bindkey -M viins '^D'    delete-char-or-list
+
+    # Emacs Keybindings in vi cmd mode
+    bindkey -M vicmd '^A'    beginning-of-line
+    bindkey -M vicmd '^E'    end-of-line
+    bindkey -M vicmd '^K'    kill-line
+    bindkey -M vicmd '^P'    up-line-or-history
+    bindkey -M vicmd '^N'    down-line-or-history
+    bindkey -M vicmd '^Y'    yank
+    bindkey -M vicmd '^W'    backward-kill-word
+    bindkey -M vicmd '^U'    backward-kill-line
+    bindkey -M vicmd '/'     vi-history-search-forward
+    bindkey -M vicmd '?'     vi-history-search-backward
+    # alt
+    bindkey -M vicmd '\ef'   forward-word
+    bindkey -M vicmd '\eb'   backward-word
+    bindkey -M vicmd '\ed'   kill-word
+
     # bind P and N for EMACS mode
     has 'history-substring-search-up' &&
         bindkey -M emacs '^P' history-substring-search-up
@@ -697,7 +839,6 @@ zsh_set_keybind() {
     #${key[Up]}
     #${key[Down]}
 
-
     bindkey "^[[Z" reverse-menu-complete
 
     bindkey '^m' do-enter
@@ -706,54 +847,114 @@ zsh_set_keybind() {
     bindkey '^x^g' peco-select-git-add
 
     zle -N peco-src
-    bindkey '^]' peco-src
+    #bindkey '^' peco-src
 
     if ! is_tmux_runnning; then
         bindkey '^T' start-tmux-if-it-is-not-already-started
     fi
+
+    bindkey -M viins 'jj' vi-cmd-mode
+
+    # Insert a last word
+    zle -N insert-last-word smart-insert-last-word
+    zstyle :insert-last-word match '*([^[:space:]][[:alpha:]/\\]|[[:alpha:]/\\][^[:space:]])*'
+    bindkey -M viins '^]' insert-last-word
+
+    # Surround a forward word by single quote
+    _quote-previous-word-in-single() {
+        modify-current-argument '${(qq)${(Q)ARG}}'
+        zle vi-forward-blank-word
+    }
+    zle -N _quote-previous-word-in-single
+    bindkey -M viins '^Q' _quote-previous-word-in-single
+
+    # Surround a forward word by double quote
+    _quote-previous-word-in-double() {
+        modify-current-argument '${(qqq)${(Q)ARG}}'
+        zle vi-forward-blank-word
+    }
+    zle -N _quote-previous-word-in-double
+    bindkey -M viins '^Xq' _quote-previous-word-in-double
+
+    bindkey -M viins "$terminfo[kcbt]" reverse-menu-complete
 }
 
-# Functions {{{1
+# Completion {{{1
+zshrc_completion()
+{
+    # cf. http://voidy21.hatenablog.jp/entry/20090902/1251918174
+    setopt auto_param_slash
+    setopt mark_dirs
+    setopt list_types
+    setopt auto_menu
+    setopt auto_param_keys
+    setopt interactive_comments
+    setopt magic_equal_subst
 
-zsh_utilities() {
-    op() {
-        if [ -p /dev/stdin ]; then
-            open $(cat -) "$@"
-        elif [ -z "$1" ]; then
-            open .
-        else
-            open "$@"
-        fi
-    }
-    is_osx || unfunction op 2>/dev/null
+    setopt complete_in_word
+    setopt always_last_prompt
+    setopt print_eight_bit
+    setopt extended_glob
+    setopt globdots
 
-    tex() {
-        if ! has 'platex' || ! has 'dvipdfmx'; then
-            return 1
-        fi
-        platex "$1" && dvipdfmx "${1/.tex/.dvi}"
-        if [ $? -eq 0 ]; then
-            echo -e "\n\033[31mCompile complete!\033[m"
-            if has 'open'; then
-                open "${1/.tex/.pdf}"
-            fi
-        fi
-    }
-    is_osx || unfunction tex 2>/dev/null
+    bindkey "^I" menu-complete
 
-    chpwd() {
-        ls -F
-    }
+    # Completing Highlighting
+    autoload -U compinit
+    compinit
+    zstyle ':completion:*:default' menu select=2
 
-    reload() {
-        local f
-        f=(~/.zsh/Completion/*(.))
-        unfunction $f:t 2>/dev/null
-        autoload -U $f:t
-    }
+    # Completing Selectable
+    zmodload -i zsh/complist
+    bindkey -M menuselect 'h' vi-backward-char
+    bindkey -M menuselect 'j' vi-down-line-or-history
+    bindkey -M menuselect 'k' vi-up-line-or-history
+    bindkey -M menuselect 'l' vi-forward-char
+    bindkey -M menuselect '^k' accept-and-infer-next-history 
+
+    # Completing Groping
+    zstyle ':completion:*:options' description 'yes'
+    zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'
+    zstyle ':completion:*' group-name ''
+
+    # Completing misc
+    zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+    zstyle ':completion:*' verbose yes
+    zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
+    zstyle ':completion:*:*files' ignored-patterns '*?.o' '*?~' '*\#'
+    zstyle ':completion:*' use-cache true
+    zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
+
+    # Directory
+    zstyle ':completion:*:cd:*' ignore-parents parent pwd
+    export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+    # default: --
+    zstyle ':completion:*' list-separator '-->'
+    zstyle ':completion:*:manuals' separate-sections true
+
+    #zstyle ':completion:*' completer _complete _expand _list _match _prefix
+    #zstyle ':completion:*' list-colors 'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
+    #zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' '+m:{A-Z}={a-z}'
+    #zstyle ':completion:*' menu select=2
+    #zstyle ':completion:*:sudo:*' command-path $sudo_path $path
+    #zstyle ':completion:*' use-cache true
+    #
+    #zstyle ':vcs_info:*' enable git hg svn
+    #zstyle ":vcs_info:*" check-for-changes true
+    #zstyle ':vcs_info:*' stagedstr "+"
+    #zstyle ':vcs_info:*' unstagedstr "?"
+    #zstyle ':vcs_info:*' formats '%u%c%b (%s)'
+    #zstyle ':vcs_info:*' actionformats '%u%c%b (%s) !%a'
 }
 
 # Disable {{{1
+zshrc_misc() {
+    if is_osx; then
+        has "rbenv" && eval "$(rbenv init -)"
+    fi
+}
 zsh_disable_function() {
     typeset -A aaaliases
     aaaliases=(
@@ -899,7 +1100,6 @@ tmux_automatically_attach() {
 }
 
 # setup plugins {{{2
-
 export ANTIGEN=~/.antigen
 antigen_plugins=(
 "brew"
@@ -910,6 +1110,8 @@ antigen_plugins=(
 "b4b4r07/enhancd"
 "Tarrasch/zsh-bd"
 #"b4b4r07/zsh-vi-mode-visual"
+"hchbaw/opp.zsh"
+"joel-porquet/zsh-dircolors-solarized"
 )
 
 setup_antigen() {
@@ -924,9 +1126,11 @@ setup_antigen() {
         fi
     }
 
+    ANTIGEN_NO_INSTALL=0
     if [[ ! -d $ANTIGEN ]]; then
-        # install antigen
-        :
+        if ask "Do you install antigen?"; then
+            git clone https://github.com/zsh-users/antigen $ANTIGEN
+        fi
     fi
 
     if [[ -f $ANTIGEN/antigen.zsh ]]; then
@@ -946,8 +1150,8 @@ setup_antigen() {
         unfunction has_plugin 2>/dev/null
     fi
 }
+#}}}
 
-# Startup {{{2
 zsh_at_startup() {
     if ! load_modules; then
         # If zsh can't load vital library,
@@ -961,26 +1165,23 @@ zsh_at_startup() {
     # Hello, Zsh!!
     # The fact that display this message means that the initialization of zsh is almost finished.
     echo -e "\n$fg_bold[cyan]This is ZSH $fg_bold[red]${ZSH_VERSION}$fg_bold[cyan] - DISPLAY on $fg_bold[red]$DISPLAY$reset_color\n"
+
+    zshrc_setopt
+
+    # get_filter depends on zshrc_setopt
+    get_filter
 }
+#}}}
 
 if zsh_at_startup; then
-    zsh_set_setopt
-    zsh_set_completion
-    zsh_set_alias
-    zsh_set_prompt
-    zsh_set_keybind
-    zsh_utilities
-
-    if is_osx; then
-        has "rbenv" && eval "$(rbenv init -)"
-    fi
+    zshrc_functions
+    zshrc_aliases
+    zshrc_prompt
+    zshrc_keymappings
+    zshrc_completion
+    zshrc_misc
 
     # declare the environment variables
-    export LANGUAGE="en_US.UTF-8"
-    export LANG="${LANGUAGE}"
-    export LC_ALL="${LANGUAGE}"
-    export LC_CTYPE="${LANGUAGE}"
-
     export CORRECT_IGNORE='_*'
     export CORRECT_IGNORE_FILE='.*'
 
@@ -991,38 +1192,6 @@ if zsh_at_startup; then
     export HISTFILE=~/.zsh_history
     export HISTSIZE=1000000
     export SAVEHIST=1000000
-
-    # Editor
-    export EDITOR=vim
-    export CVSEDITOR="${EDITOR}"
-    export SVN_EDITOR="${EDITOR}"
-    export GIT_EDITOR="${EDITOR}"
-
-    # Pager
-    export PAGER=less
-    export LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
-    export LESSCHARSET='utf-8'
-
-    # LESS man page colors (makes Man pages more readable).
-    export LESS_TERMCAP_mb=$'\E[01;31m'
-    export LESS_TERMCAP_md=$'\E[01;31m'
-    export LESS_TERMCAP_me=$'\E[0m'
-    export LESS_TERMCAP_se=$'\E[0m'
-    export LESS_TERMCAP_so=$'\E[00;44;37m'
-    export LESS_TERMCAP_ue=$'\E[0m'
-    export LESS_TERMCAP_us=$'\E[01;32m'
-
-    # PATH
-    export PYTHONSTARTUP=~/.pythonrc.py
-    export GOPATH=$HOME
-    export PATH=$PATH:$GOPATH/bin
-
-    # LS
-    export LSCOLORS=exfxcxdxbxegedabagacad
-
-    if [ -f ~/.cdlog ]; then
-        export TOLIST=~/.cdlog
-    fi
 
     if [ -f ~/.localrc ]; then
         source ~/.localrc

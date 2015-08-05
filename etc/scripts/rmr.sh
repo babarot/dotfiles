@@ -1,4 +1,14 @@
 #!/bin/bash
+#
+# @(#) rmr v0.0.1 2015-08-05
+#
+# Usage:
+#   rmr [-r] file...
+#
+# Description:
+#   rmr deletes files and restores the files
+#
+######################################################################
 
 d=" "
 rmr_trash=$HOME/.rmtrash

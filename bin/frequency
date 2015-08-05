@@ -1,27 +1,22 @@
 #!/bin/bash
 #
-# @(#) frequency ver.0.1 2014.12.17
+# @(#) frequency v0.1.0 2015-08-04
 #
 # Usage:
 #   frequency file
 #   cat file | frequency
 #
 # Description:
-#   Count the frequent word
+#   frequency counts frequent words
 #
 ######################################################################
 
-[[ "$1" == "-h" || "$1" == "--help" ]] && cat <<HELP && exit 0
-$(basename "$0") [-h] file
-Count the frequent word
+frequency() {
+    ruby -F'[^a-zA-Z]+' -ane '
+    BEGIN   { $words = Hash.new(0) }
+    $F.each { |word| $words[word.downcase] += 1 }
+    END     { $words.each { |word, i| printf "%3d %s\n", i, word } }
+    ' <"${1:-/dev/stdin}" | sort -nr
+}
 
-Copyright (c) 2012 "BABAROT" b4b4r07
-Licensed under the MIT license.
-HELP
-
-ruby -F'[^a-zA-Z]+' -ane '
-BEGIN   { $words = Hash.new(0) }
-$F.each { |word| $words[word.downcase] += 1 }
-END     { $words.each { |word, i| printf "%3d %s\n", i, word } }
-' <"${1:-/dev/stdin}" |
-sort -nr
+frequency ${@+"$@"}

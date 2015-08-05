@@ -1,36 +1,20 @@
 #!/bin/bash
 #
-# @(#) new v0.0.1 2015.06.06
+# @(#) new v0.0.1 2015-08-05
 #
 # Usage:
-#   new TODO:
+#   new [project_name]
+#
 # Description:
-#   DESCRIPTION TODO:
-#
-# Copyright (c) 2015 b4b4r07 (a.k.a. BABAROT)
-# see also <https://github.com/b4b4r07>
-#
-# License:
-#   GNU General Public License version 3
+#   Make new project to Gopath
 #
 ######################################################################
 
 set -eu
 
-. $DOTPATH/etc/lib/vital.sh
-. $DOTPATH/etc/lib/standard.sh
-
-usage=$(cat <<-HELP
-usage: new
-HELP
-)
-
 main() {
-    if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
-        die "$usage"
-    fi
-    :
     local go="$GOPATH"/src/github.com/b4b4r07
+
     if [ -z "${1:-}" ]; then
         echo "$go"
     else

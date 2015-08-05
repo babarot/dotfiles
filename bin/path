@@ -1,18 +1,12 @@
 #!/bin/bash
 #
-# @(#) path ver.0.1 2014.12.02
+# @(#) path v0.1.0 2015-08-05
 #
 # Usage:
 #   path file...
+#
 # Description:
 #   Get the absolute(full) pathname.
-#
-# Copyright (C) 2013-2014 b4b4r07, aka BABAROT
-#               <b4b4r07@gmail.com>
-#               <https://github.com/b4b4r07>
-#
-# License:
-#   GNU General Public License version 3
 #
 ######################################################################
 

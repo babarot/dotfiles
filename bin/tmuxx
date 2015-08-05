@@ -1,11 +1,18 @@
 #!/bin/bash
-
-# attach to an existing tmux session, or create one if none exist
-# also set up access to the system clipboard from within tmux when possible
 #
-# e.g.
-# https://gist.github.com/1462391
-# https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
+# @(#) tmuxx v0.1.0 2015-08-05
+#
+# Usage:
+#   tmuxx
+#
+# Description:
+#   attach to an existing tmux session, or create one if none exist
+#   also set up access to the system clipboard from within tmux when possible
+#   e.g.,
+#   https://gist.github.com/1462391
+#   https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
+#
+######################################################################
 
 if ! type tmux >/dev/null 2>&1; then
     echo 'Error: tmux command not found' 1>&2

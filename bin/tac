@@ -1,36 +1,20 @@
 #!/bin/bash
 #
-# @(#) tac v0.0.1 2015.06.06
+# @(#) tac v0.0.1 2015-08-05
 #
 # Usage:
 #   tac file...
+#
 # Description:
-#   DESCRIPTION
-#
-# Copyright (c) 2015 b4b4r07 (a.k.a. BABAROT)
-# see also <https://github.com/b4b4r07>
-#
-# License:
-#   MIT
+#   tac displays the contents of the file in reverse order
 #
 ######################################################################
 
 set -eu
 
 . $DOTPATH/etc/lib/vital.sh
-. $DOTPATH/etc/lib/standard.sh
-
-
-usage=$(cat <<-HELP
-usage: tac file...
-HELP
-)
 
 main() {
-    if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
-        die "$usage"
-    fi
-
-    reverse ${@+"$@"}
+    reverse "$@"
 }
 main ${@+"$@"}

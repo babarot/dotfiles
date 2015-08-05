@@ -1,4 +1,15 @@
 #!/bin/bash
+#
+# @(#) richpager v0.0.1 2015-08-05
+#
+# Usage:
+#   richpager [-p|-n|-l|-s] file...
+#
+# Description:
+#   richpager is a pager such like less and cat with pygmentize
+#
+######################################################################
+
 
 set -e
 

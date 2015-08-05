@@ -1,28 +1,26 @@
 #!/bin/bash
 #
-# @(#) deadlink ver.0.1 2014.10.2
+# @(#) deadlink v0.1.0 2015-08-04
 #
 # Usage:
 #   deadlink [path]
 #
 # Description:
-#   Backup dotfiles directory.
+#   deadlink removes its paths after check if symbolic link that
+#   exist in the home directory are invalid paths
 #
 ######################################################################
 
 function deadlink()
 {
-    local f=
+    local f fpath
 
-    for f in `command ls -A "${1:-$PWD}"`; do
-        local fpath="${1:-$PWD}/$f"
+    for f in $(ls -A "${1:-$PWD}"); do
+        fpath="${1:-$PWD}/$f"
         if [ -h "$fpath" ]; then
-            [ -a "$fpath" ] || command rm -i "$fpath"
+            [ -a "$fpath" ] || command rm -iv "$fpath"
         fi
     done
-
-    unset f fpath
-    return 0
 }
 
-deadlink "$@"
+deadlink ${@+"$@"}

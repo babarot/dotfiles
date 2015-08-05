@@ -1,15 +1,31 @@
 #!/bin/bash
 #
-# Find and replace by a given list of files.
+# @(#) replace v0.1.0 2015-08-05
 #
-# replace foo bar **/*.rb
+# Usage:
+#   replace foo bar **/*.rb
+#
+# Description:
+#   replace find and replace by a given list of files
+#
+######################################################################
 
-find_this=$(echo $1 | sed "s / \\\/ g");    shift
-replace_with=$(echo $1 | sed "s / \\\/ g"); shift
+. "$DOTPATH"/etc/lib/vital.sh
 
-if type ag >/dev/null 2>&1; then
-    searcher='ag'
-elif type ack >/dev/null 2>&1; then
-    searcher='ack'
-fi
-"${searcher:-grep}" -l $find_this $* | xargs sed -i '' "s/$find_this/$replace_with/g"
+replace() {
+    bins="pt:ag:ack"
+    bin="$(available "$bins")"
+
+    if [ -z "$bin" ]; then
+        die "install $bins"
+        return 1
+    fi
+
+    find_this="$(echo "$1" | sed "s / \\\/ g")"
+    replace_with="$(echo "$2" | sed "s / \\\/ g")"
+    shift
+    shift
+    "$bin" -l "$find_this" $* | xargs sed -i '' "s/$find_this/$replace_with/g"
+}
+
+replace ${@+"$@"}

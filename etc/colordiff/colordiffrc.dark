@@ -1,0 +1,26 @@
+# Example colordiffrc file for dark backgrounds
+#
+# Set banner=no to suppress authorship info at top of
+# colordiff output
+banner=no
+# By default, when colordiff output is being redirected
+# to a file, it detects this and does not colour-highlight
+# To make the patch file *include* colours, change the option
+# below to 'yes'
+color_patches=no
+# 
+# available colours are: white, yellow, green, blue,
+#                        cyan, red, magenta, black,
+#                        darkwhite, darkyellow, darkgreen,
+#                        darkblue, darkcyan, darkred,
+#                        darkmagenta, darkblack
+#
+# Can also specify 'none', 'normal' or 'off' which are all
+# aliases for the same thing, namely "don't colour highlight
+# this, use the default output colour"
+#
+plain=off
+newtext=red
+oldtext=blue
+diffstuff=magenta
+cvsstuff=green

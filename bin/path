@@ -12,6 +12,7 @@
 
 set -eu
 
+. $DOTPATH/etc/lib/vital.sh
 . $DOTPATH/etc/lib/standard.sh
 
 function get_path()
@@ -51,7 +52,7 @@ function get_path()
     fi
 }
 
-if [[ $OSTYPE == darwin* ]]; then
+if is_osx; then
     get_path "$@" | (tee /dev/fd/3 | tr -d "\n" | pbcopy) 3>&1
 else
     get_path "$@"

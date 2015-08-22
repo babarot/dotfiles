@@ -1,28 +1,33 @@
 #!/bin/bash
 #
-# @(#) new v0.0.1 2015-08-05
+# @(#) new v0.0.1 2015-08-22
 #
 # Usage:
 #   new [project_name]
 #
 # Description:
-#   Make new project to Gopath
+#   Make new project like go package
 #
 ######################################################################
 
 set -eu
 
-main() {
-    local go="$GOPATH"/src/github.com/b4b4r07
+if [ -z "${GOPATH:-}" ]; then
+    echo "GOPATH not set" 1>&2
+    exit 1
+fi
 
-    if [ -z "${1:-}" ]; then
-        echo "$go"
-    else
-        local new="$go"/"$1"
-        if [ ! -d "$new" ]; then
-            mkdir -p "$new"
-        fi &&
-        echo "$new"
+gopro="${GOPATH%%:*}/src/github.com/b4b4r07"
+if [ -z "${1:-}" ]; then
+    echo "$gopro"
+else
+    gopro="$gopro/$1"
+    if [ ! -d "$gopro" ]; then
+        mkdir -p "$gopro"
     fi
-}
-main ${@+"$@"}
+    if [ $? -eq 0 ]; then
+        echo "$gopro"
+    else
+        echo "cannnot start $1" 1>&2
+    fi
+fi

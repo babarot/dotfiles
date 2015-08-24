@@ -123,10 +123,6 @@ let s:vimrc_manage_rtp_manually        = get(g:, 's:vimrc_manage_rtp_manually', 
 let s:vimrc_auto_cd_file_parentdir     = get(g:, 's:vimrc_auto_cd_file_parentdir',   s:true)
 let s:vimrc_ignore_all_settings        = get(g:, 's:vimrc_ignore_all_settings',      s:false)
 
-" misc
-let s:is_tabpage = (&showtabline == 1 && tabpagenr('$') >= 2)
-      \ || (&showtabline == 2 && tabpagenr('$') >= 1)
-let s:cwd = getcwd()
 " if s:vimrc_manage_rtp_manually is s:true, s:vimrc_plugin_on is disabled.
 let s:vimrc_plugin_on = s:vimrc_manage_rtp_manually == s:true ? s:false : s:vimrc_plugin_on
 
@@ -136,6 +132,40 @@ let s:vimrc_plugin_on = s:vimrc_manage_rtp_manually == s:true ? s:false : s:vimr
 "   execute ...
 " This variable is used to disable the feature intentionally.
 unlet! s:vimrc_nil_dummy_variables
+
+function! s:vimrc_environment()
+  let env = {}
+
+  let env.is_starting = has('vim_starting')
+  let env.is_gui = has('gui_running')
+  let env.hostname = substitute(hostname(), '[^\w.]', '', '')
+
+  if s:is_windows
+    let vimpath = expand('~/vimfiles')
+  else
+    let vimpath = expand('~/.vim')
+  endif
+  let vimbundle = vimpath . '/bundle'
+  let neobundlepath = vimbundle . '/neobundle.vim'
+
+  let env.path = {
+    \ 'vim':       vimpath,
+    \ 'bundle':    vimbundle,
+    \ 'neobundle': neobundlepath,
+  \ }
+
+  let env.support = {
+    \ 'ag':        executable('ag'),
+    \ 'osascript': executable('osascript'),
+  \ }
+
+  let env.is_tabpage = (&showtabline == 1 && tabpagenr('$') >= 2)
+              \ || (&showtabline == 2 && tabpagenr('$') >= 1)
+  return env
+endfunction
+
+" s:env is an environment variable in vimrc
+let s:env = s:vimrc_environment()
 
 " Depelopment for Vim plugin {{{2
 if len(findfile("Vimpfile", ".;")) > 0

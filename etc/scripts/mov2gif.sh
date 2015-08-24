@@ -24,7 +24,8 @@ if [ -z "$mov_file" -o ! -f "$mov_file" ]; then
 fi
 
 fps="${2:-10}"
-gif_file="$(dirname $mov_file)"/"${mov_file%.*}"
+out_file="$(basename $mov_file)"
+gif_file="$(dirname $mov_file)"/"${out_file%.*}".gif
 
 if [ -f "$gif_file" ]; then
     die "$gif_file: already exists"
@@ -32,3 +33,6 @@ if [ -f "$gif_file" ]; then
 fi
 
 ffmpeg -i "$mov_file" -s "${3:-600}"x"${4:-400}" -pix_fmt rgb24 -r "$fps" -f gif - | gifsicle --optimize=3 --delay=3 >"$gif_file"
+if [ $? -eq 0 ]; then
+    echo "Created $gif_file"
+fi

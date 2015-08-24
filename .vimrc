@@ -277,6 +277,8 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1
   NeoBundle 'dag/vim-fish'
   "NeoBundle 'haya14busa/incsearch.vim'
   NeoBundle 'rhysd/try-colorscheme.vim'
+  NeoBundle 'junegunn/fzf'
+
   " Japanese help
   NeoBundle 'vim-jp/vimdoc-ja'
   " Vital
@@ -4770,6 +4772,55 @@ augroup END
 let g:syntastic_mode_map = { 'mode': 'passive',
     \ 'active_filetypes': ['go'] }
 let g:syntastic_go_checkers = ['go', 'golint']
+
+" ----------------------------------------------------------------------------
+" Open files
+" ----------------------------------------------------------------------------
+nnoremap <silent> <Leader><Leader> :FZF -m<CR>
+
+" Open files in horizontal split
+nnoremap <silent> <Leader>s :call fzf#run({
+\   'tmux_height': '40%',
+\   'sink':        'botright split' })<CR>
+
+" Open files in vertical horizontal split
+nnoremap <silent> <Leader>v :call fzf#run({
+\   'tmux_width': winwidth('.') / 2,
+\   'sink':       'vertical botright split' })<CR>
+
+" ----------------------------------------------------------------------------
+" Choose color scheme
+" ----------------------------------------------------------------------------
+nnoremap <silent> <Leader>C :call fzf#run({
+\   'source':
+\     map(split(globpath(&rtp, "colors/*.vim"), "\n"),
+\         "substitute(fnamemodify(v:val, ':t'), '\\..\\{-}$', '', '')"),
+\   'sink':       'colo',
+\   'options':    '+m',
+\   'tmux_width': 20,
+\   'launcher':   'iterm2-launcher 20 30 %s'
+\ })<CR>
+
+" ----------------------------------------------------------------------------
+" Select buffer
+" ----------------------------------------------------------------------------
+function! s:buflist()
+  redir => ls
+  silent ls
+  redir END
+  return split(ls, '\n')
+endfunction
+
+function! s:bufopen(e)
+  execute 'buffer' matchstr(a:e, '^[ 0-9]*')
+endfunction
+
+nnoremap <silent> <Leader><Enter> :call fzf#run({
+\   'source':      reverse(<sid>buflist()),
+\   'sink':        function('<sid>bufopen'),
+\   'options':     '+m',
+\   'tmux_height': '40%'
+\ })<CR>
 
 " __END__ {{{1
 " Must be written at the last.  see :help 'secure'.

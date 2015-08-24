@@ -307,6 +307,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1
   NeoBundle 'dag/vim-fish'
   "NeoBundle 'haya14busa/incsearch.vim'
   NeoBundle 'rhysd/try-colorscheme.vim'
+  NeoBundle 'rhysd/github-complete.vim'
   NeoBundle 'junegunn/fzf'
 
   " Japanese help

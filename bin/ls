@@ -1,0 +1,82 @@
+#!/bin/bash
+
+. "$DOTPATH"/etc/lib/vital.sh
+
+main() {
+    # find ls path
+    {
+        local ls_path
+        ls_path="$(which ls)"
+        if [ -z "$ls_path" ]; then
+            echo "ls: not found in the PATH" 1>&2
+            return 1
+        fi
+
+        if gls_search; then
+            is_gls() { return 0; }
+        else
+            is_gls() { return 1; }
+        fi
+
+        if is_gls; then
+            ls_path="gls"
+        fi
+    }
+
+    # find ls options
+    {
+        local color_option
+        if is_linux || is_gls; then
+            color_option="--color=always"
+        elif is_osx; then
+            color_option="-G"
+        else
+            echo "not available" 1>&2
+            return 1
+        fi
+
+        local ls_option
+        ls_option="${ls_option} ${color_option} -F"
+        if is_gls; then
+            ls_option="${ls_option} --group-directories-first"
+        fi
+    }
+
+    # run ls
+    eval "$ls_path" "$ls_option" "$@"
+    return $?
+}
+
+gls_search() {
+    local p
+    p="$PATH:"
+
+    # The case that GNU ls command name is gls
+    if has "gls"; then
+        gls --version 2>/dev/null | grep -iq "GNU"
+        if [ $? -eq 0 ]; then
+            return 0
+        fi
+    fi
+
+    # The case that GNU ls command name is ls
+    while [ -n "$p" ]; do
+        # the first remaining entry
+        x="${p%%:*}"
+        # reset p
+        p="${p#*:}"
+
+        # search $1 command
+        if [ -x "$x/ls" ]; then
+            eval "$x/ls" --version 2>/dev/null | grep -iq "GNU"
+            return $?
+        else
+            continue
+        fi
+    done
+
+    # GNU ls doesn't found in the PATH
+    return 1
+}
+
+main "$@"

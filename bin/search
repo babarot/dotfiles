@@ -1,0 +1,41 @@
+#!/bin/bash
+
+search() {
+    local p
+    p="$PATH:"
+
+    # Check if a argument is verbose flag
+    if [ "$1" = "-v" -o "$1" = "--verbose" ]; then
+        local is_verbose
+        is_verbose=1
+        shift
+    fi
+
+    # Check if arguments are given
+    if [ -z "$1" ]; then
+        echo "too few arguments" 1>&2
+        return 1
+    fi
+
+    while [ -n "$p" ]; do
+        # the first remaining entry
+        x="${p%%:*}"
+        # reset p
+        p="${p#*:}"
+
+        # search $1 command
+        if [ -x "$x/$1" ]; then
+            if [ "${is_verbose:-0}" -eq 1 ]; then
+                echo "$x/$1"
+            fi
+            return 0
+        else
+            continue
+        fi
+    done
+
+    # not found in the PATH
+    return 1
+}
+
+search "$@"

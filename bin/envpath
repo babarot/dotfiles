@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [ -n "$PATH" ]; then
+    old_PATH="$PATH:"
+    PATH=
+    while [ -n "$old_PATH" ]; do
+        x="${old_PATH%%:*}"     # the first remaining entry
+        # the case of non-exsiting path direcotry
+        if [ ! -d "$x" ]; then
+            x=""
+        fi
+
+        case "$PATH": in
+            *:"$x":*)
+                ;;              # already there
+            *)
+                PATH="$PATH:$x"
+                ;;              # not there yet
+        esac
+        old_PATH="${old_PATH#*:}"
+    done
+
+    # Reset the PATH
+    PATH="${PATH#:}"
+fi
+
+# Puts the PATH that is replaced a colon with a newline
+echo "$PATH" | tr ":" "\n" | sed -e "/^$/d"

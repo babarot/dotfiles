@@ -1,0 +1,3 @@
+#!/bin/bash
+
+od -A n -t u4 -N 4 /dev/urandom | sed 's/[^0-9]//g' | head -n 1

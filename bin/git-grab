@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [[ ! $1 =~ [A-Za-z0-9_-]+/[A-Za-z0-9_-]+ ]]; then
+    echo "usage: git-grab username/reponame" 1>&2
+    echo "(grabs the repository from github.com)" 1>&2
+    exit 1
+fi
+
+target=~/src/github.com/"$1"
+if [ -d "$target" ]; then
+    echo "$target: already exists" 1>&2
+    exit 1
+fi
+
+target="${target%/*}"
+mkdir -p "$target" 2>/dev/null
+builtin cd "$target"
+
+git clone https://github.com/"$1".git "${1##*/}"

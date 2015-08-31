@@ -40,7 +40,7 @@ wifi()
     # Search information about Wi-Fi by using airport command
     local current="$(bash -c "$airport -I" | egrep "agrCtlRSSI|state|lastTxRate| SSID" | tr "\\n" ";" | awk '{print $2,$4,$6,$8}')"
     if [ "$current" = "" ]; then
-        echo "no_wifi"
+        echo "offline"
         return 1
     fi
 
@@ -77,6 +77,11 @@ wifi()
             red="#[fg=red]"
         fi
         local color="$blue"
+    fi
+
+    if [ "$bandwidth" = 0 ]; then
+        echo "no_wifi"
+        return 1
     fi
 
     echo -e "${name} ${bandwidth}Mbs ${signal}"

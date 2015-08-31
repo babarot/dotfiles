@@ -17,6 +17,7 @@ search() {
         return 1
     fi
 
+    export ret=1
     while [ -n "$p" ]; do
         # the first remaining entry
         x="${p%%:*}"
@@ -28,14 +29,13 @@ search() {
             if [ "${is_verbose:-0}" -eq 1 ]; then
                 echo "$x/$1"
             fi
-            return 0
+            ret=0
         else
             continue
         fi
     done
 
-    # not found in the PATH
-    return 1
+    return "$ret"
 }
 
 search "$@"

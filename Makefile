@@ -15,7 +15,7 @@ help:
 	@echo "make clean          #=> Remove the dot files and this repo"
 
 list:
-	@$(foreach val, $(DOTFILES), ls -dF $(val);)
+	@$(foreach val, $(DOTFILES), /bin/ls -dF $(val);)
 
 deploy:
 	@echo 'Copyright (c) 2013-2015 BABAROT All Rights Reserved.'

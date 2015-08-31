@@ -1,5 +1,11 @@
-#!/usr/bin/env bash
+#!/bin/bash
+# git-undo undos your last commit
 
-# Undo your last commit
+. "$DOTPATH"/etc/lib/vital.sh
+
+if ! is_git_repo; then
+    echo "Not a git repository (or any of the parent directories)" 1>&2
+    exit 1
+fi
 
 git reset --soft HEAD^

@@ -10,11 +10,6 @@
 #
 ######################################################################
 
-set -eu
+. "$DOTPATH"/etc/lib/lingua.sh
 
-. $DOTPATH/etc/lib/vital.sh
-
-main() {
-    reverse "$@"
-}
-main ${@+"$@"}
+reverse "$@"

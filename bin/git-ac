@@ -1,0 +1,6 @@
+#!/bin/bash
+
+f="$(git status -s | awk '$1=="??"{print $2}' | fzf)"
+if [ -n "$f" ]; then
+    git add "$f" && git commit --verbose --edit
+fi

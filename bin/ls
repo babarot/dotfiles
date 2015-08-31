@@ -12,8 +12,6 @@ search_ls() {
     local p
     p="$PATH:"
 
-    local ls_path
-
     while [ -n "$p" ]; do
         # the first remaining entry
         x="${p%%:*}"
@@ -21,32 +19,24 @@ search_ls() {
         p="${p#*:}"
 
         if [ -x "$x/ls" -a "$x/ls" != "$0" ]; then
-            # Skip this ls command
-            #file "$x/ls" | grep -vq "text"
-            #if [ $? -eq 0 ]; then
-            ls_path="$x/ls"
-            #fi
+            echo "$x/ls"
+            eval "$x/ls" --version 2>/dev/null | grep -iq "GNU"
+            return $?
         else
             continue
         fi
     done
 
-    # Return ls path
-    echo "$ls_path"
+    return 1
 }
 
-main() {
-    local ls_path
-    ls_path="$(search_ls)"
+is_gls() {
+    search_ls >/dev/null 2>&1
+    return $?
+}
 
-    if [ -z "$ls_path" ]; then
-        echo "ls: not found in the PATH" 1>&2
-        return 1
-    fi
-
-    # Add ls options
-    {
-        local ls_option
+ls_options() {
+    local ls_option
 
         # initialize ls_option with a zero string
         ls_option=""
@@ -59,48 +49,31 @@ main() {
         fi
 
         # identifier option
-        ls_option="${ls_option} -F"
+        ls_option="${ls_option} --classify"
 
         # grouping option
         if is_gls; then
             ls_option="${ls_option} --group-directories-first"
             ls_option="${ls_option} --human-readable"
         fi
-    }
+
+    echo "$ls_option"
+}
+
+main() {
+    local ls_path ls_option
+
+    ls_path="$(search_ls)"
+    if [ -z "$ls_path" ]; then
+        echo "ls: not found in the PATH" 1>&2
+        return 1
+    fi
+
+    ls_option="$(ls_options)"
 
     # run ls
     eval "$ls_path" "$ls_option" "$@"
     return $?
-}
-
-is_gls() {
-    # a temporary PATH value
-    local p
-    p="$PATH:"
-
-    # The case that GNU ls command name is gls
-    if has "gls"; then
-        return 0
-    fi
-
-    # The case that GNU ls command name is ls
-    while [ -n "$p" ]; do
-        # the first remaining entry
-        x="${p%%:*}"
-        # reset p
-        p="${p#*:}"
-
-        # find GNU ls command aliased to ls
-        if [ -x "$x/ls" -a "$x/ls" != "$0" ]; then
-            eval "$x/ls" --version 2>/dev/null | grep -iq "GNU"
-            return $?
-        else
-            continue
-        fi
-    done
-
-    # GNU ls doesn't found in the PATH
-    return 1
 }
 
 main "$@"

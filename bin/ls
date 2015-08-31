@@ -3,6 +3,12 @@
 . "$DOTPATH"/etc/lib/vital.sh
 
 search_ls() {
+    # Set gls if exists
+    if has "gls"; then
+        echo "gls"
+        return 0
+    fi
+
     local p
     p="$PATH:"
 
@@ -14,37 +20,29 @@ search_ls() {
         # reset p
         p="${p#*:}"
 
-        if [ -x "$x/ls" ]; then
+        if [ -x "$x/ls" -a "$x/ls" != "$0" ]; then
             # Skip this ls command
-            file "$x/ls" | grep -vq "text"
-            if [ $? -eq 0 ]; then
-                ls_path="$x/ls"
-            fi
+            #file "$x/ls" | grep -vq "text"
+            #if [ $? -eq 0 ]; then
+            ls_path="$x/ls"
+            #fi
         else
             continue
         fi
     done
-
-    # Set gls if exists
-    if is_gls; then
-        ls_path="gls"
-    fi
 
     # Return ls path
     echo "$ls_path"
 }
 
 main() {
-    # find ls path
-    {
-        local ls_path
-        ls_path="$(search_ls)"
+    local ls_path
+    ls_path="$(search_ls)"
 
-        if [ -z "$ls_path" ]; then
-            echo "ls: not found in the PATH" 1>&2
-            return 1
-        fi
-    }
+    if [ -z "$ls_path" ]; then
+        echo "ls: not found in the PATH" 1>&2
+        return 1
+    fi
 
     # Add ls options
     {
@@ -66,8 +64,10 @@ main() {
         # grouping option
         if is_gls; then
             ls_option="${ls_option} --group-directories-first"
+            ls_option="${ls_option} --human-readable"
         fi
     }
+
     # run ls
     eval "$ls_path" "$ls_option" "$@"
     return $?
@@ -80,10 +80,7 @@ is_gls() {
 
     # The case that GNU ls command name is gls
     if has "gls"; then
-        gls --version 2>/dev/null | grep -iq "GNU"
-        if [ $? -eq 0 ]; then
-            return 0
-        fi
+        return 0
     fi
 
     # The case that GNU ls command name is ls
@@ -94,7 +91,7 @@ is_gls() {
         p="${p#*:}"
 
         # find GNU ls command aliased to ls
-        if [ -x "$x/ls" ]; then
+        if [ -x "$x/ls" -a "$x/ls" != "$0" ]; then
             eval "$x/ls" --version 2>/dev/null | grep -iq "GNU"
             return $?
         else

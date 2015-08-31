@@ -1,0 +1,11 @@
+#!/bin/bash
+# git-typechange restores typechanged files to normal files
+
+. "$DOTPATH"/etc/lib/vital.sh
+
+if ! is_git_repo; then
+    echo "Not a git repository (or any of the parent directories)" 1>&2
+    exit 1
+fi
+
+git status -s | awk '$1=="T"{print $2}' | xargs git checkout

@@ -3,11 +3,6 @@
 
 . "$DOTPATH"/etc/lib/vital.sh
 
-if ! is_git_repo; then
-    echo "Not a git repository (or any of the parent directories)" 1>&2
-    exit 1
-fi
-
 # Check if $1 consists of user name and repository name with a slash
 # e.g., 'b4b4r07/dotfiles'
 if [[ ! $1 =~ [A-Za-z0-9_-]+/[A-Za-z0-9_-]+ ]]; then

@@ -8,13 +8,19 @@ if ! is_git_repo; then
     exit 1
 fi
 
+# Check if $1 consists of user name and repository name with a slash
+# e.g., 'b4b4r07/dotfiles'
 if [[ ! $1 =~ [A-Za-z0-9_-]+/[A-Za-z0-9_-]+ ]]; then
-    echo "usage: git-grab username/reponame" 1>&2
-    echo "(grabs the repository from github.com)" 1>&2
+    echo "usage: git-grab username/reponame [<dest>]" 1>&2
     exit 1
 fi
 
-target=~/src/github.com/"$1"
+# dest
+if [ -z "$2" ]; then
+    target=~/src/github.com/"$1"
+else
+    target="$2/${1##*/}"
+fi
 if [ -d "$target" ]; then
     echo "$target: already exists" 1>&2
     exit 1
@@ -22,6 +28,10 @@ fi
 
 target="${target%/*}"
 mkdir -p "$target" 2>/dev/null
-builtin cd "$target"
+builtin cd "$target" 2>/dev/null
+if [ $? -ne 0 ]; then
+    echo "$1: cannot grap: install it, manually" 1>&2
+    exit 1
+fi
 
 git clone https://github.com/"$1".git "${1##*/}"

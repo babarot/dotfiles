@@ -17,5 +17,5 @@ before_script:
     - cd $(dotpath)
 
 script:
-    - make init
+    - sudo make init
     - make --silent test

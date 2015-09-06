@@ -8,8 +8,6 @@ env:
     - GOPATH=~
     - DOTPATH=~/.dotfiles
 
-sudo: required
-
 install:
     - curl -L dot.b4b4r07.com | bash
 
@@ -17,5 +15,5 @@ before_script:
     - cd $(dotpath)
 
 script:
-    - sudo make init
+    - make init
     - make --silent test

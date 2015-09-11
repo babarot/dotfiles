@@ -10,6 +10,6 @@
 #
 ######################################################################
 
-. "$DOTPATH"/etc/lib/lingua.sh
+. "$DOTPATH"/etc/lib/corelib.sh
 
 reverse "$@"

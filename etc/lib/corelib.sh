@@ -41,3 +41,19 @@ reverse() {
         }
     }' 2>/dev/null
 }
+
+ask() {
+    local ans
+
+    printf "%s [y/N]: " "$1"
+    read ans
+
+    case "$ans" in
+        y|Y|yes|YES)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}

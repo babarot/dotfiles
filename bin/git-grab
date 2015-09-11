@@ -1,32 +1,32 @@
 #!/bin/bash
-# git-grab grabs the repository from GitHub
 
-. "$DOTPATH"/etc/lib/vital.sh
-
-# Check if $1 consists of user name and repository name with a slash
-# e.g., 'b4b4r07/dotfiles'
-if [[ ! $1 =~ [A-Za-z0-9_-]+/[A-Za-z0-9_-]+ ]]; then
-    echo "usage: git-grab username/reponame [<dest>]" 1>&2
+# Check arguments
+if [[ -z $1 ]]; then
+    echo "too few argument" 1>&2
+    exit 1
+elif [[ ! $1 =~ ^(((https?|git)://)?github\.com/)?[A-Za-z0-9_-]+/[A-Za-z0-9_-]+(\.git)?$ ]]; then
+    echo "$1: invalid github.com URL" 1>&2
     exit 1
 fi
 
-# dest
-if [ -z "$2" ]; then
-    target=~/src/github.com/"$1"
-else
-    target="$2/${1##*/}"
-fi
-if [ -d "$target" ]; then
-    echo "$target: already exists" 1>&2
-    exit 1
+# Format username/reponame
+uri="$(echo "$1" | perl -pe "s/^((https?|git):\/\/)?(github\.com\/)?//;s/\.git$//")"
+uri="$(echo "$1" | perl -pe "s/^(((https?|git):\/\/)?github\.com\/)?//;s/\.git$//")"
+username="${uri%/*}"
+reponame="${uri#*/}"
+
+# Destination
+dest="${2:-$HOME/src/github.com/$username}"
+if [ -d "$dest" ]; then
+    dest="$dest/$reponame"
 fi
 
-target="${target%/*}"
-mkdir -p "$target" 2>/dev/null
-builtin cd "$target" 2>/dev/null
+# Make dir
+mkdir -p "$dest" 2>/dev/null
 if [ $? -ne 0 ]; then
-    echo "$1: cannot grap: install it, manually" 1>&2
+    echo "$dest: cannot create directory" 1>&2
     exit 1
 fi
 
-git clone https://github.com/"$1".git "${1##*/}"
+# Run
+git clone "https://github.com/${uri}.git" "$dest"

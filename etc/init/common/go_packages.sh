@@ -1,50 +1,47 @@
 #!/bin/bash
 
+# Stop script if errors occur
 trap 'echo Error: $0:$LINENO stopped; exit 1' ERR INT
 set -eu
 
+# Load vital library that is most important and
+# constructed with many minimal functions
+# For more information, see etc/README.md
 . "$DOTPATH"/etc/lib/vital.sh
 
+# If you don't have Gotcha command,
+# to install it with optimal method.
 if ! has "gotcha"; then
+    # With go command
     if has "go"; then
-        log_echo "install gotcha form go"
+        log_echo "Install gotcha command form go get!"
         if [ -z "${GOPATH:-}" ]; then
-            GOPATH=$HOME
-            export GOPATH
+            export GOPATH=$HOME
         fi
         go get -u github.com/b4b4r07/gotcha
-        if [ $? -eq 0 ]; then
-            PATH=$GOPATH/bin:$PATH
-            export PATH
-        else
-            log_fail "go get: exit status is not true"
-            exit 1
-        fi
     else
-        log_echo "Download and install gotcha"
+        # With git.io/gotcha
+        log_echo "Install gotcha command from git.io/gotcha!"
+
+        # curl / wget
         if has "curl"; then
-            curl -L git.io/gotcha | sh
+            curl -L   git.io/gotcha | bash
         elif has "wget"; then
-            wget -O - git.io/gotcha | sh
+            wget -O - git.io/gotcha | bash
         else
-            log_fail "require: go, curl or wget"
+            log_fail "error: require: go, curl or wget"
             exit 1
         fi
     fi
 fi
 
+# It should be able to use Gotcha command if its installation is success
 if has "gotcha"; then
-    cd "$DOTPATH"/etc/init/assets/go
-    if [ -f config.toml ]; then
-        log_echo "Grab go packages"
-        gotcha --verbose
-    else
-        log_fail "something is wrong"
-        exit 1
-    fi
+    log_echo "Grab go packages"
+    gotcha --verbose "$DOTPATH"/etc/init/assets/go/config.toml
 else
-    log_fail "gotcha: not found"
-    exit 
+    log_fail "error: gotcha: not found"
+    exit 1
 fi
 
 log_pass "Gotcha!"

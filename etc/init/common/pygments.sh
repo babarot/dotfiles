@@ -25,7 +25,6 @@ if ! has "pygmentize"; then
         log_pass "pygmentize: installed successfully"
     else
         log_fail "error: pygmentize: failed to install"
-        err=1
     fi
 
     log_echo "install pygments-style-solarized ..."
@@ -37,4 +36,4 @@ if builtin cd "$DOTPATH"/etc/init/assets/pygments/solarized-pygment; then
     sudo ./setup.py install
 fi
 
-log_pass "ok: installing pygmentize"
+log_pass "pygmentize: installed successfully"

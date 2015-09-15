@@ -178,7 +178,7 @@ logging() {
             color=red
             ;;
         INFO)
-            color=green
+            color=blue
             ;;
         SUCCESS)
             color=green

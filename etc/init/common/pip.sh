@@ -9,7 +9,11 @@ set -eu
 # For more information, see etc/README.md
 . "$DOTPATH"/etc/lib/vital.sh
 
-log_info "Install pip/easy_install and some python tools"
+# The script is dependent on python
+if ! has "python"; then
+    log_fail "error: require: python"
+    exit 1
+fi
 
 # error variable
 err=0
@@ -28,24 +32,6 @@ if ! has "pip"; then
         log_pass "pip: installed successfully"
     else
         log_fail "error: pip: failed to install"
-        err=1
-    fi
-fi
-
-if ! has "diff-highlight"; then
-    if sudo pip install diff-highlight; then
-        log_pass "diff-highlight: installed successfully"
-    else
-        log_fail "error: diff-highlight: failed to install"
-        err=1
-    fi
-fi
-
-if ! has "pygmentize"; then
-    if sudo pip install Pygments; then
-        log_pass "pygmentize: installed successfully"
-    else
-        log_fail "error: pygmentize: failed to install"
         err=1
     fi
 fi

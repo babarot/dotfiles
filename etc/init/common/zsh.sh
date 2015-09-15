@@ -9,56 +9,78 @@ set -eu
 # For more information, see etc/README.md
 . "$DOTPATH"/etc/lib/vital.sh
 
-if [ ${EUID:-${UID}} != 0 ]; then
-    log_info "${0:-zsh.sh} must be executed as user root."
-    log_info "you should run 'su root; chsh -s \$(which zsh)'"
-    exit
+# If you don't have Z shell or don't find zsh preserved
+# in a directory with the path,
+# to install it after the platforms are detected
+if ! has "zsh"; then
+
+    # Install zsh
+    case "$(get_os)" in
+        # Case of OS X
+        osx)
+            if has "brew"; then
+                log_echo "Install zsh with Homebrew"
+                brew install zsh
+            elif "port"; then
+                log_echo "Install zsh with MacPorts"
+                sudo port install zsh-devel
+            else
+                log_fail "error: require: Homebrew or MacPorts"
+                exit 1
+            fi
+            ;;
+
+        # Case of Linux
+        linux)
+            if has "yum"; then
+                log_echo "Install zsh with Yellowdog Updater Modified"
+                sudo yum -y install zsh
+            elif "port"; then
+                log_echo "Install zsh with Advanced Packaging Tool"
+                sudo apt-get -y install zsh
+            else
+                log_fail "error: require: YUM or APT"
+                exit 1
+            fi
+            ;;
+
+        # Other platforms such as BSD are supported
+        *)
+            log_fail "error: this script is only supported osx and linux"
+            exit 1
+            ;;
+    esac
 fi
 
-if ! has "zsh"; then
-    if is_osx; then
-        if has "brew"; then
-            brew install zsh
-        elif has "port"; then
-            sudo port install zsh-devel
-        else
-            log_fail "You need Homebrew or MacPorts"
-            exit 1
-        fi
-    elif is_linux; then
-        if has "apt-get"; then
-            sudo apt-get -y install zsh
-        elif has "yum"; then
-            sudo yum -y install zsh
-        else
-            log_fail "You need apt-get or yum"
-            exit 1
-        fi
-    else
-        log_fail "supports only mac or linux"
+# Assign zsh as a login shell
+if ! contains "${SHELL:-}" "zsh"; then
+    zsh_path="$(which zsh)"
+
+    # Check /etc/shells
+    if ! grep -xq "${zsh_path:=/bin/zsh}" /etc/shells; then
+        log_fail "oh, you should append '$zsh_path' to /etc/shells"
         exit 1
     fi
-fi
 
-if ! contains "${SHELL:-}" "zsh"; then
-    path="$(which zsh)"
-    if [ -z "${path:-}" ]; then
-        path="zsh"
-    fi
-
-    if [ -f "$path" -a -x "$path" ]; then
-        if sudo chsh -s "$path"; then
-            echo "[verbose] chsh -s $path"
+    if [ -x "$zsh_path" ]; then
+        # Changing for a general user
+        if chsh -s "$zsh_path" "${USER:-root}"; then
+            log_pass "Change shell to $zsh_path for ${USER:-root} successfully"
         else
             log_fail "cannot set '$path' as \$SHELL"
-            log_info "Is '$path' described in /etc/shells?"
-            log_info "you should run 'chsh -l' now"
+            log_fail "Is '$path' described in /etc/shells?"
+            log_fail "you should run 'chsh -l' now"
             exit 1
         fi
+
+        # For root user
+        if [ ${EUID:-${UID}} != 0 ]; then
+            if chsh -s "$zsh_path" && :; then
+                log_pass "[root] change shell to $zsh_path successfully"
+            fi
+        fi
     else
-        log_fail "$path: invalid path or something is wrong"
+        log_fail "$zsh_path: invalid path"
         exit 1
     fi
 fi
-
-log_pass "ok: changing SHELL to zsh"

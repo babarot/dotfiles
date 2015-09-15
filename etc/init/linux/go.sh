@@ -61,9 +61,9 @@ if [ ! -d "$dir" ]; then
 fi
 
 # Installing
-command cp -f -v "$dir"/bin/go "${PATH%%:*}"
-command mv -f -v "$dir" "$grt"
-command rm -f -v "$tar"
+sudo cp -f -v "$dir"/bin/go "${PATH%%:*}"
+sudo mv -f -v "$dir" "$grt"
+sudo rm -f -v "$tar"
 
 # Result
 if eval "${PATH%%:*}/go version"; then

@@ -101,7 +101,8 @@ export LSCOLORS=exfxcxdxbxegedabagacad
 antigen=~/.antigen
 antigen_plugins=(
 "b4b4r07/enhancd"
-"b4b4r07/zsh-vicmd-visualmode"
+#"b4b4r07/zsh-vicmd-visualmode"
+#"b4b4r07/zsh-vicmd-visualmode"
 "brew"
 "hchbaw/opp.zsh"
 "zsh-users/zsh-completions"
@@ -240,10 +241,10 @@ tmux_automatically_attach() {
 }
 
 zshrc_startup() {
+    # tmux_automatically_attach attachs tmux session automatically when your are in zsh
+    tmux_automatically_attach
     # setup_bundles return true if antigen plugins and some modules are valid
     setup_bundles || return 1
-    # tmux_automatically_attach attachs tmux session automatically when your are in zsh
-    tmux_automatically_attach || return 1
 
     # Display Zsh version and display number
     echo -e "\n$fg_bold[cyan]This is ZSH $fg_bold[red]${ZSH_VERSION}$fg_bold[cyan] - DISPLAY on $fg_bold[red]$DISPLAY$reset_color\n"
@@ -299,6 +300,22 @@ zshrc_keybind() {
         bindkey -a ds delete-surround
         bindkey -a ys add-surround
         bindkey -a S add-surround
+
+        #autoload -U select-bracketed
+        #zle -N select-bracketed
+        #for m in vivis viopp; do
+        #    for c in {a,i}${(s..)^:-'()[]{}<>bB'}; do
+        #        bindkey -M $m $c select-bracketed
+        #    done
+        #done
+
+        #autoload -U select-quoted
+        #zle -N select-quoted
+        #for m in vivis viopp; do
+        #    for c in {a,i}{\',\",\`}; do
+        #        bindkey -M $m $c select-quoted
+        #    done
+        #done
     fi
 
     # Ctrl-T
@@ -576,13 +593,17 @@ zshrc_prompt() {
     add-zsh-hook preexec left_down_prompt_preexec
     function zle-keymap-select zle-line-init zle-line-finish {
     case $KEYMAP in
-        main)  PROMPT_2="$fg[black]-- INSERT --$reset_color"
+        main|viins)
+            PROMPT_2="$fg[black]-- INSERT --$reset_color"
             ;;
-            # [vi] Normal mode
-            vicmd) PROMPT_2="$fg[white]-- NORMAL --$reset_color"
+        vicmd)
+            PROMPT_2="$fg[white]-- NORMAL --$reset_color"
             ;;
-            # [vi] Insert mode
-            viins) PROMPT_2="$fg[green]-- INSERT --$reset_color"
+        vivis|vivli)
+            PROMPT_2="$fg[yellow]-- VISUAL --$reset_color"
+            ;;
+        virep)
+            PROMPT_2="$fg[red]-- REPLACE --$reset_color"
             ;;
     esac
     PROMPT="%{$terminfo_down_sc$PROMPT_2$terminfo[rc]%}[%(?.%{${fg[green]}%}.%{${fg[red]}%})${HOST}%{${reset_color}%}]%# "

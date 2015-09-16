@@ -1,8 +1,5 @@
 tap 'homebrew/bundle'
 
-tap 'b4b4r07/goal'
-brew 'goal'
-
 brew 'ack'
 brew 'autoconf'
 brew 'checkbashisms'

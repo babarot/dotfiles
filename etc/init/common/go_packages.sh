@@ -35,8 +35,14 @@ if ! has "gotcha"; then
     fi
 fi
 
+# Append the GOPATH/bin to the PATH
+if [ -x "${GOPATH%%:*}"/bin/gotcha ]; then
+    PATH="${GOPATH%%:*}/bin:$PATH"
+    export PATH
+fi
+
 # It should be able to use Gotcha command if its installation is success
-if has "gotcha" || [ -x "${GOPATH%%:*}"/bin/gotcha ]; then
+if has "gotcha"; then
     log_echo "Grab go packages"
     gotcha --verbose "$DOTPATH"/etc/init/assets/go/config.toml
 else

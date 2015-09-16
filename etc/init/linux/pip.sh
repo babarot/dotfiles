@@ -28,7 +28,7 @@ if ! has "easy_install"; then
 fi
 
 if ! has "pip"; then
-    if sudo yum install -y pip; then
+    if sudo easy_install pip; then
         log_pass "pip: installed successfully"
     else
         log_fail "error: pip: failed to install"

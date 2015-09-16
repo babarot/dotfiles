@@ -28,7 +28,7 @@ do
 done 2>/dev/null &
 
 # shellcheck disable=SC2102
-for i in "$DOTPATH"/etc/init/"$(get_os)"/*[^init].sh
+for i in "$DOTPATH"/etc/init/"$(get_os)"/*.sh
 do
     if [ -f "$i" ]; then
         log_info "$(e_arrow "$(basename "$i")")"

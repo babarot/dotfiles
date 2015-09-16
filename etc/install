@@ -451,7 +451,8 @@ dotfiles_logo='
 
 dotfiles_download() {
     if [ -d "$DOTPATH" ]; then
-        die "$DOTPATH: already exists"
+        log_fail "$DOTPATH: already exists"
+        exit 1
     fi
 
     e_newline
@@ -476,15 +477,18 @@ dotfiles_download() {
                 wget -O - "$tarball"
 
             fi | tar xv -
-            mv -f dotfiles-master "$DOTPATH"
+            if [ ! -d dotfiles-master ]; then
+                log_fail "dotfiles-master: not found"
+                exit 1
+            fi
+            command mv -f dotfiles-master "$DOTPATH"
 
         else
-            die "curl or wget required"
-
+            log_fail "curl or wget required"
+            exit 1
         fi
-    fi &&
-
-        e_newline && e_done "Download"
+    fi
+    e_newline && e_done "Download"
 }
 
 dotfiles_deploy() {
@@ -492,7 +496,8 @@ dotfiles_deploy() {
     e_header "Deploying dotfiles..."
 
     if [ ! -d $DOTPATH ]; then
-        die "$DOTPATH: not found"
+        log_fail "$DOTPATH: not found"
+        exit 1
     fi
 
     cd "$DOTPATH"
@@ -520,7 +525,8 @@ dotfiles_initialize() {
                 #bash "$DOTPATH"/etc/init/init.sh
                 make init
             else
-                die "Makefile: not found"
+                log_fail "Makefile: not found"
+                exit 1
             fi
         fi &&
 

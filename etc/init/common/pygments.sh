@@ -28,12 +28,10 @@ if ! has "pygmentize"; then
     fi
 
     log_echo "install pygments-style-solarized ..."
-    pip install pygments-style-solarized
+    #pip install pygments-style-solarized
 fi
 
-if builtin cd "$DOTPATH"/etc/init/assets/pygments/solarized-pygment; then
-    git submodule update
-    sudo ./setup.py install
-fi
-
-log_pass "pygmentize: installed successfully"
+#if builtin cd "$DOTPATH"/etc/init/assets/pygments/solarized-pygment; then
+#    git submodule update
+#    sudo ./setup.py install
+#fi

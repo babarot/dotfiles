@@ -476,7 +476,7 @@ dotfiles_download() {
             elif is_exists "wget"; then
                 wget -O - "$tarball"
 
-            fi | tar xv -
+            fi | tar xvz
             if [ ! -d dotfiles-master ]; then
                 log_fail "dotfiles-master: not found"
                 exit 1

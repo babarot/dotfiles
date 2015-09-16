@@ -74,7 +74,7 @@ if ! contains "${SHELL:-}" "zsh"; then
         fi
 
         # For root user
-        if [ ${EUID:-${UID}} != 0 ]; then
+        if [ ${EUID:-${UID}} = 0 ]; then
             if chsh -s "$zsh_path" && :; then
                 log_pass "[root] change shell to $zsh_path successfully"
             fi

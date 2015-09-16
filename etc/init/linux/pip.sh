@@ -15,15 +15,12 @@ if ! has "python"; then
     exit 1
 fi
 
-# error variable
-err=0
-
 if ! has "easy_install"; then
     if sudo yum install -y python-setuptools; then
         log_pass "easy_install: installed successfully"
     else
         log_fail "error: easy_install: failed to install"
-        err=1
+        exit 1
     fi
 fi
 
@@ -32,12 +29,6 @@ if ! has "pip"; then
         log_pass "pip: installed successfully"
     else
         log_fail "error: pip: failed to install"
-        err=1
+        exit 1
     fi
-fi
-
-if [ "$err" = 0 ]; then
-    log_pass "All python tools are installed successfully"
-else
-    exit 1
 fi

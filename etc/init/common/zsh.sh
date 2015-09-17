@@ -35,7 +35,7 @@ if ! has "zsh"; then
             if has "yum"; then
                 log_echo "Install zsh with Yellowdog Updater Modified"
                 sudo yum -y install zsh
-            elif "port"; then
+            elif has "apt-get"; then
                 log_echo "Install zsh with Advanced Packaging Tool"
                 sudo apt-get -y install zsh
             else

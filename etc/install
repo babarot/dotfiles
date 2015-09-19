@@ -13,10 +13,10 @@
 # retrieves the name of the running platform
 export PLATFORM
 
-readonly _TAB_="$(printf "\t")"
-readonly _SPACE_=' '
-readonly _BLANK_="${_SPACE_}${_TAB_}"
-readonly _IFS_="$IFS"
+_TAB_="$(printf "\t")"
+_SPACE_=' '
+_BLANK_="${_SPACE_}${_TAB_}"
+_IFS_="$IFS"
 
 vitalize() {
     return 0

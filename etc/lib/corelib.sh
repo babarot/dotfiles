@@ -57,3 +57,42 @@ ask() {
             ;;
     esac
 }
+
+emphasis() {
+    local word color emphasis
+
+    word="$1"
+    color="${2:-red}"
+
+    case "$color" in
+        black)
+            emphasis="\033[30m${word}\033[m"
+            ;;
+        red)
+            emphasis="\033[31m${word}\033[m"
+            ;;
+        green)
+            emphasis="\033[32m${word}\033[m"
+            ;;
+        yellow)
+            emphasis="\033[33m${word}\033[m"
+            ;;
+        blue)
+            emphasis="\033[34m${word}\033[m"
+            ;;
+        purple)
+            emphasis="\033[35m${word}\033[m"
+            ;;
+        cyan)
+            emphasis="\033[36m${word}\033[m"
+            ;;
+        gray)
+            emphasis="\033[37m${word}\033[m"
+            ;;
+        *)
+            emphasis="\033[m${word}\033[m"
+            ;;
+    esac
+
+    perl -pe 's/'"${word}"'/\033[31m'"${emphasis}"'\033[m/'
+}

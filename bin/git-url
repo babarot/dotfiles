@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Load vital library that is most important and
+# constructed with many minimal functions
+# For more information, see etc/README.md
+. "$DOTPATH"/etc/lib/vital.sh
+. "$DOTPATH"/etc/lib/corelib.sh
+
+# This script need to be run within a git directory
+if ! is_git_repo; then
+    echo "Not a git repository (or any of the parent directories)" 1>&2
+    exit 1
+fi
+
+# git remote -v
+url="$(git remote -v | awk '$1=="origin"{print $2;exit}')"
+
+if [[ "$url" =~ ^https?:// ]]; then
+    # reconstruct url
+    url="$(echo $url | perl -pe 's#^https?://(github\.com)/([A-z0-9_-]+)/([A-z0-9_-]+)(\.git)?$#git\@$1:$2/$3#')"
+
+    # to replace git protocol in remote URL with http protocol
+    git remote set-url origin "${url}.git" 2>/dev/null
+    if [ $? -ne 0 ]; then
+        # failure case
+        echo "Oops. Retry!" >&2
+        exit 1
+    fi
+
+    # Show a remote URL
+    git remote -v
+    echo "Change origin url to '$url' successfully"
+else
+    # git remote -v returns empty
+    if [ -z "$url" ]; then
+        echo "Remote URL is empty. Run this:"
+        echo "-> git remote add origin https://github.com/{username}/{reponame}" | emphasis "add"
+        exit
+    fi
+
+    #git remote -v | perl -pe "s/git/\033[31mgit\033[m/"
+    git remote -v | emphasis "git"
+    e_arrow "OK"
+fi

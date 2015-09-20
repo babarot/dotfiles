@@ -1,0 +1,16 @@
+#!/bin/bash
+# super naive way of adding stuff to gitigrnoe
+
+. "$DOTPATH"/etc/lib/vital.sh
+
+if ! is_git_repo; then
+    echo "Not a git repository (or any of the parent directories)" 1>&2
+    exit 1
+fi
+
+if [ -z "$1" ]; then
+    exit 0
+fi
+
+root="$(git rev-parse --show-toplevel)"
+echo "$@" | tr " " "\n"  >>"${root:-.}"/.gitignore

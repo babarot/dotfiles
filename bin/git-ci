@@ -6,6 +6,12 @@ if ! is_git_repo; then
     echo "Not a git repository (or any of the parent directories)" 1>&2
     exit 1
 fi
+
+if ! has "hub"; then
+    echo "hub: not found" 1>&2
+    exit 1
+fi
+
 green=$(tput setaf 2)
 red=$(tput setaf 1)
 yellow=$(tput setaf 3)

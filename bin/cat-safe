@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+require 'kconv'
+
+$stdout.sync = true
+for path in ARGV
+  File.open(path, 'r') do |file|
+    file.each_line { |line| puts line.toutf8 }
+  end
+end

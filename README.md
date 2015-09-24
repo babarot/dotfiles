@@ -61,25 +61,25 @@ The easiest way to install this dotfiles is to open up a terminal, type the inst
 Run the following command to set up a new machine:
 
 <table>
-<thead>
-<tr>
-<th></th>
-<th><a name="oneliner">Installation command</a></th>
-<th>Copy</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>cURL</strong></td>
-<td>bash -c "$(curl -fsSL <a href="https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install">dot.b4b4r07.com</a>)"</td>
-<td><a href="http://b4b4r07.com/dotfiles">:clipboard:</a></td>
-</tr>
-<tr>
-<td><strong>Wget</strong></td>
-<td>bash -c "$(wget -qO - <a href="https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install">dot.b4b4r07.com</a>)"</td>
-<td><a href="http://b4b4r07.com/dotfiles">:clipboard:</a></td>
-</tr>
-</tbody>
+    <thead>
+        <tr>
+            <th></th>
+            <th><a name="oneliner">Installation command</a></th>
+            <th>Copy</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>cURL</strong></td>
+            <td>bash -c "$(curl -fsSL <a href="https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install">dot.b4b4r07.com</a>)"</td>
+            <td align="center"><a href="http://b4b4r07.com/dotfiles">:clipboard:</a></td>
+        </tr>
+        <tr>
+            <td><strong>Wget</strong></td>
+            <td>bash -c "$(wget -qO - <a href="https://raw.githubusercontent.com/b4b4r07/dotfiles/master/etc/install">dot.b4b4r07.com</a>)"</td>
+            <td align="center"><a href="http://b4b4r07.com/dotfiles">:clipboard:</a></td>
+        </tr>
+    </tbody>
 </table>
 
 - It is almost the same as the command below except for executing through a Web site directly.
@@ -252,6 +252,24 @@ When setting up a new Mac, you may want to perform the following tasks mainly.
 	It can set many hidden settings and preferences in Mac OS X, and in individual applications.
 
 All of these are included in the `make init` for OS X. For more detail, see also [here][platform] of documentation of OS X operation.
+
+<p align="right"><a href="#top">:arrow_up:</a></p>
+
+## Trial
+
+If you have [Vagrant](https://docs.vagrantup.com/v2/installation/) and [Virtualbox](https://www.virtualbox.org/wiki/Downloads) already installed, this is both faster and cleaner than downloading and compiling all the dependencies in OS X. To install, simply do the following:
+
+```console
+$ vagrant init http://files.dryga.com/boxes/osx-yosemite-0.2.1.box
+$ vagrant up
+```
+
+If you want to try my dotfiles without polluting your development environment, it would be best to use a Vagrant. Have fun by setting and please remove it after finish.
+
+```console
+$ vagrant destroy -f   # when finished, destroy the VM
+```
+
 
 <p align="right"><a href="#top">:arrow_up:</a></p>
 

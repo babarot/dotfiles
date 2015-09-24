@@ -14,6 +14,14 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
+if [ -z "$DOTPATH" ]; then
+    echo "cannot start $SHELL, \$DOTPATH not set" 1>&2
+    return 1
+fi
+
+. "$DOTPATH"/etc/lib/vital.sh
+
+export PATH=~/bin:"$PATH"
 export PAGER=less
 export LESS='-i -N -w  -z-4 -g -e -M -X -F -R -P%t?f%f :stdin .?pb%pb\%:?lbLine %lb:?bbByte %bb:-...'
 export LESS='-f -N -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
@@ -29,11 +37,6 @@ export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
-export MYHISTFILE=~/.bash_myhistory
-
-#-------------------------------------------------------------
-# Greeting, motd etc. ...
-#-------------------------------------------------------------
 # Color definitions (taken from Color Bash Prompt HowTo).
 # Some colors might look different of some terminals.
 # For example, I see 'Bold Red' as 'orange' on my screen,
@@ -75,240 +78,125 @@ LF="$(echo -ne '\n')"
 TAB="$(echo -ne '\t')"
 ESC="$(echo -ne '\033')"
 
-ALERT=${BWhite}${On_Red} # Bold White on red background
+# man bash
+export MYHISTFILE=~/.bash_myhistory
+export HISTCONTROL=ignoreboth:erasedups
+export HISTTIMEFORMAT="%Y/%m/%d %H:%M:%S:   "
+export HISTSIZE=50000
+export HISTFILESIZE=50000
 
-bash_exit() { #{{{1
-    HISTSIZE=50000
-    HISTFILESIZE=50000
-
-    show_exit() {
-        if [ "$1" -eq 0 ]; then return; fi
-        echo -e "\007exit $1"
-    }
-
-    log_history() {
-        echo "$(date '+%Y-%m-%d %H:%M:%S') $HOSTNAME:$$ $PWD ($1) $(history 1)" >> $MYHISTFILE
-    }
-
-    prompt_cmd() {
-        local s=$?
-        show_exit $s;
-        log_history $s;
-    }
-
-    end_history() {
-        log_history $?;
-        echo "$(date '+%Y-%m-%d %H:%M:%S') $HOSTNAME:$$ $PWD (end)" >> $MYHISTFILE
-    }
-    PROMPT_COMMAND="prompt_cmd;$PROMPT_COMMAND"
-
-    _exit() {
-        end_history
-        echo -e  "${BRed}Hasta la vista, baby!"
-        echo -en "\033[m"
-    }
-    trap _exit EXIT
+show_exit() {
+    if [ "$1" -eq 0 ]; then
+        return
+    fi
+    echo -e "\007exit $1"
 }
 
-#bash_shopt() { #{{{1
-#    #set -o nounset     # These  two options are useful for debugging.
-#    #set -o xtrace
-#    alias debug="set -o nounset; set -o xtrace"
-#
-#    ulimit -S -c 0      # Don't want coredumps.
-#    set -o notify
-#    set -o noclobber
-#    set -o ignoreeof
-#
-#
-#    # Enable options:
-#    shopt -s cdspell
-#    shopt -s cdable_vars
-#    shopt -s checkhash
-#    shopt -s checkwinsize
-#    shopt -s sourcepath
-#    shopt -s no_empty_cmd_completion
-#    shopt -s cmdhist
-#    shopt -s histappend histreedit histverify
-#    shopt -s extglob       # Necessary for programmable completion.
-#
-#    # Disable options:
-#    shopt -u mailwarn
-#    unset MAILCHECK        # Don't want my shell to warn me of incoming mail.
-#}
-#
-#bash_alias() {
-#    alias vi=vim
-#}
-#
-#bash_function() {
-#    if is_osx; then
-#        op() {
-#            if [ -p /dev/stdin ]; then
-#                open $(cat -) "$@"
-#            elif [ -z "$1" ]; then
-#                open .
-#            else
-#                open "$@"
-#            fi
-#        }
-#
-#        tex() {
-#            if ! $(has 'platex') || ! $(has 'dvipdfmx'); then
-#                return 1
-#            fi
-#            platex "$1" && dvipdfmx "${1/.tex/.dvi}" && {
-#            echo -e "\n\033[31mCompile complete!\033[m"
-#        } && if $(has 'open'); then
-#        open "${1/.tex/.pdf}"; fi
-#    }
-#
-#    deadlink() {
-#        local f
-#        for f in `command ls -A "${1:-$PWD}"`; do
-#            local fpath="${1:-$PWD}/$f"
-#            if [ -h "$fpath" ]; then
-#                [ -a "$fpath" ] || command rm -i "$fpath"
-#            fi
-#        done
-#        unset f fpath
-#    }
-#
-#    strlen() {
-#        local length=`echo "$1" | wc -c | sed -e 's/ *//'`
-#        echo `expr $length - 1`
-#    }
-#
-#    sort() {
-#        if [ "$1" = '--help' ]
-#        then
-#            command sort --help
-#            echo -e '\n\nOptions that are described below is an additional option that was made by b4b4r07.\n'
-#            echo -e '  -p, --particular-field    sort an optional field; if not given arguments, 2 as a default\n'
-#            return 0
-#        elif [ "$1" = '-p' -o "$1" = '--particular-field' ]
-#        then
-#            shift
-#            gawk '
-#            {
-#                line[NR] = $'${1:-2}' "\t" $0;
-#            }
-#
-#            END {
-#            asort(line);
-#            for (i = 1; i <= NR; i++) {
-#                print substr(line[i], index(line[i], "\t") + 1);
-#            }
-#        }' 2>/dev/null
-#        return 0
-#        fi
-#        command sort "$@"
-#    }
-#
-#    repeat() {
-#        local i max
-#        max=$1; shift;
-#        for ((i=1; i <= max ; i++)); do
-#            eval "$@";
-#        done
-#    }
-#
-#    richpager()
-#    # By the file number of lines, switch using cat or less.
-#    # If the pygmentize exists, use it instead of cat.
-#    {
-#        # Use cat as default pager.
-#        Pager='cat'
-#        if type pygmentize >/dev/null 2>&1; then
-#            # Use pygmentize, if exist.
-#            Pager='pygmentize'
-#        fi
-#        # Less option.
-#        Less='less -R +Gg'
-#        # Get display lines.
-#        DispLines=$[ $( stty 'size' < '/dev/tty' | cut -d' ' -f1 ) - 2 ]
-#
-#        # Normal case.
-#        # Can use pygmentize to syntax highlight, if exist.
-#        # ex) user$ ./richpager file
-#        if [ $# -eq 1 ]; then
-#            if [ -f $1 ]; then
-#                Filename="$1"
-#                FileLines=$(wc -l <$Filename)
-#                if (( FileLines > DispLines )); then
-#                    export LESSOPEN='| pygmentize %s'
-#                    ${Less} $Filename
-#                    unset LESSOPEN
-#                else
-#                    ${Pager} $Filename
-#                fi
-#            fi
-#            return 0
-#        else
-#            # Many argument.
-#            # Cannot use pygmentize bacause cannot judge filetype from extension.
-#            # ex) user$ ./richpager file1 file2
-#            while (( $# > 0 )) ; do
-#                case "$1" in
-#                    '-n')
-#                        nflag='-n'
-#                        shift && continue
-#                        ;;
-#                esac
-#
-#                # Directory.
-#                if [[ -d "$1" ]] ; then
-#                    ls "$1"
-#                    exit 0
-#
-#                    # Readable files.
-#                elif [[ -r "$1" ]] ; then
-#                    List[${#List[@]}]=$( < "$1" )
-#
-#                    # Enigma.
-#                else
-#                    List[${#List[@]}]=$1
-#                fi
-#
-#                shift
-#            done
-#
-#            # Get file contents.
-#            if (( ${#List[@]} > 0 )) ; then
-#                File=$( for i in "${List[@]}" ; do echo "$i"; done )
-#
-#                # No argument, no pipe.
-#            elif [[ -t 0 ]] ; then
-#                echo "error: No argument." 1>&2
-#                return 1
-#
-#                # Pipe detected.
-#                # Cannot use pygmentize even if it exists.
-#                # See also pygmentize -h (help file).
-#            else
-#                File=$( cat - )
-#            fi
-#
-#            # Count file chars.
-#            FileLines=$( echo -n "$File" | grep -c '' )
-#
-#            # File is empty.
-#            if (( FileLines < 0 )); then
-#                echo "error: No entry." 1>&2
-#                return 1
-#            fi
-#        fi
-#
-#        # Judgement cat or less.
-#        if (( FileLines > DispLines )); then
-#            echo "$File" | cat ${nflag} |${Less}
-#        else
-#            echo "$File" | cat ${nflag}
-#        fi
-#
-#        return 0
-#    }
-#}
+log_history() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') $HOSTNAME:$$ $PWD ($1) $(history 1)" >> $MYHISTFILE
+}
+
+prompt_cmd() {
+    local s=$?
+    show_exit $s;
+    log_history $s;
+}
+
+end_history() {
+    log_history $?;
+    echo "$(date '+%Y-%m-%d %H:%M:%S') $HOSTNAME:$$ $PWD (end)" >> $MYHISTFILE
+}
+PROMPT_COMMAND="prompt_cmd;$PROMPT_COMMAND"
+
+_exit() {
+    end_history
+    echo -e  "${BRed}Hasta la vista, baby!"
+    echo -en "\033[m"
+}
+trap _exit EXIT
+[ -z "$TMPDIR" ] && TMPDIR=/tmp
+
+### Global
+export GOPATH=~/src
+mkdir -p $GOPATH 2>/dev/null
+export EDITOR=vim
+export LANG=en_US.UTF-8
+
+if [ "$PLATFORM" = "linux" ]; then
+    PS1="\[\e[1;38m\]\u\[\e[1;34m\]@\[\e[1;31m\]\h\[\e[1;30m\]:"
+    PS1="$PS1\[\e[0;38m\]\w\[\e[1;35m\]> \[\e[0m\]"
+else
+    ### git-prompt
+    __git_ps1() { :; }
+    if [ -f ~/.loading/git-prompt.sh ]; then
+        source ~/.loading/git-prompt.sh
+    fi
+    my__git_ps1() { is_git_repo && echo -e "${Red}$(__git_ps1)${NC}" || :; }
+    PROMPT_COMMAND="my__git_ps1;$PROMPT_COMMAND"
+    PS1="\[\e[34m\]\u\[\e[1;32m\]@\[\e[0;33m\]\h\[\e[35m\]:"
+    PS1="$PS1\[\e[m\]\w\[\e[1;31m\]> \[\e[0m\]"
+fi
+
+export FZF_DEFAULT_OPTS='--extended'
+
+bash_alias() {
+    # For mac, aliases
+    if is_osx; then
+        has "qlmanage" && alias ql='qlmanage -p "$@" >&/dev/null'
+    fi
+
+    if has 'git'; then
+        alias gst='git status'
+    fi
+
+    if has 'richpager'; then
+        alias cl='richpager'
+    fi
+
+    # Common aliases
+    alias ..='cd ..'
+    alias ld='ls -ld'          # Show info about the directory
+    alias lla='ls -lAF'        # Show hidden all files
+    alias ll='ls -lF'          # Show long file information
+    alias l='ls -1F'          # Show long file information
+    alias la='ls -AF'          # Show hidden files
+    alias lx='ls -lXB'         # Sort by extension
+    alias lk='ls -lSr'         # Sort by size, biggest last
+    alias lc='ls -ltcr'        # Sort by and show change time, most recent last
+    alias lu='ls -ltur'        # Sort by and show access time, most recent last
+    alias lt='ls -ltr'         # Sort by date, most recent last
+    alias lr='ls -lR'          # Recursive ls
+
+    # The ubiquitous 'll': directories first, with alphanumeric sorting:
+    #alias ll='ls -lv --group-directories-first'
+
+    alias cp="cp -i"
+    alias mv="mv -i"
+
+    alias du='du -h'
+    alias job='jobs -l'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+
+    # Use if colordiff exists
+    if has 'colordiff'; then
+        alias diff='colordiff -u'
+    else
+        alias diff='diff -u'
+    fi
+
+    alias vi="vim"
+
+    # Use plain vim.
+    alias nvim='vim -N -u NONE -i NONE'
+
+    # The first word of each simple command, if unquoted, is checked to see 
+    # if it has an alias. [...] If the last character of the alias value is 
+    # a space or tab character, then the next command word following the 
+    # alias is also checked for alias expansion
+    alias sudo='sudo '
+}
 
 bash_zshlike() {
     shopt -s globstar
@@ -319,39 +207,132 @@ bash_zshlike() {
     shopt -s cdspell
 }
 
-bash_loading() { #{{{1
-    if [ -d ~/.loading ]; then
-        . ~/.loading/*.sh
+# tmux_automatically_attach attachs tmux session automatically
+tmux_automatically_attach() {
+    is_ssh_running && return 1
+
+    if is_screen_or_tmux_running; then
+        if is_tmux_runnning; then
+            if has "cowsay"; then
+                if [[ $(( $RANDOM % 5 )) == 1 ]]; then
+                    cowsay -f ghostbusters "G,g,g,ghostbusters!!!"
+                    echo ""
+                fi
+            else
+                echo "$fg_bold[red] _____ __  __ _   ___  __ $reset_color"
+                echo "$fg_bold[red]|_   _|  \/  | | | \ \/ / $reset_color"
+                echo "$fg_bold[red]  | | | |\/| | | | |\  /  $reset_color"
+                echo "$fg_bold[red]  | | | |  | | |_| |/  \  $reset_color"
+                echo "$fg_bold[red]  |_| |_|  |_|\___//_/\_\ $reset_color"
+            fi
+            export DISPLAY="$TMUX"
+        elif is_screen_running; then
+            # For GNU screen
+            :
+        fi
+    else
+        if shell_has_started_interactively && ! is_ssh_running; then
+            if ! has "tmux"; then
+                echo "tmux not found" 1>&2
+                return 1
+            fi
+
+            if tmux has-session >/dev/null 2>&1 && tmux list-sessions | grep -qE '.*]$'; then
+                # detached session exists
+                tmux list-sessions
+                echo -n "Tmux: attach? (y/N/num) "
+                read
+                if [[ "$REPLY" =~ ^[Yy]$ ]] || [[ "$REPLY" == '' ]]; then
+                    tmux attach-session
+                    if [ $? -eq 0 ]; then
+                        echo "$(tmux -V) attached session"
+                        return 0
+                    fi
+                elif [[ "$REPLY" =~ ^[0-9]+$ ]]; then
+                    tmux attach -t "$REPLY"
+                    if [ $? -eq 0 ]; then
+                        echo "$(tmux -V) attached session"
+                        return 0
+                    fi
+                fi
+            fi
+
+            if is_osx && has "reattach-to-user-namespace"; then
+                # on OS X force tmux's default command
+                # to spawn a shell in the user's namespace
+                tmux_login_shell="/bin/bash"
+                tmux_config=$(cat ~/.tmux.conf <(echo 'set-option -g default-command "reattach-to-user-namespace -l' $tmux_login_shell'"'))
+                tmux -f <(echo "$tmux_config") new-session && echo "$(tmux -V) created new session supported OS X"
+            else
+                tmux new-session && echo "tmux created new session"
+            fi
+        fi
+    fi
+}
+bash_loading() {
+    echo -e "${Blue}Starting ${SHELL}...${NC}"
+
+    # Load ~/.loading modules
+    local f
+    for f in ~/.loading/*.sh
+    do
+        if [ ! -x "$f" ]; then
+            . "$f" 2>/dev/null && echo "loading $f" | e_indent 2
+        fi
+    done
+    echo
+
+    local repo repos
+    # repos is a list of bash plugins you want to download and use
+    # The repo's name must consist of "username/reponame"
+    repos=(
+    "b4b4r07/enhancd"
+    )
+
+    # repo is available
+    if [ "${#repos[@]}" -ne 0 ]; then
+        e_arrow $(e_header "Setup plugins...")
+        mkdir -p "$HOME/.repos"
     fi
 
-    [ -f /etc/bash_completion ]     && . /etc/bash_completion
-    [ -f /etc/git-completion.bash ] && . /etc/git-completion.bash
-    [ -f /etc/git-prompt.bash ]     && . /etc/git-prompt.bash
+    # Download
+    for repo in "${repos[@]}"
+    do
+        if [[ ! $repo =~ ^[A-Za-z0-9_-]+/[A-Za-z0-9_-]+$ ]]; then
+            continue
+        fi
+
+        if [ ! -d "$HOME/.repos/$repo" ]; then
+            git clone "https://github.com/$repo" "$HOME/.repos/$repo"
+        fi
+        . "$HOME/.repos/$repo/${repo##*/}.sh"
+        if [ $? -eq 0 ]; then
+            echo "checking... $HOME/.repos/$repo/${repo##*/}".sh | e_indent 2
+        fi
+    done
+
+    #[ -f /etc/bash_completion ]     && . /etc/bash_completion
+    #[ -f /etc/git-completion.bash ] && . /etc/git-completion.bash
+    #[ -f /etc/git-prompt.bash ]     && . /etc/git-prompt.bash
 }
 
-bash_at_startup() { #{{{1
-    echo -e "${BCyan}This is BASH ${BRed}${BASH_VERSION%.*}${BCyan} - DISPLAY on ${BRed}$DISPLAY${NC}\n"
-    echo "$(date '+%Y-%m-%d %H:%M:%S') $HOSTNAME:$$ $PWD (start)" >> $MYHISTFILE
+bash_at_startup() {
+    # tmux_automatically_attach attachs tmux session automatically when your are in zsh
+    tmux_automatically_attach
 
-    bash_loading
+    bash_loading || return 1
+
+    echo
+    echo -e "${BCyan}This is BASH ${BRed}${BASH_VERSION%.*}${BCyan} - DISPLAY on ${BRed}$DISPLAY${NC}"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') $HOSTNAME:$$ $PWD (start)" >> $MYHISTFILE
 
     #cowsay -f ghostbusters "$(fortune -s)"
     echo
 }
 
 if bash_at_startup; then
-    PS1="[${Yellow}\u${NC}]:${Blue}\w${NC}\$ "
-    export PS1
-
-    #bash_shopt
-    #bash_exit
-
-    #if ! is_osx && has "dircolors"; then
-    #    $(dircolors -b ~/.dir_colors)
-    #fi
+    bash_zshlike
 fi
 
 # __END__{{{1
 # vim:fdm=marker fdc=3 ft=sh ts=4 sw=4 sts=4:
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash

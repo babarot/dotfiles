@@ -14,12 +14,27 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
+# It is necessary for the setting of DOTPATH
+[ -f ~/.path ] && source ~/.path
+
+# DOTPATH environment variable specifies the location of dotfiles.
+# On Unix, the value is a colon-separated string. On Windows,
+# it is not yet supported.
+# DOTPATH must be set to run make init, make test and shell script library
+# outside the standard dotfiles tree.
 if [ -z "$DOTPATH" ]; then
     echo "cannot start $SHELL, \$DOTPATH not set" 1>&2
     return 1
 fi
 
+# Load vital library that is most important and
+# constructed with many minimal functions
+# For more information, see etc/README.md
 . "$DOTPATH"/etc/lib/vital.sh
+if vitalize 2>/dev/null; then
+    echo "cannot vitalize, cannot start $SHELL" 1>&2
+    return 1
+fi
 
 export PATH=~/bin:"$PATH"
 export PAGER=less
@@ -114,6 +129,7 @@ _exit() {
     echo -en "\033[m"
 }
 trap _exit EXIT
+
 [ -z "$TMPDIR" ] && TMPDIR=/tmp
 
 ### Global
@@ -122,6 +138,7 @@ mkdir -p $GOPATH 2>/dev/null
 export EDITOR=vim
 export LANG=en_US.UTF-8
 
+# Prompt setting
 if [ "$PLATFORM" = "linux" ]; then
     PS1="\[\e[1;38m\]\u\[\e[1;34m\]@\[\e[1;31m\]\h\[\e[1;30m\]:"
     PS1="$PS1\[\e[0;38m\]\w\[\e[1;35m\]> \[\e[0m\]"
@@ -199,12 +216,63 @@ bash_alias() {
 }
 
 bash_zshlike() {
-    shopt -s globstar
+    # This builtin allows you to change additional shell optional behavior.
+    #
+    # shopt
+    #  shopt [-pqsu] [-o] [optname ...]
+    #
+    # Toggle the values of settings controlling optional shell behavior.
+    # The settings can be either those listed below, or, if the -o option is used, 
+    # those available with the -o option to the set builtin command (see The Set Builtin).
+    # With no options, or with the -p option, a list of all settable options is displayed,
+    # with an indication of whether or not each is set. The -p option causes output to be
+    # displayed in a form that may be reused as input. Other options have the following meanings:
+    #
+    # -s
+    # Enable (set) each optname.
+    #
+    # -u
+    # Disable (unset) each optname.
+    #
+    # -q
+    # Suppresses normal output; the return status indicates whether the optname is set or unset.
+    # If multiple optname arguments are given with -q, the return status is zero if all optnames
+    # are enabled; non-zero otherwise.
+    #
+    # -o
+    # Restricts the values of optname to be those defined for the -o option to the set builtin
+    # (see The Set Builtin).
+    # http://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html
+
+    if is_at_least 4.0.0; then
+        # If set, the pattern '**' used in a filename expansion context will match
+        # all files and zero or more directories and subdirectories. If the pattern
+        # is followed by a '/', only directories and subdirectories match.
+        shopt -s globstar
+
+        # If set, a command name that is the name of a directory is executed as
+        # if it were the argument to the cd command. This option is only used by
+        # interactive shells.
+        shopt -s autocd
+    fi
+
+    # If set, Bash includes filenames beginning with a '.' in the results of
+    # filename expansion.
     #shopt -s dotglob
+
+    # If set, the extended pattern matching features described above
+    # (see Pattern Matching) are enabled.
     shopt -s extglob
+
+    # If set, minor errors in the spelling of a directory component in a cd command
+    # will be corrected. The errors checked for are transposed characters, a missing
+    # character, and a character too many. If a correction is found, the corrected path
+    # is printed, and the command proceeds. This option is only used by interactive shells.
     shopt -s cdspell
-    shopt -s autocd
-    shopt -s cdspell
+
+    # If set, Bash attempts spelling correction on directory names during word
+    # completion if the directory name initially supplied does not exist.
+    shopt -s dirspell
 }
 
 # tmux_automatically_attach attachs tmux session automatically
@@ -213,47 +281,59 @@ tmux_automatically_attach() {
 
     if is_screen_or_tmux_running; then
         if is_tmux_runnning; then
+            # Print logo header
+            # if have cowsay command, show ascii art
             if has "cowsay"; then
                 if [[ $(( $RANDOM % 5 )) == 1 ]]; then
                     cowsay -f ghostbusters "G,g,g,ghostbusters!!!"
                     echo ""
                 fi
             else
-                echo "$fg_bold[red] _____ __  __ _   ___  __ $reset_color"
-                echo "$fg_bold[red]|_   _|  \/  | | | \ \/ / $reset_color"
-                echo "$fg_bold[red]  | | | |\/| | | | |\  /  $reset_color"
-                echo "$fg_bold[red]  | | | |  | | |_| |/  \  $reset_color"
-                echo "$fg_bold[red]  |_| |_|  |_|\___//_/\_\ $reset_color"
+                echo "${Red} _____ __  __ _   ___  __ ${NC}"
+                echo "${Red}|_   _|  \/  | | | \ \/ / ${NC}"
+                echo "${Red}  | | | |\/| | | | |\  /  ${NC}"
+                echo "${Red}  | | | |  | | |_| |/  \  ${NC}"
+                echo "${Red}  |_| |_|  |_|\___//_/\_\ ${NC}"
             fi
+            # if tmux, set it to the DISPLAY
             export DISPLAY="$TMUX"
+
         elif is_screen_running; then
             # For GNU screen
             :
         fi
     else
+        #
+        # Launch a terminal multiplexer
+        #
         if shell_has_started_interactively && ! is_ssh_running; then
+            # Support tmux only
             if ! has "tmux"; then
-                echo "tmux not found" 1>&2
+                echo "tmux: not found" 1>&2
                 return 1
             fi
 
             if tmux has-session >/dev/null 2>&1 && tmux list-sessions | grep -qE '.*]$'; then
                 # detached session exists
                 tmux list-sessions
+
                 echo -n "Tmux: attach? (y/N/num) "
                 read
+                # REPLY is yes key or Enter
                 if [[ "$REPLY" =~ ^[Yy]$ ]] || [[ "$REPLY" == '' ]]; then
+                    # tmux attach the running latest session
                     tmux attach-session
-                    if [ $? -eq 0 ]; then
-                        echo "$(tmux -V) attached session"
-                        return 0
-                    fi
+                    es=$?
                 elif [[ "$REPLY" =~ ^[0-9]+$ ]]; then
                     tmux attach -t "$REPLY"
-                    if [ $? -eq 0 ]; then
-                        echo "$(tmux -V) attached session"
-                        return 0
-                    fi
+                    es=$?
+                fi
+
+                # if tmux is running successfully, show the version information
+                # and return true
+                if [ ${es:-1} -eq 0 ]; then
+                    echo "$(tmux -V) attached session!"
+                    return 0
                 fi
             fi
 
@@ -262,13 +342,16 @@ tmux_automatically_attach() {
                 # to spawn a shell in the user's namespace
                 tmux_login_shell="/bin/bash"
                 tmux_config=$(cat ~/.tmux.conf <(echo 'set-option -g default-command "reattach-to-user-namespace -l' $tmux_login_shell'"'))
-                tmux -f <(echo "$tmux_config") new-session && echo "$(tmux -V) created new session supported OS X"
+                tmux -f <(echo "$tmux_config") new-session && echo "$(tmux -V) created new session supported OS X!"
             else
-                tmux new-session && echo "tmux created new session"
+                # doesn't exist older tmux session
+                # create new session
+                tmux new-session && echo "tmux created new session!"
             fi
         fi
     fi
 }
+
 bash_loading() {
     echo -e "${Blue}Starting ${SHELL}...${NC}"
 

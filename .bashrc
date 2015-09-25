@@ -15,7 +15,7 @@
 [ -z "$PS1" ] && return
 
 # It is necessary for the setting of DOTPATH
-[ -f ~/.path ] && source ~/.path
+#[ -f ~/.path ] && source ~/.path
 
 # DOTPATH environment variable specifies the location of dotfiles.
 # On Unix, the value is a colon-separated string. On Windows,
@@ -31,7 +31,7 @@ fi
 # constructed with many minimal functions
 # For more information, see etc/README.md
 . "$DOTPATH"/etc/lib/vital.sh
-if vitalize 2>/dev/null; then
+if ! vitalize 2>/dev/null; then
     echo "cannot vitalize, cannot start $SHELL" 1>&2
     return 1
 fi
@@ -92,6 +92,13 @@ CR="$(echo -ne '\r')"
 LF="$(echo -ne '\n')"
 TAB="$(echo -ne '\t')"
 ESC="$(echo -ne '\033')"
+
+# If set to a number greater than zero, the value is used as the number of trailing
+# directory components to retain when expanding the \w and \W prompt string
+# escapes (see PROMPTING below). Characters removed are replaced with an ellipsis.
+if is_at_least 4; then
+    export PROMPT_DIRTRIM=3
+fi
 
 # man bash
 export MYHISTFILE=~/.bash_myhistory
@@ -388,7 +395,8 @@ bash_loading() {
         if [ ! -d "$HOME/.repos/$repo" ]; then
             git clone "https://github.com/$repo" "$HOME/.repos/$repo"
         fi
-        . "$HOME/.repos/$repo/${repo##*/}.sh"
+
+        . $(find "$HOME/.repos/$repo" -name "*${repo##*/}*" -depth 1 | grep -E "${repo##*/}($|\.sh$)")
         if [ $? -eq 0 ]; then
             echo "checking... $HOME/.repos/$repo/${repo##*/}".sh | e_indent 2
         fi

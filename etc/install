@@ -23,6 +23,50 @@ vitalize() {
 }
 
 # Gerenal utilities {{{1
+is_bash() {
+    [ -n "$BASH_VERSION" ]
+}
+
+is_zsh() {
+    [ -n "$ZSH_VERSION" ]
+}
+
+is_at_least() {
+    if [ -z "$1" ]; then
+        return 1
+    fi
+
+    # For Z shell
+    if is_zsh; then
+        autoload -Uz is-at-least
+        is-at-least "${1:-}"
+        return $?
+    fi
+
+    atleast="$(echo $1 | sed -e 's/\.//g')"
+    version="$(echo ${BASH_VERSION:-0.0.0} | sed -e 's/^\([0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\).*/\1/' | sed -e 's/\.//g')"
+
+    # zero padding
+    while [ ${#atleast} -ne 6 ]
+    do
+        atleast="${atleast}0"
+    done
+
+    # zero padding
+    while [ ${#version} -ne 6 ]
+    do
+        version="${version}0"
+    done
+
+    # verbose
+    #echo "$atleast < $version"
+    if [ "$atleast" -le "$version" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # ostype returns the lowercase OS name
 ostype() {
     # shellcheck disable=SC2119

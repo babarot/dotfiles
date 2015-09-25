@@ -210,7 +210,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1
   NeoBundleFetch 'Shougo/neobundle.vim'
 
   " NeoBundle List
-  NeoBundle 'Shougo/unite.vim'
+  "NeoBundle 'Shougo/unite.vim'
   NeoBundle 'Shougo/vimproc'
 
   if has('lua') && v:version >= 703
@@ -219,13 +219,13 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1
     NeoBundleLazy 'Shougo/neocomplcache.vim'
   endif
 
-  NeoBundle 'Shougo/unite-outline'
-  NeoBundle 'Shougo/unite-help'
+  "NeoBundle 'Shougo/unite-outline'
+  "NeoBundle 'Shougo/unite-help'
   "NeoBundle 'Shougo/neomru.vim'
   "NeoBundle 'Shougo/vimfiler'
   "NeoBundle 'Shougo/vimshell'
-  NeoBundle 'Shougo/neosnippet'
-  NeoBundle 'Shougo/neosnippet-snippets'
+  "NeoBundle 'Shougo/neosnippet'
+  "NeoBundle 'Shougo/neosnippet-snippets'
   "NeoBundle 'glidenote/memolist.vim'
   "NeoBundle 'severin-lemaignan/vim-minimap'
   "NeoBundle 'thinca/vim-scouter'
@@ -252,9 +252,9 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1
   "NeoBundle 'b4b4r07/vim-favdir'
   "NeoBundle 'b4b4r07/vim-ezoe'
   "NeoBundle 'b4b4r07/vim-sunset'
-  NeoBundle 'b4b4r07/vim-pt'
+  "NeoBundle 'b4b4r07/vim-pt'
   NeoBundle has('gui_running') ? 'itchyny/lightline.vim' : 'b4b4r07/vim-buftabs'
-  NeoBundle 'b4b4r07/vim-buftabs'
+  "NeoBundle 'b4b4r07/vim-buftabs'
   "NeoBundle 'itchyny/calendar.vim'
   "NeoBundle 'nathanaelkane/vim-indent-guides'
   NeoBundle 'scrooloose/syntastic'
@@ -263,22 +263,22 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1
   NeoBundle 'tpope/vim-repeat'
   NeoBundle 'tpope/vim-markdown'
   "NeoBundle 'tpope/vim-fugitive'
-  NeoBundle 'osyo-manga/vim-anzu'
+  "NeoBundle 'osyo-manga/vim-anzu'
   NeoBundle 'cohama/lexima.vim'
   "NeoBundle 'cohama/vim-insert-linenr'
   "NeoBundle 'cohama/agit.vim'
-  NeoBundle 'LeafCage/yankround.vim'
+  "NeoBundle 'LeafCage/yankround.vim'
   "NeoBundle 'LeafCage/foldCC.vim'
   "NeoBundle 'junegunn/vim-easy-align'
   "NeoBundle 'mattn/gist-vim'
-  NeoBundle 'mattn/webapi-vim'
+  "NeoBundle 'mattn/webapi-vim'
   "NeoBundle 'mattn/benchvimrc-vim'
   "NeoBundle 'vim-scripts/Align'
   "NeoBundle 'vim-scripts/DirDiff.vim'
   "NeoBundle 'mattn/excitetranslate-vim'
   "NeoBundle 'yomi322/unite-tweetvim'
   "NeoBundle 'tsukkee/lingr-vim'
-  NeoBundle 'AndrewRadev/switch.vim'
+  "NeoBundle 'AndrewRadev/switch.vim'
   "NeoBundle 'Yggdroot/indentLine'
   "NeoBundle 'ervandew/supertab'
   "NeoBundle 'vim-scripts/renamer.vim'
@@ -295,19 +295,19 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1
   "NeoBundle 'ctrlpvim/ctrlp.vim'
   "NeoBundle 'toyamarinyon/hatenablog-vim'
   NeoBundle 'justinmk/vim-dirvish'
-  NeoBundle 'deris/vim-visualinc'
-  NeoBundle 'hotchpotch/perldoc-vim'
+  "NeoBundle 'deris/vim-visualinc'
+  "NeoBundle 'hotchpotch/perldoc-vim'
   "NeoBundle 'kchmck/vim-coffee-script'
   NeoBundle 'elzr/vim-json'
   NeoBundle 'cespare/vim-toml'
   NeoBundle 'fatih/vim-go'
   NeoBundle 'jnwhiteh/vim-golang'
   NeoBundle 'zaiste/tmux.vim'
-  NeoBundle 'CORDEA/vim-glue'
-  NeoBundle 'dag/vim-fish'
+  "NeoBundle 'CORDEA/vim-glue'
+  "NeoBundle 'dag/vim-fish'
   "NeoBundle 'haya14busa/incsearch.vim'
-  NeoBundle 'rhysd/try-colorscheme.vim'
-  NeoBundle 'rhysd/github-complete.vim'
+  "NeoBundle 'rhysd/try-colorscheme.vim'
+  "NeoBundle 'rhysd/github-complete.vim'
   NeoBundle 'junegunn/fzf'
 
   " Japanese help
@@ -323,7 +323,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1
 
   " Disable plugins
   if !has('gui_running')
-    NeoBundleDisable lightline.vim
+    "NeoBundleDisable lightline.vim
   endif
   "NeoBundleDisable mru.vim
   "NeoBundleDisable vim-buftabs

@@ -3100,25 +3100,25 @@ endif
 
 " b4b4r07/vim-shellutils {{{2
 if s:neobundled('vim-shellutils')
-  call neobundle#config({
-        \   "lazy" : 1,
-        \   "autoload" : {
-        \     "commands" : [
-        \       "Ls",
-        \       "File",
-        \       "Rm",
-        \       "Mkdir",
-        \       "Rm",
-        \       "Touch",
-        \       "Cat",
-        \       "Head",
-        \       "Touch",
-        \       "Tail",
-        \       "Cp",
-        \       "Mv",
-        \     ],
-        \   }
-        \ })
+  "call neobundle#config({
+  "      \   "lazy" : 1,
+  "      \   "autoload" : {
+  "      \     "commands" : [
+  "      \       "Ls",
+  "      \       "File",
+  "      \       "Rm",
+  "      \       "Mkdir",
+  "      \       "Rm",
+  "      \       "Touch",
+  "      \       "Cat",
+  "      \       "Head",
+  "      \       "Touch",
+  "      \       "Tail",
+  "      \       "Cp",
+  "      \       "Mv",
+  "      \     ],
+  "      \   }
+  "      \ })
 
   " Options
   let g:shellutils_disable_commands = ['Ls']

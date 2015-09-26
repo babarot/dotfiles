@@ -222,7 +222,7 @@ bash_alias() {
     alias sudo='sudo '
 }
 
-bash_zshlike() {
+bashrc_shopt() {
     # This builtin allows you to change additional shell optional behavior.
     #
     # shopt
@@ -251,18 +251,6 @@ bash_zshlike() {
     # (see The Set Builtin).
     # http://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html
 
-    if is_at_least 4.0.0; then
-        # If set, the pattern '**' used in a filename expansion context will match
-        # all files and zero or more directories and subdirectories. If the pattern
-        # is followed by a '/', only directories and subdirectories match.
-        shopt -s globstar
-
-        # If set, a command name that is the name of a directory is executed as
-        # if it were the argument to the cd command. This option is only used by
-        # interactive shells.
-        shopt -s autocd
-    fi
-
     # If set, Bash includes filenames beginning with a '.' in the results of
     # filename expansion.
     #shopt -s dotglob
@@ -277,9 +265,21 @@ bash_zshlike() {
     # is printed, and the command proceeds. This option is only used by interactive shells.
     shopt -s cdspell
 
-    # If set, Bash attempts spelling correction on directory names during word
-    # completion if the directory name initially supplied does not exist.
-    shopt -s dirspell
+    if is_at_least 4.0.0; then
+        # If set, the pattern '**' used in a filename expansion context will match
+        # all files and zero or more directories and subdirectories. If the pattern
+        # is followed by a '/', only directories and subdirectories match.
+        shopt -s globstar
+
+        # If set, a command name that is the name of a directory is executed as
+        # if it were the argument to the cd command. This option is only used by
+        # interactive shells.
+        shopt -s autocd
+
+        # If set, Bash attempts spelling correction on directory names during word
+        # completion if the directory name initially supplied does not exist.
+        shopt -s dirspell
+    fi
 }
 
 # tmux_automatically_attach attachs tmux session automatically
@@ -359,13 +359,14 @@ tmux_automatically_attach() {
     fi
 }
 
-bash_loading() {
+bashrc_loading() {
     echo -e "${Blue}Starting ${SHELL}...${NC}"
 
     # Load ~/.loading modules
     local f
     for f in ~/.loading/*.sh
     do
+        # source non-executable file
         if [ ! -x "$f" ]; then
             . "$f" 2>/dev/null && echo "loading $f" | e_indent 2
         fi
@@ -385,18 +386,23 @@ bash_loading() {
         mkdir -p "$HOME/.repos"
     fi
 
-    # Download
     for repo in "${repos[@]}"
     do
+        # repo need to be the string that consists of username/reponame
         if [[ ! $repo =~ ^[A-Za-z0-9_-]+/[A-Za-z0-9_-]+$ ]]; then
+            # skip
             continue
         fi
 
+        # get repo from github.com if it doesn't exist
         if [ ! -d "$HOME/.repos/$repo" ]; then
+            # download to ~/.repo
             git clone "https://github.com/$repo" "$HOME/.repos/$repo"
         fi
 
+        # finding and sourcing script file in repo
         . $(find "$HOME/.repos/$repo" -name "*${repo##*/}*" -depth 1 | grep -E "${repo##*/}($|\.sh$)")
+        # displaying the info
         if [ $? -eq 0 ]; then
             echo "checking... $HOME/.repos/$repo/${repo##*/}".sh | e_indent 2
         fi
@@ -407,11 +413,11 @@ bash_loading() {
     #[ -f /etc/git-prompt.bash ]     && . /etc/git-prompt.bash
 }
 
-bash_at_startup() {
+bashrc_startup() {
     # tmux_automatically_attach attachs tmux session automatically when your are in zsh
     tmux_automatically_attach
 
-    bash_loading || return 1
+    bashrc_loading || return 1
 
     echo
     echo -e "${BCyan}This is BASH ${BRed}${BASH_VERSION%.*}${BCyan} - DISPLAY on ${BRed}$DISPLAY${NC}"
@@ -421,8 +427,8 @@ bash_at_startup() {
     echo
 }
 
-if bash_at_startup; then
-    bash_zshlike
+if bashrc_startup; then
+    bashrc_shopt
 fi
 
 # __END__{{{1

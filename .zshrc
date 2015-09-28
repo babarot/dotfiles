@@ -112,9 +112,9 @@ antigen_plugins=(
 setup_bundles() {
     echo "$fg[blue]Starting $SHELL....$reset_color"
 
-    # ~/.loading directory
-    if [[ -d ~/.loading ]]; then
-        for f in ~/.loading/**/*.(sh|zsh)
+    # ~/.modules directory
+    if [[ -d ~/.modules ]]; then
+        for f in ~/.modules/**/*.(sh|zsh)
         do
             # not execute files
             if [[ ! -x $f ]]; then

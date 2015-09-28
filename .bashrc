@@ -152,8 +152,8 @@ if [ "$PLATFORM" = "linux" ]; then
 else
     ### git-prompt
     __git_ps1() { :; }
-    if [ -f ~/.loading/git-prompt.sh ]; then
-        source ~/.loading/git-prompt.sh
+    if [ -f ~/.modules/git-prompt.sh ]; then
+        source ~/.modules/git-prompt.sh
     fi
     my__git_ps1() { is_git_repo && echo -e "${Red}$(__git_ps1)${NC}" || :; }
     PROMPT_COMMAND="my__git_ps1;$PROMPT_COMMAND"
@@ -362,9 +362,9 @@ tmux_automatically_attach() {
 bashrc_loading() {
     echo -e "${Blue}Starting ${SHELL}...${NC}"
 
-    # Load ~/.loading modules
+    # Load ~/.modules modules
     local f
-    for f in ~/.loading/*.sh
+    for f in ~/.modules/*.sh
     do
         # source non-executable file
         if [ ! -x "$f" ]; then

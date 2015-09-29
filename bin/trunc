@@ -3,20 +3,15 @@
 # @(#) trunc v0.1.0 2015-08-05
 #
 # Usage:
-#   trunc file...
+#   trunc file(s)
 #
 # Description:
 #   truncate files
 #
 ######################################################################
 
-set -eu
-
-main() {
-    for f in "$@"
-    do
-        cat </dev/null >"$f"
-    done
-}
-
-main ${@+"$@"}
+for f in "$@"
+do
+    [ -d "$f" ] && continue
+    cat </dev/null >"$f"
+done

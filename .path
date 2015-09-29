@@ -1,30 +1,42 @@
 #!/bin/bash
 
+# readlink emulates GNU readlink -f option
 readlink() {
     if [ $# -eq 0 ] ; then
         return 1
     fi
 
+    # change directory and reset file
     file="$1"
-    cd "$(dirname "$1")"
+    cd "$(dirname "$file")"
     file="$(basename "$file")"
+
+    # recursively
     while [ -L "$file" ]; do
+        # read link
         file="$(command readlink "$file")"
         cd "$(dirname "$file")"
         file="$(basename "$file")"
     done
+
+    # real pwd
     phys="$(pwd -P)"
     result="$phys/$file"
+
+    # puts
     echo "$result"
 }
 
+# get dotpath as full path
 dotpath="$(dirname "$(readlink "$0")")"
 
+# check if the current shell is run with the interactive mode
 if echo "$-" | grep -q "i"; then
     # -> source a.sh
     DOTPATH="$dotpath"
     export DOTPATH
 else
+    # puts
     if [ "$0" = "${BASH_SOURCE:-}" ]; then
         # -> bash a.sh
         echo "$dotpath"

@@ -1,6 +1,9 @@
 #!/bin/bash
 
-. $DOTPATH/etc/lib/vital.sh
+# Load vital library that is most important and
+# constructed with many minimal functions
+# For more information, see etc/README.md
+. "$DOTPATH"/etc/lib/vital.sh
 
 if [ "$1" = "-h" -o "$1" = "--help" ]; then
     echo "usage: mov2gif file [fps] [height] [weight]"
@@ -8,15 +11,19 @@ if [ "$1" = "-h" -o "$1" = "--help" ]; then
 fi
 
 if ! has "ffmpeg"; then
-    die "requires: ffmpeg"
+    echo "ffmpeg: not found" 1>&2
     exit 1
 fi
 
 if ! has "gifsicle"; then
-    die "requires: gifsicle"
+    echo "gifsicle: not found" 1>&2
     exit 1
 fi
 
+if [ -z "$1" ]; then
+    echo "too few arugments" 1>&2
+    exit 1
+fi
 mov_file="$1"
 
 if [ -z "$mov_file" -o ! -f "$mov_file" ]; then
@@ -24,11 +31,11 @@ if [ -z "$mov_file" -o ! -f "$mov_file" ]; then
 fi
 
 fps="${2:-10}"
-out_file="$(basename $mov_file)"
-gif_file="$(dirname $mov_file)"/"${out_file%.*}".gif
+out_file="$(basename "$mov_file")"
+gif_file="$(dirname "$mov_file")"/"${out_file%.*}".gif
 
 if [ -f "$gif_file" ]; then
-    die "$gif_file: already exists"
+    echo "$gif_file: already exists" 1>&2
     exit 1
 fi
 

@@ -12,20 +12,30 @@
 
 . "$DOTPATH"/etc/lib/vital.sh
 
-replace() {
-    bins="pt:ag:ack"
-    bin="$(available "$bins")"
+bin="$(available "pt:ag:ack")"
 
-    if [ -z "$bin" ]; then
-        die "install $bins"
-        return 1
-    fi
+if [[ $1 =~ ^-h|--help$ ]]; then
+    echo "usage: replace wordA wordB [file]" 1>&2
+    echo "  replace find and replace by a given list of files" 1>&2
+    echo "  e.g., replace foo bar **/*.rb" 1>&2
+    exit 1
+fi
 
-    find_this="$(echo "$1" | sed "s / \\\/ g")"
-    replace_with="$(echo "$2" | sed "s / \\\/ g")"
-    shift
-    shift
-    "$bin" -l "$find_this" $* | xargs sed -i '' "s/$find_this/$replace_with/g"
-}
+if [ $# -lt 3 ]; then
+    echo "too few arguments" 1>&2
+    exit 1
+fi
 
-replace ${@+"$@"}
+if [ -z "$bin" ]; then
+    echo "pt,ag,ack: not found" 1>&2
+    exit 1
+fi
+
+#find_this="$(echo "$1" | sed "s / \\\/ g")"
+#replace_with="$(echo "$2" | sed "s / \\\/ g")"
+find_this="${1//\//\\\/}"
+replace_with="${2//\//\\\/}"
+shift
+shift
+echo "$bin" -l "$find_this" "$@"
+echo xargs sed -i '' "s/$find_this/$replace_with/g"

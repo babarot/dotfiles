@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 . "$DOTPATH"/etc/lib/vital.sh
 
 if ! is_git_repo; then

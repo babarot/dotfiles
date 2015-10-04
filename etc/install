@@ -401,8 +401,10 @@ contains() {
 
 # len returns the length of $1
 len() {
-    local length="$(echo "$1" | wc -c | sed -e 's/ *//')"
-    echo $(expr $length - 1)
+    local length
+    length="$(echo "$1" | wc -c | sed -e 's/ *//')"
+    #echo "$(expr "$length" - 1)"
+    echo $(("$length" - 1))
 }
 
 # is_empty returns true if $1 consists of $_BLANK_

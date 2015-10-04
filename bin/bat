@@ -79,6 +79,31 @@ battery_color_tmux() {
     fi
 }
 
+get_remain() {
+    local time_remain
+
+    if has "pmset"; then
+        time_remain="$(pmset -g ps | grep -o '[0-9]\+:[0-9]\+')"
+        if [ -z "$time_remain" ]; then
+            time_remain="no estimate"
+        fi
+    elif has "ioreg"; then
+        local itte
+        itte="$(ioreg -n AppleSmartBattery | awk '/InstantTimeToEmpty/{print $5}')"
+        time_remain="$(awk -v remain="$itte" 'BEGIN{ printf("%dh%dm\n", remain/60, remain%60) }')"
+        if [ -z "$time_remain" ] || [ "${time_remain%%h*}" -gt 10 ]; then
+            time_remain="no estimate"
+        fi
+    else
+        time_remain="no estimate"
+    fi
+
+    echo "$time_remain"
+    if [ "$time_remain" = "no estimate" ]; then
+        return 1
+    fi
+}
+
 # this scripts is supported OS X only now
 if ! is_osx; then
     echo "OS X only" 1>&2
@@ -101,6 +126,10 @@ do
             ;;
         "--tmux")
             battery_color_tmux "$(get_battery)"
+            exit $?
+            ;;
+        "-r"|"--remain")
+            get_remain
             exit $?
             ;;
         -*|--*)

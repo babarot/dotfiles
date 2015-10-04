@@ -10,7 +10,7 @@
 #
 ######################################################################
 
-. "$DOTPATH"/etc/lib/vital.sh
+. "$DOTPATH"/etc/lib/corelib.sh
 
 bin="$(available "pt:ag:ack")"
 

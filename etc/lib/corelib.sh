@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. $DOTPATH/etc/lib/vital.sh
+. "$DOTPATH"/etc/lib/vital.sh
 
 available() {
     local x candidates
@@ -94,5 +94,9 @@ emphasis() {
             ;;
     esac
 
-    perl -pe 's/'"${word}"'/\033[31m'"${emphasis}"'\033[m/'
+    if [ -p /dev/stdin ]; then
+        cat <&0
+    else
+        echo "$word"
+    fi | perl -pe 's/'"${word}"'/\033[31m'"${emphasis}"'\033[m/'
 }

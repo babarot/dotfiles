@@ -421,29 +421,6 @@ is_empty() {
     fi
 }
 
-# available narrows list down to one
-available() {
-    local c i list
-
-    list="$1"
-
-    # Replace a colon with a newline
-    c="$(echo "$list" | tr ":" "\n")"
-
-    # Loop until has function returns true
-    for i in ${c[@]}
-    do
-        if has "$i"; then
-            echo "$i"
-            return 0
-        else
-            continue
-        fi
-    done
-
-    return 1
-}
-
 # path_remove returns new $PATH trailing $1 in $PATH removed
 # It was heavily inspired by http://stackoverflow.com/a/2108540/142339
 path_remove() {

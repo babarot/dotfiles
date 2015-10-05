@@ -13,7 +13,6 @@
 d=" "
 rmr_trash=$HOME/.rmtrash
 rmr_logfile=$rmr_trash/log
-rmr_ignore=$rmr_trash/ignore
 
 delete() {
     if [[ ! -d "$rmr_trash/$(date +'%Y/%m/%d')" ]]; then

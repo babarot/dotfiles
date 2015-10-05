@@ -17,7 +17,7 @@ url="$(git remote -v | awk '$1=="origin"{print $2;exit}')"
 
 if [[ "$url" =~ ^https?:// ]]; then
     # reconstruct url
-    url="$(echo $url | perl -pe 's#^https?://(github\.com)/([A-z0-9_-]+)/([A-z0-9_-]+)(\.git)?$#git\@$1:$2/$3#')"
+    url="$(echo "$url" | perl -pe 's#^https?://(github\.com)/([A-z0-9_-]+)/([A-z0-9_-]+)(\.git)?$#git\@$1:$2/$3#')"
 
     # to replace git protocol in remote URL with http protocol
     git remote set-url origin "${url}.git" 2>/dev/null

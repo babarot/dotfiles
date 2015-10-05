@@ -12,4 +12,8 @@
 
 . "$DOTPATH"/etc/lib/corelib.sh
 
-reverse "$@"
+if [ -z "$1" ]; then
+    cat <&0 | reverse
+else
+    reverse "$@"
+fi

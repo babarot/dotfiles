@@ -1,3 +1,5 @@
+![](https://img.shields.io/badge/Maintainer-BABAROT-green.svg?style=social)
+
 <p align="center">
 <a name="top" href="http://b4b4r07.com/dotfiles"><img src="https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/logo.png"></a>
 </p>
@@ -24,7 +26,7 @@
 
 [![](https://img.shields.io/travis/b4b4r07/dotfiles.svg?style=flat-square)][travis]
 [![](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][license]
-[![](https://img.shields.io/badge/platform-OS%20X-lightgrey.svg?style=flat-square)][platform]
+[![](https://img.shields.io/badge/platform-OS%20X%20%7C%20Linux-808080.svg?style=flat-square)][platform]
 [![](https://voting-badge.herokuapp.com/img?url=https://github.com/b4b4r07/dotfiles)][vote]
 [![](https://img.shields.io/badge/documentation-etc-red.svg?style=flat-square)][doc]
 

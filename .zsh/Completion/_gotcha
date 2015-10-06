@@ -1,0 +1,16 @@
+#compdef gotcha
+
+_gotcha() {
+  local curcontext="$curcontext" state line ret=1
+  typeset -A opt_args
+
+  _arguments -C \
+    '(- :)'{-h,--help}'[Show this help and exit]' \
+    '(- :)--version[Print the version of this application]' \
+    '(-v --verbose)'{-v,--verbose}'[Cause gotcha to be verbose, showing items as they are installed]' \
+    '(-)*: :_files' && ret=0
+}
+
+_gotcha "$@"
+
+# vim: ft=zsh sw=2 ts=2 et

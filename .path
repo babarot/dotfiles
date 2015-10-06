@@ -42,3 +42,42 @@ else
         echo "$dotpath"
     fi
 fi
+
+# alias to cd dotpath
+dot() {
+    # Initialize with dotpath
+    : "${DOTPATH:=$dotpath}"
+
+    # exit status
+    local s
+
+    case "$1" in
+        "-h"|"--help")
+            echo "usage: dot [OPTION] [path]" 1>&2
+            echo "  dot is alias to cd \$DOTPATH" 1>&2
+            echo "" 1>&2
+            echo "OPTION:" 1>&2
+            echo "  -h, --help      show this help message" 1>&2
+            echo "  -p, --path      show \$DOTPATH" 1>&2
+            return
+            ;;
+        "-p"|"--path")
+            echo "${DOTPATH:?not set}"
+            return $?
+            ;;
+        -*|--*)
+            echo "$1: unknown option"
+            return 1
+            ;;
+        *)
+            if [ -d "$DOTPATH/$1" ]; then
+                builtin cd "$DOTPATH/$1"
+                s=$?
+            else
+                builtin cd "$DOTPATH"
+                s=$?
+            fi
+            return $s
+            ;;
+    esac
+}

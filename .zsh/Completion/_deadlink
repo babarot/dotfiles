@@ -1,0 +1,14 @@
+#compdef deadlink
+
+_deadlink() {
+  local curcontext="$curcontext" state line ret=1
+  typeset -A opt_args
+
+  _arguments -C \
+    '(- :)'{-h,--help}'[Show this help and exit]' \
+    '(-)*: :_directories' && ret=0
+}
+
+_deadlink "$@"
+
+# vim: ft=zsh sw=2 ts=2 et

@@ -58,8 +58,13 @@ dot() {
             echo "" 1>&2
             echo "OPTION:" 1>&2
             echo "  -h, --help      show this help message" 1>&2
+            echo "  -c, --clean     clean up dot files and dotfiles" 1>&2
             echo "  -p, --path      show \$DOTPATH" 1>&2
             return
+            ;;
+        "-c"|"--clean")
+            make --file="${DOTPATH:?not set}"/Makefile clean
+            return $?
             ;;
         "-p"|"--path")
             echo "${DOTPATH:?not set}"

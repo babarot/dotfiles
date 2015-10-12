@@ -1,0 +1,29 @@
+#!/bin/bash
+
+. "$DOTPATH"/etc/lib/vital.sh
+
+if ! is_git_repo; then
+    echo "Not a git repository (or any of the parent directories)" 1>&2
+    exit 1
+fi
+
+case "$1" in
+    "-c"|"--clean")
+        rm -vi .gitkeep
+        exit $?
+        ;;
+    -*|--*)
+        echo "$1: unknown option"
+        exit 1
+        ;;
+    *)
+        if [ -f ".gitkeep" ] || [ -n "$(ls)" ]; then
+            echo "${PWD/$HOME/~}: Already kept (git)" 1>&2
+            exit 1
+        fi
+
+        touch .gitkeep
+        ls -A
+        log_pass "start to git manage this blank directory"
+        ;;
+esac

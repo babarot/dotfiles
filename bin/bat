@@ -25,7 +25,9 @@ get_battery() {
 
     # trim dot (e.g., 79.61 -> 79)
     percentage="${current_bat%%.*}"
-    echo "$percentage%"
+    if [ -n "$percentage" ]; then
+        echo "$percentage%"
+    fi
 }
 
 # is_charging returns true if the battery is charging

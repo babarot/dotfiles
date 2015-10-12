@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for c in {0..255}
+do
+    printf "\e[48;5;%dm %3d \e[0m" $c $c
+    [ $(($c % 16)) -eq 15 ] && echo
+done

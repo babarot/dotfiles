@@ -1,0 +1,10 @@
+#!/bin/bash
+
+. "$DOTPATH"/etc/lib/vital.sh
+
+if ! has "ghq"; then
+    echo "ghq: not found" 1>&2
+    exit 1
+fi
+
+ghq list | sed 's|.[^/]*/||' | xargs -n 1 -P 10 ghq get -u

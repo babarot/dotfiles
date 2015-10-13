@@ -1,0 +1,26 @@
+#!/bin/bash
+
+. "$DOTPATH"/etc/lib/corelib.sh
+
+ghq_root="$(git config --get ghq.root)"
+if [ -z "$ghq_root" ]; then
+    ghq_root="${GOPATH%%:*}/src"
+fi
+ghq_root="$(normalize "$ghq_root")"
+
+case "$1" in
+    "-p"|"--path")
+        echo "${ghq_root:?not set}"
+        exit $?
+        ;;
+    *)
+        :
+        ;;
+esac
+
+find "$ghq_root"/github.com \
+    -follow \
+    -maxdepth 2 \
+    -mindepth 2 \
+    -type d \
+    | sed "s|$ghq_root/||"

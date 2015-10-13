@@ -1,4 +1,14 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+# Load vital library that is most important and
+# constructed with many minimal functions
+# For more information, see etc/README.md
+. "$DOTPATH"/etc/lib/vital.sh
+
+if ! is_git_repo; then
+    echo "Not a git repository (or any of the parent directories)" 1>&2
+    exit 1
+fi
 
 repository_age() {
     git log --reverse --pretty=oneline --format="%ar" | head -n 1 | sed 's/ago//'

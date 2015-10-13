@@ -1,6 +1,14 @@
 #!/bin/bash
 
-. "$DOTPATH"/etc/install
+# Load vital library that is most important and
+# constructed with many minimal functions
+# For more information, see etc/README.md
+. "$DOTPATH"/etc/lib/vital.sh
+
+if ! is_git_repo; then
+    echo "Not a git repository (or any of the parent directories)" 1>&2
+    exit 1
+fi
 
 REPO="$(
 git config --get remote.origin.url \
@@ -52,4 +60,4 @@ echo "$issues" \
     | awk '$0 !~ /^{$|^}$/' \
     | perl -pe 's/"(#[0-9]+)"/\033[35m$1\033[m/' \
     | perl -pe 's/"(.*?)"/\033[33m$1\033[m/' \
-    | perl -pe 's/"(open|close)"/"\033[31m$1\033[m"/'
+    | perl -pe 's/"(open|closed)"/"\033[31m$1\033[m"/'

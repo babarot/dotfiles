@@ -100,3 +100,7 @@ emphasis() {
         echo "$word"
     fi | perl -pe 's/'"${word}"'/\033[31m'"${emphasis}"'\033[m/'
 }
+
+normalize() {
+    ruby -e 'puts File.expand_path(ARGV[0])' "${1:-$(cat <&0)}"
+}

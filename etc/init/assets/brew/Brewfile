@@ -31,7 +31,7 @@ brew 'ruby-build'
 brew 'shellcheck'
 brew 'sqlite'
 brew 'terminal-notifier'
-brew 'tig'
+brew 'tig', args: ['with-docs']
 brew 'tmux'
 brew 'tree'
 brew 'vim', args: ['with-lua', 'with-luajit']

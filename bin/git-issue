@@ -10,6 +10,16 @@ if ! is_git_repo; then
     exit 1
 fi
 
+if ! has "curl"; then
+    echo "curl: not found" 1>&2
+    exit 1
+fi
+
+if ! has "jq"; then
+    echo "jq: not found" 1>&2
+    exit 1
+fi
+
 REPO="$(
 git config --get remote.origin.url \
     | grep github.com \

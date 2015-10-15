@@ -23,6 +23,13 @@ vitalize() {
 }
 
 # Gerenal utilities {{{1
+is_interactive() {
+    if [ "${-/i/}" != "$-" ]; then
+        return 0
+    fi
+    return 1
+}
+
 is_bash() {
     [ -n "$BASH_VERSION" ]
 }

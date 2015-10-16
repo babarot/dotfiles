@@ -1,55 +1,50 @@
 #!/bin/bash
-#
-# @(#) path v0.1.0 2015-08-05
-#
-# Usage:
-#   path file...
-#
-# Description:
-#   Get the absolute(full) pathname.
-#
-######################################################################
-
-set -eu
 
 . "$DOTPATH"/etc/lib/vital.sh
 . "$DOTPATH"/etc/lib/standard.sh
 
-function get_path()
-{
+get_path() {
+    local arg opt_a opt_r
     local -a args
-    [[ -z "${1:-}" ]] && args+=(".")
-    while (( $# > 0 ))
+
+    if [ -z "$1" ]; then
+        args+=(".")
+    fi
+
+    for arg in "$@"
     do
-        case "$1" in
-            -*)
-                if [[ "$1" == '-h' ]]; then
-                    echo "usage: $(basename "$0") [-h|-ar] path..."
-                    echo "  -a: Get absolute path(default)"
-                    echo "  -r: Get relative path"
-                    return 0
-                fi
-                if [[ "$1" == '-a' ]]; then
-                    local option_a='true'
-                    shift
-                fi
-                if [[ "$1" == '-r' ]]; then
-                    local option_r='true'
-                    shift
-                fi
+        case "$arg" in
+            "-h"|"--help")
+                echo "usage: path [-h|--help][-a|-r] path..."
+                return
+                ;;
+            "-a"|"--absolute")
+                opt_a=1
+                shift
+                ;;
+            "-r"|"--relative")
+                opt_r=1
+                shift
+                ;;
+            -*|--*)
+                echo "$arg: unknown option" 1>&2
+                return 1
                 ;;
             *)
-                args+=("$1")
-                shift
+                args+=("$arg")
                 ;;
         esac
     done
-    
-    if [[ "${option_r:-}" == 'true' ]]; then
-        rel_path "$args"
-    else
-        abs_path "$args"
-    fi
+
+    for arg in "${args[@]}"
+    do
+        if [[ $opt_r == 1 ]]; then
+            rel_path "$arg"
+        else
+            : $opt_a
+            abs_path "$arg"
+        fi
+    done
 }
 
 if is_osx; then

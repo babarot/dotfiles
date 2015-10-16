@@ -1,0 +1,16 @@
+#compdef path
+
+_path() {
+  local curcontext="$curcontext" state line ret=1
+  typeset -A opt_args
+
+  _arguments -C \
+    '(- :)'{-h,--help}'[Show this help and exit]' \
+    '(-a --absolute)'{-a,--absolute}'[Get an absolute path]: :_files' \
+    '(-r --relative)'{-r,--relative}'[Get an relative path]: :_files' \
+    '(-)*: :_files' && ret=0
+}
+
+_path "$@"
+
+# vim: ft=zsh sw=2 ts=2 et

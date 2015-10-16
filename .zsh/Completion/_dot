@@ -7,13 +7,13 @@ _dot() {
   _arguments -C \
     '(- :)'{-h,--help}'[Show this help and exit]' \
     '(-c --clean)'{-c,--clean}'[Clean up dot files and dotfiles]' \
+    '(-f --file)'{-f,--file}'[Listup files recursively in DOTPATH]: :->directories' \
     '(-p --path)'{-p,--path}'[Show $DOTPATH]' \
     '(-)*: :->directories' && ret=0
 
     case $state in
       directories)
         PWD=${DOTPATH:?not set} _directories && ret=0
-        #_make && ret=0
         ;;
     esac
 }

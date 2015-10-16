@@ -6,6 +6,8 @@ readlink() {
         return 1
     fi
 
+    local file phys result
+
     # change directory and reset file
     file="$1"
     cd "$(dirname "$file")"
@@ -65,6 +67,26 @@ dot() {
         "-c"|"--clean")
             make --file="${DOTPATH:?not set}"/Makefile clean
             return $?
+            ;;
+        "-f"|"--file")
+            shift
+
+            local f i
+            f="$(
+            find "${DOTPATH:?not set}" -path '*.git*' -prune -o -type f -print \
+                | sed "s|$DOTPATH||g" \
+                | perl -pe 's/^(\/.*\/)(.*)/\033[34m$1\033[m$2/'
+            )"
+
+            for i in "$@"
+            do
+                f="$(echo "$f" | grep -E "$i")"
+            done
+
+            f="${f:+$(echo "$f" | fzf --ansi)}"
+            if [ -n "$f" ]; then
+                echo "$DOTPATH$f"
+            fi
             ;;
         "-p"|"--path")
             echo "${DOTPATH:?not set}"

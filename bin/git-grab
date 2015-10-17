@@ -4,7 +4,7 @@
 if [[ -z $1 ]]; then
     echo "too few argument" 1>&2
     exit 1
-elif [[ ! $1 =~ ^(((https?|git)://)?github\.com/)?([A-Za-z0-9_-]+/)?[A-Za-z0-9_-]+(\.git)?$ ]]; then
+elif [[ ! $1 =~ ^(((https?|git)://)?github\.com/)?([A-Za-z0-9_-]+/)?[A-Za-z0-9_.-]+(\.git)?$ ]]; then
     echo "$1: invalid github.com URL" 1>&2
     exit 1
 fi

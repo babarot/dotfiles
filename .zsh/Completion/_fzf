@@ -1,0 +1,66 @@
+#compdef fzf
+
+# Copyright (c) 2015 b4b4r07
+# License: MIT
+
+_fzf() {
+    local context curcontext=$curcontext state line
+    typeset -A opt_args
+    local ret=1
+
+    _arguments -C \
+        '(- :)'{-h,--help}'[Show this help and exit]' \
+        '(-x --extended)'{-x,--extended}'[Extended-search mode]' \
+        '(-e --extended-exact)'{-x,--extended-exact}'[Extended-search mode (exact match)]' \
+        '(-i)-i[Case insensitive match (default: smart-case match)]' \
+        '(+i)+i[Case sensitive match]' \
+        '(-n --nth)'{-n,--nth=}'[Comma-separated list of field index expressions for limiting search scope]' \
+        '(--with-nth)--with-nth=[Transform the item using the list of index expressions for search]' \
+        '(-d --delimiter)'{-d,--delimiter=}'[Field delimiter regex for --nth and --with-nth (default: AWK-style)]' \
+        '(+s --no-sort)'{+s,--no-sort}'[Do not sort the result]' \
+        '(--tac)--tac[Reverse the order of the input]' \
+        '(--tiebreak)--tiebreak=[Sort criterion to use when the scores are tied]:CRI:(length begin end index)' \
+        '(-m --multi)'{-m,--multi}'[Enable multi-select with tab/shift-tab]' \
+        '(--ansi)--ansi[Enable processing of ANSI color codes]' \
+        '(--no-mouse)--no-mouse[Disable mouse]' \
+        '(--color)--color=[Color configuration. The name of the base color scheme is followed by custom mappings. Ansi color code of -1 denotes terminal default foreground/background color.]:KEY-ACTION:->color' \
+        '(--black)--black[Use black background]' \
+        '(--reverse)--reverse[Reverse orientation]' \
+        '(--margin)--margin=[Comma-separated expression for margins around the finder.]' \
+        '(--cycle)--cycle[Enable ciclic scroll]' \
+        '(--no-hscroll)--no-hscroll[Disable horizontal scroll]' \
+        '(--inline-info)--inline-info[Display finde info inline with the query]' \
+        '(--prompt)--prompt=[Input prompt (default: > )]' \
+        '(--toggle-sort)--toggle-sort=[Key to toggle sort. For the list of the allowed key names, see --bind]' \
+        '(--bind)--bind=[Comma-separated list of custom key bindings. Each key binding expression follows the following format]:KEYACTION:->keyaction' \
+        '(--history)--history=[Load search history from the specified file and update the file on completion. When enabled, CTRL-N and CTRL-P are automatically remapped to next-history and previous-history.]:History File:_files' \
+        '(--history-size)--history-size=[Maximum number of entries in the history file (default: 1000). The file is automatically truncated when the number of the lines exceeds the value.]' \
+        '(--header-file)--header-file=[The content of the file will be printed as the sticky header. The lines in the file are displayed in order from top to bottom regardless of --reverse, and are not affected by --with-nth. ANSI color codes are pro- cessed even when --ansi is not set.]:Files:->_files' \
+        '(--header-lines)--header-lines=[The first N lines of the input are treated as the sticky header. When --with-nth is set, the lines are transformed just like the other lines that follow.]' \
+        '(-q --query)'{-q,--query}'[Start the finder with the given query]' \
+        '(-1 --select-1)'{-1,--select-1}'[Automatically select the only match]' \
+        '(-0 --exit-0)'{-0,--exit-0}'[Exit immediately when theres no match]' \
+        '(-f --filter)'{-f,--filter=}'[Filter mode. Do not start interactive finder. When used with --no-sort, fzf becomes a fuzzy-version of grep.]' \
+        '(--print-query)--print-query[Print query as the first line]' \
+        '(--expect)--expect=[Comma-separated list of keys that can be used to complete fzf in addition to the default enter key. When this option is set, fzf will print the name of the key pressed as the first line of its output. The line will be empty if fzf is completed with the default enter key]' \
+        '(--sync)--sync[Synchronous search for multi-staged filtering. If specified, fzf will launch ncurses finder only after the input stream is complete]' \
+        '(-)*: :_files' \
+        && ret=0
+
+    case $state in
+        color)
+            local _colors ret=1
+            _colors=({"dark","light","16","bw"},{"fg","bg","hl","fg+","bg+","hl+","info","prompt","pointer","marker","spinner","header"}:)
+            _multi_parts ${words[(r)-w]:+-S,} -i , _colors && ret=0
+            ;;
+        keyaction)
+            local _key_action ret=1
+            _key_action=({ctrl-{a..z},alt-{a..z},enter,return,space,bspace,bs,alt-bspace,alt-bs,tab,btab,shift-tab,esc,del,up,down,left,right,home,end,pgup,page-up,pgdn,page-down,shift-left,shift-right,{a-z}}:{abort,accept,backward-char,backward-delete-char,backward-kill-ward,backward-word,beginning-of-line,cancel,clear-screen,delete-char,delete-char/eof,deselect-all,down,end-of-line,execute,forward-char,forward-word,ignore,kill-line})
+            _multi_parts ${words[(r)-w]:+-S,} -S, -q -i : _key_action && ret=0
+            ;;
+    esac
+
+    return ret
+}
+
+_fzf "$@"

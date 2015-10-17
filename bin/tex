@@ -2,6 +2,10 @@
 
 . "$DOTPATH"/etc/lib/vital.sh
 
+if is_osx; then
+    PATH=/usr/texbin:/Library/TeX/texbin:"$PATH"
+fi
+
 if ! has "platex"; then
     echo "platex: not found" 1>&2
     exit 1

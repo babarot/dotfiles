@@ -38,11 +38,13 @@ export LESS_TERMCAP_so=$'\E[00;44;37m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
-# LS
+# ls command colors
 export LSCOLORS=exfxcxdxbxegedabagacad
 
+# Add ~/bin to PATH
 export PATH=~/bin:"$PATH"
 
+# Settings for golang
 export GOPATH="$HOME"
 export GOBIN="$GOPATH/bin"
 export PATH="$GOBIN:$PATH"
@@ -59,9 +61,11 @@ export HISTFILE=~/.zsh_history
 export HISTSIZE=1000000
 export SAVEHIST=1000000
 
-export FZF_DEFAULT_OPTS="--extended --ansi --bind=ctrl-u:page-up --bind=ctrl-d:page-down"
+# fzf - command-line fuzzy finder (https://github.com/junegunn/fzf)
+export FZF_DEFAULT_OPTS="--extended --ansi --multi --bind=ctrl-u:page-up --bind=ctrl-d:page-down"
 
-export HOMEBREW_CASK_OPTS="--appdir=/Applications"
+# Cask
+#export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 
 # History
 # History file

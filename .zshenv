@@ -81,3 +81,5 @@ if [ $UID = 0 ]; then
     unset HISTFILE
     SAVEHIST=0
 fi
+
+[ -f ~/.secret ] && source ~/.secret

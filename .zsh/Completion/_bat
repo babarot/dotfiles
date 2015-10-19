@@ -8,6 +8,7 @@ _bat() {
     '(- :)'{-h,--help}'[Show this help and exit]' \
     '(--ansi)--tmux[Display percentage with ansi]' \
     '(--tmux)--ansi[Display percentage with tmux]' \
+    '(--remain -r)'{-r,--remain}'[Display remainning battery]' \
     '(-)*: :_files' && ret=0
 }
 

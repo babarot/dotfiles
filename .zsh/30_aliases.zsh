@@ -74,3 +74,7 @@ alias -g T='| tail'
 alias -g S='| sort'
 alias -g W='| wc'
 alias -g X='| xargs'
+
+if has "emojify"; then
+    alias -g E='| emojify'
+fi

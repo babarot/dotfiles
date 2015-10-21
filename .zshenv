@@ -82,4 +82,6 @@ if [ $UID = 0 ]; then
     SAVEHIST=0
 fi
 
+export INTERACTIVE_FILTER="fzf:peco:percol:gof:pick"
+
 [ -f ~/.secret ] && source ~/.secret

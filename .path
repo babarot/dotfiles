@@ -94,7 +94,7 @@ dot() {
             f="${f:+$(echo "$f" | perl -pe 's/^(\/.*\/)(.*)/\033[34m$1\033[m$2/' | fzf --ansi)}"
             # and f is not zero, puts to stdout
             if [ -n "$f" ]; then
-                echo "$DOTPATH$f"
+                for i in $f; do echo "$DOTPATH$i"; done
             fi
             ;;
         "-p"|"--path")

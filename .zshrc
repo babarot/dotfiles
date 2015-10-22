@@ -67,6 +67,7 @@ fi
 antigen=~/.antigen
 antigen_plugins=(
 "b4b4r07/enhancd"
+"b4b4r07/emoji-cli"
 "b4b4r07/tmuxlogger"
 "b4b4r07/zsh-vimode-visual"
 "brew"

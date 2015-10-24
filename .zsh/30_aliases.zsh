@@ -74,6 +74,7 @@ alias -g T='| tail'
 alias -g S='| sort'
 alias -g W='| wc'
 alias -g X='| xargs'
+alias -g F='| "$(available $INTERACTIVE_FILTER)"'
 
 if has "emojify"; then
     alias -g E='| emojify'

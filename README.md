@@ -13,7 +13,7 @@
 |
 <b><a href="#setup">Setup</a></b>
 |
-<b><a href="#components">Components</a></b>
+<b><a href="#structure">Structure</a></b>
 |
 <b><a href="#credits">Credits</a></b>
 |
@@ -273,7 +273,7 @@ $ vagrant destroy -f   # when finished, destroy the VM
 
 <p align="right"><a href="#top">:arrow_up:</a></p>
 
-## Components
+## Structure
 
 [![](https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/components.png)](https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/components.png)
 
@@ -289,7 +289,7 @@ Acknowledgment; I established this dotfiles referring to the following user's re
 * *Installation* section based on [@Cătălin's dotfiles](https://github.com/alrra/dotfiles)
 * *Git* section based on [@necolas's dotfiles](https://github.com/necolas/dotfiles)
 * *OS X* section based on [@cowboy's dotfiles](https://github.com/cowboy/dotfiles/blob/master/README.md)
-* *Components* section based on [@holman's dotfiles](https://github.com/holman/dotfiles)
+* *Structure* section based on [@holman's dotfiles](https://github.com/holman/dotfiles)
 * *Author* section and [*OS X defaults*](etc/init/osx/osx_defaults.sh) based on [@Mathias's dotfiles](https://github.com/mathiasbynens/dotfiles)
 * My `README.md` layout based on [@zanshin's README.md](https://github.com/zanshin/dotfiles)
 * My `Makefile` based on [@Tetsuji's dotfiles](https://github.com/xtetsuji/dotfiles)

@@ -99,7 +99,7 @@ bindkey -M viins "$terminfo[kcbt]" reverse-menu-complete
 # functions
 #
 _delete-char-or-list-expand() {
-    if [[ -z $RBUFFER ]]; then
+    if [ -z "$RBUFFER" ]; then
         zle list-expand
     else
         zle delete-char
@@ -111,11 +111,12 @@ bindkey '^D' _delete-char-or-list-expand
 # Ctrl-R
 _peco-select-history() {
     if true; then
-        BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | fzf --query "$LBUFFER")
+        BUFFER="$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | fzf --query "$LBUFFER")"
 
-        CURSOR=${#BUFFER}
+        CURSOR=$#BUFFER
         #zle accept-line
-        zle clear-screen
+        #zle clear-screen
+        zle reset-prompt
     else
         if is-at-least 4.3.9; then
             zle -la history-incremental-pattern-search-backward && bindkey "^r" history-incremental-pattern-search-backward
@@ -155,9 +156,9 @@ zle -N _peco-tmuxinator
 bindkey '^X' _peco-tmuxinator
 
 _start-tmux-if-it-is-not-already-started() {
-    BUFFER='tmux'
-    if has 'tmux_automatically_attach'; then
-        BUFFER='tmux_automatically_attach'
+    BUFFER="tmux"
+    if has "tmux_automatically_attach"; then
+        BUFFER="tmux_automatically_attach"
     fi
     CURSOR=$#BUFFER
     zle accept-line
@@ -173,6 +174,7 @@ do-enter() {
         return
     fi
 
+    echo
     if is_git_repo; then
         git status
     else
@@ -191,7 +193,7 @@ peco-select-gitadd() {
         | perl -pe 's/^( ?.{1,2} )(.*)$/\033[31m$1\033[m$2/' \
         | fzf --ansi --exit-0 \
         | awk -F ' ' '{print $NF}' \
-        | tr '\n' ' '
+        | tr "\n" " "
     )"
 
     if [ -n "$selected_file_to_add" ]; then
@@ -202,4 +204,4 @@ peco-select-gitadd() {
     zle reset-prompt
 }
 zle -N peco-select-gitadd
-bindkey "^g^a" peco-select-gitadd
+bindkey '^g^a' peco-select-gitadd

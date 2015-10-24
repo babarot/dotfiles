@@ -128,6 +128,7 @@ zle -N _peco-select-history
 bindkey '^r' _peco-select-history
 
 _peco-tmuxinator() {
+    local sql
     sql="$(
     {
         tmuxinator completions start | sed 's/\(.*\)/\1: project name/'
@@ -182,3 +183,23 @@ do-enter() {
 }
 zle -N do-enter
 bindkey '^m' do-enter
+
+peco-select-gitadd() {
+    local selected_file_to_add
+    selected_file_to_add="$(
+    git status --porcelain \
+        | perl -pe 's/^( ?.{1,2} )(.*)$/\033[31m$1\033[m$2/' \
+        | fzf --ansi --exit-0 \
+        | awk -F ' ' '{print $NF}' \
+        | tr '\n' ' '
+    )"
+
+    if [ -n "$selected_file_to_add" ]; then
+        BUFFER="git add $selected_file_to_add"
+        CURSOR=$#BUFFER
+        zle accept-line
+    fi
+    zle reset-prompt
+}
+zle -N peco-select-gitadd
+bindkey "^g^a" peco-select-gitadd

@@ -17,9 +17,14 @@ root="$(git rev-parse --show-toplevel)"
 for arg in "${@:-}"
 do
     case "$arg" in
-        "-l"|"--local")
+        "-c"|"--clean")
+            flag_c=1
+            flag_c_arg="$2"
             shift
+            ;;
+        "-l"|"--local")
             root="."
+            shift
             ;;
         -*|--*)
             echo "$1: unknown option"
@@ -32,6 +37,13 @@ ignoref=${root:?not set}/.gitignore
 if [ ! -f "$ignoref" ]; then
     echo "$ignoref: no such file or directory" 1>&2
     exit 1
+fi
+
+# deal with flag
+if [[ $flag_c == 1 ]]; then
+    ignore_contents="$(cat <"$ignoref")"
+    grep -v -Fx "$flag_c_arg" <<<"$ignore_contents" >"$ignoref"
+    exit $?
 fi
 
 # check normal arguments

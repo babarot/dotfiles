@@ -69,13 +69,16 @@ alias sudo='sudo '
 alias -g C='| pbcopy'
 alias -g G='| grep'
 alias -g L='| less'
-alias -g H='| head'
-alias -g T='| tail'
-alias -g S='| sort'
+
 alias -g W='| wc'
 alias -g X='| xargs'
 alias -g F='| "$(available $INTERACTIVE_FILTER)"'
 
+(( $+galiases[H] )) || alias -g H='| head'
+(( $+galiases[T] )) || alias -g T='| tail'
+
 if has "emojify"; then
     alias -g E='| emojify'
 fi
+
+alias -g CC="| tee /dev/tty | pbcopy"

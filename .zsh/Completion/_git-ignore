@@ -1,0 +1,20 @@
+#compdef git-ignore
+
+__pattern() {
+  local -a _pat
+  _pat=(${(f)"$(<$(git root)/.gitignore)"})
+  _wanted application expl 'pattern' compadd $_pat
+}
+
+local curcontext="$curcontext" state line expl ret=1
+local -A opt_args
+
+_arguments -C \
+  '(- :)'{-h,--help}'[Show this help and exit]' \
+  '(-c --clean)'{-c,--clean}'[Clean up unneeded ignore pattern]:pattern:__pattern' \
+  '(-l --local)'{-l,--local}'[Local ignore file]' \
+  '(-)*::files:_files' && ret=0
+
+return ret
+
+# vim: ft=zsh sw=2 ts=2 et

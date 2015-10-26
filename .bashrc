@@ -14,6 +14,8 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
+[ -n "$VIMRUNTIME" ] && return
+
 # It is necessary for the setting of DOTPATH
 #[ -f ~/.path ] && source ~/.path
 

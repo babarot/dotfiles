@@ -213,6 +213,8 @@ tmux_automatically_attach() {
 }
 
 zsh_startup() {
+    [[ -n "$VIMRUNTIME" ]] && return
+
     # tmux_automatically_attach attachs tmux session automatically when your are in zsh
     tmux_automatically_attach
     # setup_bundles return true if antigen plugins and some modules are valid

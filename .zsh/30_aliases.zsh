@@ -82,3 +82,12 @@ if has "emojify"; then
 fi
 
 alias -g CC="| tee /dev/tty | pbcopy"
+
+awk_alias() {
+    local f=0
+    if [[ ${@[-1]} =~ ^[0-9]+$ ]]; then
+        f=${@[-1]}
+    fi
+    awk "${@:1:-1}" '{print $'"$f"'}'
+}
+alias -g A="| awk_alias"

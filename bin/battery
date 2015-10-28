@@ -1,255 +1,143 @@
 #!/bin/bash
-#
-# @(#) battery ver.0.2 2014.12.17
-#
-# Usage:
-#   battery [-p][-t]
-#
-# Description:
-#   Display battery information
-#   supported ansi/tmux color
-#
-######################################################################
 
-ostype() { echo $OSTYPE | tr '[A-Z]' '[a-z]'; }
-determine_os()
-{
-    case "$(ostype)" in
-        *'linux'*   ) SHELL_PLATFORM='linux'    ;;
-        *'darwin'*  ) SHELL_PLATFORM='osx'      ;;
-        *'bsd'*     ) SHELL_PLATFORM='bsd'      ;;
-        *           ) SHELL_PLATFORM='unknown'  ;;
-    esac
+# Load vital library that is most important and
+# constructed with many minimal functions
+# For more information, see etc/README.md
+. "$DOTPATH"/etc/lib/vital.sh
+
+# If the current_bat is less than the BATTERY_DANGER,
+# output color will be red
+BATTERY_DANGER=20
+
+# get_battery returns remaining battery
+get_battery() {
+    local current_bat percentage
+
+    if has "pmset"; then
+        current_bat="$(pmset -g ps | grep -o '[0-9]\+%' | tr -d '%')"
+    elif has "ioreg"; then
+        local _battery_info _max_cap _cur_cap
+        _battery_info="$(ioreg -n AppleSmartBattery)"
+        _max_cap="$(echo "$_battery_info" | awk '/MaxCapacity/{print $5}')"
+        _cur_cap="$(echo "$_battery_info" | awk '/CurrentCapacity/{print $5}')"
+        current_bat="$(awk -v cur="$_cur_cap" -v max="$_max_cap" 'BEGIN{ printf("%.2f\n", cur/max*100) }')"
+    fi
+
+    # trim dot (e.g., 79.61 -> 79)
+    percentage="${current_bat%%.*}"
+    if [ -n "$percentage" ]; then
+        echo "$percentage%"
+    fi
 }
 
-shell_is_linux() { [[ $SHELL_PLATFORM == 'linux' || $SHELL_PLATFORM == 'bsd' ]]; }
-shell_is_osx()   { [[ $SHELL_PLATFORM == 'osx' ]]; }
-shell_is_bsd()   { [[ $SHELL_PLATFORM == 'bsd' || $SHELL_PLATFORM == 'osx' ]]; }
-has()       { type $1 >/dev/null 2>&1; return $?; }
-
-declare battery_danger=20
-declare get_battery_help=$(
-cat <<-END
-usage: ${0##*/} [-h][-pt][-c {type}]
-
-    -h        display this help
-    -p        display percentage(default)
-    -t        display remainning time
-    -c {type} colorize according to the {type}
-              If the {type} is omitted, the color
-              at the terminal is supported.
-END
-)
-
-function get_battery()
-{
-    get_battery_initialize
-    [ -z "$percentage" ] && return 1
-
-    if [[ $# == 0 ]]; then
-        echo "${percentage}%"
+# is_charging returns true if the battery is charging
+is_charging() {
+    if has "pmset"; then
+        pmset -g ps | grep -E "Battery Power|charged" >/dev/null 2>&1
+        if [ $? -eq 0  ]; then
+            return 1
+        else
+            return 0
+        fi
+    elif has "ioreg"; then
+        ioreg -c AppleSmartBattery | grep "IsCharging" | grep "Yes" >/dev/null 2>&1
+        return $?
     else
-        while (( $# > 0 ))
-        do
-            case "$1" in
-                -*)
-                    if [[ "$1" =~ 'h' ]]; then
-                        echo "$get_battery_help"
-                        return 0
-                    fi
-
-                    [[ "$1" =~ 'p' ]] && echomsg="$echomsg $percentage%"
-                    [[ "$1" =~ 't' ]] && echomsg="$echomsg $time_remain" && t_opt=1
-
-                    if [[ "$1" =~ 'c' ]]; then
-                        shift
-                        if [[ -z "$1" ]]; then
-                            shift; get_battery_color "$@"
-                        elif [[ "$1" == 'tmux' ]]; then
-                            shift; get_battery_color_tmux "$@"
-                        fi
-                        return 0
-                    fi
-                    echo "$echomsg"
-                    ;;
-                *)
-                    if [[ -n "${percentage}" ]]; then
-                        echo "${percentage}%"
-                        return 0
-                    fi
-                    shift
-                    ;;
-            esac
-        done
-    fi
-}
-
-function get_battery_initialize()
-{
-    determine_os
-
-    if shell_is_osx; then
-        if has 'pmset'; then
-            percentage=$(pmset -g ps | grep -E -o '[0-9]+%' | tr -d '%')
-            time_remain=$(pmset -g ps | grep -E -o '[0-9]+:[0-9]+')
-            if [ -z "$time_remain" ]; then
-                time_remain='no estimate'
-            fi
-        elif has 'ioreg'; then
-            local max_capacity=$(ioreg -n AppleSmartBattery | awk '/MaxCapacity/{ print $5 }')
-            local current_capacity=$(ioreg -n AppleSmartBattery | awk '/CurrentCapacity/{ print $5 }')
-            local instant_time_to_empty=$(ioreg -n AppleSmartBattery | awk '/InstantTimeToEmpty/{ print $5 }')
-
-            percentage=$(awk -v cur=$current_capacity -v max=$max_capacity 'BEGIN{ printf("%.2f\n", cur/max*100) }')
-            time_remain=$(awk -v remain=$instant_time_to_empty 'BEGIN{ printf("%dh%dm\n", remain/60, remain%60) }')
-        fi
-    fi
-
-    if shell_is_linux; then
         return 1
-        case "$SHELL_PLATFORM" in
-            "linux")
-                BATPATH=/sys/class/power_supply/BAT0
-                if [ ! -d $BATPATH ]; then
-                    BATPATH=/sys/class/power_supply/BAT1
-                fi
-                STATUS=$BATPATH/status
-                BAT_FULL=$BATPATH/charge_full
-                if [ ! -r $BAT_FULL ]; then
-                    BAT_FULL=$BATPATH/energy_full
-                fi
-                BAT_NOW=$BATPATH/charge_now
-                if [ ! -r $BAT_NOW ]; then
-                    BAT_NOW=$BATPATH/energy_now
-                fi
-
-                if [ "$1" = `cat $STATUS` -o "$1" = "" ]; then
-                    bf=$(cat $BAT_FULL)
-                    bn=$(cat $BAT_NOW)
-                    echo $(( 100 * $bn / $bf ))
-                fi
-                ;;
-            "bsd")
-                STATUS=`sysctl -n hw.acpi.battery.state`
-                case $1 in
-                    "Discharging")
-                        if [ $STATUS -eq 1 ]; then
-                            echo "$(sysctl -n hw.acpi.battery.life)"
-                            echo "$(sysctl -n hw.acpi.battery.life)"
-                        fi
-                        ;;
-                    "Charging")
-                        if [ $STATUS -eq 2 ]; then
-                            echo "$(sysctl -n hw.acpi.battery.life)"
-                        fi
-                        ;;
-                    "")
-                        echo "$(sysctl -n hw.acpi.battery.life)"
-                        ;;
-                esac
-                ;;
-        esac
     fi
 }
 
-function get_battery_color()
-{
-    if shell_is_osx; then
-        if has 'pmset'; then
-            # Charging, not 100%
-            if (pmset -g ps | grep -q 'AC Power') && ! (pmset -g ps | grep -q 'charged;'); then
-                [[ -n "$percentage" ]] && echo -e "\033[32m${percentage}%\033[0m"
-            else
-                [[ "$time_remain" == '0:00' ]] && time_remain='Full charged'
+# battery_color_ansi colourizes the battery level for the terminal
+battery_color_ansi() {
+    local percentage
+    percentage="${1:-$(get_battery)}"
 
-                # Discharging and 1% ~ 10%, 10%+
-                if [ "$percentage" -ge "$battery_danger" ]; then
-                    echo -e "\033[34m${percentage}%\033[0m"
-                else
-                    echo -e "\033[31m${percentage}%\033[0m"
-                fi
-            fi
-        elif has 'ioreg'; then
-            # Charging, not 100%
-            if ioreg -c AppleSmartBattery | grep IsCharging | grep Yes >/dev/null 2>&1; then
-                [[ -n "$percentage" ]] && echo -e "\033[32m${percentage}%\033[0m"
-            else
-                [[ "$time_remain" == '0:00' ]] && time_remain='Full charged'
-                [[ "${percentage%.*}" == '100' ]] && time_remain='Full charged'
-
-                # Discharging and 1% ~ 10%, 10%+
-                if [ $(echo "$percentage" | cut -d. -f1) -ge "$battery_danger" ]; then
-                    echo -e "\033[34m${percentage}%\033[0m"
-                else
-                    echo -e "\033[31m${percentage}%\033[0m"
-                fi
-            fi
+    if is_charging; then
+        [[ -n $percentage ]] && echo -e "\033[32m${percentage}\033[0m"
+    else
+        # percentage > BATTERY_DANGER
+        if [ "${percentage%%%*}" -ge "$BATTERY_DANGER" ]; then
+            echo -e "\033[34m${percentage}\033[0m"
+        else
+            echo -e "\033[31m${percentage}\033[0m"
         fi
     fi
-    if shell_is_linux; then
-        :
-    fi
 }
 
-function get_battery_color_tmux()
-{
-    for i in "$@"; do [[ $i =~ t ]] && t_opt=1; done
-    if shell_is_osx; then
-        if has 'pmset'; then
-            # Charging, not 100%
-            if (pmset -g ps | grep -q 'AC Power') && ! (pmset -g ps | grep -q 'charged;'); then
-                [[ -n "$percentage" ]] && echo "#[fg=colour46]${percentage}%#[default]"
-            else
-                [[ "$time_remain" == '0:00' ]] && time_remain='Full charged'
+# battery_color_tmux colourizes the battery level for tmux
+battery_color_tmux() {
+    local percentage
+    percentage="${1:-$(get_battery)}"
 
-                # Discharging and 1% ~ 10%, 10%+
-                if [ "$percentage" -ge "$battery_danger" ]; then
-                    #echo "#[fg=blue]${percentage}%#[default]"
-                    color_tmux_echomsg="#[fg=blue]${percentage}%#[default]"
-                    if [[ -n $t_opt ]]; then
-                        color_tmux_echomsg="$color_tmux_echomsg ($time_remain)"
-                    fi
-                    echo "$color_tmux_echomsg"
-                else
-                    #echo "#[fg=red]${percentage}%#[default]"
-                    color_tmux_echomsg="#[fg=red]${percentage}%#[default]"
-                    if [[ -n $t_opt ]]; then
-                        color_tmux_echomsg="$color_tmux_echomsg ($time_remain)"
-                    fi
-                    echo "$color_tmux_echomsg"
-                fi
-            fi
-        elif has 'ioreg'; then
-            # Charging, not 100%
-            if ioreg -c AppleSmartBattery | grep IsCharging | grep Yes >/dev/null 2>&1; then
-                [[ -n "$percentage" ]] && echo "#[fg=colour46]${percentage}%#[default]"
-            else
-                [[ "$time_remain" == '0:00' ]] && time_remain='Full charged'
-                [[ "${percentage%.*}" == '100' ]] && time_remain='Full charged'
-
-                # Discharging and 1% ~ 10%, 10%+
-                if [ $(echo "$percentage" | cut -d. -f1) -ge "$battery_danger" ]; then
-                    #echo "#[fg=blue]${percentage}%#[default]"
-                    color_tmux_echomsg="#[fg=blue]${percentage}%#[default]"
-                    if [[ -n $t_opt ]]; then
-                        color_tmux_echomsg="$color_tmux_echomsg ($time_remain)"
-                    fi
-                    echo "$color_tmux_echomsg"
-                else
-                    #echo "#[fg=red]${percentage}%#[default]"
-                    color_tmux_echomsg="#[fg=red]${percentage}%#[default]"
-                    if [[ -n $t_opt ]]; then
-                        color_tmux_echomsg="$color_tmux_echomsg ($time_remain)"
-                    fi
-                    echo "$color_tmux_echomsg"
-                fi
-            fi
+    if is_charging; then
+        [[ -n $percentage ]] && echo -e "#[fg=colour46]${percentage}#[default]"
+    else
+        # percentage > BATTERY_DANGER
+        if [ "${percentage%%%*}" -ge "$BATTERY_DANGER" ]; then
+            echo -e "#[fg=blue]${percentage}#[default]"
+        else
+            echo -e "#[fg=red]${percentage}#[default]"
         fi
     fi
-    if shell_is_linux; then
-        :
+}
+
+get_remain() {
+    local time_remain
+
+    if has "pmset"; then
+        time_remain="$(pmset -g ps | grep -o '[0-9]\+:[0-9]\+')"
+        if [ -z "$time_remain" ]; then
+            time_remain="no estimate"
+        fi
+    elif has "ioreg"; then
+        local itte
+        itte="$(ioreg -n AppleSmartBattery | awk '/InstantTimeToEmpty/{print $5}')"
+        time_remain="$(awk -v remain="$itte" 'BEGIN{ printf("%dh%dm\n", remain/60, remain%60) }')"
+        if [ -z "$time_remain" ] || [ "${time_remain%%h*}" -gt 10 ]; then
+            time_remain="no estimate"
+        fi
+    else
+        time_remain="no estimate"
+    fi
+
+    echo "$time_remain"
+    if [ "$time_remain" = "no estimate" ]; then
+        return 1
     fi
 }
 
-t_opt=
-get_battery "$@"
+# this scripts is supported OS X only now
+if ! is_osx; then
+    echo "OS X only" 1>&2
+    exit 1
+fi
+
+# check arguments
+for i in "$@"
+do
+    case "$i" in
+        "-h"|"--help")
+            echo "usage: battery [--help|-h][--ansi|--tmux][-r|--remain]" 1>&2
+            echo "  Getting the remaining battery, then" 1>&2
+            echo "  outputs and colourizes with options" 1>&2
+            exit
+            ;;
+        "--ansi")
+            battery_color_ansi "$(get_battery)"
+            exit $?
+            ;;
+        "--tmux")
+            battery_color_tmux "$(get_battery)"
+            exit $?
+            ;;
+        "-r"|"--remain")
+            get_remain
+            exit $?
+            ;;
+        -*|--*)
+            echo "$i: unknown option" 1>&2
+            exit 1
+    esac
+done
+
+get_battery

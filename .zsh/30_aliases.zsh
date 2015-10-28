@@ -68,7 +68,18 @@ alias sudo='sudo '
 # Global aliases
 alias -g C='| pbcopy'
 alias -g G='| grep'
-alias -g L='| less'
+less_alias() {
+    local stdin
+    stdin="$(cat <&0)"
+    if [[ -n $stdin ]]; then
+        if [[ -f $stdin ]]; then
+            less $stdin
+        else
+            echo "$stdin" | less
+        fi
+    fi
+}
+alias -g L='| less_alias'
 
 alias -g W='| wc'
 alias -g X='| xargs'

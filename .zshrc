@@ -149,74 +149,12 @@ setup_bundles() {
     modules; echo
 }
 
-# tmux_automatically_attach attachs tmux session automatically
-tmux_automatically_attach() {
-    is_ssh_running && return 1
-
-    if is_screen_or_tmux_running; then
-        if is_tmux_runnning; then
-            if has "cowsay"; then
-                if [[ $(( $RANDOM % 5 )) == 1 ]]; then
-                    cowsay -f ghostbusters "G,g,g,ghostbusters!!!"
-                    echo ""
-                fi
-            else
-                echo "$fg_bold[red] _____ __  __ _   ___  __ $reset_color"
-                echo "$fg_bold[red]|_   _|  \/  | | | \ \/ / $reset_color"
-                echo "$fg_bold[red]  | | | |\/| | | | |\  /  $reset_color"
-                echo "$fg_bold[red]  | | | |  | | |_| |/  \  $reset_color"
-                echo "$fg_bold[red]  |_| |_|  |_|\___//_/\_\ $reset_color"
-            fi
-            export DISPLAY="$TMUX"
-        elif is_screen_running; then
-            # For GNU screen
-            :
-        fi
-    else
-        if shell_has_started_interactively && ! is_ssh_running; then
-            if ! has "tmux"; then
-                echo "tmux not found" 1>&2
-                return 1
-            fi
-
-            if tmux has-session >/dev/null 2>&1 && tmux list-sessions | grep -qE '.*]$'; then
-                # detached session exists
-                tmux list-sessions | perl -pe 's/(^.*?):/\033[31m$1:\033[m/'
-                echo -n "Tmux: attach? (y/N num/session-name) "
-                read
-                if [[ "$REPLY" =~ ^[Yy]$ ]] || [[ "$REPLY" == '' ]]; then
-                    tmux attach-session
-                    if [ $? -eq 0 ]; then
-                        echo "$(tmux -V) attached session"
-                        return 0
-                    fi
-                elif tmux list-sessions | grep -q "^$REPLY:"; then
-                    tmux attach -t "$REPLY"
-                    if [ $? -eq 0 ]; then
-                        echo "$(tmux -V) attached session"
-                        return 0
-                    fi
-                fi
-            fi
-
-            if is_osx && has "reattach-to-user-namespace"; then
-                # on OS X force tmux's default command
-                # to spawn a shell in the user's namespace
-                tmux_login_shell="/bin/zsh"
-                tmux_config=$(cat ~/.tmux.conf <(echo 'set-option -g default-command "reattach-to-user-namespace -l' $tmux_login_shell'"'))
-                tmux -f <(echo "$tmux_config") new-session && echo "$(tmux -V) created new session supported OS X"
-            else
-                tmux new-session && echo "tmux created new session"
-            fi
-        fi
-    fi
-}
-
 zsh_startup() {
     [[ -n "$VIMRUNTIME" ]] && return
 
     # tmux_automatically_attach attachs tmux session automatically when your are in zsh
-    tmux_automatically_attach
+    #tmux_automatically_attach
+    $DOTPATH/bin/tmuxx
     # setup_bundles return true if antigen plugins and some modules are valid
     setup_bundles || return 1
 

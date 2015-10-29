@@ -1,0 +1,27 @@
+#compdef marine
+
+_marine() {
+  local curcontext="$curcontext" state line ret=1
+  typeset -A opt_args
+
+  _arguments -C \
+    '(- :)'{-h,--help}'[Show this help and exit]' \
+    '(-p --path)'{-p,--path}'[Specify full path of log file''s directory]: :_files -/' \
+    '(-d --date)'{-d,--date}'[Specify date]: :->date' \
+    '(-l --locate)'{-l,--locate}'[Select locations]: :(ika fukushima kamiiso)' \
+    '(-)*: :->_files' && ret=0
+
+  case $state in
+    date)
+      local _date
+      _date=(2015/{07..12}/{01..31})
+      _multi_parts ${words[(r)-w]:+-S/} -i / _date && ret=0
+      ;;
+  esac
+
+  return $ret
+}
+
+_marine "$@"
+
+# vim: ft=zsh sw=2 ts=2 et

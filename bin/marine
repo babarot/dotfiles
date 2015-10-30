@@ -64,10 +64,7 @@ while out=$(
     [ -z "$res" ] && exit #continue
     if [ "$k" = "ctrl-v" ]; then
         LESS='-R -f -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
-        f="$path"/$(awk '{print $9}' <<<"$res")
-        if [ -s "$f" ]; then
-            less "$f"
-        fi
+        less +G --quit-at-eof "$path"/$(awk '{print $9}' <<<"$res")
     else
         for i in $(awk '{print $9}' <<<"$res")
         do

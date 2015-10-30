@@ -6,7 +6,8 @@ _marine() {
 
   _arguments -C \
     '(- :)'{-h,--help}'[Show this help and exit]' \
-    '(-p --path)'{-p,--path}'[Specify full path of log file''s directory]: :_files -/' \
+    '(-a --all)'{-a,--all}'[Listup all files in the path]' \
+    '(-p --path -d --date -l --locate)'{-p,--path}'[Specify full path of log file''s directory]: :_files -/' \
     '(-d --date)'{-d,--date}'[Specify date]: :->date' \
     '(-l --locate)'{-l,--locate}'[Select locations]: :(ika fukushima kamiiso)' \
     '(-)*: :->_files' && ret=0

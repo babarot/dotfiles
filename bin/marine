@@ -57,12 +57,12 @@ while out=$(
         | perl -pe 's/^(.* )(.[^ ]*\.txt)$/$1\033[35m$2\033[m/' \
         | awk '{sub($5, "\033[33m"$5"\033[m"); print}' \
         | fzf --ansi --multi --no-sort --tac --query="$q" \
-        --print-query --expect=ctrl-l --exit-0); do
+        --print-query --expect=ctrl-v --exit-0); do
     q="$(head -1 <<< "$out")"
     k="$(head -2 <<< "$out" | tail -1)"
     res="$(sed '1,2d;s/^[^a-z0-9]*//;/^$/d' <<< "$out")"
     [ -z "$res" ] && exit #continue
-    if [ "$k" = "ctrl-l" ]; then
+    if [ "$k" = "ctrl-v" ]; then
         LESS='-R -f -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
         f="$path"/$(awk '{print $9}' <<<"$res")
         if [ -s "$f" ]; then

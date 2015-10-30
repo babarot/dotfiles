@@ -66,20 +66,20 @@ alias nvim='vim -N -u NONE -i NONE'
 alias sudo='sudo '
 
 # Global aliases
-alias -g C='| pbcopy'
 alias -g G='| grep'
-less_alias() {
-    local stdin
-    stdin="$(cat <&0)"
-    if [[ -n $stdin ]]; then
-        if [[ -f $stdin ]]; then
-            less $stdin
-        else
-            echo "$stdin" | less
-        fi
-    fi
-}
-alias -g L='| less_alias'
+
+#less_alias() {
+#    local stdin
+#    stdin="$(cat <&0)"
+#    if [[ -n $stdin ]]; then
+#        if [[ -f $stdin ]]; then
+#            less $stdin
+#        else
+#            echo "$stdin" | less
+#        fi
+#    fi
+#}
+alias -g L='| cat_alias | less'
 
 alias -g W='| wc'
 alias -g X='| xargs'
@@ -92,13 +92,76 @@ if has "emojify"; then
     alias -g E='| emojify'
 fi
 
-alias -g CC="| tee /dev/tty | pbcopy"
+if is_osx; then
+    alias -g CP='| pbcopy'
+    alias -g CC="| tee /dev/tty | pbcopy"
+fi
+
+#cat_alias() {
+#    local stdin
+#    stdin="$(cat <&0)"
+#    if [[ -n $stdin ]]; then
+#        if [[ -f $stdin ]]; then
+#            cat $stdin
+#        else
+#            echo "$stdin" | cat
+#        fi
+#    fi
+#}
+#alias -g C="| cat_alias"
+
+cat_all_alias() {
+    local i
+    for i in $(cat <&0)
+    do
+        if [[ -n $i ]]; then
+            if [[ -f $i ]]; then
+                cat $i
+            else
+                echo "$i" | cat
+            fi
+        fi
+    done
+}
+alias -g CA="| cat_all_alias"
+alias -g C="| cat_all_alias"
+
+pygmentize_alias() {
+    has "pygmentize" || return
+
+    local get_styles styles style
+    get_styles="from pygments.styles import get_all_styles
+    styles = list(get_all_styles())
+    print('\n'.join(styles))"
+    styles=( $(sed -e 's/^  *//g' <<<"$get_styles" | python) )
+
+    style=${${(M)styles:#solarized}:-default}
+
+    local i
+    for i in $(cat <&0)
+    do
+        [[ -f $i ]] && cat "$i" | pygmentize -O style="$style"
+    done
+}
+alias -g P="| pygmentize_alias"
 
 awk_alias() {
-    local f=0
-    if [[ ${@[-1]} =~ ^[0-9]+$ ]]; then
-        f=${@[-1]}
+    if (( ${ZSH_VERSION%%.*} < 5 )); then
+        #local one
+        #one="$1"
+        #shift
+        #cat_alias | awk "$@" '{print $'"${one:-0}"'}'
+        return
     fi
-    awk "${@:1:-1}" '{print $'"$f"'}'
+
+    local f=0 opt=
+    if [[ $# -gt 0 && ${@[-1]} =~ ^[0-9]+$ ]]; then
+        f=${@[-1]}
+        opt=${@:1:-1}
+    fi
+    awk $opt '{print $'"$f"'}'
 }
 alias -g A="| awk_alias"
+
+alias -g S="| sort"
+alias -g V="| tovim"

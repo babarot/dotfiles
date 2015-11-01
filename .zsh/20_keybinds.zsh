@@ -152,8 +152,8 @@ _peco-tmuxinator() {
         zle accept-line
     fi
 }
-zle -N _peco-tmuxinator
-bindkey '^X' _peco-tmuxinator
+#zle -N _peco-tmuxinator
+#bindkey '^X' _peco-tmuxinator
 
 _start-tmux-if-it-is-not-already-started() {
     BUFFER="tmux"

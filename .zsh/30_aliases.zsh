@@ -79,7 +79,8 @@ alias -g G='| grep'
 #        fi
 #    fi
 #}
-alias -g L='| cat_alias | less'
+##alias -g L='| cat_alias | less'
+#alias -g L='| less_alias'
 
 alias -g W='| wc'
 alias -g X='| xargs'
@@ -110,21 +111,37 @@ fi
 #}
 #alias -g C="| cat_alias"
 
-cat_all_alias() {
-    local i
-    for i in $(cat <&0)
+#cat_all_alias() {
+#    local i
+#    for i in $(cat <&0)
+#    do
+#        if [[ -n $i ]]; then
+#            if [[ -f $i ]]; then
+#                cat $i
+#            else
+#                echo "$i" | cat
+#            fi
+#        fi
+#    done
+#}
+#alias -g CA="| cat_all_alias"
+#alias -g C="| cat_all_alias"
+
+cat_alias() {
+    local i stdin file=0
+    stdin=("${(@f)$(cat <&0)}")
+    for i in "${stdin[@]}"
     do
-        if [[ -n $i ]]; then
-            if [[ -f $i ]]; then
-                cat $i
-            else
-                echo "$i" | cat
-            fi
+        if [[ -f $i ]]; then
+            cat "$@" "$i"
+            file=1
         fi
     done
+    if [[ $file -eq 0 ]]; then
+        echo "${(F)stdin}"
+    fi
 }
-alias -g CA="| cat_all_alias"
-alias -g C="| cat_all_alias"
+alias -g C="| cat_alias"
 
 pygmentize_alias() {
     has "pygmentize" || return
@@ -137,13 +154,20 @@ pygmentize_alias() {
 
     style=${${(M)styles:#solarized}:-default}
 
-    local i
-    for i in $(cat <&0)
-    do
-        [[ -f $i ]] && cat "$i" | pygmentize -O style="$style"
-    done
+    #local i stdin file=0
+    #stdin=("${(@f)$(cat <&0)}")
+    #for i in "${stdin[@]}"
+    #do
+    #    if [[ -f $i ]]; then
+    #        pygmentize -O style="$style" "$i"
+    #        file=1
+    #    fi
+    #done
+    #[[ $file -eq 0 ]] && echo "${(F)stdin}" | pygmentize -O style="$style"
+    cat_alias "$@" | pygmentize -O style="$style"
 }
 alias -g P="| pygmentize_alias"
+alias -g L="| cat_alias | less"
 
 awk_alias() {
     if (( ${ZSH_VERSION%%.*} < 5 )); then
@@ -165,3 +189,7 @@ alias -g A="| awk_alias"
 
 alias -g S="| sort"
 alias -g V="| tovim"
+
+alias -g N=" >/dev/null 2>&1"
+alias -g N1=" >/dev/null"
+alias -g N2=" 2>/dev/null"

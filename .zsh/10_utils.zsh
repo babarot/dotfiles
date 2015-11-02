@@ -28,15 +28,22 @@ has.alias() {
     return $status
 }
 
+# has_command returns true if $1 as an alias exists
+has.galias() {
+    (( $+galiases[${1:?too few argument}] ))
+    return $status
+}
+
 # has returns true if $1 exists
-#has() {
-#    has.function "$1" || \
-#        has.command "$1" || \
-#        has.builtin "$1" || \
-#        has.alias "$1"
-#
-#    return $status
-#}
+has() {
+    has.function "$1" || \
+        has.command "$1" || \
+        has.builtin "$1" || \
+        has.alias "$1" || \
+        has.galias "$1"
+
+    return $status
+}
 
 # zload is a helper function to autoload
 # Example 1 : zload ~/work/function/_f

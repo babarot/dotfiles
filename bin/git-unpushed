@@ -1,0 +1,22 @@
+#!/bin/bash
+
+. "$DOTPATH"/etc/lib/vital.sh
+
+if ! is_git_repo; then
+    echo "Not a git repository (or any of the parent directories)" 1>&2
+    exit 1
+fi
+
+branch="$(git branch | awk '$1=="*"{print $2}')"
+
+while [ $# -gt 0 ]
+do
+    case "$1" in
+        -*|--*)
+            opt="$opt $1"
+            ;;
+    esac
+    shift
+done
+
+git log $opt origin/"${branch:=master}".."$branch"

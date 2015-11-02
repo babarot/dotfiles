@@ -208,3 +208,42 @@ peco-select-gitadd() {
 }
 zle -N peco-select-gitadd
 bindkey '^g^a' peco-select-gitadd
+
+command-selector() {
+    local command_file
+    command_file="${COMMAND_SELECT_FILE:=${DOTPATH:?not set}/etc/config/commands.txt}"
+    export COMMAND_SELECT_FILE
+
+    [[ ! -f $command_file || ! -s $command_file ]] && return
+
+    local cmd q k res
+    while cmd="$(
+        cat <$command_file \
+            | sed -e '/^#/d;/^$/d' \
+            | perl -pe 's/^(\[.*?\]) (.*)$/\033[31m$1\033[m\t$2/' \
+            | perl -pe 's/^(: ?)(.*)$/$1\033[30;47;1m$2\033[m/' \
+            | fzf --ansi --multi --no-sort --tac --query="$q" \
+            --print-query --expect=ctrl-v --exit-0
+            )"; do
+        q="$(head -1 <<< "$cmd")"
+        k="$(head -2 <<< "$cmd" | tail -1)"
+        res="$(sed '1,2d;/^$/d' <<< "$cmd")"
+        [ -z "$res" ] && continue
+        if [ "$k" = "ctrl-v" ]; then
+            vim "$command_file" < /dev/tty > /dev/tty
+        else
+            cmd="$(perl -pe 's/^(\[.*?\])\t(.*)$/$2/' <<<"$res")"
+            break
+        fi
+    done
+
+    local len
+    if [[ -n $cmd ]]; then
+        BUFFER="$(tr -d '@' <<<"$cmd" | perl -pe 's/\n/; /' | sed -e 's/; $//')"
+        len="${cmd%%@*}"
+        CURSOR=${#len}
+    fi
+    zle reset-prompt
+}
+zle -N command-selector
+bindkey '^x^x' command-selector

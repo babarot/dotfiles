@@ -1,0 +1,20 @@
+# Execution like aliases for zsh
+#
+# Format:
+#  [description] some-command | other-command
+#  e.g., [show file name and file size] ls -l | awk '{print$9,$5}'
+
+# Besides, @ is cursor point. If it is omitted,
+# set end-of-line as default cursor point.
+#
+
+: "Gradual Research"
+[Number per Month] echo ~/data/ika@/2015/**/*.txt C A -F, 3 S -u
+[Number per Day] marine --all -l ika@ C A -F, 3 S -u
+[Number per Day detail] join -t, <(marine --all -l ika@ C A -F, 3 S -u) <(curl -sL http://i.buoy.jp/pkodg/ika.id N2)
+[List Number All] curl -sL http://i.buoy.jp/pkodg/ika@.id N2
+[View log of today] ls -ld ~/data/ika@/$(date +%Y/%m/%d)/*.txt | awk 'END{print $9}' X less +G
+:
+[Check dup galiases] cat $DOTPATH/.zsh/30_aliases.zsh G '[A-Z]\+' G 'alias -g' | sed -E '/^ *#.*$/d;s/^.*alias -g ([A-Z0-9]+)=.*$/\1/' S | uniq -c G -v "^ *1" A 2
+# cat $DOTPATH/.zsh/30_aliases.zsh | grep -E "[A-Z]+" | grep "alias -g" | {cat;echo "alias -g A=abc"} | sed -E '/^ *#.*$/d;s/^.*alias -g ([A-Z0-9]+)=.*$/\1/' | sort | uniq -c | grep -v "^ *1" | awk '{print $2}'
+# vim:ft=sh

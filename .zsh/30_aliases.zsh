@@ -199,7 +199,7 @@ vim_mru_files() {
     f=(
     ~/.unite/file_mru(N)
     ~/.vim_mru_files(N)
-    ~/.cache/ctrlp(N)
+    ~/.cache/ctrlp/mru/cache.txt(N)
     ~/.frill(N)
     )
     if [[ $#f -eq 0 ]]; then
@@ -209,7 +209,7 @@ vim_mru_files() {
 
     local cmd q k res
     while cmd="$(
-        cat <"$f" \
+        cat <$f \
             | sed -e '/^#/d;/^$/d' \
             | perl -pe 's/^(\/.*\/)(.*)$/\033[34m$1\033[m$2/' \
             | fzf --ansi --multi --no-sort --query="$q" \

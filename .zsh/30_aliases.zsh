@@ -95,7 +95,7 @@ fi
 
 if is_osx; then
     alias -g CP='| pbcopy'
-    alias -g CC="| tee /dev/tty | pbcopy"
+    alias -g CC='| tee /dev/tty | pbcopy'
 fi
 
 #cat_alias() {

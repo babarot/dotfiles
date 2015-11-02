@@ -156,7 +156,7 @@ _peco-tmuxinator() {
 #bindkey '^X' _peco-tmuxinator
 
 _start-tmux-if-it-is-not-already-started() {
-    BUFFER="tmux"
+    BUFFER="${${+commands[tmuxx]/0/}:-tmux}"
     if has "tmux_automatically_attach"; then
         BUFFER="tmux_automatically_attach"
     fi

@@ -4,13 +4,15 @@ _marine() {
   local curcontext="$curcontext" state line ret=1
   typeset -A opt_args
 
+    #'(-p --path -d --date -l --locate)'{-p,--path}'[Specify full path of log file''s directory]: :_files -/' \
   _arguments -C \
     '(- :)'{-h,--help}'[Show this help and exit]' \
     '(-a --all)'{-a,--all}'[Listup all files in the path]' \
-    '(-p --path -d --date -l --locate)'{-p,--path}'[Specify full path of log file''s directory]: :_files -/' \
-    '(-d --date)'{-d,--date}'[Specify date]: :->date' \
-    '(-l --locate)'{-l,--locate}'[Select locations]: :(ika fukushima kamiiso)' \
-    '(-)*: :->_files' && ret=0
+    '(-)'{-p,--path}'[Specify full path of log file''s directory]: :_files -/' \
+    '(-d --date -h --help -p --path)'{-d,--date}'[Specify date]: :->date' \
+    '(-l --locate -h --help -p --path)'{-l,--locate}'[Select locations]: :(ika fukushima kamiiso)' \
+  && ret=0
+    #'(- :)*: :->_files' && ret=0
 
   case $state in
     date)

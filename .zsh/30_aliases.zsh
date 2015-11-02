@@ -193,3 +193,38 @@ alias -g V="| tovim"
 alias -g N=" >/dev/null 2>&1"
 alias -g N1=" >/dev/null"
 alias -g N2=" 2>/dev/null"
+
+vim_mru_files() {
+    local -a f
+    f=(
+    ~/.unite/file_mru(N)
+    ~/.vim_mru_files(N)
+    ~/.cache/ctrlp(N)
+    ~/.frill(N)
+    )
+    if [[ $#f -eq 0 ]]; then
+        echo "There is no available MRU Vim plugins" >&2
+        return 1
+    fi
+
+    local cmd q k res
+    while cmd="$(
+        cat <"$f" \
+            | sed -e '/^#/d;/^$/d' \
+            | perl -pe 's/^(\/.*\/)(.*)$/\033[34m$1\033[m$2/' \
+            | fzf --ansi --multi --no-sort --query="$q" \
+            --print-query --expect=ctrl-v --exit-0 --prompt="MRU> "
+            )"; do
+        q="$(head -1 <<< "$cmd")"
+        k="$(head -2 <<< "$cmd" | tail -1)"
+        res="$(sed '1,2d;/^$/d' <<< "$cmd")"
+        [ -z "$res" ] && continue
+        if [ "$k" = "ctrl-v" ]; then
+            vim "$res" < /dev/tty > /dev/tty
+        else
+            echo "$res"
+            break
+        fi
+    done
+}
+alias -g mru='$(vim_mru_files)'

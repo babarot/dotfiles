@@ -95,6 +95,9 @@ bindkey -M viins '^Xq' quote-previous-word-in-double
 
 bindkey -M viins "$terminfo[kcbt]" reverse-menu-complete
 
+#bindkey -s 'vv' "!vi\n"
+#bindkey -s ':q' "^A^Kexit\n"
+
 #
 # functions
 #
@@ -156,7 +159,7 @@ _peco-tmuxinator() {
 #bindkey '^X' _peco-tmuxinator
 
 _start-tmux-if-it-is-not-already-started() {
-    BUFFER="${${+commands[tmuxx]/0/}:-tmux}"
+    BUFFER="${${${(M)${+commands[tmuxx]}#1}:+tmuxx}:-tmux}"
     if has "tmux_automatically_attach"; then
         BUFFER="tmux_automatically_attach"
     fi

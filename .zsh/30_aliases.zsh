@@ -187,6 +187,23 @@ alias -g N1=" >/dev/null"
 alias -g N2=" 2>/dev/null"
 
 vim_mru_files() {
+    case "$1" in
+        -h|--help)
+            cat <<HELP >&2
+usage: vim_mru_files
+    list up most recently files
+
+keybind:
+  ctrl-q  output files and quit
+  ctrl-l  less files under the cursor
+  ctrl-v  vim files under the cursor
+  ctrl-r  change view type
+  ctrl-x  remove files
+HELP
+            return
+            ;;
+    esac
+
     local -a f
     f=(
     ~/.vim_mru_files(N)

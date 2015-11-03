@@ -21,3 +21,6 @@
 [ディレクトリを圧縮] tar zcf - some_dir@ | openssl aes-256-cbc -e -out hogehoge.tgz.enc
 [ディレクトリから伸張] openssl aes-256-cbc -d -in hogehoge.tgz.enc@ | tar zxvf -
 [tacがなければtail -r] echo "${${${(M)${+commands[tac]}#1}:+tac}:-"tail -r"}"
+: fzf イディオム
+[Unite 的な使い方] fzf V
+[最近ファイルをコピー] cp mru to

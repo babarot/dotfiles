@@ -18,3 +18,6 @@
 [Check dup galiases] cat $DOTPATH/.zsh/30_aliases.zsh G '[A-Z]\+' G 'alias -g' | sed -E '/^ *#.*$/d;s/^.*alias -g ([A-Z0-9]+)=.*$/\1/' S | uniq -c G -v "^ *1" A 2
 # cat $DOTPATH/.zsh/30_aliases.zsh | grep -E "[A-Z]+" | grep "alias -g" | {cat;echo "alias -g A=abc"} | sed -E '/^ *#.*$/d;s/^.*alias -g ([A-Z0-9]+)=.*$/\1/' | sort | uniq -c | grep -v "^ *1" | awk '{print $2}'
 # vim:ft=sh
+[ディレクトリを圧縮] tar zcf - some_dir@ | openssl aes-256-cbc -e -out hogehoge.tgz.enc
+[ディレクトリから伸張] openssl aes-256-cbc -d -in hogehoge.tgz.enc@ | tar zxvf -
+[tacがなければtail -r] echo "${${${(M)${+commands[tac]}#1}:+tac}:-"tail -r"}"

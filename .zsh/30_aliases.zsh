@@ -200,7 +200,7 @@ vim_mru_files() {
     fi
 
     local cmd q k res line ok
-    while ok="${ok:-0}"; cmd="$(
+    while : ${make_dir:=0}; ok=("${ok[@]:-dummy_$RANDOM}"); cmd="$(
         cat <$f \
             | while read line; do [ -e "$line" ] && echo "$line"; done \
             | sed -e '/^#/d;/^$/d' \
@@ -217,11 +217,11 @@ vim_mru_files() {
                 less "${(@f)res}" < /dev/tty > /dev/tty
                 ;;
             ctrl-x)
-                if [[ $ok -eq 1 ]]; then
+                if [[ ${(j: :)ok} == ${(j: :)${(@f)res}} ]]; then
                     eval '${${${(M)${+commands[gomi]}#1}:+gomi}:-rm} "${(@f)res}" 2>/dev/null'
-                    ok=0
+                    ok=()
                 else
-                    ok=1
+                    ok=("${(@f)res}")
                 fi
                 ;;
             ctrl-v)

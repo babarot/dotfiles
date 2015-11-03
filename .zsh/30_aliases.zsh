@@ -152,7 +152,7 @@ pygmentize_alias() {
         styles=( $(sed -e 's/^  *//g' <<<"$get_styles" | python) )
 
         style=${${(M)styles:#solarized}:-default}
-        cat_alias "$@" | pygmentize -O style="$style"
+        cat_alias "$@" | pygmentize -O style="$style" -f console256 -g
     else
         cat -
     fi
@@ -269,7 +269,7 @@ alias -g mru='$(vim_mru_files)'
 destination_directories() {
     local -a d
     d=(
-    ${GOPATH%%:*}/src/github.com/**/*~**/*\.git/**(N-/)
+    #${GOPATH%%:*}/src/github.com/**/*~**/*\.git/**(N-/)
     $DOTPATH/**/*~$DOTPATH/*\.git/**(N-/)
     $HOME/Dropbox(N-/)
     $HOME

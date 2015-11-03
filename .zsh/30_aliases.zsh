@@ -159,6 +159,7 @@ pygmentize_alias() {
 }
 alias -g P="| pygmentize_alias"
 alias -g L="| cat_alias | less"
+alias -g LL="| less"
 
 awk_alias() {
     if (( ${ZSH_VERSION%%.*} < 5 )); then
@@ -198,25 +199,43 @@ vim_mru_files() {
         return 1
     fi
 
-    local cmd q k res
-    while cmd="$(
+    local cmd q k res line ok
+    while ok="${ok:-0}"; cmd="$(
         cat <$f \
             | while read line; do [ -e "$line" ] && echo "$line"; done \
             | sed -e '/^#/d;/^$/d' \
             | perl -pe 's/^(\/.*\/)(.*)$/\033[34m$1\033[m$2/' \
             | fzf --ansi --multi --no-sort --query="$q" \
-            --print-query --expect=ctrl-v --exit-0 --prompt="MRU> "
+            --print-query --expect=ctrl-v,ctrl-x,ctrl-l,ctrl-q --exit-0 --prompt="MRU> "
             )"; do
         q="$(head -1 <<< "$cmd")"
         k="$(head -2 <<< "$cmd" | tail -1)"
         res="$(sed '1,2d;/^$/d' <<< "$cmd")"
         [ -z "$res" ] && continue
-        if [ "$k" = "ctrl-v" ]; then
-            vim "$res" < /dev/tty > /dev/tty
-        else
-            echo "$res"
-            break
-        fi
+        case "$k" in
+            ctrl-l)
+                less "${(@f)res}" < /dev/tty > /dev/tty
+                ;;
+            ctrl-x)
+                if [[ $ok -eq 1 ]]; then
+                    eval '${${${(M)${+commands[gomi]}#1}:+gomi}:-rm} "${(@f)res}" 2>/dev/null'
+                    ok=0
+                else
+                    ok=1
+                fi
+                ;;
+            ctrl-v)
+                vim -p "${(@f)res}" < /dev/tty > /dev/tty
+                ;;
+            ctrl-q)
+                echo "$res" < /dev/tty > /dev/tty
+                return $status
+                ;;
+            *)
+                echo "${(@f)res}"
+                break
+                ;;
+        esac
     done
 }
 alias -g mru='$(vim_mru_files)'

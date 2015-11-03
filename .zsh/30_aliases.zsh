@@ -197,8 +197,8 @@ alias -g N2=" 2>/dev/null"
 vim_mru_files() {
     local -a f
     f=(
-    ~/.unite/file_mru(N)
     ~/.vim_mru_files(N)
+    ~/.unite/file_mru(N)
     ~/.cache/ctrlp/mru/cache.txt(N)
     ~/.frill(N)
     )
@@ -210,6 +210,7 @@ vim_mru_files() {
     local cmd q k res
     while cmd="$(
         cat <$f \
+            | while read line; do [ -e "$line" ] && echo "$line"; done \
             | sed -e '/^#/d;/^$/d' \
             | perl -pe 's/^(\/.*\/)(.*)$/\033[34m$1\033[m$2/' \
             | fzf --ansi --multi --no-sort --query="$q" \
@@ -228,3 +229,21 @@ vim_mru_files() {
     done
 }
 alias -g mru='$(vim_mru_files)'
+
+destination_directories() {
+    local -a d
+    d=(
+    ${GOPATH%%:*}/src/github.com/**/*~**/*\.git/**(N-/)
+    $DOTPATH/**/*~$DOTPATH/*\.git/**(N-/)
+    $HOME/Dropbox(N-/)
+    $HOME
+    $OLDPWD
+    $($DOTPATH/bin/tfp(N))
+    )
+    if [[ $#d -eq 0 ]]; then
+        echo "There is no available directory" >&2
+        return 1
+    fi
+    echo "${(F)d}" | fzf --tac --prompt="to> "
+}
+alias -g to='$(destination_directories)'

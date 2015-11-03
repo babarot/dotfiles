@@ -199,7 +199,9 @@ vim_mru_files() {
         return 1
     fi
 
-    local cmd q k res line ok make_dir i
+    local cmd q k res
+    local line ok make_dir i arr
+    local get_styles styles style
     while : ${make_dir:=0}; ok=("${ok[@]:-dummy_$RANDOM}"); cmd="$(
         cat <$f \
             | while read line; do [ -e "$line" ] && echo "$line"; done \
@@ -225,7 +227,20 @@ vim_mru_files() {
                 continue
                 ;;
             ctrl-l)
-                less "${(@f)res}" < /dev/tty > /dev/tty
+                arr=("${(@f)res}")
+                if [[ -d ${arr[1]} ]]; then
+                    ls -l "${(@f)res}"  < /dev/tty | less > /dev/tty
+                else
+                    if has "pygmentize"; then
+                        get_styles="from pygments.styles import get_all_styles
+                        styles = list(get_all_styles())
+                        print('\n'.join(styles))"
+                        styles=( $(sed -e 's/^  *//g' <<<"$get_styles" | python) )
+                        style=${${(M)styles:#solarized}:-default}
+                        export LESSOPEN="| pygmentize -O style=$style -f console256 -g %s"
+                    fi
+                    less "${(@f)res}" < /dev/tty > /dev/tty
+                fi
                 ;;
             ctrl-x)
                 if [[ ${(j: :)ok} == ${(j: :)${(@f)res}} ]]; then

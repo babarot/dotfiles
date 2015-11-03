@@ -144,27 +144,18 @@ cat_alias() {
 alias -g C="| cat_alias"
 
 pygmentize_alias() {
-    has "pygmentize" || return
+    if has "pygmentize"; then
+        local get_styles styles style
+        get_styles="from pygments.styles import get_all_styles
+        styles = list(get_all_styles())
+        print('\n'.join(styles))"
+        styles=( $(sed -e 's/^  *//g' <<<"$get_styles" | python) )
 
-    local get_styles styles style
-    get_styles="from pygments.styles import get_all_styles
-    styles = list(get_all_styles())
-    print('\n'.join(styles))"
-    styles=( $(sed -e 's/^  *//g' <<<"$get_styles" | python) )
-
-    style=${${(M)styles:#solarized}:-default}
-
-    #local i stdin file=0
-    #stdin=("${(@f)$(cat <&0)}")
-    #for i in "${stdin[@]}"
-    #do
-    #    if [[ -f $i ]]; then
-    #        pygmentize -O style="$style" "$i"
-    #        file=1
-    #    fi
-    #done
-    #[[ $file -eq 0 ]] && echo "${(F)stdin}" | pygmentize -O style="$style"
-    cat_alias "$@" | pygmentize -O style="$style"
+        style=${${(M)styles:#solarized}:-default}
+        cat_alias "$@" | pygmentize -O style="$style"
+    else
+        cat -
+    fi
 }
 alias -g P="| pygmentize_alias"
 alias -g L="| cat_alias | less"

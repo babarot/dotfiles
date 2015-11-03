@@ -243,7 +243,8 @@ command-selector() {
         len="${cmd%%@*}"
         CURSOR=${#len}
     fi
-    zle reset-prompt
+    #zle reset-prompt
+    zle redisplay
 }
 zle -N command-selector
 bindkey '^x^x' command-selector

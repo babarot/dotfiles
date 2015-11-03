@@ -199,20 +199,31 @@ vim_mru_files() {
         return 1
     fi
 
-    local cmd q k res line ok
+    local cmd q k res line ok make_dir i
     while : ${make_dir:=0}; ok=("${ok[@]:-dummy_$RANDOM}"); cmd="$(
         cat <$f \
             | while read line; do [ -e "$line" ] && echo "$line"; done \
+            | while read line; do [ "$make_dir" -eq 1 ] && echo "${line:h}/" || echo "$line"; done \
+            | if [ "$make_dir" -eq 1 ]; then awk '!a[$0]++'; else cat -; fi \
             | sed -e '/^#/d;/^$/d' \
             | perl -pe 's/^(\/.*\/)(.*)$/\033[34m$1\033[m$2/' \
-            | fzf --ansi --multi --no-sort --query="$q" \
-            --print-query --expect=ctrl-v,ctrl-x,ctrl-l,ctrl-q --exit-0 --prompt="MRU> "
+            | fzf --ansi --multi --query="$q" \
+            --no-sort --exit-0 --prompt="MRU> " \
+            --print-query --expect=ctrl-v,ctrl-x,ctrl-l,ctrl-q,ctrl-r
             )"; do
         q="$(head -1 <<< "$cmd")"
         k="$(head -2 <<< "$cmd" | tail -1)"
         res="$(sed '1,2d;/^$/d' <<< "$cmd")"
         [ -z "$res" ] && continue
         case "$k" in
+            ctrl-r)
+                if [ $make_dir -eq 1 ]; then
+                    make_dir=0
+                else
+                    make_dir=1
+                fi
+                continue
+                ;;
             ctrl-l)
                 less "${(@f)res}" < /dev/tty > /dev/tty
                 ;;

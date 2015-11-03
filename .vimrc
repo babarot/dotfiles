@@ -2021,7 +2021,7 @@ else
     endif
   else
     " Vim for CUI
-    if s:has_plugin('solarized.vim')
+    if s:has_plugin('solarized.vim') && $TERM_PROGRAM ==# "Apple_Terminal"
       try
         colorscheme solarized-cui
       catch

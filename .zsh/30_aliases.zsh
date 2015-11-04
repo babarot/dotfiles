@@ -255,6 +255,40 @@ destination_directories() {
         echo "There is no available directory" >&2
         return 1
     fi
-    echo "${(F)d}" | fzf --tac --prompt="to> "
+
+    local cmd q k res
+    local line make_dir
+    while : ${make_dir:=0}; cmd="$(
+        echo "${(F)d}" \
+            | while read line; do echo "${line:F:$make_dir:h}"; done \
+            | reverse | awk '!a[$0]++' | reverse \
+            | perl -pe 's/^(\/.*)$/\033[34m$1\033[m/' \
+            | fzf --ansi --multi --tac --query="$q" \
+            --no-sort --exit-0 --prompt="destination-> " \
+            --print-query --expect=ctrl-r,ctrl-y,ctrl-q \
+            )"; do
+        q="$(head -1 <<< "$cmd")"
+        k="$(head -2 <<< "$cmd" | tail -1)"
+        res="$(sed '1,2d;/^$/d' <<< "$cmd")"
+        [ -z "$res" ] && continue
+        case "$k" in
+            ctrl-y)
+                let make_dir--
+                continue
+                ;;
+            ctrl-r)
+                let make_dir++
+                continue
+                ;;
+            ctrl-q)
+                echo "${(@f)res}" >/dev/tty
+                break
+                ;;
+            *)
+                echo "${(@f)res}"
+                break
+                ;;
+        esac
+    done
 }
 alias -g to='$(destination_directories)'

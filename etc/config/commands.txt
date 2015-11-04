@@ -1,18 +1,41 @@
-# Execution like aliases for zsh
+# ワンライナーお手軽実行するためのファイル
 #
-# Format:
-#  [description] some-command | other-command
-#  e.g., [show file name and file size] ls -l | awk '{print$9,$5}'
-
-# Besides, @ is cursor point. If it is omitted,
-# set end-of-line as default cursor point.
+# {書き方}
+#     （例）
+#          [これはワンライナーです] oneliner | some-command | other-command
+#
+#     []のなかにそのワンライナーの説明を書きます（省いても構いません）
+#     []の後ろに1つ以上のスペースをあけてワンライナーを書きます
+#
+# {@マークについて}
+#     ワンライナー中に@マークを1つだけ記述することができます
+#     実行時にその@マークの位置にカーソルが置かれます
+#
+# {!マークについて}
+#     ワンライナーの行末に!マークを置くと、ワンライナーが即座に実行されます
+#
+# {#マークについて}
+#     2種類の使用方法があります
+#     行頭に置かれた場合、その行はfzfに表示されません
+#     行中に置いた場合、それ以降をコメントとみなし黒色表示します
+#     ただし、後者の場合#マークの前後にスペースを必要とします
+#
+# {:マークについて}
+#     セクションごとのタイトルに最適です
+#     シェルが無視してくれる記号には#と:があります
+#     #は行頭にあるとfzfが無視しますが、:は問題無いです
 #
 
-: "Gradual Research"
+: 研究関連
+# 2015年に出港したことがある漁船ナンバー
 [Number per Month] echo ~/data/ika@/2015/**/*.txt C A -F, 3 S -u
+# 今日、出港したことがある漁船ナンバー
 [Number per Day] marine --all -l ika@ C A -F, 3 S -u
+# 今日、出港したことがある漁船ナンバーを船名とともに表示する
 [Number per Day detail] join -t, <(marine --all -l ika@ C A -F, 3 S -u) <(curl -sL http://i.buoy.jp/pkodg/ika.id N2)
+# 登録されている漁船ナンバーと漁船名
 [List Number All] curl -sL http://i.buoy.jp/pkodg/ika@.id N2
+# 今日のログを見る
 [View log of today] ls -ld ~/data/ika@/$(date +%Y/%m/%d)/*.txt | awk 'END{print $9}' X less +G
 
 : 暗号関連
@@ -22,13 +45,13 @@
 [ディレクトリから伸張] openssl aes-256-cbc -d -in hogehoge.tgz.enc@ | tar zxvf -
 
 : fzf イディオム
-[Unite的な使い方でVimを開く] fzf V
-[最近開いたファイルをコピー] cp mru to
-[最近開いたファイルをVimで開く] vim mru
+[Unite的な使い方でVimを開く] fzf --prompt="unite.vim> " V ! #即実行！
+[最近開いたファイルをコピー] cp from to # from,toはグローバルエイリアス
+[最近開いたファイルをVimで開く] vim from # fromはグローバルエイリアス
+[最近開いたファイルをVimで開く] mru V
 
 : その他
-[galiasの重複チェック] cat $DOTPATH/.zsh/30_aliases.zsh G '[A-Z]\+' G 'alias -g' | sed -E '/^ *#.*$/d;s/^.*alias -g ([A-Z0-9]+)=.*$/\1/' S | uniq -c G -v "^ *1" A 2
+[galiasの重複チェック] cat ${DOTPATH:?not set}/.zsh/30_aliases.zsh G '[A-Z]\+' G 'alias -g' | sed -E '/^ *#.*$/d;s/^.*alias -g ([A-Z0-9]+)=.*$/\1/' S | uniq -c G -v "^ *1" A 2
 [tacがなければtail -r] echo "${${${(M)${+commands[tac]}#1}:+tac}:-"tail -r"}"
-# cat $DOTPATH/.zsh/30_aliases.zsh | grep -E "[A-Z]+" | grep "alias -g" | {cat;echo "alias -g A=abc"} | sed -E '/^ *#.*$/d;s/^.*alias -g ([A-Z0-9]+)=.*$/\1/' | sort | uniq -c | grep -v "^ *1" | awk '{print $2}'
 
 # vim:ft=sh

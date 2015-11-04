@@ -45,13 +45,14 @@
 [ディレクトリから伸張] openssl aes-256-cbc -d -in hogehoge.tgz.enc@ | tar zxvf -
 
 : fzf イディオム
-[Unite的な使い方でVimを開く] fzf --prompt="unite.vim> " V ! #即実行！
+[Unite的な使い方でVimを開く] fzf --prompt="unite.vim> " V ! #即実行
 [最近開いたファイルをコピー] cp from to # from,toはグローバルエイリアス
 [最近開いたファイルをVimで開く] vim from # fromはグローバルエイリアス
-[最近開いたファイルをVimで開く] mru V
+[最近開いたファイルをVimで開く] mru V ! #即実行
 
 : その他
-[galiasの重複チェック] cat ${DOTPATH:?not set}/.zsh/30_aliases.zsh G '[A-Z]\+' G 'alias -g' | sed -E '/^ *#.*$/d;s/^.*alias -g ([A-Z0-9]+)=.*$/\1/' S | uniq -c G -v "^ *1" A 2
-[tacがなければtail -r] echo "${${${(M)${+commands[tac]}#1}:+tac}:-"tail -r"}"
+[galiasの重複がないかチェック] cat ${DOTPATH:?not set}/.zsh/30_aliases.zsh G '[A-Z]\+' G 'alias -g' | sed -E '/^ *#.*$/d;s/^.*alias -g ([A-Z0-9]+)=.*$/\1/' S | uniq -c G -v "^ *1" A 2
+[tacがなければtail -rを出力] echo "${${${(M)${+commands[tac]}#1}:+tac}:-"tail -r"}"
+[git logで使った絵文字を列挙] git log --oneline | grep -o ':\w\+:' | sort -u | if has emojify; then emojify; else cat -; fi
 
 # vim:ft=sh

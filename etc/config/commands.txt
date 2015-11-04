@@ -14,13 +14,21 @@
 [Number per Day detail] join -t, <(marine --all -l ika@ C A -F, 3 S -u) <(curl -sL http://i.buoy.jp/pkodg/ika.id N2)
 [List Number All] curl -sL http://i.buoy.jp/pkodg/ika@.id N2
 [View log of today] ls -ld ~/data/ika@/$(date +%Y/%m/%d)/*.txt | awk 'END{print $9}' X less +G
-:
-[Check dup galiases] cat $DOTPATH/.zsh/30_aliases.zsh G '[A-Z]\+' G 'alias -g' | sed -E '/^ *#.*$/d;s/^.*alias -g ([A-Z0-9]+)=.*$/\1/' S | uniq -c G -v "^ *1" A 2
-# cat $DOTPATH/.zsh/30_aliases.zsh | grep -E "[A-Z]+" | grep "alias -g" | {cat;echo "alias -g A=abc"} | sed -E '/^ *#.*$/d;s/^.*alias -g ([A-Z0-9]+)=.*$/\1/' | sort | uniq -c | grep -v "^ *1" | awk '{print $2}'
-# vim:ft=sh
+
+: 暗号関連
+[ファイルの暗号化] openssl aes-256-cbc -e -in normal_file@ -out encrypted_file
+[ファイルの復号] openssl aes-256-cbc -d -in encrypted_file@ -out decrypted_file
 [ディレクトリを圧縮] tar zcf - some_dir@ | openssl aes-256-cbc -e -out hogehoge.tgz.enc
 [ディレクトリから伸張] openssl aes-256-cbc -d -in hogehoge.tgz.enc@ | tar zxvf -
-[tacがなければtail -r] echo "${${${(M)${+commands[tac]}#1}:+tac}:-"tail -r"}"
+
 : fzf イディオム
-[Unite 的な使い方] fzf V
-[最近ファイルをコピー] cp mru to
+[Unite的な使い方でVimを開く] fzf V
+[最近開いたファイルをコピー] cp mru to
+[最近開いたファイルをVimで開く] vim mru
+
+: その他
+[galiasの重複チェック] cat $DOTPATH/.zsh/30_aliases.zsh G '[A-Z]\+' G 'alias -g' | sed -E '/^ *#.*$/d;s/^.*alias -g ([A-Z0-9]+)=.*$/\1/' S | uniq -c G -v "^ *1" A 2
+[tacがなければtail -r] echo "${${${(M)${+commands[tac]}#1}:+tac}:-"tail -r"}"
+# cat $DOTPATH/.zsh/30_aliases.zsh | grep -E "[A-Z]+" | grep "alias -g" | {cat;echo "alias -g A=abc"} | sed -E '/^ *#.*$/d;s/^.*alias -g ([A-Z0-9]+)=.*$/\1/' | sort | uniq -c | grep -v "^ *1" | awk '{print $2}'
+
+# vim:ft=sh

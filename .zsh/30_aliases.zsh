@@ -38,7 +38,7 @@ alias cp="${ZSH_VERSION:+nocorrect} cp -i"
 alias mv="${ZSH_VERSION:+nocorrect} mv -i"
 alias mkdir="${ZSH_VERSION:+nocorrect} mkdir"
 
-#autoload -Uz zmv
+autoload -Uz zmv
 alias zmv='noglob zmv -W'
 
 alias du='du -h'
@@ -67,24 +67,15 @@ alias sudo='sudo '
 
 # Global aliases
 alias -g G='| grep'
-
-#less_alias() {
-#    local stdin
-#    stdin="$(cat <&0)"
-#    if [[ -n $stdin ]]; then
-#        if [[ -f $stdin ]]; then
-#            less $stdin
-#        else
-#            echo "$stdin" | less
-#        fi
-#    fi
-#}
-##alias -g L='| cat_alias | less'
-#alias -g L='| less_alias'
-
 alias -g W='| wc'
 alias -g X='| xargs'
 alias -g F='| "$(available $INTERACTIVE_FILTER)"'
+alias -g S="| sort"
+alias -g V="| tovim"
+alias -g N=" >/dev/null 2>&1"
+alias -g N1=" >/dev/null"
+alias -g N2=" 2>/dev/null"
+
 
 (( $+galiases[H] )) || alias -g H='| head'
 (( $+galiases[T] )) || alias -g T='| tail'
@@ -97,35 +88,6 @@ if is_osx; then
     alias -g CP='| pbcopy'
     alias -g CC='| tee /dev/tty | pbcopy'
 fi
-
-#cat_alias() {
-#    local stdin
-#    stdin="$(cat <&0)"
-#    if [[ -n $stdin ]]; then
-#        if [[ -f $stdin ]]; then
-#            cat $stdin
-#        else
-#            echo "$stdin" | cat
-#        fi
-#    fi
-#}
-#alias -g C="| cat_alias"
-
-#cat_all_alias() {
-#    local i
-#    for i in $(cat <&0)
-#    do
-#        if [[ -n $i ]]; then
-#            if [[ -f $i ]]; then
-#                cat $i
-#            else
-#                echo "$i" | cat
-#            fi
-#        fi
-#    done
-#}
-#alias -g CA="| cat_all_alias"
-#alias -g C="| cat_all_alias"
 
 cat_alias() {
     local i stdin file=0
@@ -143,6 +105,10 @@ cat_alias() {
 }
 alias -g C="| cat_alias"
 
+# less
+alias -g L="| cat_alias | less"
+alias -g LL="| less"
+
 pygmentize_alias() {
     if has "pygmentize"; then
         local get_styles styles style
@@ -158,8 +124,6 @@ pygmentize_alias() {
     fi
 }
 alias -g P="| pygmentize_alias"
-alias -g L="| cat_alias | less"
-alias -g LL="| less"
 
 awk_alias() {
     if (( ${ZSH_VERSION%%.*} < 5 )); then
@@ -179,19 +143,7 @@ awk_alias() {
 }
 alias -g A="| awk_alias"
 
-alias -g S="| sort"
-alias -g V="| tovim"
-
-alias -g N=" >/dev/null 2>&1"
-alias -g N1=" >/dev/null"
-alias -g N2=" 2>/dev/null"
-
 vim_mru_files() {
-    case "$1" in
-        -h|--help)
-            ;;
-    esac
-
     local -a f
     f=(
     ~/.vim_mru_files(N)
@@ -287,14 +239,18 @@ alias -g mru='$(vim_mru_files)'
 
 destination_directories() {
     local -a d
-    d=(
-    #${GOPATH%%:*}/src/github.com/**/*~**/*\.git/**(N-/)
-    $DOTPATH/**/*~$DOTPATH/*\.git/**(N-/)
-    $HOME/Dropbox(N-/)
-    $HOME
-    $OLDPWD
-    $($DOTPATH/bin/tfp(N))
-    )
+    if [[ -f ~/.enhancd/enhancd.log ]]; then
+        d=("${(@f)"$(<~/.enhancd/enhancd.log)"}")
+    else
+        d=(
+        #${GOPATH%%:*}/src/github.com/**/*~**/*\.git/**(N-/)
+        $DOTPATH/**/*~$DOTPATH/*\.git/**(N-/)
+        $HOME/Dropbox(N-/)
+        $HOME
+        $OLDPWD
+        $($DOTPATH/bin/tfp(N))
+        )
+    fi
     if [[ $#d -eq 0 ]]; then
         echo "There is no available directory" >&2
         return 1

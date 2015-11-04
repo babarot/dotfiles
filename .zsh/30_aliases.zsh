@@ -76,7 +76,6 @@ alias -g N=" >/dev/null 2>&1"
 alias -g N1=" >/dev/null"
 alias -g N2=" 2>/dev/null"
 
-
 (( $+galiases[H] )) || alias -g H='| head'
 (( $+galiases[T] )) || alias -g T='| tail'
 
@@ -143,15 +142,16 @@ awk_alias() {
 }
 alias -g A="| awk_alias"
 
-vim_mru_files() {
-    local -a f
-    f=(
+mru() {
+    local -a f1 f2
+    f1=(
     ~/.vim_mru_files(N)
     ~/.unite/file_mru(N)
     ~/.cache/ctrlp/mru/cache.txt(N)
     ~/.frill(N)
     )
-    if [[ $#f -eq 0 ]]; then
+    f2=($DOTPATH/**/*~$DOTPATH/*\.git/**(.N))
+    if [[ $#f1 -eq 0 || $#f2 -eq 0 ]]; then
         echo "There is no available MRU Vim plugins" >&2
         return 1
     fi
@@ -160,11 +160,10 @@ vim_mru_files() {
     local line ok make_dir i arr
     local get_styles styles style
     while : ${make_dir:=0}; ok=("${ok[@]:-dummy_$RANDOM}"); cmd="$(
-        cat <$f \
+        { cat <$f1; echo "${(F)f2}"; } \
             | while read line; do [ -e "$line" ] && echo "$line"; done \
             | while read line; do [ "$make_dir" -eq 1 ] && echo "${line:h}/" || echo "$line"; done \
-            | if [ "$make_dir" -eq 1 ]; then awk '!a[$0]++'; else cat -; fi \
-            | sed -e '/^#/d;/^$/d' \
+            | awk '!a[$0]++' \
             | perl -pe 's/^(\/.*\/)(.*)$/\033[34m$1\033[m$2/' \
             | fzf --ansi --multi --query="$q" \
             --no-sort --exit-0 --prompt="MRU> " \
@@ -198,6 +197,7 @@ HELP
                 continue
                 ;;
             ctrl-l)
+                export LESS='-R -f -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
                 arr=("${(@f)res}")
                 if [[ -d ${arr[1]} ]]; then
                     ls -l "${(@f)res}" < /dev/tty | less > /dev/tty
@@ -235,7 +235,7 @@ HELP
         esac
     done
 }
-alias -g mru='$(vim_mru_files)'
+alias -g from='$(mru)'
 
 destination_directories() {
     local -a d

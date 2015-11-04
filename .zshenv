@@ -10,7 +10,7 @@ if [ -z "$DOTPATH" ]; then
     }
     export DOTPATH="$(_get_dotpath)"
 fi
-[ -f $DOTPATH/etc/install ] && . $DOTPATH/etc/install
+#[ -f $DOTPATH/etc/install ] && . $DOTPATH/etc/install
 
 # LANGUAGE must be set by en_US
 export LANGUAGE="en_US.UTF-8"
@@ -84,6 +84,6 @@ if [ $UID = 0 ]; then
 fi
 
 export INTERACTIVE_FILTER="fzf:peco:percol:gof:pick"
-is_linux && export EMOJI_CLI_FILTER=peco
+#is_linux && export EMOJI_CLI_FILTER=peco
 
 [ -f ~/.secret ] && . ~/.secret

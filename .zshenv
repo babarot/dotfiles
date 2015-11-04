@@ -85,5 +85,6 @@ fi
 
 export INTERACTIVE_FILTER="fzf:peco:percol:gof:pick"
 #is_linux && export EMOJI_CLI_FILTER=peco
+export COMMAND_SELECT_FILE="$DOTPATH/doc/misc/commands.txt"
 
 [ -f ~/.secret ] && . ~/.secret

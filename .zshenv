@@ -10,6 +10,7 @@ if [ -z "$DOTPATH" ]; then
     }
     export DOTPATH="$(_get_dotpath)"
 fi
+[ -f $DOTPATH/etc/install ] && . $DOTPATH/etc/install
 
 # LANGUAGE must be set by en_US
 export LANGUAGE="en_US.UTF-8"
@@ -69,19 +70,20 @@ export FZF_DEFAULT_OPTS="--extended --ansi --multi --bind=ctrl-u:page-up --bind=
 
 # History
 # History file
-HISTFILE=~/.zsh_history
+export HISTFILE=~/.zsh_history
 # History size in memory
-HISTSIZE=10000
+export HISTSIZE=10000
 # The number of histsize
-SAVEHIST=1000000
+export SAVEHIST=1000000
 # The size of asking history
-LISTMAX=50
+export LISTMAX=50
 # Do not add in root
 if [ $UID = 0 ]; then
     unset HISTFILE
-    SAVEHIST=0
+    export SAVEHIST=0
 fi
 
 export INTERACTIVE_FILTER="fzf:peco:percol:gof:pick"
+is_linux && export EMOJI_CLI_FILTER=peco
 
-[ -f ~/.secret ] && source ~/.secret
+[ -f ~/.secret ] && . ~/.secret

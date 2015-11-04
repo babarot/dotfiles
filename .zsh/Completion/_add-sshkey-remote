@@ -10,8 +10,14 @@ _1st_arguments=(
 
 __users() {
   local -a _users
-  _users=("$(git config --get user.name)")
-  _wanted application expl 'command' compadd $_users
+  _users=("$(git config --get user.name)" $USER)
+  _wanted application expl 'users' compadd $_users
+}
+
+__hosts() {
+  local -a _hosts
+  _hosts=(${(R)${(@f)"$(<~/.ssh/known_hosts)"}%%[, ]*})
+  _wanted application expl 'hosts' compadd $_hosts
 }
 
 local expl
@@ -35,7 +41,7 @@ case $state in
   (options)
     case $line[1] in
       (ssh)
-        _arguments ':hostname:_ssh_hosts'
+        _arguments ':hostname:__hosts'
         ;;
       (github|bitbucket)
         _arguments ':users:__users'

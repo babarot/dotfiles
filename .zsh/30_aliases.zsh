@@ -189,18 +189,6 @@ alias -g N2=" 2>/dev/null"
 vim_mru_files() {
     case "$1" in
         -h|--help)
-            cat <<HELP >&2
-usage: vim_mru_files
-    list up most recently files
-
-keybind:
-  ctrl-q  output files and quit
-  ctrl-l  less files under the cursor
-  ctrl-v  vim files under the cursor
-  ctrl-r  change view type
-  ctrl-x  remove files
-HELP
-            return
             ;;
     esac
 
@@ -228,13 +216,27 @@ HELP
             | perl -pe 's/^(\/.*\/)(.*)$/\033[34m$1\033[m$2/' \
             | fzf --ansi --multi --query="$q" \
             --no-sort --exit-0 --prompt="MRU> " \
-            --print-query --expect=ctrl-v,ctrl-x,ctrl-l,ctrl-q,ctrl-r
+            --print-query --expect=ctrl-v,ctrl-x,ctrl-l,ctrl-q,ctrl-r,"?"
             )"; do
         q="$(head -1 <<< "$cmd")"
         k="$(head -2 <<< "$cmd" | tail -1)"
         res="$(sed '1,2d;/^$/d' <<< "$cmd")"
         [ -z "$res" ] && continue
         case "$k" in
+            "?")
+                cat <<HELP > /dev/tty
+usage: vim_mru_files
+    list up most recently files
+
+keybind:
+  ctrl-q  output files and quit
+  ctrl-l  less files under the cursor
+  ctrl-v  vim files under the cursor
+  ctrl-r  change view type
+  ctrl-x  remove files (two-step)
+HELP
+                return 1
+                ;;
             ctrl-r)
                 if [ $make_dir -eq 1 ]; then
                     make_dir=0
@@ -246,7 +248,7 @@ HELP
             ctrl-l)
                 arr=("${(@f)res}")
                 if [[ -d ${arr[1]} ]]; then
-                    ls -l "${(@f)res}"  < /dev/tty | less > /dev/tty
+                    ls -l "${(@f)res}" < /dev/tty | less > /dev/tty
                 else
                     if has "pygmentize"; then
                         get_styles="from pygments.styles import get_all_styles

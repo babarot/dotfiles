@@ -211,8 +211,7 @@ bindkey '^g^a' peco-select-gitadd
 
 command-selector() {
     local command_file
-    command_file="${COMMAND_SELECT_FILE:=${DOTPATH:?not set}/etc/config/commands.txt}"
-    export COMMAND_SELECT_FILE
+    command_file="${COMMAND_SELECT_FILE:-~/.commnad.list}"
 
     [[ ! -f $command_file || ! -s $command_file ]] && return
 
@@ -228,7 +227,7 @@ command-selector() {
             )"; do
         q="$(head -1 <<< "$cmd")"
         k="$(head -2 <<< "$cmd" | tail -1)"
-        res="$(sed '1,2d;/^$/d' <<< "$cmd")"
+        res="$(sed '1,2d;/^$/d;s/[[:blank:]]#.*$//' <<< "$cmd")"
         [ -z "$res" ] && continue
         if [ "$k" = "ctrl-v" ]; then
             vim "$command_file" < /dev/tty > /dev/tty

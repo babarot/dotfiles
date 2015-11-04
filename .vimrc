@@ -310,6 +310,9 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1
   "NeoBundle 'rhysd/github-complete.vim'
   NeoBundle 'junegunn/fzf'
 
+  NeoBundle 'b4b4r07/vim-hcl'
+  NeoBundle 'fatih/vim-hclfmt'
+
   " Japanese help
   NeoBundle 'vim-jp/vimdoc-ja'
   " Vital

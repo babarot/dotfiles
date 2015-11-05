@@ -35,8 +35,10 @@
 [Number per Day detail] join -t, <(marine --all -l ika@ C A -F, 3 S -u) <(curl -sL http://i.buoy.jp/pkodg/ika.id N2)
 # 登録されている漁船ナンバーと漁船名
 [List Number All] curl -sL http://i.buoy.jp/pkodg/ika@.id N2
-# 今日のログを見る
-[View log of today] ls -ld ~/data/ika@/$(date +%Y/%m/%d)/*.txt | awk 'END{print $9}' X less +G
+# 今日のログの中身を見る
+[View Log of today] ls -ld ~/data/ika@/$(date +%Y/%m/%d)/*.txt | awk 'END{print $9}' X less +G
+# 今日のログ一覧を見る（データ数が同じものを表示しない）
+[Uniq LogList per Day] marine --all X ls -l U 5
 
 : 暗号関連
 [ファイルの暗号化] openssl aes-256-cbc -e -in normal_file@ -out encrypted_file

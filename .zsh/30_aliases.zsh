@@ -292,3 +292,17 @@ destination_directories() {
     done
 }
 alias -g to='$(destination_directories)'
+
+uniq_alias() {
+    if (( ${ZSH_VERSION%%.*} < 5 )); then
+        return
+    fi
+
+    local f=0 opt=
+    if [[ $# -gt 0 && ${@[-1]} =~ ^[0-9]+$ ]]; then
+        f=${@[-1]}
+        opt=${@:1:-1}
+    fi
+    awk $opt '!a[$'"${f:-0}"']++'
+}
+alias -g U="| uniq_alias"

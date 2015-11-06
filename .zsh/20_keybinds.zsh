@@ -209,19 +209,22 @@ peco-select-gitadd() {
 zle -N peco-select-gitadd
 bindkey '^g^a' peco-select-gitadd
 
-command-selector() {
-    local command_file
-    command_file="${COMMAND_SELECT_FILE:-~/.commnad.list}"
+exec-oneliner() {
+    local oneliner_f
+    oneliner_f="${ONELINER_FILE:-~/.commnad.list}"
 
-    [[ ! -f $command_file || ! -s $command_file ]] && return
+    [[ ! -f $oneliner_f || ! -s $oneliner_f ]] && return
 
     local cmd q k res accept
     while accept=0; cmd="$(
-        cat <$command_file \
+        cat <$oneliner_f \
             | sed -e '/^#/d;/^$/d' \
-            | perl -pe 's/^(\[.*?\]) (.*)$/\033[31m$1\033[m\t$2/' \
+            | perl -pe 's/^(\[.*?\]) (.*)$/$1\t$2/' \
+            | perl -pe 's/(\[.*?\])/\033[31m$1\033[m/' \
             | perl -pe 's/^(: ?)(.*)$/$1\033[30;47;1m$2\033[m/' \
             | perl -pe 's/^(.*)([[:blank:]]#[[:blank:]]?.*)$/$1\033[30;1m$2\033[m/' \
+            | perl -pe 's/(!)/\033[31;1m$1\033[m/' \
+            | perl -pe 's/(\|| [A-Z]+ [A-Z]+| [A-Z]+ )/\033[35;1m$1\033[m/g' \
             | fzf --ansi --multi --no-sort --tac --query="$q" \
             --print-query --expect=ctrl-v --exit-0
             )"; do
@@ -230,7 +233,7 @@ command-selector() {
         res="$(sed '1,2d;/^$/d;s/[[:blank:]]#.*$//' <<< "$cmd")"
         [ -z "$res" ] && continue
         if [ "$k" = "ctrl-v" ]; then
-            vim "$command_file" < /dev/tty > /dev/tty
+            vim "$oneliner_f" < /dev/tty > /dev/tty
         else
             cmd="$(perl -pe 's/^(\[.*?\])\t(.*)$/$2/' <<<"$res")"
             if [[ $cmd =~ "!$" || $cmd =~ "! *#.*$" ]]; then
@@ -253,5 +256,5 @@ command-selector() {
     #zle reset-prompt
     zle redisplay
 }
-zle -N command-selector
-bindkey '^x^x' command-selector
+zle -N exec-oneliner
+bindkey '^x^x' exec-oneliner

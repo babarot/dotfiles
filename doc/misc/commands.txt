@@ -39,6 +39,7 @@
 [View Log of today] ls -ld ~/data/ika@/$(date +%Y/%m/%d)/*.txt | awk 'END{print $9}' X less +G
 # 今日のログ一覧を見る（データ数が同じものを表示しない）
 [Uniq LogList per Day] marine --all X ls -l U 5
+[Uniq LogList per Day] marine --all X ls -l U 5 F A 9 X less +G
 
 : 暗号関連
 [ファイルの暗号化] openssl aes-256-cbc -e -in normal_file@ -out encrypted_file
@@ -56,5 +57,6 @@
 [galiasの重複がないかチェック] cat ${DOTPATH:?not set}/.zsh/30_aliases.zsh G '[A-Z]\+' G 'alias -g' | sed -E '/^ *#.*$/d;s/^.*alias -g ([A-Z0-9]+)=.*$/\1/' S | uniq -c G -v "^ *1" A 2
 [tacがなければtail -rを出力] echo "${${${(M)${+commands[tac]}#1}:+tac}:-"tail -r"}"
 [git logで使った絵文字を列挙] git log --oneline | grep -o ':\w\+:' | sort -u | if has emojify; then emojify; else cat -; fi
+[テキストのコマンドの総行数] for file in $DOTPATH/bin/*; do file $file | grep -i "text" | cut -d: -f1 | xargs wc -l; done | awk '{m+=$1} END{print m}'
 
 # vim:ft=sh

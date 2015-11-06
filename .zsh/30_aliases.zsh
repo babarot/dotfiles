@@ -239,8 +239,8 @@ alias -g from='$(mru)'
 
 destination_directories() {
     local -a d
-    if [[ -f ~/.enhancd/enhancd.log ]]; then
-        d=("${(@f)"$(<~/.enhancd/enhancd.log)"}")
+    if [[ -f $ENHANCD_LOG ]]; then
+        d=("${(@f)"$(<$ENHANCD_LOG)"}")
     else
         d=(
         #${GOPATH%%:*}/src/github.com/**/*~**/*\.git/**(N-/)

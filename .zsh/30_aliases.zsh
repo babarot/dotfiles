@@ -160,19 +160,19 @@ mru() {
     local line ok make_dir i arr
     local get_styles styles style
     while : ${make_dir:=0}; ok=("${ok[@]:-dummy_$RANDOM}"); cmd="$(
-        { cat <$f1; echo "${(F)f2}"; } \
+        { if (( $#f1 > 0 )); then cat <$f1; fi; echo "${(F)f2}"; } \
             | while read line; do [ -e "$line" ] && echo "$line"; done \
             | while read line; do [ "$make_dir" -eq 1 ] && echo "${line:h}/" || echo "$line"; done \
             | awk '!a[$0]++' \
             | perl -pe 's/^(\/.*\/)(.*)$/\033[34m$1\033[m$2/' \
             | fzf --ansi --multi --query="$q" \
-            --no-sort --exit-0 --prompt="MRU> " \
-            --print-query --expect=ctrl-v,ctrl-x,ctrl-l,ctrl-q,ctrl-r,"?"
+            --no-sort --prompt="MRU> " \
+            --print-query --expect=ctrl-v,ctrl-x,ctrl-l,ctrl-q,ctrl-r,"?",ctrl-z
             )"; do
         q="$(head -1 <<< "$cmd")"
         k="$(head -2 <<< "$cmd" | tail -1)"
         res="$(sed '1,2d;/^$/d' <<< "$cmd")"
-        [ -z "$res" ] && continue
+        #[ -z "$res" ] && continue
         case "$k" in
             "?")
                 cat <<HELP > /dev/tty
@@ -187,6 +187,25 @@ keybind:
   ctrl-x  remove files (two-step)
 HELP
                 return 1
+                ;;
+            ctrl-z)
+                if [[ -z $res ]]; then
+                    f1=(
+                    ~/.vim_mru_files(N)
+                    ~/.unite/file_mru(N)
+                    ~/.cache/ctrlp/mru/cache.txt(N)
+                    ~/.frill(N)
+                    )
+                    f2=($DOTPATH/**/*~$DOTPATH/*\.git/**(.N))
+                    continue
+                fi
+                if [[ -d $res ]]; then
+                    make_dir=0
+                    f1=()
+                    f2=($(echo $res*(N)))
+                else
+                    continue
+                fi
                 ;;
             ctrl-r)
                 if [ $make_dir -eq 1 ]; then

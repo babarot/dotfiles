@@ -89,3 +89,16 @@ reload() {
     unfunction $f:t 2>/dev/null
     autoload -U $f:t
 }
+
+# chpwd function is called after cd command
+chpwd() {
+    ls -F
+}
+
+256colortest() {
+    local code
+    for code in {0..255}
+    do
+        echo -e "\e[38;05;${code}m $code: Test"
+    done
+}

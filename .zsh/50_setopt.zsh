@@ -154,3 +154,15 @@ setopt hist_verify
 
 # Enable history system like a Bash
 setopt bang_hist
+
+if :; then
+    setopt auto_param_slash
+    setopt list_types
+    setopt auto_menu
+    setopt auto_param_keys
+    setopt interactive_comments
+    setopt magic_equal_subst
+    setopt complete_in_word
+    setopt always_last_prompt
+    setopt globdots
+fi

@@ -35,7 +35,11 @@ autoload     run-help-svk
 autoload     run-help-svn
 
 # It is necessary for the setting of DOTPATH
-[ -f ~/.path ] && source ~/.path
+if [[ -f ~/.path ]]; then
+    source ~/.path
+else
+    export DOTPATH="${0:A:t}"
+fi
 
 # DOTPATH environment variable specifies the location of dotfiles.
 # On Unix, the value is a colon-separated string. On Windows,
@@ -58,18 +62,13 @@ if [[ -f $VITAL_PATH ]]; then
     source "$VITAL_PATH"
 fi
 
-# Check whether the vital file is loaded
-if ! vitalize 2>/dev/null; then
-    echo "$fg[red]cannot vitalize$reset_color" 1>&2
-    return 1
-fi
-
 antigen=~/.antigen
 antigen_plugins=(
-"b4b4r07/enhancd"
+"b4b4r07/cli-finder"
 "b4b4r07/emoji-cli"
-"b4b4r07/zsh-gomi"
+"b4b4r07/enhancd"
 "b4b4r07/tmuxlogger"
+"b4b4r07/zsh-gomi"
 "b4b4r07/zsh-vimode-visual"
 "brew"
 "hchbaw/opp.zsh"
@@ -84,40 +83,26 @@ setup_bundles() {
     modules() {
         e_arrow $(e_header "Setup modules...")
 
-        local f
-        local -a lpath
-        [[ -d ~/.zsh ]]     && lpath=(~/.zsh/[0-9]*.(sh|zsh)   $lpath)
-        [[ -d ~/.modules ]] && lpath=(~/.modules/**/*.(sh|zsh) $lpath)
+        local -a modules_path
+        modules_path=(
+        ~/.zsh/[0-9]*.(sh|zsh)(N^*)
+        ~/.modules/*.(sh|zsh)(N^*)
+        )
 
-        for f in $lpath[@]
-        do
-            # not execute files
-            if [[ ! -x $f ]]; then
-                source "$f" && echo "loading $f" | e_indent 2
-            fi
-        done
+        local f
+        for f ($modules_path) source "$f" && echo "loading $f" | e_indent 2
     }
 
     # has_plugin returns true if $1 plugin are installed and available
     has_plugin() {
-        if [[ -n $1 ]]; then
-            [[ -n ${(M)antigen_plugins:#$1} ]] || [[ -n ${(M)antigen_plugins:#*/$1} ]]
-        else
-            return 1
-        fi
+        (( ${antigen_plugins[(I)$1]} ))
+        return $status
     }
 
     # bundle_install installs antigen and runs bundles command
     bundle_install() {
-        # require git command
-        if ! has "git"; then
-            echo "git: required" 1>&2
-            return 1
-        fi
-
         # install antigen
         git clone https://github.com/zsh-users/antigen $antigen
-
         # run bundles
         bundles
     }
@@ -126,13 +111,10 @@ setup_bundles() {
     bundles() {
         if [[ -f $antigen/antigen.zsh ]]; then
             e_arrow $(e_header "Setup antigen...")
-
-            local p
-
-            # load antigen
             source $antigen/antigen.zsh
 
             # check plugins installed by antigen
+            local p
             for p in ${antigen_plugins[@]}
             do
                 echo "checking... $p" | e_indent 2
@@ -142,7 +124,7 @@ setup_bundles() {
             # apply antigen
             antigen-apply
         else
-            echo "$fg[red]To make your shell strong, run 'bundle_install'.$reset_color"
+            has "git" && echo "$fg[red]To make your shell strong, run 'bundle_install'.$reset_color"
         fi
     }
 
@@ -151,10 +133,16 @@ setup_bundles() {
 }
 
 zsh_startup() {
+    # Exit if called from vim
     [[ -n "$VIMRUNTIME" ]] && return
 
+    # Check whether the vital file is loaded
+    if ! vitalize 2>/dev/null; then
+        echo "$fg[red]cannot vitalize$reset_color" 1>&2
+        return 1
+    fi
+
     # tmux_automatically_attach attachs tmux session automatically when your are in zsh
-    #tmux_automatically_attach
     $DOTPATH/bin/tmuxx
     # setup_bundles return true if antigen plugins and some modules are valid
     setup_bundles || return 1
@@ -164,16 +152,6 @@ zsh_startup() {
 }
 
 if zsh_startup; then
-    setopt auto_param_slash
-    setopt list_types
-    setopt auto_menu
-    setopt auto_param_keys
-    setopt interactive_comments
-    setopt magic_equal_subst
-    setopt complete_in_word
-    setopt always_last_prompt
-    setopt globdots
-
     # Important
     zstyle ':completion:*:default' menu select=2
 
@@ -207,10 +185,5 @@ if zsh_startup; then
     bindkey -M menuselect '^l' vi-forward-char
     #bindkey -M menuselect '^k' accept-and-infer-next-history
 fi
-
-# chpwd function is called after cd command
-chpwd() {
-    ls -F
-}
 
 # vim:fdm=marker fdc=3 ft=zsh ts=4 sw=4 sts=4:

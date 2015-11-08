@@ -405,9 +405,6 @@ endif
 "==============================================================================
 
 " func s:bundle() {{{2
-" @params string
-" @return bool
-"
 function! s:bundled(bundle)
   if !isdirectory($VIMBUNDLE)
     return s:false
@@ -424,9 +421,6 @@ function! s:bundled(bundle)
 endfunction
 
 " func s:has_plugin() {{{2
-" @params string
-" @return bool
-"
 function! s:has_plugin(name)
   " Check {name} plugin whether there is in the runtime path
   let nosuffix = a:name =~? '\.vim$' ? a:name[:-5] : a:name
@@ -439,9 +433,6 @@ function! s:has_plugin(name)
 endfunction
 
 " func s:b4b4r07() {{{2
-" @params -
-" @return -
-"
 function! s:b4b4r07()
   hide enew
   setlocal buftype=nofile nowrap nolist nonumber bufhidden=wipe
@@ -476,9 +467,6 @@ function! s:b4b4r07()
 endfunction
 
 " func s:escape_filename() {{{2
-" @params string
-" @return string
-"
 function! s:escape_filename(fname)
   let esc_filename_chars = ' *?[{`$%#"|!<>();&' . "'\t\n"
   if exists("*fnameescape")
@@ -489,9 +477,6 @@ function! s:escape_filename(fname)
 endfunction
 
 " func s:has() {{{2
-" @params string
-" @return bool
-"
 function! s:has(path)
   let save_wildignore = &wildignore
   setlocal wildignore=
@@ -504,17 +489,11 @@ function! s:has(path)
 endfunction
 
 " func s:get_dir_separator() {{{2
-" @params -
-" @return string
-"
 function! s:get_dir_separator()
   return fnamemodify('.', ':p')[-1 :]
 endfunction
 
 " func s:echomsg() {{{2
-" @params string, string
-" @return -
-"
 function! s:echomsg(hl, msg)
   execute 'echohl' a:hl
   try
@@ -525,9 +504,6 @@ function! s:echomsg(hl, msg)
 endfunction
 
 " func s:error() {{{2
-" @params string
-" @return bool
-"
 function! s:error(msg)
   echohl ErrorMsg
   echo 'ERROR: ' . a:msg
@@ -536,9 +512,6 @@ function! s:error(msg)
 endfunction
 
 " func s:warning() {{{2
-" @params string
-" @return -
-"
 function! s:warning(msg)
   echohl WarningMsg
   echo 'WARNING: ' . a:msg
@@ -546,17 +519,11 @@ function! s:warning(msg)
 endfunction
 
 " func s:confirm() {{{2
-" @params string
-" @return bool
-"
 function! s:confirm(msg)
   return input(printf('%s [y/N]: ', a:msg)) =~? '^y\%[es]$'
 endfunction
 
 " func s:mkdir() {{{2
-" @params string...
-" @return bool
-"
 function! s:mkdir(dir)
   if !exists("*mkdir")
     return s:false
@@ -571,9 +538,6 @@ function! s:mkdir(dir)
 endfunction
 
 " func s:auto_mkdir() {{{2
-" @params string, bool
-" @return bool
-"
 function! s:auto_mkdir(dir, force)
   if !isdirectory(a:dir) && (a:force ||
         \ input(printf('"%s" does not exist. Create? [y/N] ', a:dir)) =~? '^y\%[es]$')
@@ -582,9 +546,6 @@ function! s:auto_mkdir(dir, force)
 endfunction
 
 " func s:smart_foldcloser() {{{2
-" @params -
-" @return -
-"
 function! s:smart_foldcloser()
   if foldlevel('.') == 0
     normal! zM
@@ -604,9 +565,6 @@ function! s:smart_foldcloser()
 endfunction
 
 " func s:smart_execute() {{{2
-" @params string
-" @return -
-"
 function! s:smart_execute(expr)
   let wininfo = winsaveview()
   execute a:expr
@@ -614,19 +572,12 @@ function! s:smart_execute(expr)
 endfunction
 
 " func s:rand() {{{2
-" @params int
-" @return int
-"
 function! s:rand(n)
   let match_end = matchend(reltimestr(reltime()), '\d\+\.') + 1
   return reltimestr(reltime())[match_end : ] % (a:n + 1)
 endfunction
 
 " func s:random_string() {{{2
-" @params int
-" @return string
-" desc: portability
-"
 function! s:random_string(n)
   let n = a:n ==# '' ? 8 : a:n
   let s = []
@@ -640,9 +591,6 @@ function! s:random_string(n)
 endfunction
 
 " func s:move_left_center_right() {{{2
-" @params ...
-" @return -
-"
 function! s:move_left_center_right(...)
   let curr_pos = getpos('.')
   let curr_line_len = len(getline('.'))
@@ -671,10 +619,6 @@ function! s:move_left_center_right(...)
 endfunction
 
 " func s:toggle_option() {{{2
-" @params string
-" @return -
-" Usage: s:toggle_option("relativenumber")
-"
 function! s:toggle_option(option_name)
   if exists('&' . a:option_name)
     execute 'setlocal' a:option_name . '!'
@@ -683,9 +627,6 @@ function! s:toggle_option(option_name)
 endfunction
 
 " func s:toggle_variable() {{{2
-" @params string
-" @return -
-"
 function! s:toggle_variable(variable_name)
   if eval(a:variable_name)
     execute 'let' a:variable_name . ' = 0'
@@ -696,9 +637,6 @@ function! s:toggle_variable(variable_name)
 endfunction
 
 " func s:rename() {{{2
-" @params string, string
-" @return bool
-"
 function! s:rename(new, type)
   if a:type ==# 'file'
     if empty(a:new)
@@ -740,9 +678,6 @@ function! s:rename(new, type)
 endfunction
 
 " func s:make_junkfile() {{{2
-" @params -
-" @return -
-"
 function! s:make_junkfile()
   let junk_dir = $HOME . '/.vim/junk'. strftime('/%Y/%m/%d')
   if !isdirectory(junk_dir)
@@ -758,9 +693,6 @@ function! s:make_junkfile()
 endfunction
 
 " func s:copy_current_path() {{{2
-" @params -
-" @return -
-"
 function! s:copy_current_path(...)
   let path = a:0 ? expand('%:p:h') : expand('%:p')
   if s:is_windows
@@ -772,9 +704,6 @@ function! s:copy_current_path(...)
 endfunction
 
 " func s:load_source() {{{2
-" @params string
-" @return -
-"
 function! s:load_source(path)
   let path = expand(a:path)
   if filereadable(path)
@@ -783,9 +712,6 @@ function! s:load_source(path)
 endfunction
 
 " func s:open() {{{2
-" @params string
-" @return bool
-"
 function! s:open(file)
   if !executable('open')
     return s:error('open: not supported yet.')
@@ -796,9 +722,6 @@ function! s:open(file)
 endfunction
 
 " func s:rm() {{{2
-" @params string
-" @return -
-"
 function! s:rm(...)
   let files = []
   for file in a:0 ? map(copy(a:000), 'expand(v:val)') : split(simplify(expand('%:p')))
@@ -828,9 +751,6 @@ function! s:rm(...)
 endfunction
 
 " func s:ls() {{{2
-" @params string, string
-" @return bool
-"
 function! s:ls(path, bang)
   let path = empty(a:path) ? getcwd() : expand(a:path)
   if filereadable(path)
@@ -898,9 +818,6 @@ function! s:ls(path, bang)
 endfunction
 
 " func s:buf_delete() {{{2
-" @params string
-" @return bool
-"
 function! s:buf_delete(bang)
   let file = fnamemodify(expand('%'), ':p')
   let g:buf_delete_safety_mode = 1
@@ -935,9 +852,6 @@ function! s:buf_delete(bang)
 endfunction
 
 " func s:count_buffers() {{{2
-" @params -
-" @return int
-"
 function! s:count_buffers()
   let l:count = 0
   for i in range(1, bufnr('$'))
@@ -949,9 +863,6 @@ function! s:count_buffers()
 endfunction
 
 " func s:get_buflists() {{{2
-" @params string...
-" @return -
-"
 function! s:get_buflists(...)
   if a:0 && a:1 ==# 'n'
     silent bnext
@@ -977,9 +888,6 @@ function! s:get_buflists(...)
 endfunction
 
 " func s:smart_bwipeout() {{{2
-" @params int
-" @return return
-"
 function! s:smart_bwipeout(mode)
   " Bwipeout! all buffers except current buffer.
   if a:mode == 1
@@ -1038,9 +946,6 @@ function! s:smart_bwipeout(mode)
 endfunction
 
 " func s:smart_bchange() {{{2
-" @params int
-" @return return
-"
 function! s:smart_bchange(mode)
   let mode = a:mode
 
@@ -1079,9 +984,6 @@ function! s:smart_bchange(mode)
 endfunction
 
 " func s:smart_bchange() {{{2
-" @params string, string
-" @return -
-"
 function! s:bufnew(buf, bang)
   let buf = empty(a:buf) ? '' : a:buf
   execute "new" buf | only
@@ -1096,9 +998,6 @@ function! s:bufnew(buf, bang)
 endfunction
 
 " func s:buf_enqueue() {{{2
-" @params string
-" @return -
-"
 function! s:buf_enqueue(buf)
   let buf = fnamemodify(a:buf, ':p')
   if bufexists(buf) && buflisted(buf) && filereadable(buf)
@@ -1111,9 +1010,6 @@ function! s:buf_enqueue(buf)
 endfunction
 
 " func s:buf_dequeue() {{{2
-" @params string
-" @return []
-"
 function! s:buf_dequeue(buf)
   if empty(s:bufqueue)
     throw 'bufqueue: Empty queue.'
@@ -1127,9 +1023,6 @@ function! s:buf_dequeue(buf)
 endfunction
 
 " func s:buf_restore() {{{2
-" @params -
-" @return -
-"
 function! s:buf_restore()
   try
     execute 'edit' s:buf_dequeue(-1)
@@ -1142,9 +1035,6 @@ function! s:buf_restore()
 endfunction
 
 " func s:all_buffers_bwipeout() {{{2
-" @params -
-" @return -
-"
 function! s:all_buffers_bwipeout()
   for i in range(1, bufnr('$'))
     if bufexists(i) && buflisted(i)
@@ -1154,9 +1044,6 @@ function! s:all_buffers_bwipeout()
 endfunction
 
 " func s:win_tab_switcher() {{{2
-" @params string...
-" @return -
-"
 function! s:win_tab_switcher(...)
   let minus = 0
   if &laststatus == 1 && winnr('$') != 1
@@ -1297,9 +1184,6 @@ function! s:win_tab_switcher(...)
 endfunction
 
 " func s:tabdrop() {{{2
-" @params string
-" @return -
-"
 function! s:tabdrop(target)
   let target = empty(a:target) ? expand('%:p') : bufname(a:target + 0)
   if !empty(target) && bufexists(target) && buflisted(target)
@@ -1310,9 +1194,6 @@ function! s:tabdrop(target)
 endfunction
 
 " func s:tabnew() {{{2
-" @params int
-" @return -
-"
 function! s:tabnew(num)
   let num = empty(a:num) ? 1 : a:num
   for i in range(1, num)
@@ -1321,9 +1202,6 @@ function! s:tabnew(num)
 endfunction
 
 " func s:move_tabpage() {{{2
-" @params string
-" @return -
-"
 function! s:move_tabpage(dir)
   if a:dir == "right"
     let num = tabpagenr()
@@ -1336,9 +1214,6 @@ function! s:move_tabpage(dir)
 endfunction
 
 " func s:close_all_right_tabpages() {{{2
-" @params -
-" @return -
-"
 function! s:close_all_right_tabpages()
   let current_tabnr = tabpagenr()
   let last_tabnr = tabpagenr("$")
@@ -1351,9 +1226,6 @@ function! s:close_all_right_tabpages()
 endfunction
 
 " func s:close_all_left_tabpages() {{{2
-" @params -
-" @return -
-"
 function! s:close_all_left_tabpages()
   let current_tabnr = tabpagenr()
   let num_close = current_tabnr - 1
@@ -1365,9 +1237,6 @@ function! s:close_all_left_tabpages()
 endfunction
 
 " func s:find_tabnr() {{{2
-" @params int
-" @return int
-"
 function! s:find_tabnr(bufnr)
   for tabnr in range(1, tabpagenr("$"))
     if index(tabpagebuflist(tabnr), a:bufnr) !=# -1
@@ -1378,9 +1247,6 @@ function! s:find_tabnr(bufnr)
 endfunction
 
 " func s:find_winnr() {{{2
-" @params int
-" @return int
-"
 function! s:find_winnr(bufnr)
   for winnr in range(1, winnr("$"))
     if a:bufnr ==# winbufnr(winnr)
@@ -1391,9 +1257,6 @@ function! s:find_winnr(bufnr)
 endfunction
 
 " func s:find_winnr() {{{2
-" @params string, string
-" @return return
-"
 function! s:recycle_open(default_open, path)
   let default_action = a:default_open . ' ' . a:path
   if bufexists(a:path)
@@ -4265,13 +4128,13 @@ endif
 
 " justinmk/vim-dirvish {{{2
 if s:neobundled('vim-dirvish')
-  call neobundle#config({
-        \   "lazy" : 1,
-        \   "autoload" : {
-        \     "commands" : [ "Dirvish" ],
-        \     "functions" : [ "dirvish#open()" ],
-        \   }
-        \ })
+  "call neobundle#config({
+  "      \   "lazy" : 1,
+  "      \   "autoload" : {
+  "      \     "commands" : [ "Dirvish" ],
+  "      \     "functions" : [ "dirvish#open()" ],
+  "      \   }
+  "      \ })
 
   " Options
   let g:dirvish_hijack_netrw = 1

@@ -63,7 +63,7 @@ export HISTSIZE=1000000
 export SAVEHIST=1000000
 
 # fzf - command-line fuzzy finder (https://github.com/junegunn/fzf)
-export FZF_DEFAULT_OPTS="--extended --ansi --multi --bind=ctrl-u:page-up --bind=ctrl-d:page-down"
+export FZF_DEFAULT_OPTS="--extended --ansi --multi"
 
 # Cask
 #export HOMEBREW_CASK_OPTS="--appdir=/Applications"
@@ -83,8 +83,10 @@ if [ $UID = 0 ]; then
     export SAVEHIST=0
 fi
 
+# available $INTERACTIVE_FILTER
 export INTERACTIVE_FILTER="fzf:peco:percol:gof:pick"
-#is_linux && export EMOJI_CLI_FILTER=peco
+
+# keybind ^X^X
 export ONELINER_FILE="$DOTPATH/doc/misc/commands.txt"
 
 [ -f ~/.secret ] && . ~/.secret

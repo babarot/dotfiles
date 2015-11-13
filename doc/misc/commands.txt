@@ -58,5 +58,10 @@
 [tacがなければtail -rを出力] echo "${${${(M)${+commands[tac]}#1}:+tac}:-"tail -r"}"
 [git logで使った絵文字を列挙] git log --oneline | grep -o ':\w\+:' | sort -u | if has emojify; then emojify; else cat -; fi
 [テキストのコマンドの総行数] for file in $DOTPATH/bin/*; do file $file | grep -i "text" | cut -d: -f1 | xargs wc -l; done | awk '{m+=$1} END{print m}'
+[lsとsedによる簡易treeコマンド] ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
+
+: gif アニメ
+[logoを作成する] mov2gif -f --size 1500x500 --rate 13 ~/logo@.mov
+[demo.gifを作成する] mov2gif -f --rate 13 ~/demo@.mov
 
 # vim:ft=sh

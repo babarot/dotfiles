@@ -11,8 +11,8 @@
     co = checkout
     ci = commit
     df = diff
+    t  = typechange
     graph = log --graph --date-order --all --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=short
-    t = typechange
 
 [help]
     autocorrect = 1
@@ -24,16 +24,16 @@
     default = matching
 
 [user]
-    name = b4b4r07
+    name  = b4b4r07
     email = b4b4r07@gmail.com
 
 [pager]
-    log  = diff-highlight | less -R
-    show = diff-highlight | less -R
-    diff = diff-highlight | less -R
+    log  = diff-highlight | less -RX
+    show = diff-highlight | less -RX
+    diff = diff-highlight | less -RX
 
 [diff]
-    tool = vimdiff
+    tool      = vimdiff
     algorithm = histogram
 
 [ghq]

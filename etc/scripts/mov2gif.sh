@@ -30,6 +30,9 @@ do
             echo "    -r, --rate  frame rate per second" 1>&2
             exit 1
             ;;
+        -f|--force)
+            is_force=1
+            ;;
         -r|--rate)
             if [[ $2 =~ ^[0-9]+$ ]]; then
                 rate="$2"; shift
@@ -59,15 +62,15 @@ if [ -z "$mov_file" ]; then
     exit 1
 fi
 
-if [ ! -f "$mov_file" ] || [[ ! $mov_file =~ \.mov$ ]]; then
-    echo "$mov_file: no such *.mov file" 1>&2
+if [ ! -f "$mov_file" ]; then
+    echo "$mov_file: no such file or directory" 1>&2
     exit 1
 fi
 
 out_file="$(basename "$mov_file")"
 gif_file="$(dirname "$mov_file")/${out_file%.*}.gif"
 
-if [ -f "$gif_file" ]; then
+if [ -f "$gif_file" ] && [ ${is_force:-0} -ne 1 ]; then
     echo "$gif_file: already exists" 1>&2
     exit 1
 fi

@@ -1,22 +1,13 @@
 #compdef mov2gif
 
-_mov2gif() {
-  local curcontext="$curcontext" state line ret=1
-  typeset -A opt_args
+local curcontext="$curcontext" state line ret=1
+typeset -A opt_args
 
-  _arguments -C \
-    '(- :)'{-h,--help}'[show this help]' \
-    '(-s --size)'{-s,--size}'[specify gif file size e.g., 600x400]' \
-    '(-r --rate)'{-r,--rate}'[frame rate per seconds]' \
-    '(-)*:file:->files' && ret=0
-
-  case $state in
-    (files)
-      _files -g '*.mov'
-      ;;
-  esac
-}
-
-_mov2gif "$@"
+_arguments -C \
+  '(- :)'{-h,--help}'[show this help]' \
+  '(-f --force)'{-f,--force}'[if an destination file exists, overrides it forcibly]' \
+  '(-s --size)'{-s,--size}'[specify gif file size e.g., 600x400]' \
+  '(-r --rate)'{-r,--rate}'[frame rate per seconds]' \
+  '(-)*:file:_files -g "*.mov"' && ret=0
 
 # vim: ft=zsh sw=2 ts=2 et

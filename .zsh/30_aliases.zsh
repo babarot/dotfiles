@@ -342,5 +342,17 @@ alias f='fzf \
     --bind="ctrl-v:execute(vim {})"'
 alias -g F='$(f)'
 
+# list git branch
+git_branch() {
+    is_git_repo || return
+    has "fzf"   || return
+
+    {
+        git branch | sed -e '/^\*/d'
+        git branch | sed -n -e '/^\*/p'
+    } \
+        | fzf --select-1 \
+        | sed -e 's/^\*[ ]*//g'
 }
 
+alias -g GB='$(git_branch)'

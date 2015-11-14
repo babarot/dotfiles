@@ -143,7 +143,7 @@ awk_alias() {
 alias -g A="| awk_alias"
 
 mru() {
-    local -a f1 f2
+    local -a f1 f2 f2_backup
     f1=(
     ~/.vim_mru_files(N)
     ~/.unite/file_mru(N)
@@ -167,7 +167,7 @@ mru() {
             | perl -pe 's/^(\/.*\/)(.*)$/\033[34m$1\033[m$2/' \
             | fzf --ansi --multi --query="$q" \
             --no-sort --prompt="MRU> " \
-            --print-query --expect=ctrl-v,ctrl-x,ctrl-l,ctrl-q,ctrl-r,"?",ctrl-z
+            --print-query --expect=ctrl-v,ctrl-x,ctrl-l,ctrl-q,ctrl-r,"?",ctrl-z,ctrl-y
             )"; do
         q="$(head -1 <<< "$cmd")"
         k="$(head -2 <<< "$cmd" | tail -1)"
@@ -188,26 +188,30 @@ keybind:
 HELP
                 return 1
                 ;;
+            ctrl-y)
+                # Reset ctrl-z
+                f1=(
+                ~/.vim_mru_files(N)
+                ~/.unite/file_mru(N)
+                ~/.cache/ctrlp/mru/cache.txt(N)
+                ~/.frill(N)
+                )
+                f2=($f2_backup)
+                ;;
             ctrl-z)
-                if [[ -z $res ]]; then
-                    f1=(
-                    ~/.vim_mru_files(N)
-                    ~/.unite/file_mru(N)
-                    ~/.cache/ctrlp/mru/cache.txt(N)
-                    ~/.frill(N)
-                    )
-                    f2=($DOTPATH/**/*~$DOTPATH/*\.git/**(.N))
-                    continue
-                fi
+                # Enter to the directroy (or parent directory of the file) under the cursor
+                f2_backup=($f2)
+                make_dir=0
                 if [[ -d $res ]]; then
-                    make_dir=0
                     f1=()
-                    f2=($(echo $res*(N)))
+                    f2=(${res}*(N))
                 else
-                    continue
+                    f1=()
+                    f2=(${res:h}/*(N))
                 fi
                 ;;
             ctrl-r)
+                # show up the parent directories
                 if [ $make_dir -eq 1 ]; then
                     make_dir=0
                 else
@@ -216,6 +220,7 @@ HELP
                 continue
                 ;;
             ctrl-l)
+                # less
                 export LESS='-R -f -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
                 arr=("${(@f)res}")
                 if [[ -d ${arr[1]} ]]; then
@@ -233,6 +238,7 @@ HELP
                 fi
                 ;;
             ctrl-x)
+                # remove (2-steps)
                 if [[ ${(j: :)ok} == ${(j: :)${(@f)res}} ]]; then
                     eval '${${${(M)${+commands[gomi]}#1}:+gomi}:-rm} "${(@f)res}" 2>/dev/null'
                     ok=()
@@ -241,9 +247,11 @@ HELP
                 fi
                 ;;
             ctrl-v)
+                # vim
                 vim -p "${(@f)res}" < /dev/tty > /dev/tty
                 ;;
             ctrl-q)
+                # quit with echo
                 echo "$res" < /dev/tty > /dev/tty
                 return $status
                 ;;

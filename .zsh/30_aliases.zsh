@@ -334,6 +334,9 @@ uniq_alias() {
 }
 alias -g U="| uniq_alias"
 
+if has "gomi"; then
+    alias -g D="| gomi"
+fi
 
 # finder
 alias f='fzf \
@@ -341,6 +344,9 @@ alias f='fzf \
     --bind="ctrl-h:execute(ls -l {} | less)" \
     --bind="ctrl-v:execute(vim {})"'
 alias -g F='$(f)'
+
+# list galias
+alias galias="alias | command grep -E '^[A-Z]'"
 
 # list git branch
 git_branch() {

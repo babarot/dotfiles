@@ -362,3 +362,10 @@ git_branch() {
 }
 
 alias -g GB='$(git_branch)'
+
+if has "tw"; then
+    alias -g TW="| tw --pipe"
+    if has "emojify"; then
+        alias -g TW="| emojify | tw --pipe"
+    fi
+fi

@@ -64,7 +64,7 @@ fi
 
 antigen=~/.antigen
 antigen_plugins=(
-"b4b4r07/cli-finder"
+#"b4b4r07/cli-finder"
 "b4b4r07/emoji-cli"
 "b4b4r07/enhancd"
 "b4b4r07/tmuxlogger"
@@ -96,7 +96,8 @@ setup_bundles() {
 
     # has_plugin returns true if $1 plugin are installed and available
     has_plugin() {
-        (( ${antigen_plugins[(I)$1]} ))
+        #(( ${antigen_plugins[(I)$1]} ))
+        (( ${antigen_plugins[(I)${${(M)1:#*/*}:-"*"/${1#*/}}|${1#*/}]} ))
         return $status
     }
 
@@ -145,6 +146,7 @@ zsh_startup() {
 
     # tmux_automatically_attach attachs tmux session automatically when your are in zsh
     $DOTPATH/bin/tmuxx
+
     # setup_bundles return true if antigen plugins and some modules are valid
     setup_bundles || return 1
 

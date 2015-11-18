@@ -77,5 +77,9 @@ fi
 
 ffmpeg -i "$mov_file" -s "${size:-600x400}" -pix_fmt rgb24 -r "${rate:-10}" -f gif - | gifsicle --optimize=3 --delay=3 >"$gif_file"
 if [ $? -eq 0 ] && [ -f "$gif_file" ]; then
-    echo "Created $gif_file, successfully"
+    success="Created $gif_file, successfully"
+    echo "$success"
+    if has "terminal-notifier"; then
+        terminal-notifier -message "$success" -title "${0##*/}"
+    fi
 fi

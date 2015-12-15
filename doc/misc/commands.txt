@@ -64,4 +64,7 @@
 [logoを作成する] mov2gif -f --size 1500x500 --rate 13 ~/logo@.mov
 [demo.gifを作成する] mov2gif -f --rate 13 ~/demo@.mov
 
+: red_fat_
+[進捗報告がシェル芸] is_git_repo && git log --oneline --shortstat $PREV_COMMIT@ | awk '!(NR%2){as+=$4;rs+=$6}END{printf "%d insertion(+), %d deletion(-)\n", as, rs}'
+
 # vim:ft=sh

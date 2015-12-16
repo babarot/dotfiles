@@ -134,6 +134,49 @@ setup_bundles() {
     modules; echo
 }
 
+zsh_zplug() {
+    [[ -d ~/.zplug ]] || {
+        git clone https://github.com/b4b4r07/zplug ~/.zplug
+        source ~/.zplug/zplug
+        zplug update --self
+    }
+
+    # For development
+    source ~/Dropbox/zplug/zplug
+
+    has_plugin() {
+        (( $+functions[zplug] )) || return 1
+        zplug check "${1:?too few arguments}"
+        return $status
+    }
+
+    zplug "b4b4r07/zplug"
+
+    # Local loading
+    zplug "~/.modules", from:local, nice:1, of:"*.sh"
+    zplug "~/.zsh",     from:local, nice:2
+
+    # Remote loading
+    zplug "b4b4r07/zsh-gomi",   as:command, of:bin/gomi
+    zplug "b4b4r07/http_code",  as:command, of:bin
+    zplug "b4b4r07/enhancd",    of:enhancd.sh
+    zplug "b4b4r07/emoji-cli",  if:"which jq"
+    zplug "mrowa44/emojify",    as:command
+    zplug "zsh-users/zsh-completions"
+    zplug "zsh-users/zsh-history-substring-search"
+    zplug "zsh-users/zsh-syntax-highlighting", nice:19
+
+    if ! zplug check --verbose; then
+        printf "Install? [y/N]: "
+        if read -q; then
+            echo; zplug install
+        else
+            echo
+        fi
+    fi
+    zplug load --verbose
+}
+
 zsh_startup() {
     # Exit if called from vim
     [[ -n "$VIMRUNTIME" ]] && return
@@ -147,8 +190,9 @@ zsh_startup() {
     # tmux_automatically_attach attachs tmux session automatically when your are in zsh
     $DOTPATH/bin/tmuxx
 
+    zsh_zplug
     # setup_bundles return true if antigen plugins and some modules are valid
-    setup_bundles || return 1
+    # setup_bundles || return 1
 
     # Display Zsh version and display number
     echo -e "\n$fg_bold[cyan]This is ZSH $fg_bold[red]${ZSH_VERSION}$fg_bold[cyan] - DISPLAY on $fg_bold[red]$DISPLAY$reset_color\n"

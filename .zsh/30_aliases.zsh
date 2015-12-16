@@ -165,7 +165,7 @@ mru() {
             | while read line; do [ "$make_dir" -eq 1 ] && echo "${line:h}/" || echo "$line"; done \
             | awk '!a[$0]++' \
             | perl -pe 's/^(\/.*\/)(.*)$/\033[34m$1\033[m$2/' \
-            | fzf --ansi --multi --query="$q" \
+            | fzf --ansi --multi --query="$@" \
             --no-sort --prompt="MRU> " \
             --print-query --expect=ctrl-v,ctrl-x,ctrl-l,ctrl-q,ctrl-r,"?",ctrl-z,ctrl-y
             )"; do
@@ -262,7 +262,7 @@ HELP
         esac
     done
 }
-alias -g from='$(mru)'
+alias -g FROM='$(mru)'
 
 destination_directories() {
     local -a d
@@ -318,7 +318,7 @@ destination_directories() {
         esac
     done
 }
-alias -g to='$(destination_directories)'
+alias -g TO='$(destination_directories)'
 
 uniq_alias() {
     if (( ${ZSH_VERSION%%.*} < 5 )); then
@@ -369,3 +369,43 @@ if has "tw"; then
         alias -g TW="| emojify | tw --pipe"
     fi
 fi
+
+git_modified_files() {
+    is_git_repo || return
+
+    local cmd q k res ok
+    while ok=("${ok[@]:-dummy_$RANDOM}"); cmd="$(
+        git status --po \
+            | awk '$1=="M"{print $2}' \
+            | FZF_DEFAULT_OPTS= fzf --ansi --multi --query="$@" \
+            --no-sort --prompt="[C-a:add | C-c:checkout | C-d:diff]> " \
+            --print-query --expect=ctrl-d,ctrl-a,ctrl-c \
+            --bind=ctrl-z:toggle-all \
+            )"; do
+        q="$(head -1 <<< "$cmd")"
+        k="$(head -2 <<< "$cmd" | tail -1)"
+        res="$(sed '1,2d;/^$/d' <<< "$cmd")"
+        [ -z "$res" ] && continue
+        case "$k" in
+            ctrl-c)
+                if [[ ${(j: :)ok} == ${(j: :)${(@f)res}} ]]; then
+                    git checkout -- "${(@f)res}"
+                    ok=()
+                else
+                    ok=("${(@f)res}")
+                fi
+                ;;
+            ctrl-a)
+                git add "${(@f)res}"
+                ;;
+            ctrl-d)
+                git diff "${(@f)res}" < /dev/tty > /dev/tty
+                ;;
+            *)
+                echo "${(@f)res}" < /dev/tty > /dev/tty
+                break
+                ;;
+        esac
+    done
+}
+alias -g GG='$(git_modified_files)'

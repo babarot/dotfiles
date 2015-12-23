@@ -162,6 +162,7 @@ zsh_zplug() {
     zplug "b4b4r07/enhancd",    of:enhancd.sh
     zplug "b4b4r07/emoji-cli",  if:"which jq"
     zplug "mrowa44/emojify",    as:command
+    zplug "junegunn/fzf-bin",   as:command, from:gh-r, file:fzf, frozen:1
     zplug "zsh-users/zsh-completions"
     zplug "zsh-users/zsh-history-substring-search"
     zplug "zsh-users/zsh-syntax-highlighting", nice:19

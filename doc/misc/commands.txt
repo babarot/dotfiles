@@ -67,4 +67,7 @@
 : red_fat_
 [進捗報告がシェル芸] is_git_repo && git log --oneline --shortstat $PREV_COMMIT@ | awk '!(NR%2){as+=$4;rs+=$6}END{printf "%d insertion(+), %d deletion(-)\n", as, rs}'
 
+: git
+[git rmを一括でやる] git status -s | awk '$1=="D"{print $2}' | xargs git rm
+
 # vim:ft=sh

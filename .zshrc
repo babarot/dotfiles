@@ -157,12 +157,14 @@ zsh_zplug() {
     zplug "~/.zsh",     from:local, nice:2
 
     # Remote loading
-    zplug "b4b4r07/zsh-gomi",   as:command, of:bin/gomi
-    zplug "b4b4r07/http_code",  as:command, of:bin
-    zplug "b4b4r07/enhancd",    of:enhancd.sh
-    zplug "b4b4r07/emoji-cli",  if:"which jq"
-    zplug "mrowa44/emojify",    as:command
-    zplug "junegunn/fzf-bin",   as:command, from:gh-r, file:fzf, frozen:1
+    zplug "b4b4r07/zsh-gomi",  as:command, of:bin/gomi
+    zplug "b4b4r07/http_code", as:command, of:bin
+    zplug "b4b4r07/enhancd",   of:enhancd.sh
+    zplug "b4b4r07/emoji-cli", if:"which jq"
+    zplug "mrowa44/emojify",   as:command
+    zplug "junegunn/fzf-bin",  as:command, from:gh-r, file:"fzf", frozen:1
+    zplug "glidenote/hub-zsh-completion"
+    zplug "b4b4r07/zsh-vimode-visual"
     zplug "zsh-users/zsh-completions"
     zplug "zsh-users/zsh-history-substring-search"
     zplug "zsh-users/zsh-syntax-highlighting", nice:19

@@ -12,7 +12,7 @@ bindkey -d
 
 # NOTE: set fpath before compinit
 fpath=(~/.zsh/Completion(N-/) $fpath)
-fpath=(~/.zsh/functions/*(N-/) $fpath)
+fpath=(~/.zsh/functions(N-/) $fpath)
 fpath=(~/.zsh/plugins/zsh-completions(N-/) $fpath)
 fpath=(/usr/local/share/zsh/site-functions(N-/) $fpath)
 
@@ -163,6 +163,7 @@ zsh_zplug() {
     zplug "b4b4r07/emoji-cli", if:"which jq"
     zplug "mrowa44/emojify",   as:command
     zplug "junegunn/fzf-bin",  as:command, from:gh-r, file:"fzf", frozen:1
+    zplug "peco/peco",         as:command, from:gh-r, file:"fzf", at:v0.3.5
     zplug "glidenote/hub-zsh-completion"
     zplug "b4b4r07/zsh-vimode-visual"
     zplug "zsh-users/zsh-completions"

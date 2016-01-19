@@ -13,6 +13,9 @@ export ERR
 
 for i in "$DOTPATH"/etc/test/*_test.sh
 do
+    if [[ $i =~ zsh.sh ]]; then
+        continue
+    fi
     bash "$i" || ERR=1
 done
 

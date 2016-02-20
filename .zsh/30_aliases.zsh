@@ -4,6 +4,8 @@ if ! vitalize 2>/dev/null; then
     return 1
 fi
 
+alias p="print -l"
+
 # For mac, aliases
 if is_osx; then
     has "qlmanage" && alias ql='qlmanage -p "$@" >&/dev/null'
@@ -22,7 +24,6 @@ alias ..='cd ..'
 alias ld='ls -ld'          # Show info about the directory
 alias lla='ls -lAF'        # Show hidden all files
 alias ll='ls -lF'          # Show long file information
-alias l='ls -1F'           # Show long file information
 alias la='ls -AF'          # Show hidden files
 alias lx='ls -lXB'         # Sort by extension
 alias lk='ls -lSr'         # Sort by size, biggest last

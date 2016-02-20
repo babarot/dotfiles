@@ -1,4 +1,4 @@
-if [ -z "$DOTPATH" ]; then
+if [[ -z $DOTPATH ]]; then
     _get_dotpath() {
         local d
         d="${0:A:h}"
@@ -9,8 +9,25 @@ if [ -z "$DOTPATH" ]; then
         fi
     }
     export DOTPATH="$(_get_dotpath)"
+    unfunction _get_dotpath
 fi
-#[ -f $DOTPATH/etc/install ] && . $DOTPATH/etc/install
+
+# NOTE: set fpath before compinit
+typeset -gx -U fpath
+fpath=( \
+    ~/.zsh/Completion(N-/) \
+    ~/.zsh/functions(N-/) \
+    ~/.zsh/plugins/zsh-completions(N-/) \
+    /usr/local/share/zsh/site-functions(N-/) \
+    $fpath \
+    )
+
+# autoload
+autoload -Uz run-help
+autoload -Uz add-zsh-hook
+autoload -Uz colors && colors
+autoload -Uz compinit && compinit -u
+autoload -Uz is-at-least
 
 # LANGUAGE must be set by en_US
 export LANGUAGE="en_US.UTF-8"
@@ -41,6 +58,7 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 
 # ls command colors
 export LSCOLORS=exfxcxdxbxegedabagacad
+export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
 
 # Add ~/bin to PATH
 export PATH=~/bin:"$PATH"
@@ -78,7 +96,7 @@ export SAVEHIST=1000000
 # The size of asking history
 export LISTMAX=50
 # Do not add in root
-if [ $UID = 0 ]; then
+if [[ $UID == 0 ]]; then
     unset HISTFILE
     export SAVEHIST=0
 fi
@@ -89,4 +107,4 @@ export INTERACTIVE_FILTER="fzf:peco:percol:gof:pick"
 # keybind ^X^X
 export ONELINER_FILE="$DOTPATH/doc/misc/commands.txt"
 
-[ -f ~/.secret ] && . ~/.secret
+[[ -f ~/.secret ]] && source ~/.secret

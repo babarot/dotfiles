@@ -98,6 +98,7 @@ rate="${info[2]}"   # bandwidth of wifi wave
 ssid="${info[3]}"   # wifi ssid name
 
 # Determine the signal from rssi of wifi
+signal=""
 for ((j = 0; j < "${#signals[@]}"; j++))
 do
     # reference of strength (rssi)

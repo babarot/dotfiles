@@ -20,7 +20,8 @@ zplug "~/.zsh", \
 # commands
 zplug "b4b4r07/zgit", \
     as:command, \
-    of:bin
+    of:bin, \
+    on:"junegunn/fzf-bin"
 zplug "b4b4r07/zsh-gomi", \
     as:command, \
     of:bin/gomi
@@ -50,7 +51,8 @@ zplug "so-fancy/diff-so-fancy", \
 
 # plugins
 zplug "b4b4r07/emoji-cli", \
-    if:"which jq"
+    if:'(( $+commands[jq] ))' \
+    on:"junegunn/fzf-bin"
 zplug "b4b4r07/enhancd", \
     of:enhancd.sh
 zplug "zsh-users/zaw"
@@ -62,5 +64,3 @@ zplug "zsh-users/zsh-completions"
 zplug "zsh-users/zsh-history-substring-search"
 zplug "zsh-users/zsh-syntax-highlighting", \
     nice:19
-zplug "plugins/git", \
-    from:oh-my-zsh

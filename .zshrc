@@ -54,9 +54,10 @@ $DOTPATH/bin/tmuxx
 if [[ -f ~/Dropbox/zplug2/init.zsh ]]; then
     # For development
     source ~/Dropbox/zplug2/init.zsh
+    # source ~/Dropbox/zplug/zplug
 
-    export ZPLUG_EXTERNAL="$DOTPATH/.zsh/zplug.zsh"
-    export ZPLUG_CLONE_DEPTH=1
+    export ZPLUG_LOADFILE="$DOTPATH/.zsh/zplug.zsh"
+    # export ZPLUG_CLONE_DEPTH=0
 
     if ! zplug check --verbose; then
         printf "Install? [y/N]: "

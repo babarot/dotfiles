@@ -51,7 +51,7 @@ zplug "so-fancy/diff-so-fancy", \
 
 # plugins
 zplug "b4b4r07/emoji-cli", \
-    if:'(( $+commands[jq] ))' \
+    if:'(( $+commands[jq] ))', \
     on:"junegunn/fzf-bin"
 zplug "b4b4r07/enhancd", \
     of:enhancd.sh

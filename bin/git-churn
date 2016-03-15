@@ -27,4 +27,10 @@ fi
 #
 # (These are all standard arguments to `git log`.)
 
-git log --all -M -C --name-only --format='format:' "$@" | sort | grep -v '^$' | uniq -c | sort | awk 'BEGIN {print "count\tfile"} {print $1 "\t" $2}' | sort -g
+git log --all -M -C --name-only --format='format:' "$@" \
+    | sort \
+    | grep -v '^$' \
+    | uniq -c \
+    | sort \
+    | awk 'BEGIN {print "count\tfile"} {print $1 "\t" $2}' \
+    | sort -g

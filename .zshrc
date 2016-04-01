@@ -51,13 +51,15 @@ fi
 # automatically when your are in zsh
 $DOTPATH/bin/tmuxx
 
-if [[ -f ~/Dropbox/zplug2/init.zsh ]]; then
-    # For development
-    source ~/Dropbox/zplug2/init.zsh
-    # source ~/Dropbox/zplug/zplug
-
-    export ZPLUG_LOADFILE="$DOTPATH/.zsh/zplug.zsh"
-    # export ZPLUG_CLONE_DEPTH=0
+if [[ -n $ZPLUG_V1 ]] || [[ -n $ZPLUG_V2 ]]; then
+	if [[ -n $ZPLUG_V1 ]]; then
+		source ~/.zplug/zplug
+		export ZPLUG_EXTERNAL="$HOME/.zsh/zplug.zsh"
+	fi
+	if [[ -n $ZPLUG_V2 ]]; then
+		source ~/.zplug/init.zsh
+		export ZPLUG_LOADFILE="$HOME/.zsh/zplug.zsh"
+	fi
 
     if ! zplug check --verbose; then
         printf "Install? [y/N]: "

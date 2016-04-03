@@ -33,6 +33,10 @@ zplug "b4b4r07/ssh-keyreg", \
     of:bin
 zplug "mrowa44/emojify", \
     as:command
+zplug "stedolan/jq", \
+    as:command, \
+    from:gh-r, \
+    frozen:1
 zplug "junegunn/fzf-bin", \
     as:command, \
     from:gh-r, \

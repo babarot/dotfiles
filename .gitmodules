@@ -4,3 +4,12 @@
 [submodule "etc/init/assets/pygments/solarized-pygment"]
 	path = etc/init/assets/pygments/solarized-pygment
 	url = git://github.com/john2x/solarized-pygment
+[submodule "etc/config/solarized/dircolors-solarized"]
+	path = etc/config/solarized/dircolors-solarized
+	url = https://github.com/seebi/dircolors-solarized.git
+[submodule "etc/config/solarized/osx-terminal.app-colors-solarized"]
+	path = etc/config/solarized/osx-terminal.app-colors-solarized
+	url = https://github.com/tomislav/osx-terminal.app-colors-solarized.git
+[submodule "etc/config/solarized/tmux-colors-solarized"]
+	path = etc/config/solarized/tmux-colors-solarized
+	url = https://github.com/seebi/tmux-colors-solarized.git

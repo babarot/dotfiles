@@ -59,6 +59,7 @@ zplug "b4b4r07/emoji-cli", \
     on:"junegunn/fzf-bin"
 zplug "b4b4r07/enhancd", \
     use:enhancd.sh
+zplug "supercrabtree/k"
 zplug "zsh-users/zaw"
 zplug "mollifier/zload"
 zplug "glidenote/hub-zsh-completion"

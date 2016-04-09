@@ -13,3 +13,6 @@
 [submodule "etc/config/solarized/tmux-colors-solarized"]
 	path = etc/config/solarized/tmux-colors-solarized
 	url = https://github.com/seebi/tmux-colors-solarized.git
+[submodule ".zplug"]
+	path = .zplug
+	url = https://github.com/b4b4r07/zplug.git

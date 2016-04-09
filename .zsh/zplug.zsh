@@ -11,26 +11,26 @@ zplug "b4b4r07/zplug"
 zplug "~/.modules", \
     from:local, \
     nice:1, \
-    of:"*.sh"
+    use:"*.sh"
 zplug "~/.zsh", \
     from:local, \
     nice:2, \
-    of:"<->_*.zsh"
+    use:"<->_*.zsh"
 
 # commands
 zplug "b4b4r07/zgit", \
     as:command, \
-    of:bin, \
+    use:bin, \
     on:"junegunn/fzf-bin"
 zplug "b4b4r07/zsh-gomi", \
     as:command, \
-    of:bin/gomi
+    use:bin/gomi
 zplug "b4b4r07/http_code", \
     as:command, \
-    of:bin
+    use:bin
 zplug "b4b4r07/ssh-keyreg", \
     as:command, \
-    of:bin
+    use:bin
 zplug "mrowa44/emojify", \
     as:command
 zplug "stedolan/jq", \
@@ -40,7 +40,7 @@ zplug "stedolan/jq", \
 zplug "junegunn/fzf-bin", \
     as:command, \
     from:gh-r, \
-    file:"fzf", \
+    rename-to:"fzf", \
     frozen:1
 zplug "peco/peco", \
     as:command, \
@@ -48,22 +48,22 @@ zplug "peco/peco", \
     frozen:1
 zplug "Jxck/dotfiles", \
     as:command, \
-    of:bin/l
+    use:bin/l
 zplug "so-fancy/diff-so-fancy", \
     as:command, \
-    of:diff-so-fancy
+    use:diff-so-fancy
 
 # plugins
 zplug "b4b4r07/emoji-cli", \
     if:'(( $+commands[jq] ))', \
     on:"junegunn/fzf-bin"
 zplug "b4b4r07/enhancd", \
-    of:enhancd.sh
+    use:enhancd.sh
 zplug "zsh-users/zaw"
 zplug "mollifier/zload"
 zplug "glidenote/hub-zsh-completion"
 zplug "b4b4r07/zsh-vimode-visual", \
-    of:"*.sh"
+    use:"*.sh"
 zplug "zsh-users/zsh-completions"
 zplug "zsh-users/zsh-history-substring-search"
 zplug "zsh-users/zsh-syntax-highlighting", \

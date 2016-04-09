@@ -16,3 +16,4 @@
 [submodule ".zplug"]
 	path = .zplug
 	url = https://github.com/b4b4r07/zplug.git
+	branch = v2

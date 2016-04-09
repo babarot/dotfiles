@@ -51,14 +51,13 @@ fi
 # automatically when your are in zsh
 $DOTPATH/bin/tmuxx
 
-if [[ -n $ZPLUG_V1 ]] || [[ -n $ZPLUG_V2 ]]; then
-	if [[ -n $ZPLUG_V1 ]]; then
-		source ~/.zplug/zplug
-		export ZPLUG_EXTERNAL="$HOME/.zsh/zplug.zsh"
-	fi
-	if [[ -n $ZPLUG_V2 ]]; then
+if [[ -d "$HOME/.zplug" ]]; then
+	if [[ -e "$HOME/.zplug/init.zsh" ]]; then
 		source ~/.zplug/init.zsh
 		export ZPLUG_LOADFILE="$HOME/.zsh/zplug.zsh"
+    else
+		source ~/.zplug/zplug
+		export ZPLUG_EXTERNAL="$HOME/.zsh/zplug.zsh"
 	fi
 
     if ! zplug check --verbose; then

@@ -1,6 +1,5 @@
 repos = [
-    "github.com/BurntSushi/toml",
-    "github.com/BurntSushi/toml/cmd/tomlv",
+    "github.com/BurntSushi/toml/...",
     "github.com/b4b4r07/gch",
     "github.com/b4b4r07/go-pipe",
     "github.com/b4b4r07/gomi/...",
@@ -14,7 +13,7 @@ repos = [
     "github.com/kyokomi/emoji",
     "github.com/mattn/go-scan",
     "github.com/mattn/gom",
-    "github.com/mgutz/ansi",
+    "github.com/mgutz/ansi/...",
     "github.com/mitchellh/gox",
     "github.com/monochromegane/the_platinum_searcher/...",
     "github.com/motemen/ghq",

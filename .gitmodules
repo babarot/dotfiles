@@ -17,3 +17,6 @@
 	path = .zplug
 	url = https://github.com/b4b4r07/zplug.git
 	branch = v2
+[submodule "etc/config/fonts/powerline"]
+	path = etc/config/fonts/powerline
+	url = https://github.com/powerline/fonts.git

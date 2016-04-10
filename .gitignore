@@ -4,3 +4,4 @@
 /* bin */
 .config/*
 !.config/fish
+.fonts/*

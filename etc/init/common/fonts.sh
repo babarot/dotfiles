@@ -20,6 +20,7 @@ case "$(get_os)" in
 
     linux)
         font_dir="$HOME"/.fonts
+        mkdir -p $font_dir
         ;;
 
     *)

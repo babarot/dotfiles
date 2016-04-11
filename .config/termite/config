@@ -10,7 +10,7 @@ dynamic_title = true
 urgent_on_bell = true
 clickable_url = true
 browser = chromium
-font = Inconsolata-dz for Powerline 8.5
+font = Literation Mono Powerline 9 
 scrollback_lines = 25000
 search_wrap = true
 transparency = 1.0
@@ -18,9 +18,5 @@ pseudo_transparency = false
 cursor_blink = system
 cursor_shape = block
 geometry = 720x400
-
-# word characters used for word selection
-# (default if unset: all graphic non-punctuation/space characters)
-#word_chars = -A-Za-z0-9,./?%&#:_=+@~
 
 # vim: ft=dosini

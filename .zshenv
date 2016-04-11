@@ -83,9 +83,6 @@ export SAVEHIST=1000000
 # fzf - command-line fuzzy finder (https://github.com/junegunn/fzf)
 export FZF_DEFAULT_OPTS="--extended --ansi --multi"
 
-# Cask
-#export HOMEBREW_CASK_OPTS="--appdir=/Applications"
-
 # History
 # History file
 export HISTFILE=~/.zsh_history

@@ -4,4 +4,5 @@
 /* bin */
 .config/*
 !.config/fish
+!.config/termite
 .fonts/*

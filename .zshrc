@@ -10,6 +10,9 @@ umask 022
 limit coredumpsize 0
 bindkey -d
 
+source $HOME/.colorscheme
+eval `dircolors $HOME/.dir_colors`
+
 # It is necessary for the setting of DOTPATH
 if [[ -f ~/.path ]]; then
     source ~/.path

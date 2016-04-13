@@ -11,3 +11,6 @@
 [submodule "etc/config/fonts/powerline"]
 	path = etc/config/fonts/powerline
 	url = https://github.com/powerline/fonts.git
+[submodule ".tmux/plugins/tpm"]
+	path = .tmux/plugins/tpm
+	url = https://github.com/tmux-plugins/tpm

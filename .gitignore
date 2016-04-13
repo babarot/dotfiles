@@ -5,4 +5,6 @@
 .config/*
 !.config/fish
 !.config/termite
+.tmux/plugins/*
+!.tmux/plugins/tpm
 .fonts/*

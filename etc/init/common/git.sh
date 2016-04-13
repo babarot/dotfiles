@@ -35,7 +35,7 @@ if ! has "git"; then
             if has "yum"; then
                 log_echo "Install git with Yellowdog Updater Modified"
                 sudo yum -y install git
-            elif "port"; then
+            elif "apt-get"; then
                 log_echo "Install git with Advanced Packaging Tool"
                 sudo apt-get -y install git
             else

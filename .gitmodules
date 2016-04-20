@@ -4,3 +4,13 @@
 [submodule "etc/init/assets/pygments/solarized-pygment"]
 	path = etc/init/assets/pygments/solarized-pygment
 	url = git://github.com/john2x/solarized-pygment
+[submodule ".zplug"]
+	path = .zplug
+	url = https://github.com/b4b4r07/zplug.git
+	branch = v2
+[submodule "etc/config/fonts/powerline"]
+	path = etc/config/fonts/powerline
+	url = https://github.com/powerline/fonts.git
+[submodule ".tmux/plugins/tpm"]
+	path = .tmux/plugins/tpm
+	url = https://github.com/tmux-plugins/tpm

@@ -1,0 +1,22 @@
+[options]
+esize_grip = false
+scroll_on_output = false
+scroll_on_keystroke = true
+audible_bell = false
+visible_bell = false
+mouse_autohide = false
+allow_bold = true
+dynamic_title = true
+urgent_on_bell = true
+clickable_url = true
+browser = chromium
+font = Literation Mono Powerline 9 
+scrollback_lines = 25000
+search_wrap = true
+transparency = 1.0
+pseudo_transparency = false
+cursor_blink = system
+cursor_shape = block
+geometry = 720x400
+
+# vim: ft=dosini

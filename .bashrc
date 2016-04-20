@@ -17,7 +17,7 @@
 [ -n "$VIMRUNTIME" ] && return
 
 # It is necessary for the setting of DOTPATH
-#[ -f ~/.path ] && source ~/.path
+[ -f ~/.path ] && source ~/.path
 
 # DOTPATH environment variable specifies the location of dotfiles.
 # On Unix, the value is a colon-separated string. On Windows,
@@ -358,3 +358,4 @@ fi
 
 # __END__{{{1
 # vim:fdm=marker fdc=3 ft=sh ts=4 sw=4 sts=4:
+

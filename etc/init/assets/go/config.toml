@@ -23,7 +23,7 @@ repos = [
     "github.com/nsf/gocode",
     "github.com/nsf/godit",
     "github.com/peco/peco/...",
-    "github.com/rbtnn/go-filewatcher",
+    "github.com/rbtnn/go-filewatcher/...",
 ]
 
 [emoji]

@@ -8,20 +8,20 @@
 
 set -e
 
-trap 'rm -f $TOVIMTMP' ERR
+trap 'rm -f "$TOVIMTMP"' ERR
 
 if [ -p /dev/stdin ]; then
     in="$(cat <&0)"
     if [ -z "$in" ];then
-        exit
+        exit 0
     fi
 
     if [ -e "$in" ]; then
-        vim "$in" < /dev/tty > /dev/tty
+        vim "$in" </dev/tty >/dev/tty
     else
         TOVIMTMP=~/.tovim_tmp_"$(date +%Y-%m-%d_%H-%M-%S.txt)"
         echo "$in" >"$TOVIMTMP"
-        vim "$TOVIMTMP" < /dev/tty > /dev/tty
+        vim "$TOVIMTMP" </dev/tty >/dev/tty
         cat "$TOVIMTMP"
         rm "$TOVIMTMP"
     fi

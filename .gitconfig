@@ -38,3 +38,22 @@
 
 [ghq]
     root = ~/src
+
+[merge]
+    tool = vimdiff
+
+[zgit "keybind"]
+    echo   = ctrl-e
+    add    = ctrl-a
+    add-p  = ctrl-w
+    commit = ctrl-c
+    diff   = ctrl-d
+    reset  = ctrl-r
+
+[zgit "default"]
+    toggle-all = ctrl-z
+
+[zgit "core"]
+    action   = status
+    tool     = enhancd
+    lessopen = "| pygmentize -O style=solarized -f console256 -g %s"

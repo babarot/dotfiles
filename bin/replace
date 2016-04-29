@@ -10,32 +10,50 @@
 #
 ######################################################################
 
-. "$DOTPATH"/etc/lib/corelib.sh
+# . "$DOTPATH"/etc/lib/corelib.sh
+# bin="$(available "pt:ag:ack")"
 
-bin="$(available "pt:ag:ack")"
+args=()
+opt_l=false
+find_this=""
+replace_with=""
 
-if [[ $1 =~ ^-h|--help$ ]]; then
-    echo "usage: replace wordA wordB [file]" 1>&2
-    echo "  replace find and replace by a given list of files" 1>&2
-    echo "  e.g., replace foo bar **/*.rb" 1>&2
-    exit 1
-fi
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -h|--help)
+            echo "usage: replace wordA wordB [file]" 1>&2
+            echo "  replace find and replace by a given list of files" 1>&2
+            echo "  e.g., replace foo bar **/*.rb" 1>&2
+            exit 1
+            ;;
+        -l)
+            opt_l=true
+            ;;
+        *)
+            args+=("$1")
+    esac
+    shift
+done
 
-if [ $# -lt 3 ]; then
-    echo "too few arguments" 1>&2
-    exit 1
-fi
-
-if [ -z "$bin" ]; then
-    echo "pt,ag,ack: not found" 1>&2
-    exit 1
-fi
-
-#find_this="$(echo "$1" | sed "s / \\\/ g")"
-#replace_with="$(echo "$2" | sed "s / \\\/ g")"
-find_this="${1//\//\\\/}"
-replace_with="${2//\//\\\/}"
-shift
-shift
-echo "$bin" -l "$find_this" "$@"
-echo xargs sed -i '' "s/$find_this/$replace_with/g"
+case ${#args[@]} in
+    0)
+        echo "error" 1>&2
+        exit 1
+        ;;
+    1)
+        if $opt_l; then
+            pt -l "${args[0]}"
+        else
+            pt "${args[0]}"
+        fi
+        ;;
+    2|3)
+        find_this="${args[0]//\//\\\/}"
+        replace_with="${args[1]//\//\\\/}"
+        pt -l "$find_this" ${args[3]} | xargs perl -p -i -e 's/'"$find_this"'/'"$replace_with"'/g'
+        ;;
+    *)
+        echo "too many arguments" 1>&2
+        exit 1
+        ;;
+esac

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. "$DOTPATH"/etc/lib/vital.sh
+. "$DOTPATH"/etc/lib/vital.sh || exit 1
 
 search_ls() {
     # Set gls if exists

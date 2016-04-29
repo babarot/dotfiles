@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+# peco-tmux: starts peco in a tmux pane
+# usage: peco-tmux [-u|-d [HEIGHT[%]]] [-l|-r [WIDTH[%]]] [--] [peco OPTIONS]
+
+args=()
+opt=""
+skip=""
+swap=""
+close=""
+term=""
+while [ $# -gt 0 ]; do
+    arg="$1"
+    case "$arg" in
+        -)
+            term=1
+            ;;
+        -d*|-u*|-r*|-l*)
+            if [ -n "$skip" ]; then
+                args+=("$1")
+                shift
+                continue
+            fi
+            if [[ "$arg" =~ ^.[lrw] ]]; then
+                opt="-h"
+                if [[ "$arg" =~ ^.l ]]; then
+                    opt="$opt -d"
+                    swap="; swap-pane -D ; select-pane -L"
+                    close="; tmux swap-pane -D"
+                fi
+            else
+                opt=""
+                if [[ "$arg" =~ ^.u ]]; then
+                    opt="$opt -d"
+                    swap="; swap-pane -D ; select-pane -U"
+                    close="; tmux swap-pane -D"
+                fi
+            fi
+            if [ ${#arg} -gt 2 ]; then
+                size="${arg:2}"
+            else
+                shift
+                if [[ "$1" =~ ^[0-9]+%?$ ]]; then
+                    size="$1"
+                else
+                    [ -n "$1" -a "$1" != "--" ] && args+=("$1")
+                    shift
+                    continue
+                fi
+            fi
+
+            if [[ "$size" =~ %$ ]]; then
+                size=${size:0:((${#size}-1))}
+                if [ -n "$swap" ]; then
+                    opt="$opt -p $(( 100 - size ))"
+                else
+                    opt="$opt -p $size"
+                fi
+            else
+                if [ -n "$swap" ]; then
+                    if [[ "$arg" =~ ^.l ]]; then
+                        [ -n "$COLUMNS" ] && max=$COLUMNS || max=$(tput cols)
+                    else
+                        [ -n "$LINES" ] && max=$LINES || max=$(tput lines)
+                    fi
+                    size=$(( max - size ))
+                    [ $size -lt 0 ] && size=0
+                    opt="$opt -l $size"
+                else
+                    opt="$opt -l $size"
+                fi
+            fi
+            ;;
+        --)
+            # "--" can be used to separate peco-tmux options from peco options to
+            # avoid conflicts
+            skip=1
+            ;;
+        *)
+            args+=("$1")
+            ;;
+    esac
+    shift
+done
+
+if [ -z "$TMUX_PANE" ]; then
+    peco "${args[@]}"
+    exit $?
+fi
+
+set -e
+
+# Clean up named pipes on exit
+id=$RANDOM
+argsf=/tmp/peco-args-$id
+fifo1=/tmp/peco-fifo1-$id
+fifo2=/tmp/peco-fifo2-$id
+fifo3=/tmp/peco-fifo3-$id
+fifo4=/tmp/peco-fifo4-$id
+
+cleanup() {
+    rm -f $argsf $fifo1 $fifo2 $fifo3
+}
+trap cleanup EXIT SIGINT SIGTERM
+
+fail() {
+    echo "$1" >&2
+    exit 1
+}
+peco="$(which peco 2> /dev/null)" || peco="$(dirname "$0")/peco"
+[ -x "$peco" ] || fail "peco executable not found"
+
+mkfifo $fifo2
+mkfifo $fifo3
+
+# Build arguments to peco
+opts=""
+for arg in "${args[@]}"; do
+    opts="$opts \"${arg//\"/\\\"}\""
+done
+
+mkfifo $fifo4
+if [ -n "$term" ] || [ -t 0 ]; then
+    peco
+    exit $?
+else
+    mkfifo $fifo1
+    cat <<< "$peco $opts < $fifo1 > $fifo2; echo \$? > $fifo3 $close" > $argsf
+    tmux set-window-option -q synchronize-panes off \;\
+        split-window $opt "$envs bash $argsf" $swap
+    cat <&0 > $fifo1 &
+fi
+cat $fifo2
+[ "$(cat $fifo3)" = "0" ]

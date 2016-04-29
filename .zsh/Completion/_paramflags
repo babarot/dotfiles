@@ -1,0 +1,54 @@
+#autoload
+
+local -a flags
+
+flags=(
+  '):end of flags'
+  '#:as numeric'
+  '%:expand %s in result as in prompts'
+  '@:array expand even in double quotes'
+  'A:create an array parameter with ${...=...}, (AA) associative array'
+  'a:sort array index order, Oa is reversed'
+  'c:count characters even if VAR is an array for ${(c)#VAR}'
+  'C:capitalize result'
+  'e:do parameter, command arith expansion'
+  'f:split result to array on newlines'
+  'F:join arrays with using newlines between elements'
+  'i:sort case insensitive, oi or Oi'
+  'k:keys for associative array'
+  'L:lower case result'
+  'n:sort numerically, on or On'
+  'o:sort into ascending order'
+  'O:sort into decending order'
+  'P:interprete result as parameter name, get value'
+  'q:quote with backslashes'
+  'qq:quote with single quotes'
+  'qqq:quote with double quotes'
+  "qqqq:quote with $'...'"
+  'Q:strip quotes from result'
+  't:type of variable'
+  'u:unique'
+  'U:upper case result'
+  'v:values for associative array'
+  'V:visible representation of special chars'
+  'w:count words even if VAR is a string ${(w)#VAR}'
+  'W:count words, plus empty words even if VAR is a string ${(w)#VAR}'
+  'X:report error'
+  'z:split to words using shell grammer'
+  '0:split on null bytes'
+  'p:turn on escape sequence recognition (for jlrs)'
+  '~:treat as patterns for string arguments (for jlrs)'
+  'j:join'  # j:str:
+  'l:pad on left'  # l:x:, l:x::s1:, l:x::s1::s2: (see also `r' below)
+  'm:use character width (for lr or #)'
+  'r:pad on right' # r:x:, r:x::s1:, r:x::s1::s2: (see also `l' above)
+  's:split' # s:str:
+  'S:with patterns, search substrings'
+  'I:with patterns, match exprth occurrence' # I:exp:
+  'B:with aptterns, include match beginning'
+  'E:with aptterns, include match end'
+  'M:with aptterns, include matched portion'
+  'N:with aptterns, include length of match'
+  'R:with aptterns, include unmatched part (rest)'
+)
+_describe -t paramflags "parameter flag" flags -Q -S ''

@@ -104,3 +104,13 @@ emphasis() {
 normalize() {
     ruby -e 'puts File.expand_path(ARGV[0])' "${1:-$(cat <&0)}"
 }
+
+cpu_cores() {
+    if is_osx; then
+        sysctl -n hw.ncpu
+    else
+        grep -c "^processor.*[0-9]$" /proc/cpuinfo
+    fi 2>/dev/null
+}
+PROC="$(cpu_cores)"
+export PROC

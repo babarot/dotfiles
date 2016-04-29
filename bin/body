@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $# -gt 3 ]; then
+    echo "too few arguments" >&2
+    exit 1
+fi
+
+head -n $3 $1 | tail -n $(($3 - $2 + 1))

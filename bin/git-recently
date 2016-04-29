@@ -1,0 +1,57 @@
+#!/bin/bash
+
+if ! which fzf &>/dev/null; then
+    echo "${0##*/}: fzf: not found in you PATH" >&2
+    exit 1
+fi
+
+arg=""
+enter="$(git config --get git-recently.action.enter)"
+
+case $# in
+    0)
+        arg="HEAD~1..HEAD~0"
+        ;;
+    1)
+        arg="HEAD~${1#HEAD~}..HEAD~0"
+        shift 1
+        ;;
+    2)
+        arg="HEAD~${1#HEAD~}..HEAD~${2#HEAD~}"
+        shift 2
+        ;;
+    *)
+        echo "${0##*/}: arg list too long" >&2
+        exit 1
+        ;;
+esac
+
+while cmd="$(
+    git \
+        --no-pager \
+        diff \
+        --name-only \
+        "$arg" \
+        | FZF_DEFAULT_OPTS= fzf --ansi --multi --query="$@" \
+        --reverse --exit-0 \
+        --no-sort --prompt="diff> " \
+        --print-query --expect=ctrl-d \
+        --bind=ctrl-z:toggle-all \
+        )"; do
+    q="$(head -1 <<< "$cmd")"
+    k="$(head -2 <<< "$cmd" | tail -1)"
+    res="$(sed '1,2d;/^$/d' <<< "$cmd")"
+    [ -z "$res" ] && continue
+    case "$k" in
+        ctrl-d)
+            for f in $res
+            do
+                git diff "$arg" "$f"
+            done
+            ;;
+        *)
+            ${enter:-echo} $res
+            break
+            ;;
+    esac
+done

@@ -64,4 +64,12 @@
 [logoを作成する] mov2gif -f --size 1500x500 --rate 13 ~/logo@.mov
 [demo.gifを作成する] mov2gif -f --rate 13 ~/demo@.mov
 
+: red_fat_
+[進捗報告がシェル芸] is_git_repo && git log --oneline --shortstat $PREV_COMMIT@ | awk '!(NR%2){as+=$4;rs+=$6}END{printf "%d insertion(+), %d deletion(-)\n", as, rs}'
+
+: git
+[git rmを一括でやる] git status -s | awk '$1=="D"{print $2}' | xargs git rm
+[tracked file を列挙] git --git-dir "`git rev-parse --git-dir`" -C "`git config core.worktree || pwd`" ls-files
+[TORIAEZU!TORIAEZU!] cat -n ika_1125_120001_01.txt@ | awk -F, '{line[NR]=$0} NR>2000 && $10>4 {printf "%s\n%s\n%s\n%s\n", line[NR-3], line[NR-2], line[NR-1], line[NR]; exit}'
+
 # vim:ft=sh

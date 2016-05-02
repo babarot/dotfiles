@@ -5,7 +5,7 @@ has_plugin() {
 }
 
 # Local loading
-zplug "b4b4r07/zplug"
+zplug "zplug/zplug"
 
 # local plugin
 zplug "/Users/b4b4r07/.modules", \

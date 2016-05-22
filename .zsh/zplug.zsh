@@ -5,10 +5,10 @@ has_plugin() {
 }
 
 # Local loading
-zplug "b4b4r07/zplug"
+zplug "zplug/zplug"
 
 # local plugin
-zplug "~/.modules", \
+zplug "/Users/b4b4r07/.modules", \
     from:local, \
     nice:1, \
     use:"*.sh"
@@ -73,3 +73,7 @@ zplug "zsh-users/zsh-completions"
 zplug "zsh-users/zsh-history-substring-search"
 zplug "zsh-users/zsh-syntax-highlighting", \
     nice:19
+
+zplug "~/enhancd", \
+    use:init.sh, \
+    from:local

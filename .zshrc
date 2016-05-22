@@ -53,8 +53,9 @@ fi
 # automatically when your are in zsh
 $DOTPATH/bin/tmuxx
 
-source ~/.zplug/init.zsh
-export ZPLUG_LOADFILE="$HOME/.zsh/zplug.zsh"
+if [[ -f ~/.zplug/init.zsh ]]; then
+    source ~/.zplug/init.zsh
+    export ZPLUG_LOADFILE="$HOME/.zsh/zplug.zsh"
 
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "

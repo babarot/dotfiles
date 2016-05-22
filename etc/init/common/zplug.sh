@@ -7,7 +7,7 @@ if [[ ! -f ~/.zplug/init.zsh ]]; then
     fi
 
     git clone \
-        https://github.com/b4b4r07/zplug \
+        https://github.com/zplug/zplug \
         ~/.zplug
 
     # failed

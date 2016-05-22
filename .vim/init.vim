@@ -297,7 +297,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1
   NeoBundle 'justinmk/vim-dirvish'
   "NeoBundle 'deris/vim-visualinc'
   "NeoBundle 'hotchpotch/perldoc-vim'
-  "NeoBundle 'kchmck/vim-coffee-script'
+  NeoBundle 'kchmck/vim-coffee-script'
   NeoBundle 'elzr/vim-json'
   NeoBundle 'cespare/vim-toml'
   NeoBundle 'fatih/vim-go'

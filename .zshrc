@@ -38,6 +38,8 @@ if [[ -f $VITAL_PATH ]]; then
     source "$VITAL_PATH"
 fi
 
+export ENHANCD_FILTER="fzy:$ENHANCD_FILTER"
+
 # Exit if called from vim
 [[ -n $VIMRUNTIME ]] && return
 
@@ -51,26 +53,18 @@ fi
 # automatically when your are in zsh
 $DOTPATH/bin/tmuxx
 
-if [[ -n $ZPLUG_V1 ]] || [[ -n $ZPLUG_V2 ]]; then
-	if [[ -n $ZPLUG_V1 ]]; then
-		source ~/.zplug/zplug
-		export ZPLUG_EXTERNAL="$HOME/.zsh/zplug.zsh"
-	fi
-	if [[ -n $ZPLUG_V2 ]]; then
-		source ~/.zplug/init.zsh
-		export ZPLUG_LOADFILE="$HOME/.zsh/zplug.zsh"
-	fi
+source ~/.zplug/init.zsh
+export ZPLUG_LOADFILE="$HOME/.zsh/zplug.zsh"
 
-    if ! zplug check --verbose; then
-        printf "Install? [y/N]: "
-        if read -q; then
-            echo; zplug install
-        else
-            echo
-        fi
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    else
+        echo
     fi
-    zplug load --verbose
 fi
+zplug load --verbose
 
 # Display Zsh version and display number
 printf "\n$fg_bold[cyan]This is ZSH $fg_bold[red]${ZSH_VERSION}"

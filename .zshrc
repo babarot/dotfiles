@@ -57,15 +57,16 @@ if [[ -f ~/.zplug/init.zsh ]]; then
     source ~/.zplug/init.zsh
     export ZPLUG_LOADFILE="$HOME/.zsh/zplug.zsh"
 
-if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-        echo; zplug install
-    else
-        echo
+    if ! zplug check --verbose; then
+        printf "Install? [y/N]: "
+        if read -q; then
+            echo; zplug install
+        else
+            echo
+        fi
     fi
+    zplug load --verbose
 fi
-zplug load --verbose
 
 # Display Zsh version and display number
 printf "\n$fg_bold[cyan]This is ZSH $fg_bold[red]${ZSH_VERSION}"

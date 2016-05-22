@@ -5,10 +5,10 @@ has_plugin() {
 }
 
 # Local loading
-zplug "zplug/zplug"
+#zplug "zplug/zplug"
 
 # local plugin
-zplug "/Users/b4b4r07/.modules", \
+zplug "~/.modules", \
     from:local, \
     nice:1, \
     use:"*.sh"
@@ -18,10 +18,6 @@ zplug "~/.zsh", \
     use:"<->_*.zsh"
 
 # commands
-zplug "b4b4r07/zgit", \
-    as:command, \
-    use:bin, \
-    on:"junegunn/fzf-bin"
 zplug "b4b4r07/zsh-gomi", \
     as:command, \
     use:bin/gomi
@@ -54,9 +50,6 @@ zplug "peco/peco", \
 zplug "Jxck/dotfiles", \
     as:command, \
     use:bin/l
-zplug "so-fancy/diff-so-fancy", \
-    as:command, \
-    use:diff-so-fancy
 
 # plugins
 zplug "b4b4r07/emoji-cli", \
@@ -73,7 +66,3 @@ zplug "zsh-users/zsh-completions"
 zplug "zsh-users/zsh-history-substring-search"
 zplug "zsh-users/zsh-syntax-highlighting", \
     nice:19
-
-zplug "~/enhancd", \
-    use:init.sh, \
-    from:local

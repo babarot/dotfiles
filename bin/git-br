@@ -1,0 +1,19 @@
+#!/bin/zsh
+
+. "$DOTPATH"/etc/lib/vital.sh
+. "$DOTPATH"/etc/lib/corelib.sh
+
+if ! is_git_repo; then
+    echo "Not a git repository (or any of the parent directories)" 1>&2
+    exit 1
+fi
+
+local filter
+filter="$(available "fzy:fzf-tmux:$INTERACTIVE_FILTER")"
+
+git branch \
+    | grep -v "^*" \
+    | cut -c3- \
+    | sort \
+    | ${=filter} \
+    | xargs git checkout

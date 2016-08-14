@@ -5,7 +5,7 @@ has_plugin() {
 }
 
 # Local loading
-#zplug "zplug/zplug"
+zplug "zplug/zplug"
 
 # local plugin
 zplug "~/.modules", \
@@ -47,6 +47,10 @@ zplug "peco/peco", \
     as:command, \
     from:gh-r, \
     frozen:1
+zplug "motemen/ghq", \
+    as:command, \
+    from:gh-r, \
+    rename-to:ghq
 zplug "Jxck/dotfiles", \
     as:command, \
     use:bin/l

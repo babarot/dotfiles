@@ -13,6 +13,7 @@
     df = diff
     t  = typechange
     graph = log --graph --date-order --all --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=short
+    br = git branch | grep -v '^*' | cut -c3- | fzy | xargs git checkout
 
 [help]
     autocorrect = 1

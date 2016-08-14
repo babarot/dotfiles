@@ -1,6 +1,6 @@
 .DS_Store
 *~
 .*secret
-/* bin */
 .config/*
 !.config/fish
+bin/*

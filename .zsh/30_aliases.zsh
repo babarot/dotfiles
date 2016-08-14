@@ -84,6 +84,10 @@ if has "emojify"; then
     alias -g E='| emojify'
 fi
 
+if has "jq"; then
+    alias -g J='| jq .'
+fi
+
 if is_osx; then
     alias -g CP='| pbcopy'
     alias -g CC='| tee /dev/tty | pbcopy'
@@ -126,20 +130,35 @@ pygmentize_alias() {
 alias -g P="| pygmentize_alias"
 
 awk_alias() {
-    if (( ${ZSH_VERSION%%.*} < 5 )); then
-        #local one
-        #one="$1"
-        #shift
-        #cat_alias | awk "$@" '{print $'"${one:-0}"'}'
-        return
+    autoload -Uz is-at-least
+    if ! is-at-least 5; then
+        return 1
     fi
 
-    local f=0 opt=
-    if [[ $# -gt 0 && ${@[-1]} =~ ^[0-9]+$ ]]; then
-        f=${@[-1]}
-        opt=${@:1:-1}
+    local -a opts
+    local    field=0 pattern
+
+    while (( $# > 0 ))
+    do
+        case "$1" in
+            -*|--*)
+                opts+=( "$1" )
+                ;;
+            *)
+                if [[ $1 =~ ^[0-9]+$ ]]; then
+                    field="$1"
+                else
+                    pattern="$1"
+                fi
+                ;;
+        esac
+        shift
+    done
+
+    if ! awk ${=opts[@]} "$pattern{print $"$field"}" 2>/dev/null; then
+        printf "Galias: syntax error\n"
+        return 1
     fi
-    awk $opt '{print $'"$f"'}'
 }
 alias -g A="| awk_alias"
 

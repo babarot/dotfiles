@@ -21,9 +21,6 @@ zplug "~/.zsh", \
 zplug "b4b4r07/zsh-gomi", \
     as:command, \
     use:bin/gomi
-zplug "b4b4r07/http_code", \
-    as:command, \
-    use:bin
 zplug "b4b4r07/ssh-keyreg", \
     as:command, \
     use:bin
@@ -51,9 +48,9 @@ zplug "motemen/ghq", \
     as:command, \
     from:gh-r, \
     rename-to:ghq
-zplug "Jxck/dotfiles", \
+zplug "b4b4r07/ls.zsh", \
     as:command, \
-    use:bin/l
+    use:bin/ls
 
 # plugins
 zplug "b4b4r07/emoji-cli", \
@@ -61,8 +58,6 @@ zplug "b4b4r07/emoji-cli", \
     on:"junegunn/fzf-bin"
 zplug "b4b4r07/enhancd", \
     use:init.sh
-zplug "zsh-users/zaw"
-zplug "mollifier/zload"
 zplug "glidenote/hub-zsh-completion"
 zplug "b4b4r07/zsh-vimode-visual", \
     use:"*.sh"

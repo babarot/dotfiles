@@ -68,6 +68,7 @@ alias sudo='sudo '
 
 # Global aliases
 alias -g G='| grep'
+alias -g GG='| multi_grep'
 alias -g W='| wc'
 alias -g X='| xargs'
 alias -g F='| "$(available $INTERACTIVE_FILTER)"'
@@ -76,6 +77,18 @@ alias -g V="| tovim"
 alias -g N=" >/dev/null 2>&1"
 alias -g N1=" >/dev/null"
 alias -g N2=" 2>/dev/null"
+alias -g VI='| xargs -o vim'
+
+multi_grep() {
+    local std_in="$(cat <&0)" word
+
+    for word in "$@"
+    do
+        std_in="$(echo "${std_in}" | command grep "$word")"
+    done
+
+    echo "${std_in}"
+}
 
 (( $+galiases[H] )) || alias -g H='| head'
 (( $+galiases[T] )) || alias -g T='| tail'
@@ -377,7 +390,8 @@ git_branch() {
         git branch | sed -e '/^\*/d'
         git branch | sed -n -e '/^\*/p'
     } \
-        | fzf --select-1 \
+        | reverse \
+        | fzy \
         | sed -e 's/^\*[ ]*//g'
 }
 
@@ -428,4 +442,4 @@ git_modified_files() {
         esac
     done
 }
-alias -g GG='$(git_modified_files)'
+#alias -g GG='$(git_modified_files)'

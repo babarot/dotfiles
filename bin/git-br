@@ -1,19 +1,30 @@
-#!/bin/zsh
+#!/bin/bash
 
-. "$DOTPATH"/etc/lib/vital.sh
-. "$DOTPATH"/etc/lib/corelib.sh
+branch="$(
+git branch --color -a \
+    | grep -v '*' \
+    | sed -E 's/^ +//' \
+    | fzy \
+    | perl -pe 's/\e\[?.*?[\@-~]//g'
+)"
 
-if ! is_git_repo; then
-    echo "Not a git repository (or any of the parent directories)" 1>&2
-    exit 1
+if [[ -z $branch ]]; then
+    exit 0
 fi
 
-local filter
-filter="$(available "fzy:fzf-tmux:$INTERACTIVE_FILTER")"
+is_already_branched() { git branch | grep -q "${branch##*/}" &>/dev/null; }
 
-git branch \
-    | grep -v "^*" \
-    | cut -c3- \
-    | sort \
-    | ${=filter} \
-    | xargs git checkout
+if [[ $branch =~ ^remotes ]]; then
+    if is_already_branched; then
+        # already exists
+        git checkout "${branch##*/}"
+        exit $?
+    fi
+    git checkout -b "${branch##*/}" "${branch#*/}"
+else
+    if is_already_branched; then
+        git checkout "$branch"
+    else
+        git checkout -b "$branch"
+    fi
+fi

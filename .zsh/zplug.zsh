@@ -93,3 +93,9 @@ zplug "philovivero/distribution", \
 zplug "mitmproxy/mitmproxy", \
     as:command, \
     hook-build:"sudo python ./setup.py install &>/dev/null"
+
+zplug "fujiwara/nssh", \
+    as:command, \
+    from:gh-r, \
+    rename-to:"nssh", \
+    frozen:1

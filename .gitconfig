@@ -6,6 +6,22 @@
 [color]
     ui = auto
 
+[color "diff"]
+    # http://qiita.com/qurage/items/452f2debb64e2708a46c
+    meta = 242 238
+    frag = 239 236
+    old = 167 normal
+    new = 030 normal
+    context = 240
+    commit = 246 024
+
+#[color "diff"]
+#    meta = yellow bold
+#    frag = magenta bold
+#    old = red bold
+#    new = green bold
+#    whitespace = red reverse
+
 [alias]
     st = status
     co = checkout
@@ -36,6 +52,7 @@
 [diff]
     tool      = vimdiff
     algorithm = histogram
+	compactionHeuristic = true
 
 [ghq]
     root = ~/src

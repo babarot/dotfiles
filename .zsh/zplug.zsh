@@ -92,10 +92,30 @@ zplug "philovivero/distribution", \
 
 zplug "mitmproxy/mitmproxy", \
     as:command, \
-    hook-build:"sudo python ./setup.py install &>/dev/null"
+    hook-build:"sudo python ./setup.py install"
 
 zplug "fujiwara/nssh", \
     as:command, \
     from:gh-r, \
     rename-to:"nssh", \
     frozen:1
+
+zplug "wg/wrk", \
+    as:command, \
+    hook-build:"make"
+
+zplug "reorx/httpstat", \
+    as:command, \
+    use:'httpstat.py', \
+    if:'(( $+commands[python] ))', \
+    rename-to:'httpstat'
+
+zplug "jhawthorn/fzy", \
+    as:command, \
+    hook-build:"make && sudo make install"
+
+zplug "takuya/f5a6fb560dc357835122", \
+    as:command, \
+    from:gist, \
+    use:'node2bash.js', \
+    rename-to:'node2bash'

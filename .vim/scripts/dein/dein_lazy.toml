@@ -1,0 +1,49 @@
+[[plugins]]
+repo = 'thinca/vim-prettyprint'
+on_cmd = 'PP'
+
+[[plugins]]
+repo = 'b4b4r07/mru.vim'
+on_cmd = 'MRU'
+
+[[plugins]]
+repo = 'Shougo/neocomplete.vim'
+depends = 'context_filetype.vim'
+if = "has('lua')"
+on_event = 'InsertEnter'
+hook_source = '''
+  let g:neocomplete#enable_at_startup = 1
+  source ~/.vim/rc/plugins/neocomplete.rc.vim
+'''
+
+[[plugins]]
+repo = 'cespare/vim-toml'
+on_ft = 'toml'
+
+[[plugins]]
+repo = 'elzr/vim-json'
+on_ft = 'json'
+
+[[plugins]]
+repo = 'fatih/vim-go'
+on_ft = 'go'
+
+[[plugins]]
+repo = 'jnwhiteh/vim-golang'
+on_ft = 'go'
+
+[[plugins]]
+repo = 'zaiste/tmux.vim'
+on_ft = 'tmux'
+
+[[plugins]]
+repo = 'keith/tmux.vim'
+on_ft = 'tmux'
+
+[[plugins]]
+repo = 'dag/vim-fish'
+on_ft = 'fish'
+
+[[plugins]]
+repo = 'chase/vim-ansible-yaml'
+#on_ft = 'yaml'

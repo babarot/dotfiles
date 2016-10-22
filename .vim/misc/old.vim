@@ -219,6 +219,7 @@ if stridx(&runtimepath, $NEOBUNDLEPATH) != -1
     NeoBundleLazy 'Shougo/neocomplcache.vim'
   endif
 
+  NeoBundle 'chase/vim-ansible-yaml'
   "NeoBundle 'Shougo/unite-outline'
   "NeoBundle 'Shougo/unite-help'
   "NeoBundle 'Shougo/neomru.vim'

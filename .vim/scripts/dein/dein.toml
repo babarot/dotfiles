@@ -1,0 +1,59 @@
+[[plugins]]
+repo = 'Shougo/dein.vim'
+
+[[plugins]]
+repo = 'b4b4r07/vim-shellutils'
+
+[[plugins]]
+repo = 'b4b4r07/vim-shellutils'
+
+[[plugins]]
+repo = 'b4b4r07/mru.vim'
+
+[[plugins]]
+repo = 'junegunn/fzf.vim'
+
+[[plugins]]
+repo = 'justinmk/vim-dirvish'
+
+[[plugins]]
+repo = 'tpope/vim-surround'
+
+[[plugins]]
+repo = 'tpope/vim-endwise'
+
+[[plugins]]
+repo = 'junegunn/vim-emoji'
+
+[[plugins]]
+repo = 'rhysd/github-complete.vim'
+
+[[plugins]]
+repo = 'ujihisa/neco-look'
+
+[[plugins]]
+repo = 'lambdalisue/vim-gita'
+
+[[plugins]]
+repo = 'vim-jp/vimdoc-ja'
+
+[[plugins]]
+repo = 'osyo-manga/vim-anzu'
+
+[[plugins]]
+repo = 'tyru/caw.vim'
+
+[[plugins]]
+repo = 'AndrewRadev/gapply.vim'
+
+[[plugins]]
+repo = 'b4b4r07/solarized.vim'
+
+[[plugins]]
+repo = 'w0ng/vim-hybrid'
+
+[[plugins]]
+repo = 'junegunn/seoul256.vim'
+
+[[plugins]]
+repo = 'nanotech/jellybeans.vim'

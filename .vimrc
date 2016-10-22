@@ -1,6 +1,6 @@
-let s:home = expand("<sfile>:h")
-let s:init_file = s:home . "/.vim/init.vim"
-
-if filereadable(s:init_file)
-  execute 'source ' . s:init_file
+"
+" Note: Skip initialization for vim-tiny or vim-small.
+"
+if 1
+  execute 'source' fnamemodify(expand('<sfile>'), ':h').'/.vim/scripts/init.vim'
 endif

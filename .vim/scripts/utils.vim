@@ -656,7 +656,7 @@ endif
 let s:bufqueue = []
 augroup buffer-queue-restore
   autocmd!
-  autocmd BufDelete * call <SID>buf_enqueue(expand('#'))
+  "autocmd BufDelete * call <SID>buf_enqueue(expand('#'))
 augroup END
 
 " Automatically get buffer list {{{1

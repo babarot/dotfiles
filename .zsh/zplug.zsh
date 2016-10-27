@@ -119,3 +119,5 @@ zplug "takuya/f5a6fb560dc357835122", \
     from:gist, \
     use:'node2bash.js', \
     rename-to:'node2bash'
+
+zplug 'Code-Hex/battery', as:command, from:gh-r

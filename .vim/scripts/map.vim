@@ -1,20 +1,20 @@
 if !exists('g:env')
-  finish
+    finish
 endif
 
 " Common {{{1
 if !g:plug.is_installed('mru.vim')
-  "if exists(':MRU2')
-  if exists('*s:MRU_Create_Window')
-    nnoremap <silent> [Space]j :<C-u>call <SID>MRU_Create_Window()<CR>
-    "nnoremap <silent> [Space]j :<C-u>MRU<CR>
-  endif
+    "if exists(':MRU2')
+    if exists('*s:MRU_Create_Window')
+        nnoremap <silent> [Space]j :<C-u>call <SID>MRU_Create_Window()<CR>
+        "nnoremap <silent> [Space]j :<C-u>MRU<CR>
+    endif
 endif
 
 " Use backslash
 if IsMac()
-  noremap ¥ \
-  noremap \ ¥
+    noremap ¥ \
+    noremap \ ¥
 endif
 
 " Define mapleader
@@ -32,11 +32,11 @@ noremap [Space]h ^
 noremap [Space]l $
 
 if !g:plug.is_installed('lexima.vim')
-  inoremap [ []<LEFT>
-  inoremap ( ()<LEFT>
-  inoremap " ""<LEFT>
-  inoremap ' ''<LEFT>
-  inoremap ` ``<LEFT>
+    inoremap [ []<LEFT>
+    inoremap ( ()<LEFT>
+    inoremap " ""<LEFT>
+    inoremap ' ''<LEFT>
+    inoremap ` ``<LEFT>
 endif
 
 inoremap <C-h> <Backspace>
@@ -151,16 +151,16 @@ nnoremap <silent> tc :<C-u>tabclose<CR>
 nnoremap <silent> to :<C-u>tabonly<CR>
 nnoremap <silent> tm :<C-u>call <SID>move_to_tab()<CR>
 function! s:move_to_tab()
-  tab split
-  tabprevious
+    tab split
+    tabprevious
 
-  if winnr('$') > 1
-    close
-  elseif bufnr('$') > 1
-    buffer #
-  endif
+    if winnr('$') > 1
+        close
+    elseif bufnr('$') > 1
+        buffer #
+    endif
 
-  tabnext
+    tabnext
 endfunction
 " Tabpages mappings
 nnoremap <silent> <C-t>L  :<C-u>call <SID>move_tabpage("right")<CR>
@@ -179,33 +179,33 @@ vnoremap gj j
 vnoremap gk k
 
 if g:env.vimrc.goback_to_eof2bof == g:true
-  function! s:up(key)
-    if line(".") == 1
-      return ":call cursor(line('$'), col('.'))\<CR>"
-    else
-      return a:key
-    endif
-  endfunction 
-  function! s:down(key)
-    if line(".") == line("$")
-      return ":call cursor(1, col('.'))\<CR>"
-    else
-      return a:key
-    endif
-  endfunction
-  nnoremap <expr><silent> k <SID>up("gk")
-  nnoremap <expr><silent> j <SID>down("gj")
+    function! s:up(key)
+        if line(".") == 1
+            return ":call cursor(line('$'), col('.'))\<CR>"
+        else
+            return a:key
+        endif
+    endfunction 
+    function! s:down(key)
+        if line(".") == line("$")
+            return ":call cursor(1, col('.'))\<CR>"
+        else
+            return a:key
+        endif
+    endfunction
+    nnoremap <expr><silent> k <SID>up("gk")
+    nnoremap <expr><silent> j <SID>down("gj")
 endif
 
 " Buffers, windows, and tabpages {{{1
 "nnoremap <silent> <C-j> :<C-u>call <SID>get_buflists('n')<CR>
 "nnoremap <silent> <C-k> :<C-u>call <SID>get_buflists('p')<CR>
 if !g:plug.is_installed('vim-buftabs')
-  nnoremap <silent> <C-j> :<C-u>silent bnext<CR>
-  nnoremap <silent> <C-k> :<C-u>silent bprev<CR>
+    nnoremap <silent> <C-j> :<C-u>silent bnext<CR>
+    nnoremap <silent> <C-k> :<C-u>silent bprev<CR>
 else
-  nnoremap <silent> <C-j> :<C-u>silent bnext<CR>:<C-u>call <SID>get_buflists()<CR>
-  nnoremap <silent> <C-k> :<C-u>silent bprev<CR>:<C-u>call <SID>get_buflists()<CR>
+    nnoremap <silent> <C-j> :<C-u>silent bnext<CR>:<C-u>call <SID>get_buflists()<CR>
+    nnoremap <silent> <C-k> :<C-u>silent bprev<CR>:<C-u>call <SID>get_buflists()<CR>
 endif
 
 nnoremap <silent> <C-x>u :<C-u>call <SID>buf_restore()<CR>
@@ -218,11 +218,11 @@ nnoremap sp :<C-u>split<CR>
 nnoremap vs :<C-u>vsplit<CR>
 
 function! s:vsplit_or_wincmdw()
-  if winnr('$') == 1
-    return ":vsplit\<CR>"
-  else
-    return ":wincmd w\<CR>"
-  endif
+    if winnr('$') == 1
+        return ":vsplit\<CR>"
+    else
+        return ":wincmd w\<CR>"
+    endif
 endfunction
 nnoremap <expr><silent> ss <SID>vsplit_or_wincmdw()
 nnoremap sj <C-w>j

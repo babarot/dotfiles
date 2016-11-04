@@ -45,6 +45,7 @@ if g:plug.ready() && g:env.vimrc.plugin_on
   Plug 'fatih/vim-hclfmt'
   Plug has('lua') ? 'Shougo/neocomplete.vim' : 'Shougo/neocomplcache'
   Plug g:env.is_gui ? 'itchyny/lightline.vim' : ''
+  Plug 'Dkendal/fzy-vim'
 
   " syntax? language support
   Plug 'fatih/vim-go', { 'for': 'go' }

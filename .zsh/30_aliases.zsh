@@ -9,6 +9,7 @@ alias p="print -l"
 # For mac, aliases
 if is_osx; then
     has "qlmanage" && alias ql='qlmanage -p "$@" >&/dev/null'
+    alias gvim="open -a MacVim"
 fi
 
 if has 'git'; then

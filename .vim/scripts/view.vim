@@ -20,13 +20,6 @@ elseif g:plug.is_installed('hybrid')
     colorscheme hybrid
 endif
 
-if g:env.is_gui
-    set background=dark
-    if g:plug.is_installed('seoul256')
-        colorscheme seoul256
-    endif
-endif
-
 " StatusLine {{{1
 set laststatus=2
 

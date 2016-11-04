@@ -160,13 +160,6 @@ set mousehide
 set virtualedit=block
 set virtualedit& virtualedit+=block
 
-" Make it normal in UTF-8 in Unix.
-set encoding=utf-8
-
-set fileencoding=japan
-set fileencodings=utf-8,iso-2022-jp,euc-jp,ucs-2le,ucs-2,cp932
-
-" Select newline character (either or both of CR and LF depending on system) automatically
 " Default fileformat.
 set fileformat=unix
 " Automatic recognition of a new line cord.
@@ -176,6 +169,16 @@ if exists('&ambiwidth')
   set ambiwidth=double
 endif
 
+" Make it normal in UTF-8 in Unix.
+set encoding=utf-8
+set fileencoding=japan
+set fileencodings=utf-8,iso-2022-jp,euc-jp,ucs-2le,ucs-2,cp932
+
+set encoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8,iso-2022-jp,euc-jp,ucs-2le,ucs-2,cp932
+
+" Select newline character (either or both of CR and LF depending on system) automatically
 set foldenable
 "set foldmethod=marker
 "set foldopen=all

@@ -60,7 +60,7 @@ if g:plug.ready() && g:env.vimrc.plugin_on
   Plug 'b4b4r07/vim-ltsv', { 'for': 'ltsv' }
   Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
   Plug 'maksimr/vim-jsbeautify', { 'for': 'javascript' }
-  Plug 'chrisbra/csv.vim', { 'for': 'csv' }
+  "Plug 'chrisbra/csv.vim', { 'for': 'csv' }
   Plug 'zplug/vim-zplug', { 'for': 'zplug' }
 
   " colorscheme

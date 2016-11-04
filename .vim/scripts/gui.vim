@@ -1,5 +1,5 @@
 if !exists('g:env')
-  finish
+    finish
 endif
 
 "if g:env.is_tmux_running
@@ -14,38 +14,38 @@ endif
 autocmd GUIEnter * call s:gui()
 
 function! s:gui()
-  "colorscheme solarized
-  "set background=light
-  syntax enable
+    "colorscheme solarized
+    "set background=light
+    syntax enable
 
-  " Tabpages
-  set guitablabel=%{GuiTabLabel()}
+    " Tabpages
+    set guitablabel=%{GuiTabLabel()}
 
-  " Change cursor color if IME works.
-  if has('multi_byte_ime') || has('xim')
-    "highlight Cursor   guibg=NONE guifg=Yellow
-    "highlight CursorIM guibg=NONE guifg=Red
-    set iminsert=0 imsearch=0
+    " Change cursor color if IME works.
+    if has('multi_byte_ime') || has('xim')
+        "highlight Cursor   guibg=NONE guifg=Yellow
+        "highlight CursorIM guibg=NONE guifg=Red
+        set iminsert=0 imsearch=0
+        inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
+    endif
+    "autocmd VimEnter,ColorScheme * highlight Cursor   guibg=Yellow guifg=Black
+    "autocmd VimEnter,ColorScheme * highlight CursorIM guibg=Red    guifg=Black
+    autocmd VimEnter,ColorScheme * if &background ==# 'dark'  | highlight Cursor   guibg=Yellow guifg=Black | endif
+    autocmd VimEnter,ColorScheme * if &background ==# 'dark'  | highlight CursorIM guibg=Red    guifg=Black | endif
+    autocmd VimEnter,ColorScheme * if &background ==# 'light' | highlight Cursor   guibg=Black  guifg=NONE  | endif
+    autocmd VimEnter,ColorScheme * if &background ==# 'light' | highlight CursorIM guibg=Red    guifg=Black | endif
     inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
-  endif
-  "autocmd VimEnter,ColorScheme * highlight Cursor   guibg=Yellow guifg=Black
-  "autocmd VimEnter,ColorScheme * highlight CursorIM guibg=Red    guifg=Black
-  autocmd VimEnter,ColorScheme * if &background ==# 'dark'  | highlight Cursor   guibg=Yellow guifg=Black | endif
-  autocmd VimEnter,ColorScheme * if &background ==# 'dark'  | highlight CursorIM guibg=Red    guifg=Black | endif
-  autocmd VimEnter,ColorScheme * if &background ==# 'light' | highlight Cursor   guibg=Black  guifg=NONE  | endif
-  autocmd VimEnter,ColorScheme * if &background ==# 'light' | highlight CursorIM guibg=Red    guifg=Black | endif
-  inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
 
-  " Remove all menus.
-  try
-    source $VIMRUNTIME/delmenu.vim
-  catch
-  endtry
+    " Remove all menus.
+    try
+        source $VIMRUNTIME/delmenu.vim
+    catch
+    endtry
 
-  " Font
-  if IsMac()
-    set guifont=Andale\ Mono:h12
-  endif
+    " Font
+    if IsMac()
+        set guifont=Andale\ Mono:h12
+    endif
 endfunction
 
 autocmd MyAutoCmd BufReadPost *
@@ -58,13 +58,13 @@ nmap <silent> gsh :set t_te= t_ti= <cr>:sh<cr>:set t_te& t_ti&<cr>
 
 " GUI IME Cursor colors
 if has('multi_byte_ime') || has('xim')
-  highlight Cursor guibg=NONE guifg=Yellow
-  highlight CursorIM guibg=NONE guifg=Red
-  set iminsert=0 imsearch=0
-  if has('xim') && has('GUI_GTK')
-    ""set imactivatekey=s-space
-  endif
-  inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
+    highlight Cursor guibg=NONE guifg=Yellow
+    highlight CursorIM guibg=NONE guifg=Red
+    set iminsert=0 imsearch=0
+    if has('xim') && has('GUI_GTK')
+        ""set imactivatekey=s-space
+    endif
+    inoremap <silent> <ESC><ESC>:set iminsert=0<CR>
 endif
 
 " __END__ {{{1

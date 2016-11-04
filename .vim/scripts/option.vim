@@ -1,5 +1,5 @@
 if !exists('g:env')
-  finish
+    finish
 endif
 
 set pumheight=10
@@ -166,7 +166,7 @@ set fileformat=unix
 set fileformats=unix,dos,mac
 " A fullwidth character is displayed in vim properly.
 if exists('&ambiwidth')
-  set ambiwidth=double
+    set ambiwidth=double
 endif
 
 " Make it normal in UTF-8 in Unix.
@@ -197,22 +197,22 @@ set noimcmdline
 
 " Change some neccesary settings for win
 if IsWindows()
-  set shellslash "Exchange path separator
+    set shellslash "Exchange path separator
 endif
 
 if has('persistent_undo')
-  set undofile
-  let &undodir = g:env.path.vim . '/undo'
-  call Mkdir(&undodir)
+    set undofile
+    let &undodir = g:env.path.vim . '/undo'
+    call Mkdir(&undodir)
 endif
 
 " Use clipboard
 if has('clipboard')
-  set clipboard=unnamed
+    set clipboard=unnamed
 endif
 
 if has('patch-7.4.338')
-  set breakindent
+    set breakindent
 endif
 
 " __END__ {{{1

@@ -1,43 +1,43 @@
 function! s:vimrc_environment()
-  let env = {}
-  let env.is_ = {}
+    let env = {}
+    let env.is_ = {}
 
-  let env.is_.windows = has('win16') || has('win32') || has('win64')
-  let env.is_.cygwin = has('win32unix')
-  let env.is_.mac = !env.is_.windows && !env.is_.cygwin
-              \ && (has('mac') || has('macunix') || has('gui_macvim') ||
-              \    (!executable('xdg-open') &&
-              \    system('uname') =~? '^darwin'))
-  let env.is_.linux = !env.is_.mac && has('unix')
+    let env.is_.windows = has('win16') || has('win32') || has('win64')
+    let env.is_.cygwin = has('win32unix')
+    let env.is_.mac = !env.is_.windows && !env.is_.cygwin
+                \ && (has('mac') || has('macunix') || has('gui_macvim') ||
+                \    (!executable('xdg-open') &&
+                \    system('uname') =~? '^darwin'))
+    let env.is_.linux = !env.is_.mac && has('unix')
 
 
-  let env.is_starting = has('vim_starting')
-  let env.is_gui      = has('gui_running')
+    let env.is_starting = has('vim_starting')
+    let env.is_gui      = has('gui_running')
 
-  let env.hostname    = substitute(hostname(), '[^\w.]', '', '')
+    let env.hostname    = substitute(hostname(), '[^\w.]', '', '')
 
-  " vim
-  if env.is_.windows
-    let vimpath = expand('~/vimfiles')
-  else
-    let vimpath = expand('~/.vim')
-  endif
+    " vim
+    if env.is_.windows
+        let vimpath = expand('~/vimfiles')
+    else
+        let vimpath = expand('~/.vim')
+    endif
 
-  let env.path = {
-        \ 'vim': vimpath,
-        \ }
+    let env.path = {
+                \ 'vim': vimpath,
+                \ }
 
-  let env.bin = {
-        \ 'ag': executable('ag'),
-        \ 'osascript': executable('osascript'),
-        \ 'open': executable('open'),
-        \ 'chmod': executable('chmod'),
-        \ 'qlmanage': executable('qlmanage'),
-        \ }
+    let env.bin = {
+                \ 'ag': executable('ag'),
+                \ 'osascript': executable('osascript'),
+                \ 'open': executable('open'),
+                \ 'chmod': executable('chmod'),
+                \ 'qlmanage': executable('qlmanage'),
+                \ }
 
-  " tmux
-  let env.is_tmux_running = !empty($TMUX)
-  let env.tmux_proc = system('tmux display-message -p "#W"')
+    " tmux
+    let env.is_tmux_running = !empty($TMUX)
+    let env.tmux_proc = system('tmux display-message -p "#W"')
 
   "echo get(g:env.vimrc, 'enable_plugin', g:false)
   let env.vimrc = {
@@ -55,18 +55,18 @@ function! s:vimrc_environment()
               \ 'check_plug_update': g:true,
               \ }
 
-  return env
+    return env
 endfunction
 
 " g:env is an environment variable in vimrc
 let g:env = s:vimrc_environment()
 
 function! IsWindows() abort
-  return g:env.is_.windows
+    return g:env.is_.windows
 endfunction
 
 function! IsMac() abort
-  return g:env.is_.mac
+    return g:env.is_.mac
 endfunction
 
 " __END__ {{{1

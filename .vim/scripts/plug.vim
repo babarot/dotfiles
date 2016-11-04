@@ -1,5 +1,5 @@
 if !exists('g:env')
-  finish
+    finish
 endif
 
 let g:plug = {
@@ -10,7 +10,7 @@ let g:plug = {
             \ }
 
 function! g:plug.ready()
-  return filereadable(self.plug)
+    return filereadable(self.plug)
 endfunction
 
 if g:plug.ready() && g:env.vimrc.plugin_on
@@ -69,7 +69,7 @@ if g:plug.ready() && g:env.vimrc.plugin_on
   Plug 'junegunn/seoul256.vim'
   Plug 'nanotech/jellybeans.vim'
   Plug 'whatyouhide/vim-gotham'
-  
+
   " Add plugins to &runtimepath
   call plug#end()
 endif
@@ -79,35 +79,35 @@ let g:plug.plugs = get(g:, 'plugs', {})
 let g:plug.list  = keys(g:plug.plugs)
 
 if !g:plug.ready()
-  function! g:plug.init()
-    let ret = system(printf("curl -fLo %s --create-dirs %s", self.plug, self.url))
-    "call system(printf("git clone %s", self.github))
-    if v:shell_error
-      return Error('g:plug.init: error occured')
-    endif
+    function! g:plug.init()
+        let ret = system(printf("curl -fLo %s --create-dirs %s", self.plug, self.url))
+        "call system(printf("git clone %s", self.github))
+        if v:shell_error
+            return Error('g:plug.init: error occured')
+        endif
 
-    " Restart vim
-    if !g:env.is_gui
-      silent! !vim
-      quit!
-    endif
-  endfunction
-  command! PlugInit call g:plug.init()
+        " Restart vim
+        if !g:env.is_gui
+            silent! !vim
+            quit!
+        endif
+    endfunction
+    command! PlugInit call g:plug.init()
 
-  if g:env.vimrc.suggest_neobundleinit == g:true
-    autocmd! VimEnter * redraw
-          \ | echohl WarningMsg
-          \ | echo "You should do ':PlugInit' at first!"
-          \ | echohl None
-  else
-    " Install vim-plug
-    PlugInit
-  endif
+    if g:env.vimrc.suggest_neobundleinit == g:true
+        autocmd! VimEnter * redraw
+                    \ | echohl WarningMsg
+                    \ | echo "You should do ':PlugInit' at first!"
+                    \ | echohl None
+    else
+        " Install vim-plug
+        PlugInit
+    endif
 endif
 
 function! g:plug.is_installed(strict, ...)
-  let list = []
-  if type(a:strict) != type(0)
+    let list = []
+    if type(a:strict) != type(0)
         call add(list, a:strict)
     endif
     let list += a:000
@@ -148,44 +148,44 @@ function! g:plug.is_loaded(p)
 endfunction
 
 function! g:plug.check_installation()
-  if empty(self.plugs)
-    return
-  endif
-
-  let list = []
-  for [name, spec] in items(self.plugs)
-    if !isdirectory(spec.dir)
-      call add(list, spec.uri)
+    if empty(self.plugs)
+        return
     endif
-  endfor
 
-  if len(list) > 0
-    let unplugged = map(list, 'substitute(v:val, "^.*github\.com/\\(.*/.*\\)\.git$", "\\1", "g")')
+    let list = []
+    for [name, spec] in items(self.plugs)
+        if !isdirectory(spec.dir)
+            call add(list, spec.uri)
+        endif
+    endfor
 
-    " Ask whether installing plugs like NeoBundle
-    echomsg 'Not installed plugs: ' . string(unplugged)
-    if confirm('Install plugs now?', "yes\nNo", 2) == 1
-      PlugInstall
-      " Close window for vim-plug
-      silent! close
-      " Restart vim
-      if !g:env.is_gui
-        silent! !vim
-        quit!
-      endif
+    if len(list) > 0
+        let unplugged = map(list, 'substitute(v:val, "^.*github\.com/\\(.*/.*\\)\.git$", "\\1", "g")')
+
+        " Ask whether installing plugs like NeoBundle
+        echomsg 'Not installed plugs: ' . string(unplugged)
+        if confirm('Install plugs now?', "yes\nNo", 2) == 1
+            PlugInstall
+            " Close window for vim-plug
+            silent! close
+            " Restart vim
+            if !g:env.is_gui
+                silent! !vim
+                quit!
+            endif
+        endif
     endif
-  endif
 endfunction
 
 if g:plug.ready() && g:env.vimrc.plugin_on
-  function! PlugList(A,L,P)
-    return join(g:plug.list, "\n")
-  endfunction
+    function! PlugList(A,L,P)
+        return join(g:plug.list, "\n")
+    endfunction
 
-  command! -nargs=1 -complete=custom,PlugList PlugHas
-        \ if g:plug.is_installed('<args>')
-        \ | echo g:plug.plugs['<args>'].dir
-        \ | endif
+    command! -nargs=1 -complete=custom,PlugList PlugHas
+                \ if g:plug.is_installed('<args>')
+                \ | echo g:plug.plugs['<args>'].dir
+                \ | endif
 endif
 
 " __END__ {{{1

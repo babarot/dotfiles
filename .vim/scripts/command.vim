@@ -1,5 +1,5 @@
 if !exists('g:env')
-  finish
+    finish
 endif
 
 " In particular effective when I am garbled in a terminal
@@ -53,8 +53,8 @@ command! -nargs=0 AllBwipeout call s:all_buffers_bwipeout()
 
 " Get buffer queue list for restore
 command! -nargs=0 BufQueue echo len(s:bufqueue)
-      \ ? reverse(split(substitute(join(s:bufqueue, ' '), $HOME, '~', 'g')))
-      \ : "No buffers in 's:bufqueue'."
+            \ ? reverse(split(substitute(join(s:bufqueue, ' '), $HOME, '~', 'g')))
+            \ : "No buffers in 's:bufqueue'."
 
 " Get buffer list like ':ls'
 command! -nargs=0 BufList call s:get_buflists()

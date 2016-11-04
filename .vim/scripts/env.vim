@@ -47,7 +47,7 @@ function! s:vimrc_environment()
               \ 'save_window_position': g:true,
               \ 'restore_cursor_position': g:true,
               \ 'statusline_manually': g:true,
-              \ 'add_execute_perm': g:true,
+              \ 'add_execute_perm': g:false,
               \ 'colorize_statusline_insert': g:true,
               \ 'manage_rtp_manually': g:true,
               \ 'auto_cd_file_parentdir': g:true,

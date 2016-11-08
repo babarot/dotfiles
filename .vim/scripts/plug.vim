@@ -14,65 +14,64 @@ function! g:plug.ready()
 endfunction
 
 if g:plug.ready() && g:env.vimrc.plugin_on
-  " start to manage with vim-plug
-  call plug#begin(g:plug.base)
+    " start to manage with vim-plug
+    call plug#begin(g:plug.base)
 
-  " file and directory
-  Plug 'b4b4r07/vim-shellutils'
-  Plug 'b4b4r07/mru.vim'
-  Plug 'junegunn/fzf'
-  Plug 'junegunn/fzf.vim'
-  Plug 'justinmk/vim-dirvish'
-  Plug 'tweekmonster/fzf-filemru'
-  Plug 'tpope/vim-surround'
-  Plug 'tpope/vim-endwise'
-  Plug 'b4b4r07/enhancd', { 'tag': '2.2.1' }
-  Plug 'Shougo/vimproc.vim',  { 'do': 'make' }
-  Plug 'vim-jp/vimdoc-ja'
-  Plug 'osyo-manga/vim-anzu'
-  Plug 'tyru/caw.vim'
-  Plug 'AndrewRadev/gapply.vim'
-  Plug 'thinca/vim-quickrun'
-  Plug 'mattn/vim-terminal'
-  Plug 'thinca/vim-prettyprint', { 'on': 'PP' }
-  Plug 'rhysd/github-complete.vim'
-  Plug 'junegunn/vim-emoji'
-  Plug 'b4b4r07/vim-shell-with-tmux', { 'on': 'Sh' }
-  Plug 'tyru/open-browser.vim'
-  Plug 'tyru/open-browser-github.vim'
-  Plug 'kien/ctrlp.vim'
-  Plug 'b4b4r07/vim-hcl'
-  Plug 'fatih/vim-hclfmt'
-  Plug has('lua') ? 'Shougo/neocomplete.vim' : 'Shougo/neocomplcache'
-  Plug g:env.is_gui ? 'itchyny/lightline.vim' : ''
-  Plug 'Dkendal/fzy-vim'
+    " file and directory
+    Plug 'b4b4r07/vim-shellutils'
+    Plug 'b4b4r07/mru.vim'
+    Plug 'junegunn/fzf'
+    Plug 'junegunn/fzf.vim'
+    Plug 'justinmk/vim-dirvish'
+    Plug 'tweekmonster/fzf-filemru'
+    Plug 'tpope/vim-surround'
+    Plug 'tpope/vim-endwise'
+    Plug 'b4b4r07/enhancd', { 'tag': '2.2.1' }
+    Plug 'Shougo/vimproc.vim',  { 'do': 'make' }
+    Plug 'vim-jp/vimdoc-ja'
+    Plug 'osyo-manga/vim-anzu'
+    Plug 'tyru/caw.vim'
+    Plug 'AndrewRadev/gapply.vim'
+    Plug 'thinca/vim-quickrun'
+    Plug 'mattn/vim-terminal'
+    Plug 'thinca/vim-prettyprint', { 'on': 'PP' }
+    Plug 'rhysd/github-complete.vim'
+    Plug 'junegunn/vim-emoji'
+    Plug 'b4b4r07/vim-shell-with-tmux', { 'on': 'Sh' }
+    Plug 'tyru/open-browser.vim'
+    Plug 'tyru/open-browser-github.vim'
+    Plug 'kien/ctrlp.vim'
+    Plug 'b4b4r07/vim-hcl'
+    Plug 'fatih/vim-hclfmt'
+    Plug has('lua') ? 'Shougo/neocomplete.vim' : 'Shougo/neocomplcache'
+    Plug g:env.is_gui ? 'itchyny/lightline.vim' : ''
+    Plug 'Dkendal/fzy-vim'
 
-  " syntax? language support
-  Plug 'fatih/vim-go', { 'for': 'go' }
-  Plug 'jnwhiteh/vim-golang', { 'for': 'go' }
-  "Plug 'zaiste/tmux.vim', { 'for': 'tmux' }
-  Plug 'keith/tmux.vim', { 'for': 'tmux' }
-  Plug 'dag/vim-fish', { 'for': 'fish' }
-  Plug 'zplug/vim-zplug', { 'for': 'zplug' }
-  Plug 'chase/vim-ansible-yaml'
-  Plug 'evanmiller/nginx-vim-syntax', { 'for': 'nginx' }
-  Plug 'cespare/vim-toml', { 'for': 'toml' }
-  Plug 'elzr/vim-json', { 'for': 'json' }
-  Plug 'b4b4r07/vim-ltsv', { 'for': 'ltsv' }
-  Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
-  Plug 'maksimr/vim-jsbeautify', { 'for': 'javascript' }
-  "Plug 'chrisbra/csv.vim', { 'for': 'csv' }
-  Plug 'zplug/vim-zplug', { 'for': 'zplug' }
+    " syntax? language support
+    Plug 'fatih/vim-go', { 'for': 'go' }
+    Plug 'jnwhiteh/vim-golang', { 'for': 'go' }
+    "Plug 'zaiste/tmux.vim', { 'for': 'tmux' }
+    Plug 'keith/tmux.vim', { 'for': 'tmux' }
+    Plug 'dag/vim-fish', { 'for': 'fish' }
+    Plug 'zplug/vim-zplug', { 'for': 'zplug' }
+    Plug 'chase/vim-ansible-yaml'
+    Plug 'evanmiller/nginx-vim-syntax', { 'for': 'nginx' }
+    Plug 'cespare/vim-toml', { 'for': 'toml' }
+    Plug 'elzr/vim-json', { 'for': 'json' }
+    Plug 'b4b4r07/vim-ltsv', { 'for': 'ltsv' }
+    Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
+    Plug 'maksimr/vim-jsbeautify', { 'for': 'javascript' }
+    Plug 'zplug/vim-zplug', { 'for': 'zplug' }
 
-  " colorscheme
-  Plug 'b4b4r07/solarized.vim'
-  Plug 'w0ng/vim-hybrid'
-  Plug 'junegunn/seoul256.vim'
-  Plug 'nanotech/jellybeans.vim'
-  Plug 'whatyouhide/vim-gotham'
+    " colorscheme
+    Plug 'b4b4r07/solarized.vim'
+    Plug 'w0ng/vim-hybrid'
+    Plug 'junegunn/seoul256.vim'
+    Plug 'nanotech/jellybeans.vim'
+    Plug 'whatyouhide/vim-gotham'
 
-  " Add plugins to &runtimepath
-  call plug#end()
+    " Add plugins to &runtimepath
+    call plug#end()
 endif
 
 " Add plug's plugins

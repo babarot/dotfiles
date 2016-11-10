@@ -3,16 +3,9 @@ CANDIDATES := $(wildcard .??*) bin
 EXCLUSIONS := .DS_Store .git .gitmodules .travis.yml
 DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 
-all: install
+.DEFAULT_GOAL := help
 
-help:
-	@echo "make list           #=> Show dot files in this repo"
-	@echo "make deploy         #=> Create symlink to home directory"
-	@echo "make init           #=> Setup environment settings"
-	@echo "make test           #=> Test dotfiles and init scripts"
-	@echo "make update         #=> Fetch changes for this repo"
-	@echo "make install        #=> Run make update, deploy, init"
-	@echo "make clean          #=> Remove the dot files and this repo"
+all:
 
 list:
 	@$(foreach val, $(DOTFILES), /bin/ls -dF $(val);)
@@ -42,3 +35,15 @@ clean:
 	@echo 'Remove dot files in your home directory...'
 	@-$(foreach val, $(DOTFILES), rm -vrf $(HOME)/$(val);)
 	-rm -rf $(DOTPATH)
+
+help: ## Self-documented Makefile
+	@echo "make list           #=> Show dot files in this repo"
+	@echo "make deploy         #=> Create symlink to home directory"
+	@echo "make init           #=> Setup environment settings"
+	@echo "make test           #=> Test dotfiles and init scripts"
+	@echo "make update         #=> Fetch changes for this repo"
+	@echo "make install        #=> Run make update, deploy, init"
+	@echo "make clean          #=> Remove the dot files and this repo"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
+		| sort \
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

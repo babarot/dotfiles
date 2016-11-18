@@ -41,10 +41,6 @@ endif
 
 inoremap <C-h> <Backspace>
 inoremap <C-d> <Delete>
-"nnoremap + <C-a>
-"nnoremap - <C-x>
-inoremap <C-h> <Backspace>
-inoremap <C-d> <Delete>
 cnoremap <C-k> <UP>
 cnoremap <C-j> <DOWN>
 cnoremap <C-l> <RIGHT>

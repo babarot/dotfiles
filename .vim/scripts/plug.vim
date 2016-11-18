@@ -70,6 +70,8 @@ if g:plug.ready() && g:env.vimrc.plugin_on
     Plug 'nanotech/jellybeans.vim'
     Plug 'whatyouhide/vim-gotham'
 
+    Plug 'b4b4r07/vim-unicode'
+
     " Add plugins to &runtimepath
     call plug#end()
 endif

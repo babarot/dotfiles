@@ -121,3 +121,12 @@ zplug "takuya/f5a6fb560dc357835122", \
     rename-to:'node2bash'
 
 zplug 'Code-Hex/battery', as:command, from:gh-r
+
+#zplug 'paulirish/git-open', as:command
+zplug 'b4b4r07/git-open', as:command, at:patch-1
+
+zplug 'b4b4r07/d66f7c8f32a0b5724eabbdc95ad921cf', from:gist
+
+zplug 'b4b4r07/open-link.sh', as:command, use:'*.bash', rename-to:'ol'
+
+zplug 'mattn/jvgrep', as:command, from:gh-r

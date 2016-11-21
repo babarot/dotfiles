@@ -131,3 +131,5 @@ zplug 'b4b4r07/d66f7c8f32a0b5724eabbdc95ad921cf', from:gist
 zplug 'b4b4r07/open-link.sh', as:command, use:'*.bash', rename-to:'ol'
 
 zplug 'mattn/jvgrep', as:command, from:gh-r
+
+zplug 'b4b4r07/zsh-basic-theme', as:theme

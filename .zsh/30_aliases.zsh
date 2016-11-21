@@ -445,3 +445,5 @@ git_modified_files() {
 }
 #alias -g GG='$(git_modified_files)'
 alias ls='gls --color=auto -F'
+
+alias t="tree -C"

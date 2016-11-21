@@ -17,7 +17,8 @@ zplug "~/.modules", \
 zplug "~/.zsh", \
     from:local, \
     nice:2, \
-    use:"<->_*.zsh"
+    use:"<->_*.zsh", \
+    ignore:'40*'
 
 zplug "b4b4r07/zsh-gomi", \
     as:command, \

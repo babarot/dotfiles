@@ -132,4 +132,7 @@ zplug 'b4b4r07/open-link.sh', as:command, use:'*.bash', rename-to:'ol'
 
 zplug 'mattn/jvgrep', as:command, from:gh-r
 
-zplug 'b4b4r07/zsh-basic-theme', as:theme
+#zplug 'b4b4r07/zsh-basic-theme', as:theme
+zplug 'S1cK94/minimal', as:theme
+#zplug 'mafredri/zsh-async'
+#zplug 'sindresorhus/pure', as:theme, use:'pure.plugin.zsh', on:'mafredri/zsh-async'

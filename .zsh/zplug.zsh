@@ -141,4 +141,4 @@ zplug "b4b4r07/open-link.sh", as:command, use:'*.bash', rename-to:'ol'
 zplug "mattn/jvgrep", as:command, from:gh-r
 
 zplug "b4b4r07/ultimate", as:theme
-export ZSH_ULTIMATE_PATHTYPE="shortpath"
+zstyle ':ultimate:prompt:path' mode 'shortpath'

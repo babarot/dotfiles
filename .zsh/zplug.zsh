@@ -101,6 +101,14 @@ zplug "fujiwara/nssh", \
     rename-to:"nssh", \
     frozen:1
 
+zplug "tcnksm/ghr", \
+    as:command, \
+    from:gh-r
+
+zplug "b4b4r07/gdate", \
+    as:command, \
+    from:gh-r
+
 zplug "wg/wrk", \
     as:command, \
     hook-build:"make"
@@ -121,18 +129,16 @@ zplug "takuya/f5a6fb560dc357835122", \
     use:'node2bash.js', \
     rename-to:'node2bash'
 
-zplug 'Code-Hex/battery', as:command, from:gh-r
+zplug "Code-Hex/battery", as:command, from:gh-r
 
-#zplug 'paulirish/git-open', as:command
-zplug 'b4b4r07/git-open', as:command, at:patch-1
+#zplug "paulirish/git-open", as:command
+zplug "b4b4r07/git-open", as:command, at:patch-1
 
-zplug 'b4b4r07/d66f7c8f32a0b5724eabbdc95ad921cf', from:gist
+zplug "b4b4r07/d66f7c8f32a0b5724eabbdc95ad921cf", from:gist
 
-zplug 'b4b4r07/open-link.sh', as:command, use:'*.bash', rename-to:'ol'
+zplug "b4b4r07/open-link.sh", as:command, use:'*.bash', rename-to:'ol'
 
-zplug 'mattn/jvgrep', as:command, from:gh-r
+zplug "mattn/jvgrep", as:command, from:gh-r
 
-#zplug 'b4b4r07/zsh-basic-theme', as:theme
-zplug 'S1cK94/minimal', as:theme
-#zplug 'mafredri/zsh-async'
-#zplug 'sindresorhus/pure', as:theme, use:'pure.plugin.zsh', on:'mafredri/zsh-async'
+zplug "b4b4r07/ultimate", as:theme
+export ZSH_ULTIMATE_PATHTYPE="shortpath"

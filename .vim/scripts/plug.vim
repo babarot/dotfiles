@@ -71,6 +71,7 @@ if g:plug.ready() && g:env.vimrc.plugin_on
     Plug 'whatyouhide/vim-gotham'
 
     Plug 'b4b4r07/vim-unicode'
+    Plug 'b4b4r07/vim-sqlfmt'
 
     " Add plugins to &runtimepath
     call plug#end()

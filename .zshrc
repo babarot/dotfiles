@@ -66,6 +66,7 @@ if [[ -f ~/.zplug/init.zsh ]]; then
             echo
         fi
     fi
+    echo
     zplug load --verbose
 fi
 

@@ -169,12 +169,36 @@ awk_alias() {
         shift
     done
 
-    if ! awk ${=opts[@]} "$pattern{print $"$field"}" 2>/dev/null; then
+    if ! awk ${=opts[@]} "$"$field" ~ $pattern{print $"$field"}" 2>/dev/null; then
         printf "Galias: syntax error\n"
         return 1
     fi
 }
-alias -g A="| awk_alias"
+
+awk_alias2() {
+    local -a options fields words
+    while (( $#argv > 0 ))
+    do
+        case "$1" in
+            -*)
+                options+=("$1")
+                ;;
+            <->)
+                fields+=("$1")
+                ;;
+            *)
+                words+=("$1")
+                ;;
+        esac
+        shift
+    done
+    if (( $#fields > 0 )) && (( $#words > 0 )); then
+        awk '$'$fields[1]' ~ '${(qqq)words[1]}''
+    elif (( $#fields > 0 )) && (( $#words == 0 )); then
+        awk '{print $'$fields[1]'}'
+    fi
+}
+alias -g A="| awk_alias2"
 
 mru() {
     local -a f1 f2 f2_backup

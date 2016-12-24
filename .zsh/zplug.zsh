@@ -9,27 +9,15 @@ has_plugin() {
 # Local loading
 zplug "zplug/zplug"
 
-zplug "~/.modules", \
-    from:local, \
-    nice:1, \
-    use:"*.sh"
+zplug "~/.modules", from:local, use:"*.sh"
 
-zplug "~/.zsh", \
-    from:local, \
-    nice:2, \
-    use:"<->_*.zsh", \
-    ignore:'40*'
+zplug "~/.zsh", from:local, use:"<->_*.zsh", ignore:'40*'
 
-zplug "b4b4r07/zsh-gomi", \
-    as:command, \
-    use:bin/gomi
+zplug "b4b4r07/zsh-gomi", as:command, use:bin/gomi
 
-zplug "b4b4r07/ssh-keyreg", \
-    as:command, \
-    use:bin
+zplug "b4b4r07/ssh-keyreg", as:command, use:bin
 
-zplug "mrowa44/emojify", \
-    as:command
+zplug "mrowa44/emojify", as:command
 
 zplug "stedolan/jq", \
     as:command, \
@@ -58,43 +46,6 @@ zplug "motemen/ghq", \
     from:gh-r, \
     rename-to:ghq
 
-zplug "b4b4r07/ls.zsh", \
-    as:command, \
-    use:bin/ls
-
-zplug "b4b4r07/emoji-cli", \
-    if:'(( $+commands[jq] ))', \
-    on:"junegunn/fzf-bin"
-
-zplug "b4b4r07/enhancd", \
-    use:init.sh
-
-zplug "glidenote/hub-zsh-completion"
-
-zplug "b4b4r07/zsh-vimode-visual", \
-    use:"*.sh"
-
-zplug "zsh-users/zsh-completions"
-
-zplug "zsh-users/zsh-history-substring-search"
-
-zplug "zsh-users/zsh-syntax-highlighting", \
-    nice:19
-
-zplug "b4b4r07/peco-tmux.sh", \
-    as:command, \
-    use:'*.sh', \
-    rename-to:'peco-tmux'
-
-zplug "philovivero/distribution", \
-    as:command, \
-    use:distribution, \
-    if:'(( $+commands[perl] ))'
-
-zplug "mitmproxy/mitmproxy", \
-    as:command, \
-    hook-build:"sudo python ./setup.py install"
-
 zplug "fujiwara/nssh", \
     as:command, \
     from:gh-r, \
@@ -109,6 +60,29 @@ zplug "b4b4r07/gdate", \
     as:command, \
     from:gh-r
 
+zplug "b4b4r07/emoji-cli", on:"junegunn/fzf-bin", if:'(( $+commands[jq] ))'
+
+zplug "b4b4r07/enhancd", use:init.sh
+
+zplug "glidenote/hub-zsh-completion"
+
+zplug "b4b4r07/zsh-vimode-visual", use:"*.sh"
+
+zplug "zsh-users/zsh-completions"
+
+zplug "zsh-users/zsh-history-substring-search"
+
+zplug "zsh-users/zsh-syntax-highlighting", defer:3
+
+zplug "philovivero/distribution", \
+    as:command, \
+    use:distribution, \
+    if:'(( $+commands[perl] ))'
+
+zplug "mitmproxy/mitmproxy", \
+    as:command, \
+    hook-build:"sudo python ./setup.py install"
+
 zplug "wg/wrk", \
     as:command, \
     hook-build:"make"
@@ -116,22 +90,13 @@ zplug "wg/wrk", \
 zplug "reorx/httpstat", \
     as:command, \
     use:'httpstat.py', \
-    if:'(( $+commands[python] ))', \
-    rename-to:'httpstat'
+    rename-to:'httpstat', \
+    if:'(( $+commands[python] ))'
 
 zplug "jhawthorn/fzy", \
     as:command, \
     hook-build:"make && sudo make install"
 
-zplug "takuya/f5a6fb560dc357835122", \
-    as:command, \
-    from:gist, \
-    use:'node2bash.js', \
-    rename-to:'node2bash'
-
-zplug "Code-Hex/battery", as:command, from:gh-r
-
-#zplug "paulirish/git-open", as:command
 zplug "b4b4r07/git-open", as:command, at:patch-1
 
 zplug "b4b4r07/d66f7c8f32a0b5724eabbdc95ad921cf", from:gist
@@ -141,4 +106,11 @@ zplug "b4b4r07/open-link.sh", as:command, use:'*.bash', rename-to:'ol'
 zplug "mattn/jvgrep", as:command, from:gh-r
 
 zplug "b4b4r07/ultimate", as:theme
-zstyle ':ultimate:prompt:path' mode 'shortpath'
+
+if zplug check "b4b4r07/ultimate"; then
+    zstyle ':ultimate:prompt:path' mode 'shortpath'
+fi
+
+zplug 'b4b4r07/zplug-doctor', lazy:yes, use:zplug-doctor
+
+zplug 'Valodim/zsh-curl-completion'

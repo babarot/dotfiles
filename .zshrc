@@ -19,9 +19,10 @@ if [[ -f ~/.zplug/init.zsh ]]; then
 
     if ! zplug check --verbose; then
         printf "Install? [y/N]: "
-        if read -s -q; then
-            zplug install
+        if read -q; then
+            echo; zplug install
         fi
+        echo
     fi
     zplug load
 fi

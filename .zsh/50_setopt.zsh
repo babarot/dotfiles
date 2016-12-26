@@ -1,12 +1,3 @@
-# Check whether the vital file is loaded
-if ! vitalize 2>/dev/null; then
-    echo "cannot run as shell script" 1>&2
-    return 1
-fi
-
-setopt auto_cd
-setopt auto_pushd
-
 # Do not print the directory stack after pushd or popd.
 #setopt pushd_silent
 # Replace 'cd -' with 'cd +'
@@ -155,14 +146,14 @@ setopt hist_verify
 # Enable history system like a Bash
 setopt bang_hist
 
-if :; then
-    setopt auto_param_slash
-    setopt list_types
-    setopt auto_menu
-    setopt auto_param_keys
-    setopt interactive_comments
-    setopt magic_equal_subst
-    setopt complete_in_word
-    setopt always_last_prompt
-    setopt globdots
-fi
+setopt always_last_prompt
+setopt auto_cd
+setopt auto_menu
+setopt auto_param_keys
+setopt auto_param_slash
+setopt auto_pushd
+setopt complete_in_word
+setopt globdots
+setopt interactive_comments
+setopt list_types
+setopt magic_equal_subst

@@ -9,8 +9,3 @@ reload() {
     unfunction $f:t 2>/dev/null
     autoload -U $f:t
 }
-
-# chpwd function is called after cd command
-chpwd() {
-    ls -F
-}

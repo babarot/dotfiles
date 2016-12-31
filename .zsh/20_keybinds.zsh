@@ -36,14 +36,14 @@ bindkey -M vicmd 'gg' beginning-of-line
 bindkey -M vicmd 'G'  end-of-line
 
 if is-at-least 5.0.8; then
-    #autoload -Uz surround
-    #zle -N delete-surround surround
-    #zle -N change-surround surround
-    #zle -N add-surround surround
-    #bindkey -a cs change-surround
-    #bindkey -a ds delete-surround
-    #bindkey -a ys add-surround
-    #bindkey -a S add-surround
+    autoload -Uz surround
+    zle -N delete-surround surround
+    zle -N change-surround surround
+    zle -N add-surround surround
+    bindkey -a cs change-surround
+    bindkey -a ds delete-surround
+    bindkey -a ys add-surround
+    bindkey -a S add-surround
 fi
 
 # bind P and N for EMACS mode

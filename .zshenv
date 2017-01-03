@@ -3,6 +3,7 @@ path=( \
     /usr/local/bin(N-/) \
     ~/bin(N-/) \
     ~/.zplug/bin(N-/) \
+    ~/.tmux/bin(N-/) \
     "$path[@]" \
     )
 

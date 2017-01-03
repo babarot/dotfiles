@@ -15,7 +15,7 @@
 #
 # ▁▂▃▅▇
 
-. "$DOTPATH"/etc/lib/vital.sh
+# . "$DOTPATH"/etc/lib/vital.sh
 
 # if ! is_osx; then
 #     echo "wifi: require OS X" 1>&2
@@ -23,17 +23,17 @@
 # fi
 
 # Check arguments
-for arg in "$@"
-do
-    # Check if arguments have help option
-    if [[ "$arg" =~ ^"-h"|"--help"$ ]]; then
-        cat 1>&2 <<-'EOH'
-usage: wifi [-h|--help]
-    show the wifi information (strength, bandwidth, SSID)
-EOH
-        exit 1
-    fi
-done
+# for arg in "$@"
+# do
+#     # Check if arguments have help option
+#     if [[ "$arg" =~ ^"-h"|"--help"$ ]]; then
+#         cat 1>&2 <<-'EOH'
+# usage: wifi [-h|--help]
+#     show the wifi information (strength, bandwidth, SSID)
+# EOH
+#         exit 1
+#     fi
+# done
 
 # airport command is executable file
 #

@@ -1,1 +1,0 @@
-../etc/lib/standard.sh

@@ -17,10 +17,10 @@
 
 . "$DOTPATH"/etc/lib/vital.sh
 
-if ! is_osx; then
-    echo "wifi: require OS X" 1>&2
-    exit 1
-fi
+# if ! is_osx; then
+#     echo "wifi: require OS X" 1>&2
+#     exit 1
+# fi
 
 # Check arguments
 for arg in "$@"

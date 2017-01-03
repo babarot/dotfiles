@@ -1,6 +1,0 @@
-[submodule ".zsh/plugins/zsh-zsh-autosuggestions"]
-	path = .zsh/plugins/zsh-zsh-autosuggestions
-	url = https://github.com/tarruda/zsh-autosuggestions
-[submodule "etc/init/assets/pygments/solarized-pygment"]
-	path = etc/init/assets/pygments/solarized-pygment
-	url = git://github.com/john2x/solarized-pygment

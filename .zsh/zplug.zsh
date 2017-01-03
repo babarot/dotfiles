@@ -5,7 +5,6 @@ ZPLUG_PROTOCOL=ssh
 
 zplug "zplug/zplug"
 
-zplug "~/.modules", from:local, use:"*.sh", defer:1
 zplug "~/.zsh", from:local, use:"<->_*.zsh"
 
 zplug "b4b4r07/emoji-cli", on:"junegunn/fzf-bin", if:'(( $+commands[jq] ))'
@@ -113,3 +112,5 @@ zplug 'b4b4r07/zplug-rm', lazy:yes
 zplug 'b4b4r07/tmux-powertools', \
     use:init.zsh, \
     hook-load:'tmux-loader'
+
+zplug 'b4b4r07/zls', lazy:yes

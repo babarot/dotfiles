@@ -1,9 +1,6 @@
 #!/bin/bash
 
-# Load vital library that is most important and
-# constructed with many minimal functions
-# For more information, see etc/README.md
-. "$DOTPATH"/etc/lib/vital.sh
+has() { type "$1" &>/dev/null; }
 
 # If the current_bat is less than the BATTERY_DANGER,
 # output color will be red
@@ -107,10 +104,10 @@ get_remain() {
 }
 
 # this scripts is supported OS X only now
-if ! is_osx; then
-    echo "OS X only" 1>&2
-    exit 1
-fi
+# if ! is_osx; then
+#     echo "OS X only" 1>&2
+#     exit 1
+# fi
 
 # check arguments
 for i in "$@"

@@ -473,4 +473,14 @@ git_modified_files() {
 }
 #alias -g GG='$(git_modified_files)'
 
-alias t="tree -C"
+# treels() {
+#     local -a files=( *(D) )
+#     if (( $#files > $LINES )); then
+#         tree -C -L 1 -a -I .git
+#     else
+#         tree -C
+#     fi
+# }
+# alias t="treels"
+
+alias l="ls -l"

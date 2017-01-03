@@ -147,18 +147,26 @@ do-enter() {
         return $status
     fi
 
-    : ${not_yet:=1}
+    : ${ls_done:=false}
+    : ${git_ls_done:=false}
+
+    if [[ $PWD != $GIT_OLDPWD ]]; then
+        git_ls_done=false
+    fi
 
     echo
     if is_git_repo; then
-        if [[ -n "$(git status --short)" ]]; then
-            git status
+        if $git_ls_done; then
+            if [[ -n $(git status --short) ]]; then
+                git status
+            fi
+        else
+            ${=aliases[ls]} && git_ls_done=true
+            GIT_OLDPWD=$PWD
         fi
     else
-        # do anything
-        if [[ $PWD != $OLDPWD ]] && (( not_yet )); then
-            not_yet=0
-            ls -Fl --color
+        if [[ $PWD != $OLDPWD ]] && ! $ls_done; then
+            ${=aliases[ls]} && ls_done=true
         fi
     fi
 

@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 # tmux_automatically_attach attachs tmux session automatically
-is_ssh_running && exit 0
+is_ssh_running && return 0
 
 if is_screen_or_tmux_running; then
     if is_tmux_runnning; then
@@ -13,7 +13,7 @@ else
     if ! is_ssh_running; then
         if ! (( $+commands[tmux] )); then
             echo "tmux not found" 1>&2
-            exit 1
+            return 1
         fi
 
         if tmux has-session &>/dev/null && tmux list-sessions | grep -qE '.*]$'; then
@@ -24,12 +24,12 @@ else
             if [[ $REPLY =~ ^[Yy]$ || $REPLY == '' ]]; then
                 if tmux attach-session; then
                     echo "$(tmux -V) attached session"
-                    exit 0
+                    return 0
                 fi
             elif tmux list-sessions | grep -q "^$REPLY:"; then
                 if tmux attach -t "$REPLY"; then
                     echo "$(tmux -V) attached session"
-                    exit 0
+                    return 0
                 fi
             fi
         fi

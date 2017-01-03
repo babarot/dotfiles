@@ -2,6 +2,7 @@ typeset -gx -U path
 path=( \
     /usr/local/bin(N-/) \
     ~/bin(N-/) \
+    ~/.zplug/bin(N-/) \
     "$path[@]" \
     )
 

@@ -147,6 +147,8 @@ do-enter() {
         return $status
     fi
 
+    : ${not_yet:=1}
+
     echo
     if is_git_repo; then
         if [[ -n "$(git status --short)" ]]; then
@@ -154,7 +156,10 @@ do-enter() {
         fi
     else
         # do anything
-        : ls
+        if [[ $PWD != $OLDPWD ]] && (( not_yet )); then
+            not_yet=0
+            ls -Fl --color
+        fi
     fi
 
     zle reset-prompt

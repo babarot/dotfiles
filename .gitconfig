@@ -26,10 +26,8 @@
     st = status
     co = checkout
     ci = commit
-    df = diff
-    t  = typechange
+    typechange = status -s | awk '$1=="T"{print $2}' | xargs git checkout
     graph = log --graph --date-order --all --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=short
-    br = git branch | grep -v '^*' | cut -c3- | fzy | xargs git checkout
 
 [help]
     autocorrect = 1
@@ -52,7 +50,7 @@
 [diff]
     tool      = vimdiff
     algorithm = histogram
-	compactionHeuristic = true
+    compactionHeuristic = true
 
 [ghq]
     root = ~/src

@@ -109,3 +109,7 @@ fi
 zplug 'b4b4r07/zplug-doctor', lazy:yes
 zplug 'b4b4r07/zplug-cd', lazy:yes
 zplug 'b4b4r07/zplug-rm', lazy:yes
+
+zplug 'b4b4r07/tmux-powertools', \
+    use:init.zsh, \
+    hook-load:'tmux-loader'

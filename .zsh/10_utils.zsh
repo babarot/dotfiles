@@ -49,8 +49,7 @@ is_ssh_running() {
 
 # ostype returns the lowercase OS name
 ostype() {
-    # shellcheck disable=SC2119
-    uname | lower
+    echo ${(L):-$(uname)}
 }
 
 # os_detect export the PLATFORM variable as you see fit

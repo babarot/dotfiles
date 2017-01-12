@@ -481,6 +481,7 @@ git_modified_files() {
 #         tree -C
 #     fi
 # }
-# alias t="treels"
+
+alias t="tree -C"
 
 alias l="ls -l"

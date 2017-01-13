@@ -115,3 +115,7 @@ zplug 'b4b4r07/tmux-powertools', \
 
 zplug 'b4b4r07/zls', lazy:yes
 zplug 'b4b4r07/fpath-editor', lazy:yes
+
+zplug 'andialbrecht/sqlparse', \
+    as:command, \
+    hook-build:'python setup.py install'

@@ -113,6 +113,10 @@ zplug 'b4b4r07/tmux-powertools', \
     ignore:init.zsh, \
     hook-load:'tmux-loader'
 
+zplug 'b4b4r07/git-powertools', \
+    as:command, \
+    use:'bin/*'
+
 zplug 'b4b4r07/zls', lazy:yes
 zplug 'b4b4r07/fpath-editor', lazy:yes
 

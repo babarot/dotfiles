@@ -70,6 +70,9 @@ alias nvim='vim -N -u NONE -i NONE'
 # a space or tab character, then the next command word following the 
 # alias is also checked for alias expansion
 alias sudo='sudo '
+if is_osx; then
+    alias sudo="${ZSH_VERSION:+nocorrect} sudo "
+fi
 
 # Global aliases
 alias -g G='| grep'

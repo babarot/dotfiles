@@ -72,6 +72,10 @@ if g:plug.ready() && g:env.vimrc.plugin_on
 
     Plug 'b4b4r07/vim-unicode'
     Plug 'b4b4r07/vim-sqlfmt'
+    Plug 'lepture/vim-jinja'
+
+    let g:sqlfmt_command = "sqlformat"
+    let g:sqlfmt_options = "-r -k upper"
 
     " Add plugins to &runtimepath
     call plug#end()

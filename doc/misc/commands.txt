@@ -72,4 +72,7 @@
 [tracked file を列挙] git --git-dir "`git rev-parse --git-dir`" -C "`git config core.worktree || pwd`" ls-files
 [TORIAEZU!TORIAEZU!] cat -n ika_1125_120001_01.txt@ | awk -F, '{line[NR]=$0} NR>2000 && $10>4 {printf "%s\n%s\n%s\n%s\n", line[NR-3], line[NR-2], line[NR-1], line[NR]; exit}'
 
+: なんやろ
+[hoge] cat export-zplug-1484203911.json | jq -r '.[] | select(.action=="repo.transfer")'
+
 # vim:ft=sh

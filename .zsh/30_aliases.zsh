@@ -404,11 +404,11 @@ if has "gomi"; then
 fi
 
 # finder
-alias f='fzf \
-    --bind="ctrl-l:execute(less {})" \
-    --bind="ctrl-h:execute(ls -l {} | less)" \
-    --bind="ctrl-v:execute(vim {})"'
-alias -g F='$(f)'
+# alias f='fzf \
+#     --bind="ctrl-l:execute(less {})" \
+#     --bind="ctrl-h:execute(ls -l {} | less)" \
+#     --bind="ctrl-v:execute(vim {})"'
+# alias -g F='$(f)'
 
 # list galias
 alias galias="alias | command grep -E '^[A-Z]'"
@@ -488,3 +488,5 @@ git_modified_files() {
 alias t="tree -C"
 
 alias l="ls -l"
+
+# alias f='fzf --preview="pygmentize {}" --preview-window=right:60% --ansi --bind "enter:execute(vim {})"'

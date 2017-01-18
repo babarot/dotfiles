@@ -123,3 +123,11 @@ zplug 'b4b4r07/fpath-editor', lazy:yes
 zplug 'andialbrecht/sqlparse', \
     as:command, \
     hook-build:'python setup.py install'
+
+zplug 'dtan4/ghrls', \
+    as:command, \
+    hook-build:'go get -d && go build'
+
+zplug 'tianon/gosleep', \
+    as:command, \
+    hook-build:'go get -d ./src/gosleep/... && go build ./src/gosleep/...'

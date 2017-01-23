@@ -131,3 +131,12 @@ zplug 'dtan4/ghrls', \
 zplug 'tianon/gosleep', \
     as:command, \
     hook-build:'go get -d ./src/gosleep/... && go build ./src/gosleep/...'
+
+zplug 'b4b4r07/fzf-powertools', \
+    as:command, \
+    use:'re'
+
+zplug 'b4b4r07/git-switch', \
+    as:command, \
+    use:'(*).sh', \
+    rename-to:'$1'

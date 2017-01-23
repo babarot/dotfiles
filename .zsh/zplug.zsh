@@ -140,3 +140,13 @@ zplug 'b4b4r07/git-switch', \
     as:command, \
     use:'(*).sh', \
     rename-to:'$1'
+
+zplug 'mutantcornholio/prok', \
+    as:command, \
+    use:'(*).sh', \
+    rename-to:'$1'
+
+zplug 'b4b4r07/ltsv.sh', \
+    as:command, \
+    use:'(ltsv).sh', \
+    rename-to:'$1'

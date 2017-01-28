@@ -15,4 +15,4 @@ before_script:
     - cd $(dotpath)
 
 script:
-    # - make --silent test
+    - make --silent test

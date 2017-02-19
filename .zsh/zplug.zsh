@@ -150,3 +150,14 @@ zplug 'b4b4r07/ltsv.sh', \
     as:command, \
     use:'(ltsv).sh', \
     rename-to:'$1'
+
+zplug 'b4b4r07/zsh-history', defer:3, use:init.zsh
+
+if zplug check 'b4b4r07/zsh-history'; then
+    export ZSH_HISTORY_FILE="$HOME/.zsh_history.db"
+    ZSH_HISTORY_KEYBIND_GET_BY_DIR="^r"
+    ZSH_HISTORY_KEYBIND_GET_ALL="^r^a"
+    ZSH_HISTORY_KEYBIND_SCREEN="^r^r"
+    ZSH_HISTORY_KEYBIND_ARROW_UP="^p"
+    ZSH_HISTORY_KEYBIND_ARROW_DOWN="^n"
+fi

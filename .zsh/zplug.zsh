@@ -151,7 +151,8 @@ zplug 'b4b4r07/ltsv.sh', \
     use:'(ltsv).sh', \
     rename-to:'$1'
 
-zplug 'b4b4r07/zsh-history', defer:3, use:init.zsh
+zplug 'b4b4r07/zsh-history', \
+    defer:3, use:init.zsh
 
 if zplug check 'b4b4r07/zsh-history'; then
     export ZSH_HISTORY_FILE="$HOME/.zsh_history.db"

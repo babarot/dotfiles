@@ -11,8 +11,8 @@ bindkey -M viins '^N'  down-line-or-history
 bindkey -M viins '^A'  beginning-of-line
 bindkey -M viins '^E'  end-of-line
 bindkey -M viins '^K'  kill-line
-bindkey -M viins '^R'  history-incremental-pattern-search-backward
-bindkey -M viins '\er' history-incremental-pattern-search-forward
+# bindkey -M viins '^R'  history-incremental-pattern-search-backward
+# bindkey -M viins '\er' history-incremental-pattern-search-forward
 bindkey -M viins '^Y'  yank
 bindkey -M viins '^W'  backward-kill-word
 bindkey -M viins '^U'  backward-kill-line
@@ -125,8 +125,8 @@ _peco-select-history() {
         fi
     fi
 }
-zle -N _peco-select-history
-bindkey '^r' _peco-select-history
+# zle -N _peco-select-history
+# bindkey '^r' _peco-select-history
 
 _start-tmux-if-it-is-not-already-started() {
     BUFFER="${${${(M)${+commands[tmuxx]}#1}:+tmuxx}:-tmux}"

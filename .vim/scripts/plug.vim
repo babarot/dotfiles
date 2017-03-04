@@ -46,6 +46,9 @@ if g:plug.ready() && g:env.vimrc.plugin_on
     Plug has('lua') ? 'Shougo/neocomplete.vim' : 'Shougo/neocomplcache'
     Plug g:env.is_gui ? 'itchyny/lightline.vim' : ''
     Plug 'Dkendal/fzy-vim'
+    Plug 'raphael/vim-present-simple'
+    Plug 'mattn/webapi-vim'
+    Plug 'b4b4r07/vim-crowi'
 
     " syntax? language support
     Plug 'fatih/vim-go', { 'for': 'go' }
@@ -73,9 +76,6 @@ if g:plug.ready() && g:env.vimrc.plugin_on
     Plug 'b4b4r07/vim-unicode'
     Plug 'b4b4r07/vim-sqlfmt'
     Plug 'lepture/vim-jinja'
-
-    let g:sqlfmt_command = "sqlformat"
-    let g:sqlfmt_options = "-r -k upper"
 
     " Add plugins to &runtimepath
     call plug#end()

@@ -497,5 +497,17 @@ else
     "endif
 endif
 
+if g:plug.is_installed('vim-sqlfmt') "{{{1
+    let g:sqlfmt_command = "sqlformat"
+    let g:sqlfmt_options = "-r -k upper"
+    let g:sqlfmt_auto = true
+endif
+
+if g:plug.is_installed('vim-sqlfmt') "{{{1
+    let g:sqlfmt_command = "sqlformat"
+    let g:sqlfmt_options = "-r -k upper"
+    let g:sqlfmt_auto = true
+endif
+
 " __END__ {{{1
 " vim:fdm=marker expandtab fdc=3:

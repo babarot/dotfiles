@@ -2,3 +2,4 @@
 *~
 .config/*
 !.config/fish
+.zsh/history/

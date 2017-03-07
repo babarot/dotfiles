@@ -1,18 +1,13 @@
 #!/bin/bash
 
-# Load vital library that is most important and
-# constructed with many minimal functions
-# For more information, see etc/README.md
-. "$DOTPATH"/etc/lib/vital.sh
-
 trap 'rm -f $gif_file' ERR
 
-if ! has "ffmpeg"; then
+if ! type "ffmpeg" &>/dev/null; then
     echo "ffmpeg: not found" 1>&2
     exit 1
 fi
 
-if ! has "gifsicle"; then
+if ! type "gifsicle" &>/dev/null; then
     echo "gifsicle: not found" 1>&2
     exit 1
 fi
@@ -79,7 +74,7 @@ ffmpeg -i "$mov_file" -s "${size:-600x400}" -pix_fmt rgb24 -r "${rate:-10}" -f g
 if [ $? -eq 0 ] && [ -f "$gif_file" ]; then
     success="Created $gif_file, successfully"
     echo "$success"
-    if has "terminal-notifier"; then
+    if type "terminal-notifier" &>/dev/null; then
         terminal-notifier -message "$success" -title "${0##*/}"
     fi
 fi

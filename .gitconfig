@@ -29,6 +29,8 @@
     typechange = status -s | awk '$1=="T"{print $2}' | xargs git checkout
     graph = log --graph --date-order --all --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=short
     sw = switch
+    br = switch
+    review = diff origin/master...
 
 [help]
     autocorrect = 1
@@ -55,6 +57,7 @@
 
 [ghq]
     root = ~/src
+    # user = "b4b4r07"
 
 [merge]
     tool = vimdiff

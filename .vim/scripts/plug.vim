@@ -26,7 +26,6 @@ if g:plug.ready() && g:env.vimrc.plugin_on
     Plug 'tweekmonster/fzf-filemru'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-endwise'
-    Plug 'b4b4r07/enhancd', { 'tag': '2.2.1' }
     Plug 'Shougo/vimproc.vim',  { 'do': 'make' }
     Plug 'vim-jp/vimdoc-ja'
     Plug 'osyo-manga/vim-anzu'
@@ -35,12 +34,8 @@ if g:plug.ready() && g:env.vimrc.plugin_on
     Plug 'thinca/vim-quickrun'
     Plug 'mattn/vim-terminal'
     Plug 'thinca/vim-prettyprint', { 'on': 'PP' }
-    Plug 'rhysd/github-complete.vim'
-    Plug 'junegunn/vim-emoji'
-    Plug 'b4b4r07/vim-shell-with-tmux', { 'on': 'Sh' }
     Plug 'tyru/open-browser.vim'
     Plug 'tyru/open-browser-github.vim'
-    Plug 'kien/ctrlp.vim'
     Plug 'b4b4r07/vim-hcl'
     Plug 'fatih/vim-hclfmt'
     Plug has('lua') ? 'Shougo/neocomplete.vim' : 'Shougo/neocomplcache'
@@ -65,6 +60,9 @@ if g:plug.ready() && g:env.vimrc.plugin_on
     Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
     Plug 'maksimr/vim-jsbeautify', { 'for': 'javascript' }
     Plug 'zplug/vim-zplug', { 'for': 'zplug' }
+    Plug 'raphael/vim-present-simple'
+    Plug 'mattn/webapi-vim'
+    Plug 'b4b4r07/vim-crowi'
 
     " colorscheme
     Plug 'b4b4r07/solarized.vim'

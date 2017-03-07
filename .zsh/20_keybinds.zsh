@@ -6,8 +6,8 @@ bindkey -M viins 'jj' vi-cmd-mode
 # Add emacs-like keybind to viins mode
 bindkey -M viins '^F'  forward-char
 bindkey -M viins '^B'  backward-char
-bindkey -M viins '^P'  up-line-or-history
-bindkey -M viins '^N'  down-line-or-history
+# bindkey -M viins '^P'  up-line-or-history
+# bindkey -M viins '^N'  down-line-or-history
 bindkey -M viins '^A'  beginning-of-line
 bindkey -M viins '^E'  end-of-line
 bindkey -M viins '^K'  kill-line
@@ -46,6 +46,7 @@ if is-at-least 5.0.8; then
     bindkey -a S add-surround
 fi
 
+if false; then
 # bind P and N for EMACS mode
 has 'history-substring-search-up' &&
     bindkey -M emacs '^P' history-substring-search-up
@@ -63,6 +64,7 @@ has 'history-substring-search-up' &&
     bindkey '^P' history-substring-search-up
 has 'history-substring-search-down' &&
     bindkey '^N' history-substring-search-down
+fi
 
 # Insert a last word
 zle -N insert-last-word smart-insert-last-word

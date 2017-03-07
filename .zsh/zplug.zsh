@@ -11,7 +11,7 @@ zplug "b4b4r07/emoji-cli", on:"junegunn/fzf-bin", if:'(( $+commands[jq] ))'
 zplug "b4b4r07/enhancd", use:init.sh
 zplug "b4b4r07/zsh-vimode-visual", use:"*.zsh", defer:3
 zplug "zsh-users/zsh-completions"
-zplug "zsh-users/zsh-history-substring-search", defer:3
+#zplug "zsh-users/zsh-history-substring-search", defer:3
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 
 zplug "glidenote/hub-zsh-completion"
@@ -162,3 +162,7 @@ if zplug check 'b4b4r07/zsh-history'; then
     ZSH_HISTORY_KEYBIND_ARROW_UP="^p"
     ZSH_HISTORY_KEYBIND_ARROW_DOWN="^n"
 fi
+
+zplug 'Fakerr/git-recall', \
+    as:command, \
+    use:'git-recall'

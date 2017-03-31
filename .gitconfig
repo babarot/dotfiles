@@ -28,7 +28,6 @@
     ci = commit
     typechange = status -s | awk '$1=="T"{print $2}' | xargs git checkout
     graph = log --graph --date-order --all --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=short
-    sw = switch
     br = switch
     review = diff origin/master...
 

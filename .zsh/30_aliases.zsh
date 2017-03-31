@@ -490,3 +490,15 @@ alias t="tree -C"
 alias l="ls -l"
 
 # alias f='fzf --preview="pygmentize {}" --preview-window=right:60% --ansi --bind "enter:execute(vim {})"'
+
+function get_path() {
+    local f="${1:?}"
+    if [[ -t 1 ]]; then
+        # give a new line if stdout
+        printf "${f:A}\n"
+    else
+        printf "${f:A}"
+    fi
+}
+
+alias p="get_path"

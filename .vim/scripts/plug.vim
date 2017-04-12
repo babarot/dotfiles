@@ -75,6 +75,8 @@ if g:plug.ready() && g:env.vimrc.plugin_on
     Plug 'b4b4r07/vim-sqlfmt'
     Plug 'lepture/vim-jinja'
 
+    Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
+
     " Add plugins to &runtimepath
     call plug#end()
 endif

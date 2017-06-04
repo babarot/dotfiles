@@ -76,3 +76,5 @@
     action   = status
     tool     = enhancd
     lessopen = "| pygmentize -O style=solarized -f console256 -g %s"
+[github]
+	user = b4b4r07

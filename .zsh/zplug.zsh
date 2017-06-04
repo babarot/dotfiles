@@ -7,7 +7,6 @@ zplug "zplug/zplug", hook-build:'zplug --self-manage'
 
 zplug "~/.zsh", from:local, use:"<->_*.zsh"
 
-zplug "b4b4r07/emoji-cli", on:"junegunn/fzf-bin", if:'(( $+commands[jq] ))'
 zplug "b4b4r07/enhancd", use:init.sh
 zplug "b4b4r07/zsh-vimode-visual", use:"*.zsh", defer:3
 zplug "zsh-users/zsh-completions"
@@ -112,9 +111,9 @@ zplug 'b4b4r07/zplug-rm', lazy:yes
 zplug 'b4b4r07/tmux-powertools', \
     hook-load:'tmux-loader'
 
-zplug 'b4b4r07/git-powertools', \
-    as:command, \
-    use:'bin/*'
+#zplug 'b4b4r07/git-powertools', \
+#    as:command, \
+#    use:'bin/*'
 
 zplug 'b4b4r07/zls', lazy:yes
 zplug 'b4b4r07/fpath-editor', lazy:yes
@@ -135,10 +134,10 @@ zplug 'b4b4r07/fzf-powertools', \
     as:command, \
     use:'re'
 
-zplug 'b4b4r07/git-switch', \
-    as:command, \
-    use:'(*).sh', \
-    rename-to:'$1'
+#zplug 'b4b4r07/git-switch', \
+#    as:command, \
+#    use:'(*).sh', \
+#    rename-to:'$1'
 
 zplug 'mutantcornholio/prok', \
     as:command, \
@@ -150,7 +149,7 @@ zplug 'b4b4r07/ltsv.sh', \
     use:'(ltsv).sh', \
     rename-to:'$1'
 
-zplug 'b4b4r07/zsh-history', defer:3, use:init.zsh
+#zplug 'b4b4r07/zsh-history', defer:3, use:init.zsh
 zplug 'b4b4r07/zsh-history', as:command, use:misc/fzf-wrapper.zsh, rename-to:ff
 
 if zplug check 'b4b4r07/zsh-history'; then
@@ -162,6 +161,19 @@ if zplug check 'b4b4r07/zsh-history'; then
     ZSH_HISTORY_KEYBIND_ARROW_DOWN="^n"
 fi
 
-zplug 'Fakerr/git-recall', \
+zplug 'knqyf263/pet', \
     as:command, \
-    use:'git-recall'
+    hook-build:'go get -d && go build'
+
+zplug 'b4b4r07/git-fzf', hook-build:'make'
+zplug 'b4b4r07/git-fzf', \
+    as:command, \
+    use:'bin/(git-*).zsh', \
+    rename-to:'$1'
+
+zplug 'b4b4r07/dbl', \
+    as:command, \
+    use:'(dbl).zsh', \
+    rename-to:'$1'
+
+source "/Users/b4b4r07/src/github.com/b4b4r07/history/zsh/init.zsh"

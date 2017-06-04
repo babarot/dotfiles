@@ -1,0 +1,71 @@
+#compdef dbl
+# vim: ft=zsh
+
+_dbl () {
+    local -a _1st_arguments
+    local root file desc
+    root=${^path}/dbl(N-.:A)
+    for file in $root/action/*.zsh(N-.)
+    do
+        desc="$(sed -n '2p' "$p" | sed -E 's/^.*[Dd]esc(ription)?: ?//')"
+        _1st_arguments+=("${file:t:r}:${desc:-"nothing"}")
+    done
+
+    _arguments \
+        '(--help)--help[show this help message]' \
+        '(--config)--config=[config file (default is $HOME/.config/pet/config.toml)]' \
+        '(--debug)--debug[debug mode]' \
+        '*:: :->subcmds' \
+        && return 0
+
+    if (( CURRENT == 1 )); then
+        _describe -t commands "gist subcommand" _1st_arguments
+        return
+    fi
+
+    case "$words[1]" in
+        ("configure"|"edit"|"version")
+            _arguments \
+                '(- :)'{-h,--help}'[Show this help and exit]' \
+                && return 0
+            ;;
+        ("exec")
+            _arguments \
+                '(- :)'{-h,--help}'[Show this help and exit]' \
+                '(--color)--color[Enable colorized output (only fzf)]' \
+                '(-q --query)'{-q,--query}'=[Initial value for query]' \
+                && return 0
+            ;;
+        ("list")
+            _arguments \
+                '(- :)'{-h,--help}'[Show this help and exit]' \
+                '(--oneline)--oneline[Display snippets in one line]' \
+                && return 0
+            ;;
+        ("new")
+            _arguments \
+                '(- :)'{-h,--help}'[Show this help and exit]' \
+                '(-t --tag)'{-t,--tag}'=[Display tag prompt (delimiter: space)]' \
+                && return 0
+            ;;
+        ("search")
+            _arguments \
+                '(- :)'{-h,--help}'[Show this help and exit]' \
+                '(--color)--color[Enable colorized output (only fzf)]' \
+                '(-d --delimiter)'{-d,--delimiter}'[Use delim as the command delimiter character (default "; ")]' \
+                '(-q --query)'{-q,--query}'=[Initial value for query]' \
+                && return 0
+            ;;
+        ("sync")
+            _arguments \
+                '(- :)'{-h,--help}'[Show this help and exit]' \
+                '(-u --upload)'{-u,--upload}'[Upload snippets to gist]' \
+                && return 0
+            ;;
+        ("help")
+            _values 'help message' ${_1st_arguments[@]%:*} && return 0
+            ;;
+    esac
+}
+
+_dbl "$@"

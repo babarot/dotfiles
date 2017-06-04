@@ -1,0 +1,78 @@
+#compdef crowi
+# URL: https://github.com/b4b4r07/crowi
+# vim: ft=zsh
+
+_crowi () {
+    local -a _1st_arguments
+    _1st_arguments=(
+    'open:Open a page'
+    'edit:Edit a page'
+    'new:Create a new page'
+    'live:Preview local pages as html'
+    'config:Config the setting file'
+    'help:Show help for any command'
+    )
+
+    # completions for user-defined commands
+    local p desc
+    for p in ${^path}/crowi-*(N-.)
+    do
+        desc=
+        desc="$(grep -E "^# Desc(ription)?: ?" "$p")"
+        regexp-replace desc "^.*[Dd]esc(ription)?: ?" ""
+        desc="[User-defined] ${desc:-"No description."}"
+        _1st_arguments+=("${p:t:gs:crowi-:}:$desc")
+    done
+
+    _arguments \
+        '(--help)--help[Show the help message]' \
+        '(-v --version)'{-v,--version}'[Show the version and exit]' \
+        '*:: :->subcmds' \
+        && return 0
+
+    if (( CURRENT == 1 )); then
+        _describe -t commands "gist subcommand" _1st_arguments
+        return
+    fi
+
+    case "$words[1]" in
+        (open)
+            _arguments \
+                '(- :)--help[Show this help and exit]' \
+                && return 0
+            ;;
+        (edit)
+            _arguments \
+                '(- :)--help[Show this help and exit]' \
+                && return 0
+            ;;
+        (new)
+            _arguments \
+                '(- :)--help[Show this help and exit]' \
+                '(-)*: :_files' \
+                && return 0
+            ;;
+        (live)
+            _arguments \
+                '(- :)--help[Show this help and exit]' \
+                && return 0
+           ;;
+        (config)
+            keys=( $(crowi config --keys) )
+            _arguments \
+                '(- :)--help[Show this help and exit]' \
+                '(--get)--get[Get the config value]: :->keys' \
+                '(--keys)--keys[Get the config keys]'
+            case "$state" in
+                (keys)
+                    _describe -t keys 'toml keys' keys && return 0
+                    ;;
+            esac
+            ;;
+        (help)
+            _values 'help message' ${_1st_arguments[@]%:*} && return 0
+            ;;
+    esac
+}
+
+_crowi "$@"

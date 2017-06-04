@@ -63,6 +63,9 @@ if g:plug.ready() && g:env.vimrc.plugin_on
     Plug 'raphael/vim-present-simple'
     Plug 'mattn/webapi-vim'
     Plug 'b4b4r07/vim-crowi'
+    Plug 'mattn/goplayground-vim'
+    Plug 'haya14busa/vim-gofmt'
+    Plug 'kylef/apiblueprint.vim'
 
     " colorscheme
     Plug 'b4b4r07/solarized.vim'
@@ -74,8 +77,12 @@ if g:plug.ready() && g:env.vimrc.plugin_on
     Plug 'b4b4r07/vim-unicode'
     Plug 'b4b4r07/vim-sqlfmt'
     Plug 'lepture/vim-jinja'
+    Plug 'mattn/gist-vim'
 
     Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
+    Plug 'cocopon/vaffle.vim'
+    Plug 'hotwatermorning/auto-git-diff'
+    Plug 'lambdalisue/vim-gista'
 
     " Add plugins to &runtimepath
     call plug#end()

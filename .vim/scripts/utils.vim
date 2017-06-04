@@ -695,5 +695,11 @@ if IsMac() && !g:env.bin.qlmanage
     endfunction
 endif
 
+augroup gopkgs
+  autocmd!
+  autocmd FileType go command! -buffer Import exe 'GoImport' fzf#run({'source': 'gopkgs'})[0]
+  autocmd FileType go command! -buffer Doc exe 'GoDoc' fzf#run({'source': 'gopkgs'})[0]
+augroup END
+
 " __END__ {{{1
 " vim:fdm=marker expandtab fdc=3:

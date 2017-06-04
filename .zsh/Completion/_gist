@@ -1,0 +1,64 @@
+#compdef gist
+# URL: https://github.com/b4b4r07/gist
+# vim: ft=zsh
+
+_gist () {
+    local -a _1st_arguments
+    _1st_arguments=(
+    'open:Open user''s gist'
+    'edit:Edit the gist file and sync after'
+    'new:Create a new gist'
+    'delete:Delete gist files'
+    'config:Config the setting file'
+    'copy:Copy contents from gist files'
+    'get:Get gist content'
+    'help:Show help for any command'
+    )
+
+    _arguments \
+        '(--help)--help[help message]' \
+        '(-v --version)'{-v,--version}'[version]' \
+        '*:: :->subcmds' \
+        && return 0
+
+    if (( CURRENT == 1 )); then
+        _describe -t commands "gist subcommand" _1st_arguments
+        return
+    fi
+
+    case "$words[1]" in
+        (open)
+            _arguments \
+                '(--sort)--sort=[Sort by the argument]: :(created updated)' \
+                '(--only)--only=[Open only for the condition]: :(secret public private)' \
+                '(--no-select)--no-select[Open only gist base URL without selecting]' \
+                '(--starred -s)'{--starred,-s}'[Open your starred gist]' \
+                && return 0
+            ;;
+        (edit)
+            _arguments \
+                '(-o --open)'{-o,--open}'[Open with the default browser]' \
+                '(-d --description)'{-d,--description}'[Edit only the description]' \
+                && return 0
+            ;;
+        (new)
+            _arguments \
+                '(- :)'{-h,--help}'[Show this help and exit]' \
+                '(-o --open)'{-o,--open}'[Open with the default browser]' \
+                '(-p --private)'{-p,--private}'[Create as private gist]' \
+                '(-c --from-clipboard)'{-c,--from-clipboard}'[Create gist from clipboard]' \
+                '(-)*: :_files' \
+                && return 0
+            ;;
+        (delete|config|copy|get)
+            _arguments \
+                '(- :)'{-h,--help}'[Show this help and exit]' \
+                && return 0
+            ;;
+        (help)
+            _values 'help message' ${_1st_arguments[@]%:*} && return 0
+            ;;
+    esac
+}
+
+_gist "$@"

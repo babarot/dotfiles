@@ -176,4 +176,4 @@ zplug 'b4b4r07/dbl', \
     use:'(dbl).zsh', \
     rename-to:'$1'
 
-source "/Users/b4b4r07/src/github.com/b4b4r07/history/zsh/init.zsh"
+source "/Users/b4b4r07/src/github.com/b4b4r07/history/misc/zsh/init.zsh"

@@ -503,6 +503,11 @@ if g:plug.is_installed('vim-sqlfmt') "{{{1
     let g:sqlfmt_auto = true
 endif
 
+if g:plug.is_installed('syntastic') " {{{1
+    let g:syntastic_mode_map = { 'mode': 'passive',
+                \ 'active_filetypes': ['go'] }
+    let g:syntastic_go_checkers = ['go', 'golint']
+endif
 
 if g:plug.is_installed('') " {{{1
 endif

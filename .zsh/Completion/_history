@@ -1,0 +1,76 @@
+#compdef history
+# vim: ft=zsh
+
+_history () {
+    local -a _1st_arguments
+    _1st_arguments=(
+    'add:Add new history'
+    'config:Config the setting file'
+    'edit:Edit your history file directly'
+    'list:List the history'
+    'search:Search the command from the history file'
+    'help:Show help for any command'
+    )
+
+    _arguments \
+        '(--help)--help[Show the help message]' \
+        '(-v --version)'{-v,--version}'[Show the version and exit]' \
+        '*:: :->subcmds' \
+        && return 0
+
+    if (( CURRENT == 1 )); then
+        _describe -t commands "history subcommand" _1st_arguments
+        return
+    fi
+
+    case "$words[1]" in
+        (add)
+            _arguments \
+                '(- :)--help[Show this help and exit]' \
+                '(--branch)--branch=[Set branch]' \
+                '(--dir)--dir=[Set dir]' \
+                '(--command)--command=[Set command]' \
+                '(--status)--status=[Set status]' \
+                && return 0
+            ;;
+        (search)
+            _arguments \
+                '(- :)--help[Show this help and exit]' \
+                '(--branch -b)'{--branch,-b}'=[Search with branch]' \
+                '(--dir -d)'{--dir,-d}'=[Search with dir]' \
+                '(--query -q)'{--query,-q}'=[Search with query]' \
+                '(--columns -c)'{--columns,-c}'=[Specify columns with options]' \
+                && return 0
+            ;;
+        (list)
+            _arguments \
+                '(- :)--help[Show this help and exit]' \
+                '(--branch -b)'{--branch,-b}'=[List with branch]' \
+                '(--dir -d)'{--dir,-d}'=[List with dir]' \
+                '(--query -q)'{--query,-q}'=[List with query]' \
+                && return 0
+            ;;
+        (edit)
+            _arguments \
+                '(- :)--help[Show this help and exit]' \
+                && return 0
+            ;;
+        (config)
+            keys=( $(command history config --keys) )
+            _arguments \
+                '(- :)--help[Show this help and exit]' \
+                '(--get)--get[Get the config value]: :->keys' \
+                '(--keys)--keys[Get the config keys]'
+            case "$state" in
+                (keys)
+                    _describe -t keys 'toml keys' keys && return 0
+                    ;;
+            esac
+            ;;
+        (help)
+            _values 'help message' ${_1st_arguments[@]%:*} && return 0
+            ;;
+    esac
+}
+
+_history "$@"

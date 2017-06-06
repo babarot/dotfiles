@@ -502,3 +502,5 @@ function get_path() {
 }
 
 alias p="get_path"
+
+alias hs="command history"

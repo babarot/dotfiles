@@ -9,6 +9,8 @@ _history () {
     'edit:Edit your history file directly'
     'list:List the history'
     'search:Search the command from the history file'
+    'delete:Delete the record from history file'
+    'sync:Sync the history file with gist'
     'help:Show help for any command'
     )
 
@@ -33,21 +35,22 @@ _history () {
                 '(--status)--status=[Set status]' \
                 && return 0
             ;;
-        (search)
+        (search|list|delete)
             _arguments \
                 '(- :)--help[Show this help and exit]' \
-                '(--branch -b)'{--branch,-b}'=[Search with branch]' \
-                '(--dir -d)'{--dir,-d}'=[Search with dir]' \
-                '(--query -q)'{--query,-q}'=[Search with query]' \
-                '(--columns -c)'{--columns,-c}'=[Specify columns with options]' \
+                '(--filter-branch -b)'{--filter-branch,-b}'['${(C)words[1]}' with branch]' \
+                '(--filter-dir -d)'{--filter-dir,-d}'['${(C)words[1]}' with dir]' \
+                '(--filter-hostname -p)'{--filter-hostname,-p}'['${(C)words[1]}' with hostname]' \
+                '(--query -q)'{--query,-q}'=['${(C)words[1]}' with query]' \
+                '(--columns -c)'{--columns,-c}'=['${(C)words[1]}' columns with options]' \
                 && return 0
             ;;
-        (list)
+        (sync)
             _arguments \
                 '(- :)--help[Show this help and exit]' \
-                '(--branch -b)'{--branch,-b}'=[List with branch]' \
-                '(--dir -d)'{--dir,-d}'=[List with dir]' \
-                '(--query -q)'{--query,-q}'=[List with query]' \
+                '(--interval)--interval=[Sync with the interval]' \
+                '(--diff)--diff=[Sync if the diff exceeds a certain number]' \
+                '(--ask)--ask[Sync after the confirmation]' \
                 && return 0
             ;;
         (edit)

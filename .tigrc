@@ -17,4 +17,6 @@ bind main G move-last-line
 bind main    R !git rebase -i %(commit)
 bind diff    R !git rebase -i %(commit)
 
+bind blame   G !open-pull-request %(commit)
+
 # vim: ft=config

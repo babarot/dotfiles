@@ -240,5 +240,8 @@ nnoremap <silent> to :<C-u>tabonly<CR>
 "nnoremap <expr>h col('.') == 1 && foldlevel(line('.')) > 0 ? 'zc' : 'h'
 nnoremap <silent>z0 :<C-u>set foldlevel=<C-r>=foldlevel('.')<CR><CR>
 
+" tig {{{1
+nnoremap <silent> [Space]g :<C-u>!tig blame +<C-r>=line('.')<CR> %<CR>:redraw!<CR>
+
 " __END__ {{{1
 " vim:fdm=marker expandtab fdc=3:

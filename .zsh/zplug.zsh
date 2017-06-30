@@ -53,13 +53,8 @@ zplug "fujiwara/nssh", \
     rename-to:"nssh", \
     frozen:1
 
-zplug "tcnksm/ghr", \
-    as:command, \
-    from:gh-r
-
-zplug "b4b4r07/gdate", \
-    as:command, \
-    from:gh-r
+zplug 'tcnksm/ghr',   as:command, hook-build:'go get -d && go build'
+zplug 'knqyf263/pet', as:command, hook-build:'go get -d && go build'
 
 zplug "philovivero/distribution", \
     as:command, \
@@ -160,10 +155,6 @@ if zplug check 'b4b4r07/zsh-history'; then
     ZSH_HISTORY_KEYBIND_ARROW_UP="^p"
     ZSH_HISTORY_KEYBIND_ARROW_DOWN="^n"
 fi
-
-zplug 'knqyf263/pet', \
-    as:command, \
-    hook-build:'go get -d && go build'
 
 zplug 'b4b4r07/git-fzf', hook-build:'make'
 zplug 'b4b4r07/git-fzf', \

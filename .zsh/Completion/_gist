@@ -10,14 +10,15 @@ _gist () {
     'new:Create a new gist'
     'delete:Delete gist files'
     'config:Config the setting file'
-    'copy:Copy contents from gist files'
-    'get:Get gist content'
+    'get:Manipulate gist with the command passed in the argument'
+    'run:Run the gist snippet as a script'
     'help:Show help for any command'
     )
 
     _arguments \
         '(--help)--help[help message]' \
-        '(-v --version)'{-v,--version}'[version]' \
+        '(-v --version)'{-v,--version}'[show the version and exit]' \
+        '(-c --cache-clear)'{-c,--cache-clear}'[clear cache]' \
         '*:: :->subcmds' \
         && return 0
 
@@ -29,16 +30,15 @@ _gist () {
     case "$words[1]" in
         (open)
             _arguments \
-                '(--sort)--sort=[Sort by the argument]: :(created updated)' \
-                '(--only)--only=[Open only for the condition]: :(secret public private)' \
+                '(- :)'{-h,--help}'[Show this help and exit]' \
                 '(--no-select)--no-select[Open only gist base URL without selecting]' \
                 '(--starred -s)'{--starred,-s}'[Open your starred gist]' \
                 && return 0
             ;;
-        (edit)
+        (run)
             _arguments \
-                '(-o --open)'{-o,--open}'[Open with the default browser]' \
-                '(-d --description)'{-d,--description}'[Edit only the description]' \
+                '(- :)'{-h,--help}'[Show this help and exit]' \
+                '(--starred -s)'{--starred,-s}'[Open your starred gist]' \
                 && return 0
             ;;
         (new)
@@ -46,11 +46,10 @@ _gist () {
                 '(- :)'{-h,--help}'[Show this help and exit]' \
                 '(-o --open)'{-o,--open}'[Open with the default browser]' \
                 '(-p --private)'{-p,--private}'[Create as private gist]' \
-                '(-c --from-clipboard)'{-c,--from-clipboard}'[Create gist from clipboard]' \
                 '(-)*: :_files' \
                 && return 0
             ;;
-        (delete|config|copy|get)
+        (delete|config|get|edit)
             _arguments \
                 '(- :)'{-h,--help}'[Show this help and exit]' \
                 && return 0

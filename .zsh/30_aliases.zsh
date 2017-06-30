@@ -106,7 +106,8 @@ if has "emojify"; then
 fi
 
 if has "jq"; then
-    alias -g J='| jq .'
+    alias -g JQ='| jq -C .'
+    alias -g JL='| jq -C . | less -R -X'
 fi
 
 if is_osx; then

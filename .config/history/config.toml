@@ -5,11 +5,7 @@
 
 [history]
   path = "/Users/b4b4r07/.config/history/history.ltsv"
-  ignore_words = [
-      '^\w+$',
-      '^cd -+(\w)?$',
-      '^hs\s+\S',
-  ]
+  ignore_words = []
   use_color = false
   [history.sync]
     id = ""
@@ -19,10 +15,6 @@
   filter_dir = false
   filter_branch = false
   filter_hostname = false
-  columns = [
-      "{{.Time}}",
-      "{{.Status}}",
-      "{{.Command}}",
-  ]
+  columns = ["{{.Time}}", "{{.Status}}", "{{.Command}}"]
   status_ok = " "
   status_ng = "x"

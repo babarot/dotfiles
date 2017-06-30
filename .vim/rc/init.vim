@@ -59,19 +59,19 @@ endfunction
 "}}}
 
 " Init
-if !s:load('env.vim')
-  " Finish if loading env.vim is failed
+if !s:load('config.vim')
+  " Finish if loading config.vim is failed
   finish
 endif
 
-let g:env.vimrc.plugin_on = g:true
-let g:env.vimrc.manage_rtp_manually = g:false
-let g:env.vimrc.plugin_on = 
-      \ g:env.vimrc.manage_rtp_manually == g:true
+let g:config.vimrc.plugin_on = g:true
+let g:config.vimrc.manage_rtp_manually = g:false
+let g:config.vimrc.plugin_on = 
+      \ g:config.vimrc.manage_rtp_manually == g:true
       \ ? g:false
-      \ : g:env.vimrc.plugin_on
+      \ : g:config.vimrc.plugin_on
 
-if g:env.is_starting
+if g:config.is_starting
   " Necesary for lots of cool vim things
   " http://rbtnn.hateblo.jp/entry/2014/11/30/174749
 
@@ -81,7 +81,7 @@ if g:env.is_starting
   " Check if there are plugins not to be installed
   augroup vimrc-check-plug
     autocmd!
-    if g:env.vimrc.check_plug_update == g:true
+    if g:config.vimrc.check_plug_update == g:true
       autocmd VimEnter * if !argc() | call g:plug.check_installation() | endif
     endif
   augroup END
@@ -108,12 +108,7 @@ call s:load('map.vim')
 call s:load('command.vim')
 call s:load('utils.vim')
 call s:load('option.vim')
-call s:load('gui.vim', g:env.is_gui)
+call s:load('gui.vim', g:config.is_gui)
 
 " Must be written at the last.  see :help 'secure'.
 set secure
-
-" __END__ {{{1
-" vi:set ts=2 sw=2 sts=2:
-" vim:fdt=substitute(getline(v\:foldstart),'\\(.\*\\){\\{3}','\\1',''):
-" vim:fdm=marker expandtab fdc=3:

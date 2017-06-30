@@ -8,8 +8,9 @@
   ignore_words = []
   use_color = false
   [history.sync]
-    id = ""
-    token = "$GITHUB_TOKEN"
+    id = "34e9f7e2ede2b9c8a1ac447158a9cb0f"
+    token = "b81c189ae8c020ba33d8ff6a9c776323237c4385"
+    size = 100
 
 [screen]
   filter_dir = false

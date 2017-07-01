@@ -26,11 +26,11 @@ function! s:config()
         \ }
 
   let config.bin = {
-        \ 'ag': executable('ag'),
+        \ 'ag':        executable('ag'),
         \ 'osascript': executable('osascript'),
-        \ 'open': executable('open'),
-        \ 'chmod': executable('chmod'),
-        \ 'qlmanage': executable('qlmanage'),
+        \ 'open':      executable('open'),
+        \ 'chmod':     executable('chmod'),
+        \ 'qlmanage':  executable('qlmanage'),
         \ }
 
   " tmux

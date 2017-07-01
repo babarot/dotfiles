@@ -42,20 +42,19 @@ if g:plug.ready() && g:config.vimrc.plugin_on
   Plug 'b4b4r07/vim-crowi'
 
   " syntax? language support
-  Plug 'fatih/vim-go', { 'for': 'go' }
-  Plug 'jnwhiteh/vim-golang', { 'for': 'go' }
-  "Plug 'zaiste/tmux.vim', { 'for': 'tmux' }
-  Plug 'keith/tmux.vim', { 'for': 'tmux' }
-  Plug 'dag/vim-fish', { 'for': 'fish' }
-  Plug 'zplug/vim-zplug', { 'for': 'zplug' }
-  Plug 'chase/vim-ansible-yaml'
-  Plug 'evanmiller/nginx-vim-syntax', { 'for': 'nginx' }
-  Plug 'cespare/vim-toml', { 'for': 'toml' }
-  Plug 'elzr/vim-json', { 'for': 'json' }
-  Plug 'b4b4r07/vim-ltsv', { 'for': 'ltsv' }
+  Plug 'fatih/vim-go',                 { 'for': 'go' }
+  Plug 'jnwhiteh/vim-golang',          { 'for': 'go' }
+  Plug 'keith/tmux.vim',               { 'for': 'tmux' }
+  Plug 'dag/vim-fish',                 { 'for': 'fish' }
+  Plug 'zplug/vim-zplug',              { 'for': 'zplug' }
+  Plug 'chase/vim-ansible-yaml',       { 'for': 'ansible' }
+  Plug 'evanmiller/nginx-vim-syntax',  { 'for': 'nginx' }
+  Plug 'cespare/vim-toml',             { 'for': 'toml' }
+  Plug 'elzr/vim-json',                { 'for': 'json' }
+  Plug 'b4b4r07/vim-ltsv',             { 'for': 'ltsv' }
   Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
-  Plug 'maksimr/vim-jsbeautify', { 'for': 'javascript' }
-  Plug 'zplug/vim-zplug', { 'for': 'zplug' }
+  Plug 'maksimr/vim-jsbeautify',       { 'for': 'javascript' }
+
   Plug 'raphael/vim-present-simple'
   Plug 'mattn/webapi-vim'
   Plug 'b4b4r07/vim-crowi'

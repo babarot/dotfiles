@@ -2,15 +2,6 @@ if !exists('g:config')
   finish
 endif
 
-" Common {{{1
-if !g:plug.is_installed('mru.vim')
-  "if exists(':MRU2')
-  if exists('*s:MRU_Create_Window')
-    nnoremap <silent> [Space]j :<C-u>call <SID>MRU_Create_Window()<CR>
-    "nnoremap <silent> [Space]j :<C-u>MRU<CR>
-  endif
-endif
-
 " Use backslash
 if IsMac()
   noremap ¥ \
@@ -30,6 +21,10 @@ xnoremap  [Space]   <Nop>
 " key map ^,$ to <Space>h,l. Because ^ and $ is difficult to type and damage little finger!!!
 noremap [Space]h ^
 noremap [Space]l $
+
+if g:plug.is_installed('fzf-mru')
+  nnoremap <silent> [Space]j :<C-u>FZFMru<CR>
+endif
 
 if !g:plug.is_installed('lexima.vim')
   inoremap [ []<LEFT>
@@ -79,7 +74,6 @@ nnoremap <Right> <Nop>
 nnoremap ZZ <Nop>
 nnoremap ZQ <Nop>
 
-" Must {{{1
 inoremap jj <ESC>
 cnoremap <expr> j getcmdline()[getcmdpos()-2] ==# 'j' ? "\<BS>\<C-c>" : 'j'
 vnoremap <C-j><C-j> <ESC>
@@ -118,9 +112,9 @@ cmap <c-x> <c-r>=expand('%:p:h')<cr>/
 " expand file (not ext)
 cmap <c-z> <c-r>=expand('%:p:r')<cr>
 " Add a relative number toggle
-nnoremap <silent> <Leader>r :<C-u>call <SID>toggle_option('relativenumber')<CR>
+nnoremap <silent> <Leader>r :<C-u>call rc#misc#toggle_option('relativenumber')<CR>
 " Add a spell check toggle
-nnoremap <silent> <Leader>s :<C-u>call <SID>toggle_option('spell')<CR>
+nnoremap <silent> <Leader>s :<C-u>call rc#misc#toggle_option('spell')<CR>
 " Tabs Increase
 nnoremap <silent> ~ :let &tabstop = (&tabstop * 2 > 16) ? 2 : &tabstop * 2<CR>:echo 'tabstop:' &tabstop<CR>
 " Toggle top/center/bottom
@@ -135,17 +129,15 @@ nnoremap <silent> cy   ce<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
 nnoremap <Leader>y :<C-u>%y<CR>
 nnoremap <Leader>Y :<C-u>%y<CR>
 
-nnoremap <silent> <Leader>l :<C-u>call <SID>toggle_option('cursorline')<CR>
-nnoremap <silent> <Leader>c :<C-u>call <SID>toggle_option('cursorcolumn')<CR>
+nnoremap <silent> <Leader>l :<C-u>call rc#misc#toggle_option('cursorline')<CR>
+nnoremap <silent> <Leader>c :<C-u>call rc#misc#toggle_option('cursorcolumn')<CR>
 
-" Tabpages {{{1
 nnoremap t <Nop>
 nnoremap <silent> [Space]t :<C-u>tabclose<CR>:<C-u>tabnew<CR>
 nnoremap <silent> tt :<C-u>tabnew<CR>
 nnoremap <silent> tT :<C-u>tabnew<CR>:<C-u>tabprev<CR>
 nnoremap <silent> tc :<C-u>tabclose<CR>
 nnoremap <silent> to :<C-u>tabonly<CR>
-nnoremap <silent> tm :<C-u>call <SID>move_to_tab()<CR>
 function! s:move_to_tab()
   tab split
   tabprevious
@@ -158,13 +150,7 @@ function! s:move_to_tab()
 
   tabnext
 endfunction
-" Tabpages mappings
-nnoremap <silent> <C-t>L  :<C-u>call <SID>move_tabpage("right")<CR>
-nnoremap <silent> <C-t>H  :<C-u>call <SID>move_tabpage("left")<CR>
-nnoremap <silent> <C-t>dh :<C-u>call <SID>close_all_left_tabpages()<CR>
-nnoremap <silent> <C-t>dl :<C-u>call <SID>close_all_right_tabpages()<CR>
 
-" Swap jk for gjgk {{{1
 nnoremap j gj
 nnoremap k gk
 vnoremap j gj
@@ -193,18 +179,17 @@ if g:config.vimrc.goback_to_eof2bof == g:true
   nnoremap <expr><silent> j <SID>down("gj")
 endif
 
-" Buffers, windows, and tabpages {{{1
-"nnoremap <silent> <C-j> :<C-u>call <SID>get_buflists('n')<CR>
-"nnoremap <silent> <C-k> :<C-u>call <SID>get_buflists('p')<CR>
+"nnoremap <silent> <C-j> :<C-u>call rc#misc#get_buflists('n')<CR>
+"nnoremap <silent> <C-k> :<C-u>call rc#misc#get_buflists('p')<CR>
 if !g:plug.is_installed('vim-buftabs')
   nnoremap <silent> <C-j> :<C-u>silent bnext<CR>
   nnoremap <silent> <C-k> :<C-u>silent bprev<CR>
 else
-  nnoremap <silent> <C-j> :<C-u>silent bnext<CR>:<C-u>call <SID>get_buflists()<CR>
-  nnoremap <silent> <C-k> :<C-u>silent bprev<CR>:<C-u>call <SID>get_buflists()<CR>
+  nnoremap <silent> <C-j> :<C-u>silent bnext<CR>:<C-u>call rc#misc#get_buflists()<CR>
+  nnoremap <silent> <C-k> :<C-u>silent bprev<CR>:<C-u>call rc#misc#get_buflists()<CR>
 endif
 
-nnoremap <silent> <C-x>u :<C-u>call <SID>buf_restore()<CR>
+" nnoremap <silent> <C-x>u :<C-u>call <SID>buf_restore()<CR>
 nnoremap <silent> <C-x>d     :Delete<CR>
 nnoremap <silent> <C-x><C-d> :Delete!<CR>
 
@@ -213,14 +198,7 @@ nnoremap s <Nop>
 nnoremap sp :<C-u>split<CR>
 nnoremap vs :<C-u>vsplit<CR>
 
-function! s:vsplit_or_wincmdw()
-  if winnr('$') == 1
-    return ":vsplit\<CR>"
-  else
-    return ":wincmd w\<CR>"
-  endif
-endfunction
-nnoremap <expr><silent> ss <SID>vsplit_or_wincmdw()
+nnoremap <expr><silent> ss rc#misc#splitw()
 nnoremap sj <C-w>j
 nnoremap sk <C-w>k
 nnoremap sl <C-w>l
@@ -235,10 +213,9 @@ nnoremap <silent> tT :<C-u>tabnew<CR>:<C-u>tabprev<CR>
 nnoremap <silent> tc :<C-u>tabclose<CR>
 nnoremap <silent> to :<C-u>tabonly<CR>
 
-" Folding (see :h usr_28.txt){{{1
+" Folding (see :h usr_28.txt)
 "nnoremap <expr>l foldclosed('.') != -1 ? 'zo' : 'l'
 "nnoremap <expr>h col('.') == 1 && foldlevel(line('.')) > 0 ? 'zc' : 'h'
 nnoremap <silent>z0 :<C-u>set foldlevel=<C-r>=foldlevel('.')<CR><CR>
 
-" tig {{{1
 nnoremap <silent> [Space]g :<C-u>!tig blame +<C-r>=line('.')<CR> %<CR>:redraw!<CR>

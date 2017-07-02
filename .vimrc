@@ -7,4 +7,5 @@ if 1
   else
     execute 'source' fnamemodify(expand('<sfile>'), ':h').'/.vim/rc/init.vim'
   endif
+  " execute 'source' fnamemodify(expand('<sfile>'), ':h').'/.vim/rc/init.vim'
 endif

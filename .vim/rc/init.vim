@@ -103,6 +103,7 @@ call s:load('command.vim')
 call s:load('mapping.vim')
 
 call s:load('misc.vim')
+call s:load('app.vim')
 
 " if s:load('plug.vim')
 "   call s:load('custom.vim')

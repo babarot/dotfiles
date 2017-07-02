@@ -67,6 +67,8 @@ if g:plug.ready() && g:config.vimrc.plugin_on
   Plug 'nanotech/jellybeans.vim'
   Plug 'whatyouhide/vim-gotham'
 
+  Plug 'pbogut/fzf-mru.vim'
+
   Plug 'b4b4r07/vim-unicode'
   Plug 'b4b4r07/vim-sqlfmt'
   Plug 'lepture/vim-jinja'

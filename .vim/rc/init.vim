@@ -13,7 +13,7 @@ if &compatible
 endif
 
 let g:false = 0
-let g:true = 1
+let g:true  = 1
 
 augroup MyAutoCmd
   autocmd!
@@ -72,9 +72,6 @@ let g:config.vimrc.plugin_on =
       \ : g:config.vimrc.plugin_on
 
 if g:config.is_starting
-  " Necesary for lots of cool vim things
-  " http://rbtnn.hateblo.jp/entry/2014/11/30/174749
-
   scriptencoding utf-8
   set runtimepath&
 
@@ -86,7 +83,6 @@ if g:config.is_starting
     endif
   augroup END
 
-  " Vim starting time
   if has('reltime')
     let g:startuptime = reltime()
     augroup vimrc-startuptime
@@ -96,6 +92,8 @@ if g:config.is_starting
     augroup END
   endif
 endif
+
+call s:load('plug.vim')
 
 call s:load('autocmd.vim')
 call s:load('options.vim')

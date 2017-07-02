@@ -56,3 +56,11 @@ function! s:config()
 endfunction
 
 let g:config = s:config()
+
+function! IsWindows() abort
+  return g:config.is_.windows
+endfunction
+
+function! IsMac() abort
+  return g:config.is_.mac
+endfunction

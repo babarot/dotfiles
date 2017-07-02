@@ -23,6 +23,7 @@ function! s:config()
 
   let config.path = {
         \ 'vim': vimpath,
+        \ 'rc':  vimpath . '/rc',
         \ }
 
   let config.bin = {

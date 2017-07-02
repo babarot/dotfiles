@@ -41,7 +41,6 @@ if g:plug.ready() && g:config.vimrc.plugin_on
   Plug 'mattn/webapi-vim'
   Plug 'b4b4r07/vim-crowi'
 
-  " syntax? language support
   Plug 'fatih/vim-go',                 { 'for': 'go' }
   Plug 'jnwhiteh/vim-golang',          { 'for': 'go' }
   Plug 'keith/tmux.vim',               { 'for': 'tmux' }
@@ -62,7 +61,6 @@ if g:plug.ready() && g:config.vimrc.plugin_on
   Plug 'haya14busa/vim-gofmt'
   Plug 'kylef/apiblueprint.vim'
 
-  " colorscheme
   Plug 'b4b4r07/solarized.vim'
   Plug 'w0ng/vim-hybrid'
   Plug 'junegunn/seoul256.vim'

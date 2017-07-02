@@ -185,7 +185,7 @@ set foldenable
 "set foldclose=all
 set foldlevel=0
 "set foldnestmax=2
-set foldcolumn=2
+"set foldcolumn=2
 
 " IM settings
 " IM off when starting up
@@ -204,6 +204,7 @@ if has('persistent_undo')
   set undofile
   let &undodir = g:config.path.vim . '/undo'
   " call Mkdir(&undodir)
+  call rc#misc#mkdir(&undodir)
 endif
 
 " Use clipboard

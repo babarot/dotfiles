@@ -93,12 +93,16 @@ if g:config.is_starting
   endif
 endif
 
+execute 'set runtimepath^=' . fnameescape(g:config.path.rc)
+
 call s:load('plug.vim')
 
 call s:load('autocmd.vim')
 call s:load('options.vim')
 call s:load('command.vim')
 call s:load('mapping.vim')
+
+call s:load('misc.vim')
 
 " if s:load('plug.vim')
 "   call s:load('custom.vim')

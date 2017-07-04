@@ -40,3 +40,31 @@ command! -nargs=* -complete=mapping AllMaps map <args> | map! <args> | lmap <arg
 
 " Show buffer kind.
 command! -bar EchoBufKind setlocal bufhidden? buftype? swapfile? buflisted?
+
+command! -nargs=? -complete=file Open call rc#misc#open(<q-args>)
+command! -nargs=0                Op   call rc#misc#open('.')
+
+command! CopyCurrentPath call rc#misc#copy_current_path()
+command! CopyCurrentDir  call rc#misc#copy_current_path(1)
+command! CopyPath CopyCurrentPath
+
+command! -nargs=0 JunkFile call rc#misc#junkfile()
+
+command! -nargs=? -complete=file Rename call rc#misc#rename(<q-args>, 'file')
+if v:version >= 730
+  command! -nargs=? -complete=filetype ReExt  call rc#misc#rename(<q-args>, 'ext')
+else
+  command! -nargs=?                    ReExt  call rc#misc#rename(<q-args>, 'ext')
+endif
+
+" Remove EOL ^M
+command! RemoveCr call rc#misc#smart_execute('silent! %substitute/\r$//g | nohlsearch')
+" Remove EOL space
+command! RemoveEolSpace call rc#misc#smart_execute('silent! %substitute/ \+$//g | nohlsearch')
+
+" Delete the current buffer and the file.
+command! -bang -nargs=0 -complete=buffer Delete call rc#buf#delete(<bang>0)
+nnoremap <silent> <C-x>d     :<C-u>Delete<CR>
+nnoremap <silent> <C-x><C-d> :<C-u>Delete!<CR>
+
+nnoremap <silent> <C-_> :<C-u>call rc#misc#smart_foldcloser()<CR>

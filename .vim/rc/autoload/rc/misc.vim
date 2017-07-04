@@ -77,3 +77,101 @@ function! rc#misc#splitw()
     return ":wincmd w\<CR>"
   endif
 endfunction
+
+function! rc#misc#open(file)
+  if !g:config.bin.open
+    return g:false
+    " return Error('open: not supported yet.')
+  endif
+  let file = empty(a:file) ? expand('%') : fnamemodify(a:file, ':p')
+  call system(printf('%s %s &', 'open', shellescape(file)))
+  return v:shell_error ? g:false : g:true
+endfunction
+
+function! rc#misc#copy_current_path(...)
+  let path = a:0 ? expand('%:p:h') : expand('%:p')
+  if IsWindows()
+    let @* = substitute(path, '\\/', '\\', 'g')
+  else
+    let @* = path
+  endif
+  echo path
+endfunction
+
+function! rc#misc#junkfile()
+  let junk_dir = $HOME . '/.vim/junk'. strftime('/%Y/%m/%d')
+  if !isdirectory(junk_dir)
+    call s:mkdir(junk_dir)
+  endif
+
+  let ext = input('Junk Ext: ')
+  let filename = junk_dir . tolower(strftime('/%A')) . strftime('_%H%M%S')
+  if !empty(ext)
+    let filename = filename . '.' . ext
+  endif
+  execute 'edit ' . filename
+endfunction
+
+function! rc#misc#rename(new, type)
+  if a:type ==# 'file'
+    if empty(a:new)
+      let new = input('New filename: ', expand('%:p:h') . '/', 'file')
+    else
+      let new = a:new
+    endif
+  elseif a:type ==# 'ext'
+    if empty(a:new)
+      let ext = input('New extention: ', '', 'filetype')
+      let new = expand('%:p:t:r')
+      if !empty(ext)
+        let new .= '.' . ext
+      endif
+    else
+      let new = expand('%:p:t:r') . '.' . a:new
+    endif
+  endif
+
+  if filereadable(new)
+    redraw
+    echo printf("overwrite `%s'? ", new)
+    if nr2char(getchar()) ==? 'y'
+      silent call delete(new)
+    else
+      return g:false
+    endif
+  endif
+
+  if new != '' && new !=# 'file'
+    let oldpwd = getcwd()
+    lcd %:p:h
+    execute 'file' new
+    execute 'setlocal filetype=' . fnamemodify(new, ':e')
+    write
+    call delete(expand('#'))
+    execute 'lcd' oldpwd
+  endif
+endfunction
+
+function! rc#misc#smart_execute(expr)
+  let wininfo = winsaveview()
+  execute a:expr
+  call winrestview(wininfo)
+endfunction
+
+function! rc#misc#smart_foldcloser()
+  if foldlevel('.') == 0
+    normal! zM
+    return
+  endif
+
+  let foldc_lnum = foldclosed('.')
+  normal! zc
+  if foldc_lnum == -1
+    return
+  endif
+
+  if foldclosed('.') != foldc_lnum
+    return
+  endif
+  normal! zM
+endfunction

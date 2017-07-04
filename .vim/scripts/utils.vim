@@ -248,6 +248,7 @@ function! s:root() "{{{1
     endif
 endfunction
 command! Root call <SID>root()
+
 function! s:get_buflists(...) "{{{1
     if a:0 && a:1 ==# 'n'
         silent bnext

@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+# load some utilities
+source ~/src/github.com/b4b4r07/dotfiles/etc/install || exit 1
+
 # tmux_automatically_attach attachs tmux session automatically
 is_ssh_running && exit 0
 

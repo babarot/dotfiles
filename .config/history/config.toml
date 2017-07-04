@@ -5,17 +5,24 @@
 
 [history]
   path = "/Users/b4b4r07/.config/history/history.ltsv"
-  ignore_words = []
+  ignore_words = [
+      '^\w+$',
+      '^cd -+(\w)?$',
+      '^hs\s+\S',
+  ]
   use_color = false
   [history.sync]
-    id = "34e9f7e2ede2b9c8a1ac447158a9cb0f"
-    token = "b81c189ae8c020ba33d8ff6a9c776323237c4385"
-    size = 100
+    id = ""
+    token = "$GITHUB_TOKEN"
 
 [screen]
   filter_dir = false
   filter_branch = false
   filter_hostname = false
-  columns = ["{{.Time}}", "{{.Status}}", "{{.Command}}"]
+  columns = [
+      "{{.Time}}",
+      "{{.Status}}",
+      "{{.Command}}",
+  ]
   status_ok = " "
   status_ng = "x"

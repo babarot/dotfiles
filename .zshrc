@@ -14,8 +14,8 @@ fi
 if [[ -f ~/.zplug/init.zsh ]]; then
     export ZPLUG_LOADFILE=~/.zsh/zplug.zsh
     # For development version of zplug
-    # source ~/.zplug/init.zsh
-    source ~/src/github.com/zplug/zplug/init.zsh
+    source ~/.zplug/init.zsh
+    #source ~/src/github.com/zplug/zplug/init.zsh
 
     if ! zplug check --verbose; then
         printf "Install? [y/N]: "
@@ -25,4 +25,8 @@ if [[ -f ~/.zplug/init.zsh ]]; then
         echo
     fi
     zplug load
+fi
+
+if [[ -f ~/.zshrc.local ]]; then
+    source ~/.zshrc.local
 fi

@@ -1,5 +1,6 @@
 setlocal noexpandtab
 
+" automatically run gofmt
 " augroup custom-ftplugin-go
 "   autocmd! * <buffer>
 "   if executable('gofmt')
@@ -24,6 +25,10 @@ augroup goautocmd
   autocmd BufWritePre *.go :GoImports
 augroup END
 
+let g:go_fmt_command = "goimports"
+
+let g:go_gocode_unimported_packages = 1
+
 let g:go_highlight_array_whitespace_error = 1
 let g:go_highlight_chan_whitespace_error = 1
 let g:go_highlight_extra_types = 1
@@ -38,3 +43,5 @@ let g:go_highlight_build_constraints = 1
 let g:go_highlight_string_spellcheck = 1
 let g:go_highlight_format_strings = 1
 let g:go_highlight_generate_tags = 1
+
+set rtp+=$GOPATH/src/github.com/nsf/gocode/vim

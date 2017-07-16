@@ -53,6 +53,7 @@ if g:plug.ready() && g:config.vimrc.plugin_on
   Plug 'b4b4r07/vim-ltsv',             { 'for': 'ltsv' }
   Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
   Plug 'maksimr/vim-jsbeautify',       { 'for': 'javascript' }
+  Plug 'plasticboy/vim-markdown',      { 'for': 'markdown' }
 
   Plug 'raphael/vim-present-simple'
   Plug 'mattn/webapi-vim'

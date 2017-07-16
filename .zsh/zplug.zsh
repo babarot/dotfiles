@@ -93,11 +93,14 @@ zplug "b4b4r07/ssh-keyreg", as:command, use:bin
 zplug "mrowa44/emojify", as:command
 zplug 'b4b4r07/copy', as:command, use:'(*).sh', rename-to:'$1'
 
-zplug "b4b4r07/ultimate", as:theme
+# zplug "b4b4r07/ultimate", as:theme
+# if zplug check "b4b4r07/ultimate"; then
+#     zstyle ':ultimate:prompt:path' mode 'shortpath'
+# fi
+source /Users/b4b4r07/src/github.com/b4b4r07/ultimate/ultimate.zsh-theme
 
-if zplug check "b4b4r07/ultimate"; then
-    zstyle ':ultimate:prompt:path' mode 'shortpath'
-fi
+# zplug mafredri/zsh-async, from:github
+# zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
 
 zplug 'b4b4r07/zplug-doctor', lazy:yes
 zplug 'b4b4r07/zplug-cd', lazy:yes

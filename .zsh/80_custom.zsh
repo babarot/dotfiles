@@ -28,3 +28,10 @@ kchange() {
     go get github.com/bronze1man/yaml2json
     kubectl config use-context $({ kubectl config view | yaml2json; echo } | jq -r '.clusters[].name' | fzf-tmux)
 }
+
+docker-rmi() {
+    docker images \
+        | fzf-tmux --reverse --header-lines=1 --multi --ansi \
+        | awk '{print $3}' \
+        | xargs docker rmi ${1+"$@"}
+}

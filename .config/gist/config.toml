@@ -1,0 +1,22 @@
+[core]
+  editor = "vim"
+  selectcmd = "fzf-tmux --multi --reverse:fzf --multi --reverse:peco"
+  tomlfile = "/Users/b4b4r07/.config/gist/config.toml"
+  user = "b4b4r07"
+
+[gist]
+  token = ""
+  base_url = "https://gist.github.com"
+  dir = "/Users/b4b4r07/.config/gist/files"
+  file_ext = ".patch"
+  use_cache = true
+  cache_ttl = 86400000000000
+  runnable_ext = ["sh", "rb", "py", "pl", "php"]
+
+[flag]
+  open_url = true
+  blog_mode = true
+  starred = false
+
+[screen]
+  columns = ["{{.ShortID}}", "{{.PrivateMark}} {{.Filename}}", "{{.Description}}"]

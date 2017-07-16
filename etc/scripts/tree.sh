@@ -2,14 +2,12 @@
 
 set -eu
 
-. $DOTPATH/etc/lib/vital.sh
-
 usage=$(cat <<-'HELP'
 usage: <find command options>
 HELP
 )
 
-if has "tree"; then
+if type "tree" &>/dev/null; then
     tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less # -FRNX;
 else
     if [ "$1" = "-h" -o "$1" = "--help" ]; then

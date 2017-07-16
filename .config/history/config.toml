@@ -1,6 +1,6 @@
 [core]
   editor = "vim"
-  selectcmd = "fzf-tmux --multi:fzf --multi:peco"
+  selectcmd = "fzf-tmux --multi --ansi:fzf --multi:peco"
   tomlfile = "/Users/b4b4r07/.config/history/config.toml"
 
 [history]

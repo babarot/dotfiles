@@ -53,13 +53,8 @@ zplug "fujiwara/nssh", \
     rename-to:"nssh", \
     frozen:1
 
-zplug "tcnksm/ghr", \
-    as:command, \
-    from:gh-r
-
-zplug "b4b4r07/gdate", \
-    as:command, \
-    from:gh-r
+zplug 'tcnksm/ghr',   as:command, hook-build:'go get -d && go build'
+zplug 'knqyf263/pet', as:command, hook-build:'go get -d && go build'
 
 zplug "philovivero/distribution", \
     as:command, \
@@ -98,11 +93,14 @@ zplug "b4b4r07/ssh-keyreg", as:command, use:bin
 zplug "mrowa44/emojify", as:command
 zplug 'b4b4r07/copy', as:command, use:'(*).sh', rename-to:'$1'
 
-zplug "b4b4r07/ultimate", as:theme
+# zplug "b4b4r07/ultimate", as:theme
+# if zplug check "b4b4r07/ultimate"; then
+#     zstyle ':ultimate:prompt:path' mode 'shortpath'
+# fi
+source /Users/b4b4r07/src/github.com/b4b4r07/ultimate/ultimate.zsh-theme
 
-if zplug check "b4b4r07/ultimate"; then
-    zstyle ':ultimate:prompt:path' mode 'shortpath'
-fi
+# zplug mafredri/zsh-async, from:github
+# zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
 
 zplug 'b4b4r07/zplug-doctor', lazy:yes
 zplug 'b4b4r07/zplug-cd', lazy:yes
@@ -160,10 +158,6 @@ if zplug check 'b4b4r07/zsh-history'; then
     ZSH_HISTORY_KEYBIND_ARROW_UP="^p"
     ZSH_HISTORY_KEYBIND_ARROW_DOWN="^n"
 fi
-
-zplug 'knqyf263/pet', \
-    as:command, \
-    hook-build:'go get -d && go build'
 
 zplug 'b4b4r07/git-fzf', hook-build:'make'
 zplug 'b4b4r07/git-fzf', \

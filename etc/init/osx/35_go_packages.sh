@@ -1,1 +1,0 @@
-../common/go_packages.sh

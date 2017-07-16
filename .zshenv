@@ -100,7 +100,4 @@ fi
 # available $INTERACTIVE_FILTER
 export INTERACTIVE_FILTER="fzf:peco:percol:gof:pick"
 
-# keybind ^X^X
-export ONELINER_FILE="$DOTPATH/doc/misc/commands.txt"
-
-[[ -f ~/.secret ]] && source ~/.secret
+export DOTPATH=${0:A:h}

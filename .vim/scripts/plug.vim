@@ -66,6 +66,7 @@ if g:plug.ready() && g:env.vimrc.plugin_on
     Plug 'mattn/goplayground-vim'
     Plug 'haya14busa/vim-gofmt'
     Plug 'kylef/apiblueprint.vim'
+    Plug 'millermedeiros/vim-esformatter'
 
     " colorscheme
     Plug 'b4b4r07/solarized.vim'

@@ -54,6 +54,7 @@ if g:plug.ready() && g:config.vimrc.plugin_on
   Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
   Plug 'maksimr/vim-jsbeautify',       { 'for': 'javascript' }
   Plug 'plasticboy/vim-markdown',      { 'for': 'markdown' }
+  Plug 'hashivim/vim-terraform'
 
   Plug 'raphael/vim-present-simple'
   Plug 'mattn/webapi-vim'
@@ -61,6 +62,7 @@ if g:plug.ready() && g:config.vimrc.plugin_on
   Plug 'mattn/goplayground-vim'
   Plug 'haya14busa/vim-gofmt'
   Plug 'kylef/apiblueprint.vim'
+  Plug 'millermedeiros/vim-esformatter'
 
   Plug 'b4b4r07/solarized.vim'
   Plug 'w0ng/vim-hybrid'

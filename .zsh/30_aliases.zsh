@@ -505,3 +505,7 @@ function get_path() {
 alias p="get_path"
 
 alias hs="command history"
+
+# function kchange() {
+#     kubectx $(kubectx | fzy)
+# }

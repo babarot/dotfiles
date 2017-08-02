@@ -20,14 +20,14 @@ gchange() {
     gcloud config configurations activate $(gcloud config configurations list | fzf-tmux --reverse --header-lines=1 | awk '{print $1}')
 }
 
-kchange() {
-    if ! type kubectl &>/dev/null; then
-        echo "kubectl not found" >&2
-        return 1
-    fi
-    go get github.com/bronze1man/yaml2json
-    kubectl config use-context $({ kubectl config view | yaml2json; echo } | jq -r '.clusters[].name' | fzf-tmux)
-}
+# kchange() {
+#     if ! type kubectl &>/dev/null; then
+#         echo "kubectl not found" >&2
+#         return 1
+#     fi
+#     go get github.com/bronze1man/yaml2json
+#     kubectl config use-context $({ kubectl config view | yaml2json; echo } | jq -r '.clusters[].name' | fzf-tmux)
+# }
 
 docker-rmi() {
     docker images \
@@ -35,3 +35,6 @@ docker-rmi() {
         | awk '{print $3}' \
         | xargs docker rmi ${1+"$@"}
 }
+
+source <(kubectl completion zsh)
+source <(kubectl completion zsh | sed 's/__start_kubectl kubectl/__start_kubectl kube/')

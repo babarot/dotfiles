@@ -63,6 +63,7 @@ if g:plug.ready() && g:config.vimrc.plugin_on
   Plug 'haya14busa/vim-gofmt'
   Plug 'kylef/apiblueprint.vim'
   Plug 'millermedeiros/vim-esformatter'
+  Plug 'juvenn/mustache.vim'
 
   Plug 'b4b4r07/solarized.vim'
   Plug 'w0ng/vim-hybrid'

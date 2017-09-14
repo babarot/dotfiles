@@ -169,10 +169,12 @@ zplug 'b4b4r07/dbl', \
     use:'(dbl).zsh', \
     rename-to:'$1'
 
+zplug 'b4b4r07/kubernetes-alias', use:zshrc
+
 # zplug 'b4b4r07/history', use:misc/zsh/init.zsh
 # if zplug check 'b4b4r07/history'; then
 #     export ZSH_HISTORY_AUTO_SYNC=false
 # fi
 
-source "/Users/b4b4r07/src/github.com/b4b4r07/history/misc/zsh/init.zsh"
 export ZSH_HISTORY_AUTO_SYNC=false
+source "/Users/b4b4r07/src/github.com/b4b4r07/history/misc/zsh/init.zsh"

@@ -509,3 +509,13 @@ alias hs="command history"
 # function kchange() {
 #     kubectx $(kubectx | fzy)
 # }
+
+alias -g P='$(kubectl get pods | fzf-tmux --header-lines=1 --reverse --multi --cycle | awk "{print \$1}")'
+alias -g F='$(fzf-tmux --reverse --multi --cycle)'
+alias -g J='| jq -C . | less -F'
+
+function filetime() {
+    zmodload "zsh/stat"
+    zmodload "zsh/datetime"
+    strftime "%F %T" "$(stat +mtime "${1:?}")"
+}

@@ -486,7 +486,16 @@ git_modified_files() {
 #     fi
 # }
 
-alias t="tree -C"
+tree_func() {
+    local length
+    if [[ -z $1 ]]; then
+        length="-L 1"
+    else
+        length="-L $1"
+    fi
+    tree -C $length
+}
+alias t="tree_func"
 
 alias l="ls -l"
 
@@ -518,4 +527,21 @@ function filetime() {
     zmodload "zsh/stat"
     zmodload "zsh/datetime"
     strftime "%F %T" "$(stat +mtime "${1:?}")"
+}
+
+function _gcloud_change_project() {
+    local proj=$(gcloud projects list | fzf-tmux --header-lines=1 --reverse --multi --cycle | awk '{print $1}')
+    if [[ -n $proj ]]; then
+        gcloud config set project $proj
+        return $?
+    fi
+}
+alias gcp=_gcloud_change_project
+
+function devpath() {
+    local loc="$(ghq list | fzf-tmux --reverse --multi --cycle --preview="ls -lF $(ghq root)/{}" --preview-window=right:60%)"
+    if [[ -n $loc ]]; then
+        echo $(ghq root)/$loc
+    fi
+    return 1
 }

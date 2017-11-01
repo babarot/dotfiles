@@ -1,6 +1,6 @@
 [core]
   editor = "vim"
-  selectcmd = "fzf-tmux --multi --ansi:fzf --multi:peco"
+  selectcmd = "fzf --multi --ansi --height 40% --reverse"
   tomlfile = "/Users/b4b4r07/.config/history/config.toml"
 
 [history]

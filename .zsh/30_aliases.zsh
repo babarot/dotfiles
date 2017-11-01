@@ -545,3 +545,6 @@ function devpath() {
     fi
     return 1
 }
+
+# for help less
+alias -g HL=' 2>&1 | less'

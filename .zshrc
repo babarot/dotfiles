@@ -9,7 +9,9 @@ fi
 
 # tmux_automatically_attach attachs tmux session
 # automatically when your are in zsh
-$DOTPATH/bin/tmuxx
+if [[ -x ~/bin/tmuxx ]]; then
+    ~/bin/tmuxx
+fi
 
 if [[ -f ~/.zplug/init.zsh ]]; then
     export ZPLUG_LOADFILE=~/.zsh/zplug.zsh

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+case "$1" in
+    --edit)
+        vim $0
+        exit $?
+        ;;
+    -* | --*)
+        echo "$1: no such option" >&2
+        exit 1
+        ;;
+    *)
+        action="${@:-"vim -p"}"
+        ;;
+esac
+
+out=$(
+git diff origin/master... --name-only \
+    | fzf --height 30 --reverse --preview-window down:80% --preview 'git diff origin/master --color=always {}'
+)
+
+if [[ -n $out ]]; then
+    $action $out
+fi

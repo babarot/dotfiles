@@ -103,3 +103,17 @@ get_os() {
         fi
     done
 }
+
+sa() {
+    gcloud beta iam service-accounts list \
+        | sed '1d' \
+        | awk '{print $NF}' \
+        | perl -pe "s/^(.*?)(@.*)$/$fg[red]\$1$reset_color\$2/"
+}
+
+has_sa() {
+    gcloud beta iam service-accounts list \
+        | sed '1d' \
+        | awk '{print $NF}' \
+        | grep -i "${1:?}"
+}

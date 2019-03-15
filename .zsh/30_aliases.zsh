@@ -520,7 +520,7 @@ alias hs="command history"
 # }
 
 alias -g P='$(kubectl get pods | fzf-tmux --header-lines=1 --reverse --multi --cycle | awk "{print \$1}")'
-alias -g F='$(fzf-tmux --reverse --multi --cycle)'
+alias -g F='| fzf --height 30 --reverse --multi --cycle'
 alias -g J='| jq -C . | less -F'
 
 function filetime() {
@@ -548,3 +548,35 @@ function devpath() {
 
 # for help less
 alias -g HL=' 2>&1 | less'
+
+alias yy="fc -ln -1 | tr -d '\n' | pbcopy"
+
+if (( $+commands[iap_curl] )); then
+    alias iap='iap_curl $(iap_curl --list | fzf --height 30 --reverse)'
+fi
+
+function req() {
+    if [[ -n $1 ]]; then
+        command req "$@"
+        return $?
+    fi
+    command req $(command req --list-urls | fzf --height 20 --reverse)
+}
+
+function ggrep() {
+    if [[ -z $1 ]]; then
+        echo "too few argument" >&2
+        return 1
+    fi
+
+    res=$(
+    git grep --color "$1" \
+        | fzf --height 40 --reverse --multi --ansi \
+        | awk -F: '{print $1}'
+    )
+
+    if [[ -z $res ]]; then
+        return 0
+    fi
+    vim -p $res
+}

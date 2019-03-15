@@ -259,4 +259,4 @@ globalias() {
 
 zle -N globalias
 
-bindkey " " globalias
+# bindkey " " globalias

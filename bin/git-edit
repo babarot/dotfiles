@@ -16,7 +16,7 @@ esac
 
 out=$(
 git diff origin/master... --name-only \
-    | fzf --height 30 --reverse --preview-window down:80% --preview 'git diff origin/master --color=always {}'
+    | fzf --multi --height 30 --reverse --preview-window down:80% --preview 'git diff origin/master --color=always {}'
 )
 
 if [[ -n $out ]]; then

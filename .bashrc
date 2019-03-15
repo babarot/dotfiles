@@ -358,3 +358,5 @@ fi
 
 # __END__{{{1
 # vim:fdm=marker fdc=3 ft=sh ts=4 sw=4 sts=4:
+
+complete -C /usr/local/bin/vault vault

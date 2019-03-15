@@ -30,6 +30,8 @@
     graph = log --graph --date-order --all --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=short
     br = switch
     review = diff origin/master...
+    commit-log = log origin/master..
+    delete-merged-branches = !git branch --merged | grep -v \\* | xargs -I % git branch -d %
 
 [help]
     autocorrect = 1
@@ -78,3 +80,5 @@
     lessopen = "| pygmentize -O style=solarized -f console256 -g %s"
 [github]
 	user = b4b4r07
+[commit]
+	gpgsign = true

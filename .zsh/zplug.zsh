@@ -10,7 +10,7 @@ zplug "~/.zsh", from:local, use:"<->_*.zsh"
 zplug "b4b4r07/enhancd", use:init.sh
 if zplug check "b4b4r07/enhancd"; then
     #export ENHANCD_FILTER="fzf --height 50% --reverse --ansi --preview 'ls -l {}' --preview-window down"
-    export ENHANCD_FILTER="fzf --height 50% --reverse --ansi"
+    export ENHANCD_FILTER="fzf --height 25% --reverse --ansi"
     export ENHANCD_DOT_SHOW_FULLPATH=1
 fi
 zplug "b4b4r07/zsh-vimode-visual", use:"*.zsh", defer:3
@@ -76,11 +76,16 @@ zplug "wg/wrk", \
 
 zplug "mattn/jvgrep", as:command, from:gh-r
 
-zplug "reorx/httpstat", \
+#zplug "reorx/httpstat", \
+#    as:command, \
+#    use:'(httpstat).py', \
+#    rename-to:'$1', \
+#    if:'(( $+commands[python] ))'
+
+zplug "b4b4r07/httpstat", \
     as:command, \
-    use:'(httpstat).py', \
-    rename-to:'$1', \
-    if:'(( $+commands[python] ))'
+    use:'(*).sh', \
+    rename-to:'$1'
 
 zplug 'kouzoh/mercari', \
     as:command, \
@@ -103,6 +108,7 @@ if zplug check "b4b4r07/ultimate"; then
     zstyle ':ultimate:prompt:path' mode 'shortpath'
 fi
 source /Users/b4b4r07/src/github.com/b4b4r07/ultimate/ultimate.zsh-theme
+#zplug 'themes/agnoster', from:oh-my-zsh
 
 # zplug mafredri/zsh-async, from:github
 # zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
@@ -180,6 +186,15 @@ zplug 'b4b4r07/kubernetes-alias', use:zshrc
 # if zplug check 'b4b4r07/history'; then
 #     export ZSH_HISTORY_AUTO_SYNC=false
 # fi
+
+
+  zplug "ogham/exa", \
+    from:gh-r, \
+    as:command, \
+    rename-to:exa, \
+    use:"*macos*"
+
+zplug "akarzim/zsh-docker-aliases"
 
 export ZSH_HISTORY_AUTO_SYNC=false
 source "/Users/b4b4r07/src/github.com/b4b4r07/history/misc/zsh/init.zsh"

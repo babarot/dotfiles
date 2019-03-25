@@ -27,5 +27,5 @@ docker-rmi() {
         | xargs docker rmi ${1+"$@"}
 }
 
-source <(kubectl completion zsh)
-source <(kubectl completion zsh | sed 's/__start_kubectl kubectl/__start_kubectl kube/')
+# source <(kubectl completion zsh)
+# source <(kubectl completion zsh | sed 's/__start_kubectl kubectl/__start_kubectl kube/')

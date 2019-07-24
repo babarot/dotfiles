@@ -530,7 +530,7 @@ function filetime() {
 }
 
 function _gcloud_change_project() {
-    local proj=$(gcloud projects list | fzf-tmux --header-lines=1 --reverse --multi --cycle | awk '{print $1}')
+    local proj=$(gcloud projects list | fzf --height 50% --header-lines=1 --reverse --multi --cycle | awk '{print $1}')
     if [[ -n $proj ]]; then
         gcloud config set project $proj
         return $?

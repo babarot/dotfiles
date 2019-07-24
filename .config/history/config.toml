@@ -11,9 +11,6 @@
       '^hs\s+\S',
   ]
   use_color = false
-  [history.sync]
-    id = ""
-    token = "$GITHUB_TOKEN"
 
 [screen]
   filter_dir = false

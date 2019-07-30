@@ -1,0 +1,9 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =7
+let g:netrw_dirhist_1='/Users/b4b4r07/src/github.com/b4b4r07/antidote'
+let g:netrw_dirhist_2='/Users/b4b4r07/src/github.com/b4b4r07/antidote/antidote'
+let g:netrw_dirhist_3='/Users/b4b4r07/src/github.com/b4b4r07/ultimate'
+let g:netrw_dirhist_4='/Users/b4b4r07/src/github.com/b4b4r07/ultimate/modules'
+let g:netrw_dirhist_5='/Users/b4b4r07/src/github.com/b4b4r07'
+let g:netrw_dirhist_6='/Users/b4b4r07/src/github.com/b4b4r07/ultimate'
+let g:netrw_dirhist_7='/Users/b4b4r07/src/github.com/b4b4r07/dotfiles'

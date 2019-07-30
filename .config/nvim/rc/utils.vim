@@ -34,10 +34,10 @@ function! s:b4b4r07() "{{{1
     call feedkeys(type(char) == type(0) ? nr2char(char) : char)
 endfunction
 
-augroup vimrc-without-plugin
-    autocmd!
-    autocmd VimEnter * if !argc() | call <SID>b4b4r07() | endif
-augroup END
+" augroup vimrc-without-plugin
+"     autocmd!
+"     autocmd VimEnter * if !argc() | call <SID>b4b4r07() | endif
+" augroup END
 
 "function! s:cd_file_parentdir() "{{{1
 "  execute ":lcd " . expand("%:p:h")

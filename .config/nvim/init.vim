@@ -1,6 +1,4 @@
-" Tiny vim
 if 0 | endif
-finish
 
 " Use plain vim
 " when vim was invoked by 'sudo' command
@@ -37,7 +35,7 @@ function! s:source(from, ...)
 endfunction
 
 function! s:load(...) abort
-  let base = expand($HOME.'/.vim/scripts')
+  let base = expand($HOME.'/.config/nvim/rc')
   let found = g:true
 
   if len(a:000) > 0
@@ -59,11 +57,7 @@ function! s:load(...) abort
 endfunction
 "}}}
 
-" Init
-if !s:load('env.vim')
-  " Finish if loading env.vim is failed
-  finish
-endif
+call s:load('env.vim')
 
 let g:env.vimrc.plugin_on = g:true
 let g:env.vimrc.manage_rtp_manually = g:false
@@ -98,23 +92,20 @@ if g:env.is_starting
   endif
 endif
 
-if s:load('plug.vim')
-  call s:load('custom.vim')
-endif
-call s:load('dein.vim', g:false)
-call s:load('func.vim')
-call s:load('base.vim')
-call s:load('view.vim')
-call s:load('map.vim')
-call s:load('command.vim')
-call s:load('utils.vim')
-call s:load('option.vim')
-call s:load('gui.vim', g:env.is_gui)
+call s:load("plug.vim")
+
+call s:load("a.vim")
+call s:load("base.vim")
+call s:load("command.vim")
+call s:load("custom.vim")
+" call s:load("dein.vim")
+" call s:load("env.vim")
+call s:load("func.vim")
+call s:load("gui.vim")
+call s:load("map.vim")
+call s:load("option.vim")
+call s:load("utils.vim")
+call s:load("view.vim")
 
 " Must be written at the last.  see :help 'secure'.
 set secure
-
-" __END__ {{{1
-" vi:set ts=2 sw=2 sts=2:
-" vim:fdt=substitute(getline(v\:foldstart),'\\(.\*\\){\\{3}','\\1',''):
-" vim:fdm=marker expandtab fdc=3:

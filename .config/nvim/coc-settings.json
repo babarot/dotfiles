@@ -1,0 +1,24 @@
+{
+  "suggest.noselect":false,
+  "suggest.preferCompleteThanJumpPlaceholder":true,
+  "languageserver": {
+    "golang": {
+      "command": "gopls",
+      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
+      "filetypes": ["go"]
+    },
+    "vimls": {
+      "command": "vim-language-server",
+      "args": ["--stdio"],
+      "initializationOptions": {
+        "iskeyword": "vim iskeyword option",
+        "vimruntime": "path/to/$VIMRUNTIME",
+        "runtimepath": "vim/runtime/path",
+        "diagnostic": {
+          "enable": true
+        }
+      },
+      "filetypes": [ "vim" ]
+    }
+  }
+}

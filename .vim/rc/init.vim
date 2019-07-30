@@ -1,5 +1,6 @@
 " Tiny vim
 if 0 | endif
+finish
 
 " Use plain vim
 " when vim was invoked by 'sudo' command

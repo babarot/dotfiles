@@ -1,5 +1,5 @@
 .DS_Store
 *~
-.config/*
+#.config/*
 !.config/fish
 .zsh/history/

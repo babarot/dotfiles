@@ -360,3 +360,7 @@ fi
 # vim:fdm=marker fdc=3 ft=sh ts=4 sw=4 sts=4:
 
 complete -C /usr/local/bin/vault vault
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"

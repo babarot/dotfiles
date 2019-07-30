@@ -14,15 +14,15 @@ if has 'richpager'; then
     alias cl='richpager'
 fi
 
-if (( $+commands[gls] )); then
-    alias ls='gls -F --color --group-directories-first'
-elif (( $+commands[ls] )); then
-    if is_osx; then
-        alias ls='ls -GF'
-    else
-    alias ls='ls -F --color'
-    fi
-fi
+#if (( $+commands[gls] )); then
+#    alias ls='gls -F --color --group-directories-first'
+#elif (( $+commands[ls] )); then
+#    if is_osx; then
+#        alias ls='ls -GF'
+#    else
+#    alias ls='ls -F --color'
+#    fi
+#fi
 
 # Common aliases
 alias ..='cd ..'

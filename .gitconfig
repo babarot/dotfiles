@@ -45,6 +45,7 @@
 [user]
     name  = b4b4r07
     email = b4b4r07@gmail.com
+	signingkey = 7CEC0E2D0302CB0F
 
 [pager]
     log  = diff-highlight | less -RX

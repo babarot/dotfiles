@@ -24,6 +24,11 @@ fi
 #    fi
 #fi
 
+if (( $+commands[exa] )); then
+  alias ls="exa --group-directories-first"
+  alias ll="ls -al"
+fi
+
 # Common aliases
 alias ..='cd ..'
 alias ld='ls -ld'          # Show info about the directory

@@ -20,6 +20,13 @@ elseif g:plug.is_installed('hybrid')
     colorscheme hybrid
 endif
 
+" augroup colorscheme
+"   autocmd!
+"   autocmd BufEnter * colorscheme solarized
+"   autocmd BufEnter *.go colorscheme seoul256
+"   autocmd BufEnter *.vim colorscheme Tomorrow-Night
+" augroup END
+
 " StatusLine {{{1
 set laststatus=2
 

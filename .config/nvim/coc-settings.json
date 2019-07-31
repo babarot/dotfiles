@@ -1,15 +1,26 @@
 {
-  "suggest.noselect":false,
-  "suggest.preferCompleteThanJumpPlaceholder":true,
+  "suggest.floatEnable": false,
+  "suggest.autoTrigger": "trigger",
+  "suggest.noselect": false,
+  "suggest.preferCompleteThanJumpPlaceholder": true,
   "languageserver": {
     "golang": {
       "command": "gopls",
-      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
-      "filetypes": ["go"]
+      "rootPatterns": [
+        "go.mod",
+        ".vim/",
+        ".git/",
+        ".hg/"
+      ],
+      "filetypes": [
+        "go"
+      ]
     },
     "vimls": {
       "command": "vim-language-server",
-      "args": ["--stdio"],
+      "args": [
+        "--stdio"
+      ],
       "initializationOptions": {
         "iskeyword": "vim iskeyword option",
         "vimruntime": "path/to/$VIMRUNTIME",
@@ -18,7 +29,34 @@
           "enable": true
         }
       },
-      "filetypes": [ "vim" ]
+      "filetypes": [
+        "vim"
+      ]
     }
+  },
+  "vimlsp.debug": {
+    "type": "boolean",
+    "default": false,
+    "description": "enable coc-vimlsp service debug"
+  },
+  "vimlsp.diagnostic.enable": {
+    "type": "boolean",
+    "default": true,
+    "description": "enable diagnostic"
+  },
+  "vimlsp.trace.server": {
+    "type": "string",
+    "default": "off",
+    "enum": [
+      "off",
+      "messages",
+      "verbose"
+    ],
+    "description": "Trace level of vim language server"
+  },
+  "yaml.schemas": {
+    "url": "globPattern",
+    "kubernetes": "/*.yaml",
+    "kedge": "globPattern"
   }
 }

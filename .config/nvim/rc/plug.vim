@@ -12,14 +12,6 @@ endfunction
 if g:plug.ready()
     call plug#begin(g:plug.base)
 
-    Plug 'natebosch/vim-lsc'
-    Plug 'neoclide/coc.nvim'
-    "Plug 'prabirshrestha/async.vim'
-    "Plug 'prabirshrestha/asyncomplete-lsp.vim'
-    "Plug 'prabirshrestha/asyncomplete.vim'
-    "Plug 'prabirshrestha/vim-lsp'
-    "let g:lsp_async_completion = 1
-
     " file and directory
     Plug 'AndrewRadev/gapply.vim'
     Plug 'Dkendal/fzy-vim'
@@ -53,7 +45,6 @@ if g:plug.ready()
     Plug 'millermedeiros/vim-esformatter'
     Plug 'osyo-manga/vim-anzu'
     Plug 'raphael/vim-present-simple'
-    Plug 'raphael/vim-present-simple'
     Plug 'thinca/vim-quickrun'
     Plug 'tpope/vim-endwise'
     Plug 'tpope/vim-surround'
@@ -77,7 +68,7 @@ if g:plug.ready()
     Plug 'maksimr/vim-jsbeautify', { 'for': 'javascript' }
     Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
     Plug 'rhysd/vim-fixjson', { 'for': 'json' }
-    Plug 'zaiste/tmux.vim', { 'for': 'tmux' }
+    " Plug 'zaiste/tmux.vim', { 'for': 'tmux' }
     Plug 'zplug/vim-zplug', { 'for': 'zplug' }
 
     " colorscheme
@@ -92,10 +83,28 @@ if g:plug.ready()
     Plug 'nightsense/snow'
     Plug 'nightsense/stellarized'
     Plug 'tomasr/molokai'
-    Plug 'tyrannicaltoucan/vim-deep-space'
     Plug 'w0ng/vim-hybrid'
     Plug 'whatyouhide/vim-gotham'
     Plug 'yuttie/hydrangea-vim'
+    Plug 'itchyny/lightline.vim'
+    Plug 'rhysd/wallaby.vim'
+    Plug 'rhysd/vim-color-spring-night'
+
+    Plug 'mengelbrecht/lightline-bufferline'
+    Plug 'tyrannicaltoucan/vim-deep-space'
+    Plug 'tpope/vim-fugitive'
+    Plug 'itchyny/vim-highlighturl'
+    Plug 'rhysd/github-complete.vim'
+    Plug 'airblade/vim-gitgutter'
+    Plug 'rhysd/git-messenger.vim'
+    " Plug 'natebosch/vim-lsc'
+    Plug 'neoclide/coc.nvim'
+    "Plug 'prabirshrestha/async.vim'
+    "Plug 'prabirshrestha/asyncomplete-lsp.vim'
+    "Plug 'prabirshrestha/asyncomplete.vim'
+    "Plug 'prabirshrestha/vim-lsp'
+    "let g:lsp_async_completion = 1
+    Plug 'caglartoklu/ftcolor.vim'
 
     " Add plugins to &runtimepath
     call plug#end()
@@ -226,16 +235,117 @@ if executable('golsp')
   augroup END
 endif
 
-"inoremap <silent><expr> <TAB>
-"      \ pumvisible() ? "\<C-n>" :
-"      \ <SID>check_back_space() ? "\<TAB>" :
-"      \ coc#refresh()
-"inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-"
-"function! s:check_back_space() abort
-"  let col = col('.') - 1
-"  return !col || getline('.')[col - 1]  =~# '\s'
-"endfunction
+augroup foo
+  au!
+  autocmd FileType md,mkd,markdown setlocal omnifunc=github_complete#complete
+augroup END
+
+augroup config-github-complete
+    autocmd!
+    autocmd FileType markdown setlocal omnifunc=github_complete#complete
+augroup END
+
+function! StatusDiagnostic() abort
+  let info = get(b:, 'coc_diagnostic_info', {})
+  if empty(info) | return '' | endif
+  let msgs = []
+  if get(info, 'error', 0)
+    call add(msgs, 'E' . info['error'])
+  endif
+  if get(info, 'warning', 0)
+    call add(msgs, 'W' . info['warning'])
+  endif
+  return join(msgs, ' '). ' ' . get(g:, 'coc_status', '')
+endfunction
+
+function! CocCurrentFunction()
+    return get(b:, 'coc_current_function', '')
+endfunction
+
+let g:lightline = {
+      \ 'colorscheme': 'wambat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'cocstatus', 'gitbranch', 'readonly', 'filename', 'modified' ] ],
+      \   'right': [ [ 'lineinfo' ],
+      \              [ 'percent' ],
+      \              [ 'filetype' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'fugitive#head',
+      \   'filename': 'LightlineFilename',
+      \   'cocstatus': 'StatusDiagnostic'
+      \ },
+      \ }
+
+function! LightlineReload()
+  call lightline#init()
+  call lightline#colorscheme()
+  call lightline#update()
+endfunction
+
+function! LightlineFilename()
+  return winwidth(0) > 80 ? expand('%:f') : expand('%:t')
+endfunction
+
+function! StatusDiagnostic() abort
+  let info = get(b:, 'coc_diagnostic_info', {})
+  if empty(info) | return '' | endif
+  let msgs = []
+  if get(info, 'error', 0)
+    call add(msgs, 'E' . info['error'])
+  endif
+  if get(info, 'warning', 0)
+    call add(msgs, 'W' . info['warning'])
+  endif
+  return join(msgs, ' '). ' ' . get(g:, 'coc_status', '')
+endfunction
+
+command! LightlineReload call LightlineReload()
+command! StatusDiagnostic call StatusDiagnostic()
+
+set showtabline=2
+set laststatus=2
 
 
-colorscheme hyper-solarized
+" Use K to show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" let g:lightline.tabline          = {'left': [['buffers']], 'right': [['close']]}
+" let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
+" let g:lightline.component_type   = {'buffers': 'tabsel'}
+autocmd BufWritePost,TextChanged,TextChangedI * call lightline#update()
+
+let g:ftcolor_plugin_enabled = 1
+let g:ftcolor_redraw = 1
+let g:ftcolor_default_color_scheme = 'hyper-solarized'
+let g:ftcolor_color_mappings = {
+      \ 'vim': 'Tomorrow-Night',
+      \ 'hcl':  'gruvbox',
+      \ 'go':   'seoul256',
+      \ 'yaml': 'hyper-solarized',
+      \ 'bash': 'despacio',
+      \ 'zsh':  'despacio',
+      \ 'sh':   'despacio',
+      \ }
+
+let g:gitgutter_enabled = 1
+" see: https://github.com/airblade/vim-gitgutter#faq
+highlight SignColumn ctermbg=235
+highlight GitGutterAdd guifg=#009900 guibg=NONE ctermfg=2 ctermbg=235
+highlight GitGutterChange guifg=#bbbb00 guibg=NONE ctermfg=3 ctermbg=235
+highlight GitGutterDelete guifg=#ff2222 guibg=NONE ctermfg=1 ctermbg=235
+
+augroup gitgutter
+  autocmd!
+  autocmd BufWrite,BufWritePre,BufWritePost * call gitgutter#buffer_enable()
+  " call gitgutter#all(1)
+augroup END

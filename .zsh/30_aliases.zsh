@@ -6,24 +6,6 @@ if is_osx; then
     alias gvim="open -a MacVim"
 fi
 
-if has 'git'; then
-    alias gst='git status'
-fi
-
-if has 'richpager'; then
-    alias cl='richpager'
-fi
-
-#if (( $+commands[gls] )); then
-#    alias ls='gls -F --color --group-directories-first'
-#elif (( $+commands[ls] )); then
-#    if is_osx; then
-#        alias ls='ls -GF'
-#    else
-#    alias ls='ls -F --color'
-#    fi
-#fi
-
 if (( $+commands[exa] )); then
   alias ls="exa --group-directories-first"
   alias ll="ls -al"
@@ -442,88 +424,6 @@ if has "tw"; then
     fi
 fi
 
-git_modified_files() {
-    is_git_repo || return
-
-    local cmd q k res ok
-    while ok=("${ok[@]:-dummy_$RANDOM}"); cmd="$(
-        git status --po \
-            | awk '$1=="M"{print $2}' \
-            | FZF_DEFAULT_OPTS= fzf --ansi --multi --query="$@" \
-            --no-sort --prompt="[C-a:add | C-c:checkout | C-d:diff]> " \
-            --print-query --expect=ctrl-d,ctrl-a,ctrl-c \
-            --bind=ctrl-z:toggle-all \
-            )"; do
-        q="$(head -1 <<< "$cmd")"
-        k="$(head -2 <<< "$cmd" | tail -1)"
-        res="$(sed '1,2d;/^$/d' <<< "$cmd")"
-        [ -z "$res" ] && continue
-        case "$k" in
-            ctrl-c)
-                if [[ ${(j: :)ok} == ${(j: :)${(@f)res}} ]]; then
-                    git checkout -- "${(@f)res}"
-                    ok=()
-                else
-                    ok=("${(@f)res}")
-                fi
-                ;;
-            ctrl-a)
-                git add "${(@f)res}"
-                ;;
-            ctrl-d)
-                git diff "${(@f)res}" < /dev/tty > /dev/tty
-                ;;
-            *)
-                echo "${(@f)res}" < /dev/tty > /dev/tty
-                break
-                ;;
-        esac
-    done
-}
-#alias -g GG='$(git_modified_files)'
-
-# treels() {
-#     local -a files=( *(D) )
-#     if (( $#files > $LINES )); then
-#         tree -C -L 1 -a -I .git
-#     else
-#         tree -C
-#     fi
-# }
-
-tree_func() {
-    local length
-    if [[ -z $1 ]]; then
-        length="-L 1"
-    else
-        length="-L $1"
-    fi
-    tree -C $length
-}
-alias t="tree_func"
-
-alias l="ls -l"
-
-# alias f='fzf --preview="pygmentize {}" --preview-window=right:60% --ansi --bind "enter:execute(vim {})"'
-
-function get_path() {
-    local f="${1:?}"
-    if [[ -t 1 ]]; then
-        # give a new line if stdout
-        printf "${f:A}\n"
-    else
-        printf "${f:A}"
-    fi
-}
-
-alias p="get_path"
-
-alias hs="command history"
-
-# function kchange() {
-#     kubectx $(kubectx | fzy)
-# }
-
 alias -g P='$(kubectl get pods | fzf-tmux --header-lines=1 --reverse --multi --cycle | awk "{print \$1}")'
 alias -g F='| fzf --height 30 --reverse --multi --cycle'
 alias -g J='| jq -C . | less -F'
@@ -543,45 +443,40 @@ function _gcloud_change_project() {
 }
 alias gcp=_gcloud_change_project
 
-function devpath() {
-    local loc="$(ghq list | fzf-tmux --reverse --multi --cycle --preview="ls -lF $(ghq root)/{}" --preview-window=right:60%)"
-    if [[ -n $loc ]]; then
-        echo $(ghq root)/$loc
-    fi
-    return 1
-}
-
-# for help less
-alias -g HL=' 2>&1 | less'
-
 alias yy="fc -ln -1 | tr -d '\n' | pbcopy"
 
 if (( $+commands[iap_curl] )); then
-    alias iap='iap_curl $(iap_curl --list | fzf --height 30 --reverse)'
+    alias iap='iap_curl $(iap_curl --list | fzf --height 30% --reverse)'
 fi
 
-function req() {
-    if [[ -n $1 ]]; then
-        command req "$@"
-        return $?
-    fi
-    command req $(command req --list-urls | fzf --height 20 --reverse)
+function pet-select() {
+    BUFFER="$(pet search --color --query "$LBUFFER")"
+    CURSOR=$#BUFFER
+    zle redisplay
 }
 
-function ggrep() {
-    if [[ -z $1 ]]; then
-        echo "too few argument" >&2
+zle -N pet-select
+bindkey '^s' pet-select
+
+function prev-add() {
+  local PREV=$(fc -lrn | head -n 1)
+  sh -c "pet new `printf %q "$PREV"`"
+}
+
+gchange() {
+    if ! type gcloud &>/dev/null; then
+        echo "gcloud not found" >&2
         return 1
     fi
-
-    res=$(
-    git grep --color "$1" \
-        | fzf --height 40 --reverse --multi --ansi \
-        | awk -F: '{print $1}'
-    )
-
-    if [[ -z $res ]]; then
-        return 0
-    fi
-    vim -p $res
+    gcloud config configurations activate $(gcloud config configurations list | fzf-tmux --reverse --header-lines=1 | awk '{print $1}')
 }
+
+docker-rmi() {
+    docker images \
+        | fzf-tmux --reverse --header-lines=1 --multi --ansi \
+        | awk '{print $3}' \
+        | xargs docker rmi ${1+"$@"}
+}
+
+# source <(kubectl completion zsh)
+# source <(kubectl completion zsh | sed 's/__start_kubectl kubectl/__start_kubectl kube/')

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if ! type jq &>/dev/null; then
+    echo "jq: not found" >&2
+    exit 1
+fi
+
+if ! type gcloud &>/dev/null; then
+    echo "gcloud: not found" >&2
+    exit 1
+fi
+
+gcloud config configurations list --format='json' \
+    | jq -r '.[] | select(.is_active==true) | .properties.core.project'

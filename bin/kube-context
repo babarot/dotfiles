@@ -1,0 +1,47 @@
+#!/bin/bash
+
+while (( ${#} > 0 ))
+do
+    case "${1}" in
+    --context)
+        context="${2}"
+        shift
+        shift
+        ;;
+    --context=*)
+        context="${1#*=}"
+        shift
+        ;;
+    esac
+done
+
+if ! type kubectl &>/dev/null; then
+    echo "kubectl command not found" >&2
+    exit 1
+fi
+
+if ! context="$(kubectl config current-context 2>/dev/null)"; then
+    echo "NaN"
+    exit 0
+fi
+
+namespace="$(kubectl config view -o "jsonpath={.contexts[?(@.name==\"${context}\")].context.namespace}")"
+if [[ -z "${namespace}" ]]; then
+    namespace="default"
+fi
+
+regions=(
+asia-northeast1-a
+asia-northeast1-b
+asia-northeast1-c
+asia-east1-a
+asia-east1-b
+asia-east1-c
+)
+
+for region in "${regions[@]}"
+do
+    context=${context%_${region}*}
+done
+
+echo "${context}/${namespace}"

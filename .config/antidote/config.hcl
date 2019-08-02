@@ -22,22 +22,6 @@ github "enhancd" {
   }
 }
 
-gist "misc" {
-  owner = "b4b4r07"
-  id    = "79ee61f7c140c63d2786"
-}
-
-http "incr" {
-  description = "http://mimosa-pudica.net/zsh-incremental.html"
-
-  url    = "http://mimosa-pudica.net/src/incr-0.2.zsh"
-  output = "incr-0.2.zsh"
-
-  plugin {
-    sources = []
-  }
-}
-
 github "jq" {
   description = "Command-line JSON processor"
 
@@ -51,6 +35,31 @@ github "jq" {
 
   command {
     targets = ["jq"]
+  }
+}
+
+gist "misc" {
+  owner = "b4b4r07"
+  id    = "79ee61f7c140c63d2786"
+}
+
+github "hoge" {
+  owner = "ahmetb"
+  repo  = "kubectx"
+
+  command {
+    targets = ["kubectx", "kubens"]
+  }
+}
+
+http "incr" {
+  description = "http://mimosa-pudica.net/zsh-incremental.html"
+
+  url    = "http://mimosa-pudica.net/src/incr-0.2.zsh"
+  output = "incr-0.2.zsh"
+
+  plugin {
+    sources = []
   }
 }
 
@@ -283,7 +292,7 @@ github "kustomize" {
 }
 
 github "agkozak-zsh-prompt" {
-  description = ""
+  description = "A fast, asynchronous ZSH prompt with color ASCII indicators of Git, exit, SSH, and vi mode status. Framework-agnostic and customizable."
 
   owner = "agkozak"
   repo  = "agkozak-zsh-prompt"
@@ -297,8 +306,8 @@ github "agkozak-zsh-prompt" {
   }
 }
 
-github "zsh-vimode" {
-  description = ""
+github "zsh-vimode-visual" {
+  description = "Implement the vim-like visual mode to vi-mode of zsh"
 
   owner = "b4b4r07"
   repo  = "zsh-vimode-visual"
@@ -310,8 +319,8 @@ github "zsh-vimode" {
   }
 }
 
-github "cd-improvement" {
-  description = ""
+github "zsh-interactive-cd" {
+  description = "Fish like interactive tab completion for cd in zsh "
 
   owner = "changyuheng"
   repo  = "zsh-interactive-cd"
@@ -326,7 +335,7 @@ github "cd-improvement" {
 }
 
 github "exa" {
-  description = ""
+  description = "A modern version of 'ls'."
 
   owner = "ogham"
   repo  = "exa"
@@ -342,7 +351,7 @@ github "exa" {
 }
 
 github "ghq" {
-  description = ""
+  description = "Remote repository management made easy"
 
   owner = "motemen"
   repo  = "ghq"
@@ -357,8 +366,23 @@ github "ghq" {
   }
 }
 
+github "gobump" {
+  description = "Bumps up Go program version"
+
+  owner = "motemen"
+  repo  = "gobump"
+
+  command {
+    targets = ["**/gobump"]
+
+    build {
+      steps = ["go build -o gobump cmd/gobump/main.go"]
+    }
+  }
+}
+
 github "docker-compose" {
-  description = ""
+  description = "Define and run multi-container applications with Docker"
 
   owner = "docker"
   repo  = "compose"
@@ -374,7 +398,7 @@ github "docker-compose" {
 }
 
 github "git-open" {
-  description = ""
+  description = "Type `git open` to open the GitHub page or website for a repository in your browser."
 
   owner = "paulirish"
   repo  = "git-open"
@@ -385,7 +409,7 @@ github "git-open" {
 }
 
 github "hub" {
-  description = ""
+  description = "A command-line tool that makes git easier to use with GitHub."
 
   owner = "github"
   repo  = "hub"
@@ -401,7 +425,7 @@ github "hub" {
 }
 
 github "neovim" {
-  description = ""
+  description = "Vim-fork focused on extensibility and usability"
 
   owner = "neovim"
   repo  = "neovim"

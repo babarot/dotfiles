@@ -16,8 +16,28 @@ github "enhancd" {
     ]
 
     env = {
-      ENHANCD_FILTER            = "fzf --height 25% --reverse --ansi"
-      ENHANCD_DOT_SHOW_FULLPATH = 1
+      ENHANCD_FILTER = "fzf --height 25% --reverse --ansi"
+    }
+  }
+}
+
+github "neovim" {
+  description = "Vim-fork focused on extensibility and usability"
+
+  owner = "neovim"
+  repo  = "neovim"
+
+  release {
+    name = "nvim"
+    tag  = "nightly"
+  }
+
+  command {
+    targets = ["**/bin/nvim"]
+
+    link {
+      from = "**/bin/nvim"
+      to   = "vim"
     }
   }
 }
@@ -62,6 +82,16 @@ github "kubectx" {
 
   command {
     targets = ["kubectx", "kubens"]
+
+    link {
+      from = "kubectx"
+      to   = "kubectx"
+    }
+
+    link {
+      from = "kubens"
+      to   = "kubens"
+    }
   }
 }
 
@@ -436,22 +466,6 @@ github "hub" {
 
   command {
     targets = ["**/bin/hub"]
-  }
-}
-
-github "neovim" {
-  description = "Vim-fork focused on extensibility and usability"
-
-  owner = "neovim"
-  repo  = "neovim"
-
-  release {
-    name = "nvim"
-    tag  = "nightly"
-  }
-
-  command {
-    targets = ["**/bin/nvim"]
   }
 }
 

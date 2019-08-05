@@ -50,13 +50,6 @@ github "jq" {
     name = "jq"
     tag  = "jq-1.6"
   }
-
-  command {
-    link {
-      from = "jq"
-      to   = "jq"
-    }
-  }
 }
 
 gist "misc" {
@@ -84,12 +77,10 @@ github "kubectx" {
   command {
     link {
       from = "kubectx"
-      to   = "kubectx"
     }
 
     link {
       from = "kubens"
-      to   = "kubens"
     }
   }
 }
@@ -122,7 +113,7 @@ github "envchain" {
   }
 }
 
-github "zsh-history" {
+github "history" {
   owner = "b4b4r07"
   repo  = "history"
 
@@ -139,18 +130,19 @@ github "zsh-history" {
   }
 }
 
-github "zsh-history-search" {
+github "history-search-multi-word" {
   owner = "zdharma"
   repo  = "history-search-multi-word"
 
   plugin {
-    sources = [
-      "history-search-multi-word.plugin.zsh",
-    ]
+    sources = ["history-search-multi-word.plugin.zsh"]
   }
 }
 
-github "zsh-highlight" {
+github "fast-syntax-highlighting" {
+  // zsh-users/zsh-syntax-highlighting
+  description = "Syntax-highlighting for Zshell"
+
   owner = "zdharma"
   repo  = "fast-syntax-highlighting"
 
@@ -161,34 +153,15 @@ github "zsh-highlight" {
   }
 }
 
-github "zsh-highlight-disable" {
-  owner = "zsh-users"
-  repo  = "zsh-syntax-highlighting"
+github "ultimate" {
+  // subnixr/minimal
+  description = "Ultimate is a simple theme for minimalistic zsh users"
 
-  plugin {
-    disable = true
-
-    sources = ["zsh-syntax-highlighting.plugin.zsh"]
-  }
-}
-
-github "zsh-theme-ultimate" {
   owner = "b4b4r07"
   repo  = "ultimate"
 
   plugin {
-    disable = false
-    sources = ["ultimate.zsh-theme"]
-  }
-}
-
-github "minimal" {
-  owner = "subnixr"
-  repo  = "minimal"
-
-  plugin {
-    disable = true
-    sources = ["minimal.zsh"]
+    sources = ["*.zsh-theme"]
   }
 }
 
@@ -202,13 +175,6 @@ github "gron" {
     name = "gron"
     tag  = "v0.6.0"
   }
-
-  command {
-    link {
-      from = "gron"
-      to   = "gron"
-    }
-  }
 }
 
 github "fzf" {
@@ -220,13 +186,6 @@ github "fzf" {
   release {
     name = "fzf"
     tag  = "0.17.5"
-  }
-
-  command {
-    link {
-      from = "fzf"
-      to   = "fzf"
-    }
   }
 }
 
@@ -240,13 +199,6 @@ github "fillin" {
     name = "fillin"
     tag  = "v0.1.1"
   }
-
-  command {
-    link {
-      from = "fillin"
-      to   = "fillin"
-    }
-  }
 }
 
 github "pet" {
@@ -258,13 +210,6 @@ github "pet" {
   release {
     name = "pet"
     tag  = "v0.3.4"
-  }
-
-  command {
-    link {
-      from = "pet"
-      to   = "pet"
-    }
   }
 }
 
@@ -292,13 +237,6 @@ github "peco" {
     name = "peco"
     tag  = "v0.5.3"
   }
-
-  command {
-    link {
-      from = "peco"
-      to   = "peco"
-    }
-  }
 }
 
 github "gkill" {
@@ -311,13 +249,6 @@ github "gkill" {
     name = "gkill"
     tag  = "v1.0.2"
   }
-
-  command {
-    link {
-      from = "gkill"
-      to   = "gkill"
-    }
-  }
 }
 
 github "kustomize" {
@@ -329,28 +260,6 @@ github "kustomize" {
   release {
     name = "kustomize"
     tag  = "v2.0.3"
-  }
-
-  command {
-    link {
-      from = "kustomize"
-      to   = "kustomize"
-    }
-  }
-}
-
-github "agkozak-zsh-prompt" {
-  description = "A fast, asynchronous ZSH prompt with color ASCII indicators of Git, exit, SSH, and vi mode status. Framework-agnostic and customizable."
-
-  owner = "agkozak"
-  repo  = "agkozak-zsh-prompt"
-
-  plugin {
-    disable = true
-
-    sources = [
-      "agkozak-zsh-prompt.plugin.zsh",
-    ]
   }
 }
 
@@ -392,13 +301,6 @@ github "exa" {
     name = "exa"
     tag  = "v0.9.0"
   }
-
-  command {
-    link {
-      from = "exa"
-      to   = "exa"
-    }
-  }
 }
 
 github "ghq" {
@@ -410,13 +312,6 @@ github "ghq" {
   release {
     name = "ghq"
     tag  = "v0.12.6"
-  }
-
-  command {
-    link {
-      from = "ghq"
-      to   = "ghq"
-    }
   }
 }
 
@@ -448,13 +343,6 @@ github "docker-compose" {
     name = "docker-compose"
     tag  = "1.21.1"
   }
-
-  command {
-    link {
-      from = "docker-compose"
-      to   = "docker-compose"
-    }
-  }
 }
 
 github "git-open" {
@@ -480,13 +368,6 @@ github "dep" {
   release {
     name = "dep"
     tag  = "v0.5.4"
-  }
-
-  command {
-    link {
-      from = "dep"
-      to   = "dep"
-    }
   }
 }
 
@@ -541,10 +422,3 @@ local "zsh" {
     sources = "${glob("~/.zsh/[0-9]*.zsh")}"
   }
 }
-
-# local "theme" {
-#   plugin {
-#     sources = ["/Users/b4b4r07/src/github.com/b4b4r07/ultimate/ultimate.zsh-theme"]
-#   }
-# }
-

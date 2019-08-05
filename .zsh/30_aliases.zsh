@@ -480,3 +480,15 @@ docker-rmi() {
 
 # source <(kubectl completion zsh)
 # source <(kubectl completion zsh | sed 's/__start_kubectl kubectl/__start_kubectl kube/')
+
+review() {
+    git diff --name-only origin/master... \
+        | fzf \
+        --ansi \
+        --multi \
+        --reverse \
+        --height 70% \
+        --preview-window down:70% \
+        --preview="git diff --color=always origin/master... {}" \
+        --bind "enter:execute-multi(vim {} </dev/tty >/dev/tty)"
+}

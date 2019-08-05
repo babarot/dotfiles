@@ -33,8 +33,6 @@ github "neovim" {
   }
 
   command {
-    targets = ["**/bin/nvim"]
-
     link {
       from = "**/bin/nvim"
       to   = "vim"
@@ -54,7 +52,10 @@ github "jq" {
   }
 
   command {
-    targets = ["jq"]
+    link {
+      from = "jq"
+      to   = "jq"
+    }
   }
 }
 
@@ -81,8 +82,6 @@ github "kubectx" {
   repo  = "kubectx"
 
   command {
-    targets = ["kubectx", "kubens"]
-
     link {
       from = "kubectx"
       to   = "kubectx"
@@ -100,8 +99,6 @@ github "fzy" {
   repo  = "fzy"
 
   command {
-    targets = ["fzy"]
-
     build {
       steps = [
         "make",
@@ -116,8 +113,6 @@ github "envchain" {
   repo  = "envchain"
 
   command {
-    targets = ["envchain"]
-
     build {
       steps = [
         "make",
@@ -209,7 +204,10 @@ github "gron" {
   }
 
   command {
-    targets = ["gron"]
+    link {
+      from = "gron"
+      to   = "gron"
+    }
   }
 }
 
@@ -225,7 +223,10 @@ github "fzf" {
   }
 
   command {
-    targets = ["fzf"]
+    link {
+      from = "fzf"
+      to   = "fzf"
+    }
   }
 }
 
@@ -241,7 +242,10 @@ github "fillin" {
   }
 
   command {
-    targets = ["fillin"]
+    link {
+      from = "fillin"
+      to   = "fillin"
+    }
   }
 }
 
@@ -257,7 +261,10 @@ github "pet" {
   }
 
   command {
-    targets = ["pet"]
+    link {
+      from = "pet"
+      to   = "pet"
+    }
   }
 }
 
@@ -268,7 +275,10 @@ github "prok" {
   repo  = "prok"
 
   command {
-    targets = ["prok.sh"]
+    link {
+      from = "prok.sh"
+      to   = "prok"
+    }
   }
 }
 
@@ -284,7 +294,10 @@ github "peco" {
   }
 
   command {
-    targets = ["peco"]
+    link {
+      from = "peco"
+      to   = "peco"
+    }
   }
 }
 
@@ -300,7 +313,10 @@ github "gkill" {
   }
 
   command {
-    targets = ["gkill"]
+    link {
+      from = "gkill"
+      to   = "gkill"
+    }
   }
 }
 
@@ -316,7 +332,10 @@ github "kustomize" {
   }
 
   command {
-    targets = ["kustomize"]
+    link {
+      from = "kustomize"
+      to   = "kustomize"
+    }
   }
 }
 
@@ -375,7 +394,10 @@ github "exa" {
   }
 
   command {
-    targets = ["exa"]
+    link {
+      from = "exa"
+      to   = "exa"
+    }
   }
 }
 
@@ -391,7 +413,10 @@ github "ghq" {
   }
 
   command {
-    targets = ["**/ghq"]
+    link {
+      from = "ghq"
+      to   = "ghq"
+    }
   }
 }
 
@@ -402,7 +427,10 @@ github "gobump" {
   repo  = "gobump"
 
   command {
-    targets = ["**/gobump"]
+    link {
+      from = "gobump"
+      to   = "gobump"
+    }
 
     build {
       steps = ["go build -o gobump cmd/gobump/main.go"]
@@ -422,7 +450,10 @@ github "docker-compose" {
   }
 
   command {
-    targets = ["docker-compose"]
+    link {
+      from = "docker-compose"
+      to   = "docker-compose"
+    }
   }
 }
 
@@ -433,7 +464,10 @@ github "git-open" {
   repo  = "git-open"
 
   command {
-    targets = ["git-open"]
+    link {
+      from = "git-open"
+      to   = "git-open"
+    }
   }
 }
 
@@ -449,7 +483,10 @@ github "dep" {
   }
 
   command {
-    targets = ["dep"]
+    link {
+      from = "dep"
+      to   = "dep"
+    }
   }
 }
 
@@ -465,7 +502,9 @@ github "hub" {
   }
 
   command {
-    targets = ["**/bin/hub"]
+    link {
+      from = "**/bin/hub"
+    }
   }
 }
 

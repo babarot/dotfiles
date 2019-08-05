@@ -43,15 +43,6 @@ gist "misc" {
   id    = "79ee61f7c140c63d2786"
 }
 
-github "hoge" {
-  owner = "ahmetb"
-  repo  = "kubectx"
-
-  command {
-    targets = ["kubectx", "kubens"]
-  }
-}
-
 http "incr" {
   description = "http://mimosa-pudica.net/zsh-incremental.html"
 
@@ -60,6 +51,17 @@ http "incr" {
 
   plugin {
     sources = []
+  }
+}
+
+github "kubectx" {
+  description = "Switch faster between clusters and namespaces in kubectl"
+
+  owner = "ahmetb"
+  repo  = "kubectx"
+
+  command {
+    targets = ["kubectx", "kubens"]
   }
 }
 
@@ -236,10 +238,7 @@ github "prok" {
   repo  = "prok"
 
   command {
-    targets = [
-      "prok.sh",
-      "hoge",
-    ]
+    targets = ["prok.sh"]
   }
 }
 
@@ -405,6 +404,22 @@ github "git-open" {
 
   command {
     targets = ["git-open"]
+  }
+}
+
+github "dep" {
+  description = "A command-line tool that makes git easier to use with GitHub."
+
+  owner = "golang"
+  repo  = "dep"
+
+  release {
+    name = "dep"
+    tag  = "v0.5.4"
+  }
+
+  command {
+    targets = ["dep"]
   }
 }
 

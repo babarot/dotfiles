@@ -70,6 +70,7 @@ if g:plug.ready()
     Plug 'rhysd/vim-fixjson', { 'for': 'json' }
     " Plug 'zaiste/tmux.vim', { 'for': 'tmux' }
     Plug 'zplug/vim-zplug', { 'for': 'zplug' }
+    Plug 'rhysd/vim-syntax-codeowners'
 
     " colorscheme
     Plug 'AlessandroYorba/Despacio'

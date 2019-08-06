@@ -84,6 +84,11 @@ github "kubectx" {
     env = {
       KUBECTX_ENV = true
     }
+
+    alias = {
+      kctx = "kubectx"
+      kns  = "kubens"
+    }
   }
 }
 
@@ -172,6 +177,18 @@ github "gron" {
   release {
     name = "gron"
     tag  = "v0.6.0"
+  }
+}
+
+github "dockfmt" {
+  description = "Dockerfile format and parser. Like `gofmt` but for Dockerfiles."
+
+  owner = "jessfraz"
+  repo  = "dockfmt"
+
+  release {
+    name = "dockfmt"
+    tag  = "v0.3.3"
   }
 }
 
@@ -307,6 +324,48 @@ github "ghq" {
     name = "ghq"
     tag  = "v0.12.6"
   }
+
+  command {
+    alias = {
+      ls = "exa --group-directories-first"
+      ll = "ls -al"
+    }
+  }
+}
+
+github "colordiff" {
+  description = "Primary development for colordiff "
+
+  owner = "daveewart"
+  repo  = "colordiff"
+
+  command {
+    link {
+      from = "colordiff.pl"
+      to   = "colordiff"
+    }
+
+    alias = {
+      diff = "colordiff -u"
+    }
+  }
+}
+
+github "red" {
+  description = "Terminal log analysis tools"
+
+  owner = "antonmedv"
+  repo  = "red"
+
+  command {
+    link {
+      from = "red"
+    }
+
+    build {
+      steps = ["go build -o red"]
+    }
+  }
 }
 
 github "gobump" {
@@ -389,7 +448,6 @@ github "hub" {
 # https://github.com/gokcehan/lf
 # https://github.com/tidwall/jj
 # https://github.com/huydx/hget
-# https://github.com/jessfraz/dockfmt
 # https://github.com/aybabtme/humanlog
 # https://github.com/gulyasm/jsonui
 # https://github.com/sugyan/ttygif

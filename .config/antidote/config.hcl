@@ -11,9 +11,7 @@ github "enhancd" {
   repo  = "enhancd"
 
   plugin {
-    sources = [
-      "init.sh",
-    ]
+    sources = ["init.sh"]
 
     env = {
       ENHANCD_FILTER = "fzf --height 25% --reverse --ansi"
@@ -82,6 +80,10 @@ github "kubectx" {
     link {
       from = "kubens"
     }
+
+    env = {
+      KUBECTX_ENV = true
+    }
   }
 }
 
@@ -113,22 +115,18 @@ github "envchain" {
   }
 }
 
-github "history" {
-  owner = "b4b4r07"
-  repo  = "history"
-
-  plugin {
-    disable = true
-
-    sources = [
-      "misc/zsh/init.zsh",
-    ]
-
-    env = {
-      ZSH_HISTORY_AUTO_SYNC = false
-    }
-  }
-}
+# github "history" {
+#   owner = "b4b4r07"
+#   repo  = "history"
+#
+#   plugin {
+#     sources = ["misc/zsh/init.zsh"]
+#
+#     env = {
+#       ZSH_HISTORY_AUTO_SYNC = false
+#     }
+#   }
+# }
 
 github "history-search-multi-word" {
   owner = "zdharma"
@@ -140,7 +138,7 @@ github "history-search-multi-word" {
 }
 
 github "fast-syntax-highlighting" {
-  // zsh-users/zsh-syntax-highlighting
+  // Similar to zsh-users/zsh-syntax-highlighting
   description = "Syntax-highlighting for Zshell"
 
   owner = "zdharma"
@@ -154,7 +152,7 @@ github "fast-syntax-highlighting" {
 }
 
 github "ultimate" {
-  // subnixr/minimal
+  // Similar to subnixr/minimal
   description = "Ultimate is a simple theme for minimalistic zsh users"
 
   owner = "b4b4r07"
@@ -276,20 +274,16 @@ github "zsh-vimode-visual" {
   }
 }
 
-github "zsh-interactive-cd" {
-  description = "Fish like interactive tab completion for cd in zsh "
-
-  owner = "changyuheng"
-  repo  = "zsh-interactive-cd"
-
-  plugin {
-    disable = true
-
-    sources = [
-      "zsh-interactive-cd.plugin.zsh",
-    ]
-  }
-}
+# github "zsh-interactive-cd" {
+#   description = "Fish like interactive tab completion for cd in zsh "
+#
+#   owner = "changyuheng"
+#   repo  = "zsh-interactive-cd"
+#
+#   plugin {
+#     sources = ["zsh-interactive-cd.plugin.zsh"]
+#   }
+# }
 
 github "exa" {
   description = "A modern version of 'ls'."

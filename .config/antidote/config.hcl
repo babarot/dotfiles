@@ -351,6 +351,76 @@ github "colordiff" {
   }
 }
 
+github "tpm" {
+  description = "Tmux Plugin Manager"
+
+  owner = "tmux-plugins"
+  repo  = "tpm"
+
+  path = "~/.tmux/plugins/tpm"
+}
+
+github "fx" {
+  description = "Command-line tool and terminal JSON viewer"
+
+  owner = "antonmedv"
+  repo  = "fx"
+
+  release {
+    name = "fx"
+    tag  = "14.0.1"
+  }
+
+  command {
+    link {
+      from = "*fx*"
+      to   = "fx"
+    }
+  }
+}
+
+github "fd" {
+  description = "A simple, fast and user-friendly alternative to 'find'"
+
+  owner = "sharkdp"
+  repo  = "fd"
+
+  release {
+    name = "fd"
+    tag  = "v7.3.0"
+  }
+}
+
+github "bat" {
+  description = "A cat(1) clone with wings."
+
+  owner = "sharkdp"
+  repo  = "bat"
+
+  release {
+    name = "bat"
+    tag  = "v0.11.0"
+  }
+}
+
+github "ripgrep" {
+  description = "ripgrep recursively searches directories for a regex pattern"
+
+  owner = "BurntSushi"
+  repo  = "ripgrep"
+
+  release {
+    name = "ripgrep"
+    tag  = "11.0.2"
+  }
+
+  command {
+    link {
+      from = "rg"
+    }
+  }
+}
+
 github "red" {
   description = "Terminal log analysis tools"
 

@@ -393,6 +393,18 @@ github "bat" {
     name = "bat"
     tag  = "v0.11.0"
   }
+
+  command {
+    env = {
+      BAT_PAGER = "less -RF"
+      BAT_THEME = "ansi-dark"
+      BAT_STYLE = "numbers,changes"
+    }
+
+    alias = {
+      bat-theme = "bat --list-themes | fzf --preview='bat --theme={} --color=always ~/.zshrc'"
+    }
+  }
 }
 
 github "ripgrep" {

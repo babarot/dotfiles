@@ -349,7 +349,7 @@ github "tpm" {
   owner = "tmux-plugins"
   repo  = "tpm"
 
-  path = "~/.tmux/plugins/tpm"
+  path = "${expand("~/.tmux/plugins/tpm")}"
 }
 
 github "fx" {

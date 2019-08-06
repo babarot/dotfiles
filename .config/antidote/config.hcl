@@ -81,10 +81,6 @@ github "kubectx" {
       from = "kubens"
     }
 
-    env = {
-      KUBECTX_ENV = true
-    }
-
     alias = {
       kctx = "kubectx"
       kns  = "kubens"
@@ -150,9 +146,7 @@ github "fast-syntax-highlighting" {
   repo  = "fast-syntax-highlighting"
 
   plugin {
-    sources = [
-      "fast-syntax-highlighting.plugin.zsh",
-    ]
+    sources = ["fast-syntax-highlighting.plugin.zsh"]
   }
 }
 
@@ -285,9 +279,7 @@ github "zsh-vimode-visual" {
   repo  = "zsh-vimode-visual"
 
   plugin {
-    sources = [
-      "zsh-vimode-visual.zsh",
-    ]
+    sources = ["zsh-vimode-visual.zsh"]
   }
 }
 

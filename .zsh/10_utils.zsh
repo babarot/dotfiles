@@ -1,3 +1,7 @@
+autoload -Uz colors; colors
+export PATH=~/bin:$PATH
+export PATH=$PATH:/usr/local/go/bin
+
 has() {
     type "${1:?too few arguments}" &>/dev/null
 }

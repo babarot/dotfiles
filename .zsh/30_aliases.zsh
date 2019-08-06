@@ -1,16 +1,3 @@
-alias p="print -l"
-
-# For mac, aliases
-if is_osx; then
-    has "qlmanage" && alias ql='qlmanage -p "$@" >&/dev/null'
-    alias gvim="open -a MacVim"
-fi
-
-if (( $+commands[exa] )); then
-  alias ls="exa --group-directories-first"
-  alias ll="ls -al"
-fi
-
 # Common aliases
 alias ..='cd ..'
 alias ld='ls -ld'          # Show info about the directory
@@ -24,9 +11,6 @@ alias lu='ls -ltur'        # Sort by and show access time, most recent last
 alias lt='ls -ltr'         # Sort by date, most recent last
 alias lr='ls -lR'          # Recursive ls
 
-# The ubiquitous 'll': directories first, with alphanumeric sorting:
-#alias ll='ls -lv --group-directories-first'
-
 alias cp="${ZSH_VERSION:+nocorrect} cp -i"
 alias mv="${ZSH_VERSION:+nocorrect} mv -i"
 alias mkdir="${ZSH_VERSION:+nocorrect} mkdir"
@@ -39,13 +23,6 @@ alias job='jobs -l'
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
-
-# Use if colordiff exists
-if has 'colordiff'; then
-    alias diff='colordiff -u'
-else
-    alias diff='diff -u'
-fi
 
 alias vi="vim"
 

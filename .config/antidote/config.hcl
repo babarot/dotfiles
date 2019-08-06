@@ -408,7 +408,7 @@ github "ripgrep" {
 
   command {
     link {
-      from = "rg"
+      from = "**/rg"
     }
   }
 }

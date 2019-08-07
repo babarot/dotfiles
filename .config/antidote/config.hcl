@@ -284,7 +284,7 @@ github "zsh-vimode-visual" {
 }
 
 # github "zsh-interactive-cd" {
-#   description = "Fish like interactive tab completion for cd in zsh "
+#   description = "Fish like interactive tab completion for cd in zsh"
 #
 #   owner = "changyuheng"
 #   repo  = "zsh-interactive-cd"
@@ -326,7 +326,7 @@ github "ghq" {
 }
 
 github "colordiff" {
-  description = "Primary development for colordiff "
+  description = "Primary development for colordiff"
 
   owner = "daveewart"
   repo  = "colordiff"
@@ -368,6 +368,18 @@ github "fx" {
       from = "*fx*"
       to   = "fx"
     }
+  }
+}
+
+github "goreleaser" {
+  description = "Deliver Go binaries as fast and easily as possible"
+
+  owner = "goreleaser"
+  repo  = "goreleaser"
+
+  release {
+    name = "goreleaser"
+    tag  = "v0.114.0"
   }
 }
 

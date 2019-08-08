@@ -1,5 +1,5 @@
 [core]
-    pager = less -q -R
+    # pager = diff-so-fancy | less --tabs=4 -RFX
     excludesfile = ~/.gitignore
     preloadindex = true
 
@@ -51,10 +51,11 @@
     log  = diff-highlight | less -RX
     show = diff-highlight | less -RX
     diff = diff-highlight | less -RX
+    # diff = diff-so-fancy | less --tabs=4 -RFX
 
 [diff]
-    tool      = vimdiff
-    algorithm = histogram
+    tool                = vimdiff
+    algorithm           = histogram
     compactionHeuristic = true
 
 [ghq]

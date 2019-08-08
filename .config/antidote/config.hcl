@@ -343,6 +343,19 @@ github "colordiff" {
   }
 }
 
+github "diff-so-fancy" {
+  description = "Good-lookin' diffs. Actually… nah… The best-lookin' diffs."
+
+  owner = "so-fancy"
+  repo  = "diff-so-fancy"
+
+  command {
+    link {
+      from = "diff-so-fancy"
+    }
+  }
+}
+
 github "tpm" {
   description = "Tmux Plugin Manager"
 
@@ -371,6 +384,42 @@ github "fx" {
   }
 }
 
+github "dry" {
+  description = "A Docker manager for the terminal"
+
+  owner = "moncho"
+  repo  = "dry"
+
+  release {
+    name = "dry"
+    tag  = "v0.9-beta.10"
+  }
+}
+
+github "ktop" {
+  description = "top for k8s"
+
+  owner = "ynqa"
+  repo  = "ktop"
+
+  release {
+    name = "ktop"
+    tag  = "v0.1.1"
+  }
+}
+
+github "ctop" {
+  description = "Top-like interface for container metrics"
+
+  owner = "bcicen"
+  repo  = "ctop"
+
+  release {
+    name = "ctop"
+    tag  = "v0.7.2"
+  }
+}
+
 github "goreleaser" {
   description = "Deliver Go binaries as fast and easily as possible"
 
@@ -395,6 +444,18 @@ github "fd" {
   }
 }
 
+github "sd" {
+  description = "Intuitive find & replace CLI (sed alternative)"
+
+  owner = "chmln"
+  repo  = "sd"
+
+  release {
+    name = "sd"
+    tag  = "0.6.5"
+  }
+}
+
 github "bat" {
   description = "A cat(1) clone with wings."
 
@@ -415,6 +476,24 @@ github "bat" {
 
     alias = {
       bat-theme = "bat --list-themes | fzf --preview='bat --theme={} --color=always ~/.zshrc'"
+    }
+  }
+}
+
+github "xsv" {
+  description = "A fast CSV command line toolkit written in Rust."
+
+  owner = "BurntSushi"
+  repo  = "xsv"
+
+  release {
+    name = "xsv"
+    tag  = "0.13.0"
+  }
+
+  command {
+    link {
+      from = "xsv"
     }
   }
 }
@@ -454,6 +533,24 @@ github "red" {
   }
 }
 
+github "kubectl-trace" {
+  description = "Schedule bpftrace programs on your kubernetes cluster using the kubectl"
+
+  owner = "iovisor"
+  repo  = "kubectl-trace"
+
+  command {
+    link {
+      from = "kubectl-trace"
+      to   = "kubectl-trace"
+    }
+
+    build {
+      steps = ["go build -o kubectl-trace cmd/kubectl-trace/root.go"]
+    }
+  }
+}
+
 github "gobump" {
   description = "Bumps up Go program version"
 
@@ -471,6 +568,24 @@ github "gobump" {
     }
   }
 }
+
+# github "hclfmt" {
+#   description = "Format and prettify HCL files"
+#
+#   owner = "fatih"
+#   repo  = "hclfmt"
+#
+#   command {
+#     link {
+#       from = "hclfmt"
+#       to   = "hclfmt"
+#     }
+#
+#     build {
+#       steps = ["go build -o hclfmt"]
+#     }
+#   }
+# }
 
 github "docker-compose" {
   description = "Define and run multi-container applications with Docker"
@@ -507,6 +622,30 @@ github "dep" {
   release {
     name = "dep"
     tag  = "v0.5.4"
+  }
+}
+
+github "httpstat" {
+  description = "It's like curl -v, with colours."
+
+  owner = "davecheney"
+  repo  = "httpstat"
+
+  release {
+    name = "httpstat"
+    tag  = "v1.0.0"
+  }
+}
+
+github "stern" {
+  description = "Multi pod and container log tailing for Kubernetes"
+
+  owner = "wercker"
+  repo  = "stern"
+
+  release {
+    name = "stern"
+    tag  = "1.11.0"
   }
 }
 

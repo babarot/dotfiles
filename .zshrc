@@ -7,7 +7,7 @@ if [[ -x ~/bin/tmuxx ]]; then
     ~/bin/tmuxx
 fi
 
-source <(antidote load)
+source <(pkg load)
 
 printf "\n"
 printf "${fg_bold[cyan]} ${SHELL} ${fg_bold[red]}${ZSH_VERSION}"

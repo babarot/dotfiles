@@ -1,15 +1,15 @@
 # Common aliases
 alias ..='cd ..'
-alias ld='ls -ld'          # Show info about the directory
-alias lla='ls -lAF'        # Show hidden all files
-alias ll='ls -lF'          # Show long file information
-alias la='ls -AF'          # Show hidden files
-alias lx='ls -lXB'         # Sort by extension
-alias lk='ls -lSr'         # Sort by size, biggest last
-alias lc='ls -ltcr'        # Sort by and show change time, most recent last
-alias lu='ls -ltur'        # Sort by and show access time, most recent last
-alias lt='ls -ltr'         # Sort by date, most recent last
-alias lr='ls -lR'          # Recursive ls
+# alias ld='ls -ld'          # Show info about the directory
+# alias lla='ls -lAF'        # Show hidden all files
+# alias ll='ls -lF'          # Show long file information
+# alias la='ls -AF'          # Show hidden files
+# alias lx='ls -lXB'         # Sort by extension
+# alias lk='ls -lSr'         # Sort by size, biggest last
+# alias lc='ls -ltcr'        # Sort by and show change time, most recent last
+# alias lu='ls -ltur'        # Sort by and show access time, most recent last
+# alias lt='ls -ltr'         # Sort by date, most recent last
+# alias lr='ls -lR'          # Recursive ls
 
 alias cp="${ZSH_VERSION:+nocorrect} cp -i"
 alias mv="${ZSH_VERSION:+nocorrect} mv -i"
@@ -50,6 +50,7 @@ alias -g N=" >/dev/null 2>&1"
 alias -g N1=" >/dev/null"
 alias -g N2=" 2>/dev/null"
 alias -g VI='| xargs -o vim'
+alias -g CSV="| sed 's/,,/, ,/g;s/,,/, ,/g' | column -s, -t"
 
 multi_grep() {
     local std_in="$(cat <&0)" word

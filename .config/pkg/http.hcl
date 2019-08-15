@@ -8,25 +8,18 @@
 #     sources = ["incr-0.2.zsh"]
 #   }
 # }
-# http "wget" {
-#   description = ""
-#
-#   url    = "http://ftp.gnu.org/gnu/wget/wget-1.20.tar.gz"
-#   output = ""
-#
-#   command {
-#     build {
-#       working_dir = "wget-1.20"
-#
-#       steps = [
-#         "./configure",
-#         "make",
-#       ]
-#     }
-#
-#     link {
-#       from = "wget"
-#     }
-#   }
-# }
 
+http "gcping" {
+  // https://github.com/GoogleCloudPlatform/gcping
+  description = "Like gcping.com but a command line tool"
+
+  url    = "https://storage.googleapis.com/gcping-release/gcping_darwin_amd64_0.0.3"
+  output = ""
+
+  command {
+    link {
+      from = "gcping*"
+      to   = "gcping"
+    }
+  }
+}

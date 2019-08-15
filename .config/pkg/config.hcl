@@ -1,7 +1,7 @@
 config {
-  base = "/Users/b4b4r07/.pkg"
+  base = "${expand("~/.pkg")}"
 
   command {
-    path = "/Users/b4b4r07/bin"
+    path = "${expand("~/bin")}"
   }
 }

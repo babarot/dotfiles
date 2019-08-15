@@ -54,9 +54,12 @@ github "envchain" {
   command {
     build {
       steps = [
-        "make",
-        "sudo make install",
+        "make", # "sudo make install",
       ]
+    }
+
+    link {
+      from = "envchain"
     }
   }
 }

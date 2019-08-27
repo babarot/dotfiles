@@ -17,6 +17,18 @@ github "neovim" {
   }
 }
 
+github "stein" {
+  description = ""
+
+  owner = "b4b4r07"
+  repo  = "stein"
+
+  release {
+    name = "stein"
+    tag  = "v0.2.4"
+  }
+}
+
 github "jq" {
   description = "Command-line JSON processor"
 
@@ -352,6 +364,18 @@ github "stern" {
   release {
     name = "stern"
     tag  = "1.11.0"
+  }
+}
+
+github "bow" {
+  description = "Exec a command on multiple pods for Kubernetes"
+
+  owner = "ueokande"
+  repo  = "bow"
+
+  release {
+    name = "bow"
+    tag  = "v0.0.1"
   }
 }
 

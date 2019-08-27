@@ -33,7 +33,22 @@ github "kubectx" {
   }
 }
 
+github "kubetail" {
+  description = "Bash script to tail Kubernetes logs from multiple pods at the same time"
+
+  owner = "johanhaleby"
+  repo  = "kubetail"
+
+  command {
+    link {
+      from = "kubetail"
+    }
+  }
+}
+
 github "fzy" {
+  description = "A better fuzzy finder"
+
   owner = "jhawthorn"
   repo  = "fzy"
 
@@ -48,6 +63,8 @@ github "fzy" {
 }
 
 github "envchain" {
+  description = "Environment variables meet macOS Keychain and gnome-keyring <3"
+
   owner = "sorah"
   repo  = "envchain"
 
@@ -78,6 +95,8 @@ github "envchain" {
 # }
 
 github "history-search-multi-word" {
+  description = "Multi-word, syntax highlighted history searching for Zsh"
+
   owner = "zdharma"
   repo  = "history-search-multi-word"
 

@@ -335,7 +335,7 @@ let g:ftcolor_color_mappings = {
       \ 'yaml': 'hyper-solarized',
       \ 'bash': 'despacio',
       \ 'zsh':  'despacio',
-      \ 'sh':   'despacio',
+      \ 'sh':   'seoul256',
       \ }
 
 let g:gitgutter_enabled = 1

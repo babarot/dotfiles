@@ -1,15 +1,38 @@
 github "enhancd" {
+  description = "A next-generation cd command with your interactive filter"
+
   owner = "b4b4r07"
   repo  = "enhancd"
 
   plugin {
-    sources = ["init.sh"]
+    sources = [
+      # "hoge.sh",
+      "init.sh",
+    ]
 
     env = {
       ENHANCD_FILTER = "fzf --height 25% --reverse --ansi"
     }
   }
 }
+
+# github "fzf-man" {
+#   description = ""
+#
+#   owner = "junegunn"
+#   repo  = "fzf"
+#
+#   command {
+#     link {
+#       from = "man/man1/fzf.1"
+#       to   = "${expand("~/man/man1")}"
+#     }
+#
+#     env = {
+#       MANPATH = "$MANPATH:${expand("~/man/man1")}"
+#     }
+#   }
+# }
 
 github "kubectx" {
   description = "Switch faster between clusters and namespaces in kubectl"

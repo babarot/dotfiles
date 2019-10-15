@@ -235,6 +235,18 @@ github "goreleaser" {
   }
 }
 
+github "grex" {
+  description = "A command-line tool for generating regular expressions from user-provided input strings"
+
+  owner = "pemistahl"
+  repo  = "grex"
+
+  release {
+    name = "grex"
+    tag  = "v0.1.0"
+  }
+}
+
 github "fd" {
   description = "A simple, fast and user-friendly alternative to 'find'"
 
@@ -394,5 +406,17 @@ github "hub" {
     link {
       from = "**/bin/hub"
     }
+  }
+}
+
+github "delta" {
+  description = "A syntax-highlighting pager for git"
+
+  owner = "dandavison"
+  repo  = "delta"
+
+  release {
+    name = "delta"
+    tag  = "0.0.10"
   }
 }

@@ -66,7 +66,8 @@ if g:plug.ready()
     Plug 'jnwhiteh/vim-golang', { 'for': 'go' }
     Plug 'keith/tmux.vim', { 'for': 'tmux' }
     Plug 'maksimr/vim-jsbeautify', { 'for': 'javascript' }
-    Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
+    " Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
+    Plug 'rhysd/vim-gfm-syntax', { 'for': 'markdown' }
     Plug 'rhysd/vim-fixjson', { 'for': 'json' }
     " Plug 'zaiste/tmux.vim', { 'for': 'tmux' }
     Plug 'zplug/vim-zplug', { 'for': 'zplug' }
@@ -95,7 +96,7 @@ if g:plug.ready()
     Plug 'tyrannicaltoucan/vim-deep-space'
     Plug 'tpope/vim-fugitive'
     Plug 'itchyny/vim-highlighturl'
-    Plug 'rhysd/github-complete.vim'
+    " Plug 'rhysd/github-complete.vim'
     Plug 'airblade/vim-gitgutter'
     Plug 'rhysd/git-messenger.vim'
     " Plug 'natebosch/vim-lsc'

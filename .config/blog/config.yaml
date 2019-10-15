@@ -1,0 +1,6 @@
+finder_commands:
+- fzf
+- --reverse
+- --height
+- 50%
+blog_dir: /Users/b4b4r07/src/github.com/b4b4r07/tellme.tokyo

@@ -41,6 +41,18 @@ github "jq" {
   }
 }
 
+github "godu" {
+  description = "Simple golang utility helping to discover large files/folders."
+
+  owner = "viktomas"
+  repo  = "godu"
+
+  release {
+    name = "godu"
+    tag  = "v1.1"
+  }
+}
+
 github "gron" {
   description = "Make JSON greppable!"
 
@@ -232,6 +244,24 @@ github "goreleaser" {
   release {
     name = "goreleaser"
     tag  = "v0.114.0"
+  }
+}
+
+github "gotestsum" {
+  description = "`go test` runner with output optimized for humans, JUnit XML for CI integration, and a summary of the test run results."
+
+  owner = "gotestyourself"
+  repo  = "gotestsum"
+
+  release {
+    name = "gotestsum"
+    tag  = "v0.3.5"
+  }
+
+  command {
+    alias = {
+      gotest = "gotestsum --format short-verbose"
+    }
   }
 }
 

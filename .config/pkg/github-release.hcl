@@ -53,6 +53,18 @@ github "godu" {
   }
 }
 
+github "pst" {
+  description = "TUI process monitor written in Go"
+
+  owner = "skanehira"
+  repo  = "pst"
+
+  release {
+    name = "pst"
+    tag  = "1.2.0"
+  }
+}
+
 github "gron" {
   description = "Make JSON greppable!"
 

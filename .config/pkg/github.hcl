@@ -43,15 +43,12 @@ github "kubectx" {
   command {
     link {
       from = "kubectx"
+      to   = "kubectl-ctx"
     }
 
     link {
       from = "kubens"
-    }
-
-    alias = {
-      kctx = "kubectx"
-      kns  = "kubens"
+      to   = "kubectl-ns"
     }
   }
 }

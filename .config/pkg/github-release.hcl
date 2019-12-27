@@ -101,6 +101,30 @@ github "fzf" {
   }
 }
 
+github "kubesec" {
+  description = "Secure Secret management for Kubernetes (with gpg, Google Cloud KMS and AWS KMS backends)"
+
+  owner = "shyiko"
+  repo  = "kubesec"
+
+  release {
+    name = "kubesec"
+    tag  = "0.9.2"
+  }
+}
+
+# github "triage" {
+#   description = "Interactive command-line GitHub issue & notification triaging tool."
+#
+#   owner = "tj"
+#   repo  = "triage"
+#
+#   release {
+#     name = "triage"
+#     tag  = "v0.0.1"
+#   }
+# }
+
 github "fillin" {
   description = "fill-in your command and execute"
 
@@ -188,7 +212,7 @@ github "ghq" {
 
   release {
     name = "ghq"
-    tag  = "v0.12.6"
+    tag  = "v0.17.3"
   }
 }
 
@@ -460,5 +484,29 @@ github "delta" {
   release {
     name = "delta"
     tag  = "0.0.10"
+  }
+}
+
+github "glow" {
+  description = "Render markdown on the CLI, with pizzazz!"
+
+  owner = "charmbracelet"
+  repo  = "glow"
+
+  release {
+    name = "glow"
+    tag  = "v0.1.3"
+  }
+}
+
+github "gloc" {
+  description = "Run a shell command in all the git repos in a directory."
+
+  owner = "meain"
+  repo  = "gloc"
+
+  release {
+    name = "gloc"
+    tag  = "0.0.8"
   }
 }

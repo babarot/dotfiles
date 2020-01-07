@@ -309,7 +309,7 @@ github "grex" {
 
   release {
     name = "grex"
-    tag  = "v0.1.0"
+    tag  = "v0.3.0"
   }
 }
 
@@ -499,14 +499,27 @@ github "glow" {
   }
 }
 
-github "gloc" {
-  description = "Run a shell command in all the git repos in a directory."
+# github "gloc" {
+#   description = "Run a shell command in all the git repos in a directory."
+#
+#   owner = "meain"
+#   repo  = "gloc"
+#
+#   release {
+#     name = "gloc"
+#     tag  = "0.0.8"
+#   }
+# }
+#
+# github "mdr" {
+#   description = "MarkDown Renderer for the terminal"
+#
+#   owner = "MichaelMure"
+#   repo  = "mdr"
+#
+#   release {
+#     name = "mdr"
+#     tag  = "v0.2.1"
+#   }
+# }
 
-  owner = "meain"
-  repo  = "gloc"
-
-  release {
-    name = "gloc"
-    tag  = "0.0.8"
-  }
-}

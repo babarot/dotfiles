@@ -296,6 +296,26 @@ github "gobump" {
 #   }
 # }
 
+github "hclfmt" {
+  description = "Format and prettify HCL files"
+
+  owner = "hashicorp"
+  repo  = "hcl"
+
+  branch = "hcl2"
+
+  command {
+    link {
+      from = "hclfmt"
+      to   = "hclfmt"
+    }
+
+    build {
+      steps = ["go build -o hclfmt cmd/hclfmt/main.go"]
+    }
+  }
+}
+
 github "git-open" {
   description = "Type `git open` to open the GitHub page or website for a repository in your browser."
 

@@ -523,3 +523,71 @@ github "glow" {
 #   }
 # }
 
+
+github "mmv" {
+  description = "rename multiple files with editor"
+
+  owner = "itchyny"
+  repo  = "mmv"
+
+  release {
+    name = "mmv"
+    tag  = "v0.1.0"
+  }
+}
+
+github "slit" {
+  owner       = "tigrawap"
+  repo        = "slit"
+  description = "slit - a modern PAGER for viewing logs, get more than most in less time"
+
+  release {
+    name = "slit"
+    tag  = "1.2.0"
+  }
+
+  # command {
+  #   link {
+  #     from = "slit"
+  #     to   = "slit"
+  #   }
+  # }
+}
+
+github "arth" {
+  owner       = "jiro4989"
+  repo        = "arth"
+  description = "平均値、中央値、パーセンタイル値をさっと計算するCLI"
+  branch      = "master"
+
+  release {
+    name = "arth"
+    tag  = "v1.9.1"
+  }
+
+  command {
+    link {
+      from = "**/arth"
+      to   = "arth"
+    }
+  }
+}
+
+github "ketall" {
+  owner       = "corneliusweig"
+  repo        = "ketall"
+  description = "Like `kubectl get all`, but get really all resources"
+  branch      = "master"
+
+  release {
+    name = "ketall"
+    tag  = "v1.3.0"
+  }
+
+  command {
+    link {
+      from = "get-all-*"
+      to   = "ketall"
+    }
+  }
+}

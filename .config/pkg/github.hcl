@@ -6,7 +6,6 @@ github "enhancd" {
 
   plugin {
     sources = [
-      # "hoge.sh",
       "init.sh",
     ]
 
@@ -90,14 +89,19 @@ github "envchain" {
 
   command {
     build {
+      # env = {
+      #   DESTDIR = "${env.HOME}"
+      # }
+
       steps = [
-        "make", # "sudo make install",
+        "make",
+        "make install",
       ]
     }
 
-    link {
-      from = "envchain"
-    }
+    # link {
+    #   from = "envchain"
+    # }
   }
 }
 
@@ -355,5 +359,36 @@ github "git-open" {
 # https://github.com/rakyll/hey
 # https://github.com/simeji/jid
 # https://github.com/cjbassi/gotop
-# https://github.com/micha/jsawk
 
+github "distribution" {
+  owner       = "philovivero"
+  repo        = "distribution"
+  description = "New Canonical Project for this is wizzat / distribution"
+  branch      = "master"
+
+  command {
+    link {
+      from = "distribution.py"
+      to   = "distribution"
+    }
+  }
+}
+
+github "cob" {
+  owner       = "knqyf263"
+  repo        = "cob"
+  description = "Continuous Benchmark for Go Project"
+  branch      = "master"
+
+  release {
+    name = "cob"
+    tag  = "v0.0.1"
+  }
+
+  command {
+    link {
+      from = "cob"
+      to   = "cob"
+    }
+  }
+}

@@ -591,3 +591,23 @@ github "ketall" {
     }
   }
 }
+
+github "gist" {
+  owner       = "b4b4r07"
+  repo        = "gist"
+  description = "A simple gist editor for CLI"
+  branch      = "master"
+
+  release {
+    name = "gist"
+    tag  = "v1.2.0"
+  }
+
+  command {
+    link {
+      from = "gist"
+      to   = "gist"
+    }
+  }
+}
+

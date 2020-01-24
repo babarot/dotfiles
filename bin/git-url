@@ -3,13 +3,13 @@
 # git remote -v
 url="$(git remote -v | awk '$1=="origin"{print $2;exit}')"
 
-if [[ "$url" =~ ^https?:// ]]; then
+if [[ "${url}" =~ ^https?:// ]]; then
     # reconstruct url
-    url="$(echo "$url" | perl -pe 's#^https?://(github\.com)/([A-z0-9_-]+)/([A-z0-9_-]+)(\.git)?$#git\@$1:$2/$3#')"
+    url="$(echo "${url}" | perl -pe 's#^https?://(github\.com)/([A-z0-9\._-]+)/([A-z0-9\._-]+)(\.git)?$#git\@$1:$2/$3#')"
 
     # to replace git protocol in remote URL with http protocol
     git remote set-url origin "${url}.git" 2>/dev/null
-    if [ $? -ne 0 ]; then
+    if [[ $? != 0 ]]; then
         # failure case
         echo "Oops. Retry!" >&2
         exit 1
@@ -17,10 +17,10 @@ if [[ "$url" =~ ^https?:// ]]; then
 
     # Show a remote URL
     git remote -v
-    echo "Change origin url to '$url' successfully"
+    echo "Change origin url to '${url}' successfully"
 else
     # git remote -v returns empty
-    if [ -z "$url" ]; then
+    if [[ -z "${url}" ]]; then
         echo "Remote URL is empty. Run this:"
         echo "-> git remote add origin https://github.com/{username}/{reponame}"
         exit

@@ -141,17 +141,17 @@ github "fast-syntax-highlighting" {
   }
 }
 
-github "ultimate" {
-  // Similar to subnixr/minimal
-  description = "Ultimate is a simple theme for minimalistic zsh users"
-
-  owner = "b4b4r07"
-  repo  = "ultimate"
-
-  plugin {
-    sources = ["*.zsh-theme"]
-  }
-}
+# github "ultimate" {
+#   // Similar to subnixr/minimal
+#   description = "Ultimate is a simple theme for minimalistic zsh users"
+#
+#   owner = "b4b4r07"
+#   repo  = "ultimate"
+#
+#   plugin {
+#     sources = ["*.zsh-theme"]
+#   }
+# }
 
 github "prok" {
   description = "easy process grep with ps output"
@@ -227,6 +227,8 @@ github "diff-so-fancy" {
 #   repo  = "tpm"
 #
 #   # path = "${expand("~/.tmux/plugins/tpm")}"
+#
+#   plugin 
 # }
 
 github "red" {
@@ -374,21 +376,17 @@ github "distribution" {
   }
 }
 
-github "cob" {
-  owner       = "knqyf263"
-  repo        = "cob"
-  description = "Continuous Benchmark for Go Project"
-  branch      = "master"
+github "zsh-prompt-minimal" {
+  description = "Super super super minimal prompt for zsh"
 
-  release {
-    name = "cob"
-    tag  = "v0.0.1"
-  }
+  owner = "b4b4r07"
+  repo  = "zsh-prompt-minimal"
 
-  command {
-    link {
-      from = "cob"
-      to   = "cob"
+  plugin {
+    sources = ["*.zsh-theme"]
+
+    env = {
+      PROMPT_PATH_STYLE = "minimal"
     }
   }
 }

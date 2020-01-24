@@ -181,7 +181,8 @@ github "kustomize" {
 
   release {
     name = "kustomize"
-    tag  = "v2.0.3"
+    # tag  = "v2.0.3"
+    tag = "kustomize/v3.5.4"
   }
 }
 
@@ -198,8 +199,11 @@ github "exa" {
 
   command {
     alias = {
-      ls = "exa --group-directories-first"
-      ll = "exa --group-directories-first -la --header --git"
+      ls  = "exa --group-directories-first"
+      l   = "exa --group-directories-first -T --git-ignore --level 2"
+      ll  = "exa --group-directories-first -l --header --git"
+      la  = "exa --group-directories-first -a --header --git"
+      lla = "exa --group-directories-first -la --header --git"
     }
   }
 }
@@ -600,14 +604,55 @@ github "gist" {
 
   release {
     name = "gist"
-    tag  = "v1.2.0"
+    tag  = "v1.2.1"
   }
 
   command {
-    link {
-      from = "gist"
-      to   = "gist"
+    # link {
+    #   from = "gist"
+    #   to   = "gist"
+    # }
+  }
+}
+
+github "gomi" {
+  owner       = "b4b4r07"
+  repo        = "gomi"
+  description = "Trash can in CLI"
+  branch      = "master"
+
+  release {
+    name = "gomi"
+    tag  = "v1.0.2"
+  }
+
+  command {
+    # link {
+    #   from = "gomi"
+    #   to   = "gomi"
+    # }
+
+    alias = {
+      rm = "gomi"
     }
   }
 }
 
+github "cob" {
+  owner       = "knqyf263"
+  repo        = "cob"
+  description = "Continuous Benchmark for Go Project"
+  branch      = "master"
+
+  release {
+    name = "cob"
+    tag  = "v0.0.1"
+  }
+
+  command {
+    link {
+      from = "cob"
+      to   = "cob"
+    }
+  }
+}

@@ -473,6 +473,24 @@ review() {
         --reverse \
         --height 70% \
         --preview-window down:70% \
-        --preview="git diff --color=always origin/master... {}" \
-        --bind "enter:execute-multi(vim {} </dev/tty >/dev/tty)"
+        --preview="if [[ -f {} ]]; then git diff --color=always origin/master... {}; fi" \
+        --bind "enter:execute-silent(vim {} </dev/tty >/dev/tty)"
+}
+
+git-replace()
+{
+    case $# in
+        (0)
+            echo "too few arguments" >&2
+            return 1
+            ;;
+        (1)
+            git grep $1
+            return $?
+            ;;
+        (*)
+            git grep -l $1 | xargs -I% sd $1 $2 %
+            return $?
+            ;;
+    esac
 }

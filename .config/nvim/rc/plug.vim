@@ -38,6 +38,7 @@ if g:plug.ready()
     Plug 'lambdalisue/vim-gista'
     Plug 'lepture/vim-jinja'
     Plug 'mattn/gist-vim'
+    Plug 'mattn/emmet-vim'
     Plug 'mattn/goplayground-vim'
     Plug 'mattn/vim-terminal'
     Plug 'mattn/webapi-vim'

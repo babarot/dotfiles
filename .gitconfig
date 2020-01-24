@@ -85,3 +85,7 @@
 	user = b4b4r07
 [commit]
 	gpgsign = true
+# [url "https://"]
+# 	insteadOf = git://
+# [url "https://github.com/"]
+# 	insteadOf = git@github.com:

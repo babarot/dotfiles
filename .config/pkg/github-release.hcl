@@ -656,3 +656,128 @@ github "cob" {
     }
   }
 }
+
+github "blogsync" {
+  owner       = "x-motemen"
+  repo        = "blogsync"
+  description = "Push and pull blog entries from/to local filesystem"
+  branch      = "master"
+
+  release {
+    name = "blogsync"
+    tag  = "v0.11.0"
+  }
+
+  # command {
+  #   link {
+  #     from = "blogsync"
+  #     to   = "blogsync"
+  #   }
+  # }
+}
+
+
+github "blog" {
+  owner       = "b4b4r07"
+  repo        = "blog"
+  description = "A CLI tool for editing blog built by hugo etc"
+  branch      = "master"
+
+  release {
+    name = "blog"
+    tag  = "v0.1.4"
+  }
+
+  command {
+    # link {
+    #   from = "blog"
+    #   to   = "blog"
+    # }
+
+    env = {
+      BLOG_ROOT     = expand("~/src/github.com/b4b4r07/tellme.tokyo")
+      BLOG_POST_DIR = "content/post"
+      BLOG_EDITOR   = "vim"
+    }
+  }
+}
+
+github "conftest" {
+  owner       = "instrumenta"
+  repo        = "conftest"
+  description = "Write tests against structured configuration data using the Open Policy Agent Rego query language"
+  branch      = "master"
+
+  release {
+    name = "conftest"
+    tag  = "v0.16.0"
+  }
+
+  command {
+    link {
+      from = "conftest"
+      to   = "conftest"
+    }
+  }
+}
+
+
+github "opa" {
+  owner       = "open-policy-agent"
+  repo        = "opa"
+  description = "An open source, general-purpose policy engine."
+  branch      = "master"
+
+  release {
+    name = "opa"
+    tag  = "v0.16.2"
+  }
+
+  command {
+    link {
+      from = "opa"
+      to   = "opa"
+    }
+  }
+}
+
+
+github "cli" {
+  owner       = "cli"
+  repo        = "cli"
+  description = "the GitHub CLI"
+  branch      = "master"
+
+  release {
+    name = "gh"
+    tag  = "v0.5.2"
+  }
+
+  command {
+    link {
+      from = "*/bin/gh"
+      to   = "gh"
+    }
+  }
+}
+
+
+github "kubectl-view-secret" {
+  owner       = "elsesiy"
+  repo        = "kubectl-view-secret"
+  description = "Kubernetes CLI plugin to decode Kubernetes secrets"
+  branch      = "master"
+
+  release {
+    name = "kubectl-view-secret"
+    tag  = "v0.3.0"
+  }
+
+  command {
+    link {
+      from = "kubectl-view-secret"
+      to   = "kubectl-view-secret"
+    }
+  }
+}
+

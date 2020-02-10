@@ -100,7 +100,8 @@ cat_alias() {
         echo "${(F)stdin}"
     fi
 }
-alias -g C="| cat_alias"
+# alias -g C="| cat_alias"
+alias -g CP="| pbcopy"
 
 # less
 alias -g L="| cat_alias | less"

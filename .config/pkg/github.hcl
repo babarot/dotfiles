@@ -386,7 +386,37 @@ github "zsh-prompt-minimal" {
     sources = ["*.zsh-theme"]
 
     env = {
-      PROMPT_PATH_STYLE = "minimal"
+      PROMPT_PATH_STYLE   = "minimal"
+      PROMPT_USE_VIM_MODE = true
     }
   }
 }
+
+# github "fzf-tab" {
+#   owner       = "Aloxaf"
+#   repo        = "fzf-tab"
+#   description = "Replace zsh's default completion selection menu with fzf!"
+#   branch      = "master"
+#
+#   plugin {
+#     sources = ["fzf-tab.zsh"]
+#   }
+# }
+
+github "shlide" {
+  owner       = "icyphox"
+  repo        = "shlide"
+  description = "a slide deck presentation tool written in pure bash"
+  branch      = "master"
+
+  command {
+    link {
+      from = "shlide"
+      to   = "shlide"
+    }
+
+    env   = null
+    alias = null
+  }
+}
+

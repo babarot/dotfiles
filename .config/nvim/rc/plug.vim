@@ -73,6 +73,8 @@ if g:plug.ready()
     " Plug 'zaiste/tmux.vim', { 'for': 'tmux' }
     Plug 'zplug/vim-zplug', { 'for': 'zplug' }
     Plug 'rhysd/vim-syntax-codeowners'
+    " Plug 'mattn/vim-lexiv'
+    Plug 'tsandall/vim-rego'
 
     " colorscheme
     Plug 'AlessandroYorba/Despacio'

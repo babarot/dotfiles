@@ -781,3 +781,47 @@ github "kubectl-view-secret" {
   }
 }
 
+
+github "procs" {
+  owner       = "dalance"
+  repo        = "procs"
+  description = "A modern replacement for ps written in Rust"
+  branch      = "master"
+
+  release {
+    name = "procs"
+    tag  = "v0.9.12"
+  }
+
+  command {
+    link {
+      from = "procs"
+      to   = "procs"
+    }
+
+    env   = null
+    alias = null
+  }
+}
+
+github "shox" {
+  owner       = "liamg"
+  repo        = "shox"
+  description = "A customisable, universally compatible terminal status bar"
+  branch      = "master"
+
+  release {
+    name = "shox"
+    tag  = "v0.0.8"
+  }
+
+  command {
+    link {
+      from = "shox"
+      to   = "shox"
+    }
+
+    env   = null
+    alias = null
+  }
+}

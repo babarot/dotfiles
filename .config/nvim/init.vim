@@ -107,5 +107,8 @@ call s:load("option.vim")
 call s:load("utils.vim")
 call s:load("view.vim")
 
+" test
+tnoremap <silent> <ESC> <C-\><C-n>
+
 " Must be written at the last.  see :help 'secure'.
 set secure

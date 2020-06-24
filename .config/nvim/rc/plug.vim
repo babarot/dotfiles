@@ -111,6 +111,7 @@ if g:plug.ready()
     "let g:lsp_async_completion = 1
     Plug 'caglartoklu/ftcolor.vim'
     Plug 'posva/vim-vue'
+    Plug 'google/vim-jsonnet'
 
     " Add plugins to &runtimepath
     call plug#end()

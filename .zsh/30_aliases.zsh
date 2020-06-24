@@ -35,6 +35,9 @@ if (( $+commands[kubectl] )); then
     alias k=kubectl
 fi
 
+alias base='base64'
+alias based='base64 -d'
+
 # The first word of each simple command, if unquoted, is checked to see
 # if it has an alias. [...] If the last character of the alias value is
 # a space or tab character, then the next command word following the

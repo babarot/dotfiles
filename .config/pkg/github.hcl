@@ -10,7 +10,7 @@ github "enhancd" {
     ]
 
     env = {
-      ENHANCD_FILTER = "fzf --height 25% --reverse --ansi"
+      ENHANCD_FILTER = "fzf --height 25% --reverse --ansi:fzy"
     }
   }
 }
@@ -81,29 +81,29 @@ github "fzy" {
   }
 }
 
-github "envchain" {
-  description = "Environment variables meet macOS Keychain and gnome-keyring <3"
-
-  owner = "sorah"
-  repo  = "envchain"
-
-  command {
-    build {
-      # env = {
-      #   DESTDIR = "${env.HOME}"
-      # }
-
-      steps = [
-        "make",
-        "make install",
-      ]
-    }
-
-    # link {
-    #   from = "envchain"
-    # }
-  }
-}
+# github "envchain" {
+#   description = "Environment variables meet macOS Keychain and gnome-keyring <3"
+# 
+#   owner = "sorah"
+#   repo  = "envchain"
+# 
+#   command {
+#     build {
+#       # env = {
+#       #   DESTDIR = "${env.HOME}"
+#       # }
+# 
+#       steps = [
+#         "make",
+#         "make install",
+#       ]
+#     }
+# 
+#     # link {
+#     #   from = "envchain"
+#     # }
+#   }
+# }
 
 # github "history" {
 #   owner = "b4b4r07"

@@ -39,6 +39,13 @@ github "jq" {
     name = "jq"
     tag  = "jq-1.6"
   }
+
+  command {
+    link {
+      from = "*jq*"
+      to   = "jq"
+    }
+  }
 }
 
 github "godu" {
@@ -198,6 +205,11 @@ github "exa" {
   }
 
   command {
+    link {
+      from = "*exa*"
+      to   = "exa"
+    }
+
     alias = {
       ls  = "exa --group-directories-first"
       l   = "exa --group-directories-first -T --git-ignore --level 2"
@@ -608,10 +620,10 @@ github "gist" {
   }
 
   command {
-    # link {
-    #   from = "gist"
-    #   to   = "gist"
-    # }
+    link {
+      from = "gist"
+      to   = "gist"
+    }
   }
 }
 
@@ -627,10 +639,10 @@ github "gomi" {
   }
 
   command {
-    # link {
-    #   from = "gomi"
-    #   to   = "gomi"
-    # }
+    link {
+      from = "gomi"
+      to   = "gomi"
+    }
 
     alias = {
       rm = "gomi"

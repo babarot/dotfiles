@@ -75,11 +75,10 @@ multi_grep() {
 (( $+galiases[H] )) || alias -g H='| head'
 (( $+galiases[T] )) || alias -g T='| tail'
 
-if has "emojify"; then
-    alias -g E='| emojify'
-fi
+(( $+commands[emojify] )) && alias -g E='| emojify'
 
-if has "jq"; then
+if (( $+commands[jq] )); then
+    alias -g J='| jq -C . | less -F'
     alias -g JQ='| jq -C .'
     alias -g JL='| jq -C . | less -R -X'
 fi
@@ -405,16 +404,8 @@ git_branch() {
 
 alias -g GB='$(git_branch)'
 
-if has "tw"; then
-    alias -g TW="| tw --pipe"
-    if has "emojify"; then
-        alias -g TW="| emojify | tw --pipe"
-    fi
-fi
-
 alias -g P='$(kubectl get pods | fzf-tmux --header-lines=1 --reverse --multi --cycle | awk "{print \$1}")'
 alias -g F='| fzf --height 30 --reverse --multi --cycle'
-alias -g J='| jq -C . | less -F'
 
 function filetime() {
     zmodload "zsh/stat"
@@ -465,9 +456,6 @@ docker-rmi() {
         | awk '{print $3}' \
         | xargs docker rmi ${1+"$@"}
 }
-
-# source <(kubectl completion zsh)
-# source <(kubectl completion zsh | sed 's/__start_kubectl kubectl/__start_kubectl kube/')
 
 review() {
     git diff --name-only origin/master... \

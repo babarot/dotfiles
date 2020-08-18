@@ -7,7 +7,7 @@ if [[ -x ~/bin/tmuxx ]]; then
     ~/bin/tmuxx
 fi
 
-export PATH=~/bin:$PATH
+export PATH=~/bin:/usr/local/go/bin:$PATH
 source <(pkg init)
 
 printf "\n"

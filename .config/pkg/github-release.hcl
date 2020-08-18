@@ -311,6 +311,9 @@ github "gotestsum" {
   }
 
   command {
+    link {
+      from = "gotestsum"
+    }
     alias = {
       gotest = "gotestsum --format short-verbose"
     }
@@ -365,6 +368,10 @@ github "bat" {
   }
 
   command {
+    link {
+      from = "**/bat"
+    }
+
     env = {
       BAT_PAGER = "less -RF"
       BAT_THEME = "ansi-dark"
@@ -680,14 +687,13 @@ github "blogsync" {
     tag  = "v0.11.0"
   }
 
-  # command {
-  #   link {
-  #     from = "blogsync"
-  #     to   = "blogsync"
-  #   }
-  # }
+  command {
+    link {
+      from = "**/blogsync"
+      to   = "blogsync"
+    }
+  }
 }
-
 
 github "blog" {
   owner       = "b4b4r07"
@@ -701,10 +707,10 @@ github "blog" {
   }
 
   command {
-    # link {
-    #   from = "blog"
-    #   to   = "blog"
-    # }
+    link {
+      from = "blog"
+      to   = "blog"
+    }
 
     env = {
       BLOG_ROOT     = expand("~/src/github.com/b4b4r07/tellme.tokyo")
@@ -733,7 +739,6 @@ github "conftest" {
   }
 }
 
-
 github "opa" {
   owner       = "open-policy-agent"
   repo        = "opa"
@@ -752,7 +757,6 @@ github "opa" {
     }
   }
 }
-
 
 github "cli" {
   owner       = "cli"
@@ -792,7 +796,6 @@ github "kubectl-view-secret" {
     }
   }
 }
-
 
 github "procs" {
   owner       = "dalance"

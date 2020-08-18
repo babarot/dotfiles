@@ -220,16 +220,19 @@ github "diff-so-fancy" {
   }
 }
 
-# github "tpm" {
-#   description = "Tmux Plugin Manager"
-#
-#   owner = "tmux-plugins"
-#   repo  = "tpm"
-#
-#   # path = "${expand("~/.tmux/plugins/tpm")}"
-#
-#   plugin 
-# }
+github "tpm" {
+  description = "Tmux Plugin Manager"
+
+  owner = "tmux-plugins"
+  repo  = "tpm"
+
+  command {
+    link {
+      from = "."
+      to   = "${expand("~/.tmux/plugins/tpm")}"
+    }
+  }
+}
 
 github "red" {
   description = "Terminal log analysis tools"

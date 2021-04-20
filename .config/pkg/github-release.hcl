@@ -12,7 +12,11 @@ github "neovim" {
   command {
     link {
       from = "**/bin/nvim"
-      to   = "vim"
+      to   = "nvim"
+    }
+
+    alias = {
+      vim = "nvim"
     }
   }
 }
@@ -104,7 +108,7 @@ github "fzf" {
 
   release {
     name = "fzf"
-    tag  = "0.17.5"
+    tag  = "0.23.0"
   }
 }
 

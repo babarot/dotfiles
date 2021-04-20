@@ -103,7 +103,7 @@ if g:plug.ready()
     Plug 'airblade/vim-gitgutter'
     Plug 'rhysd/git-messenger.vim'
     " Plug 'natebosch/vim-lsc'
-    Plug 'neoclide/coc.nvim'
+    " Plug 'neoclide/coc.nvim'
     "Plug 'prabirshrestha/async.vim'
     "Plug 'prabirshrestha/asyncomplete-lsp.vim'
     "Plug 'prabirshrestha/asyncomplete.vim'
@@ -333,12 +333,12 @@ autocmd BufWritePost,TextChanged,TextChangedI * call lightline#update()
 
 let g:ftcolor_plugin_enabled = 1
 let g:ftcolor_redraw = 1
-let g:ftcolor_default_color_scheme = 'hyper-solarized'
+let g:ftcolor_default_color_scheme = 'solarized'
 let g:ftcolor_color_mappings = {
       \ 'vim': 'Tomorrow-Night',
       \ 'hcl':  'gruvbox',
       \ 'go':   'seoul256',
-      \ 'yaml': 'hyper-solarized',
+      \ 'yaml': 'solarized',
       \ 'bash': 'despacio',
       \ 'zsh':  'despacio',
       \ 'sh':   'seoul256',

@@ -29,7 +29,7 @@ alias egrep='egrep --color=auto'
 alias vi="vim"
 
 # Use plain vim.
-alias nvim='vim -N -u NONE -i NONE'
+# alias nvim='vim -N -u NONE -i NONE'
 
 if (( $+commands[kubectl] )); then
     alias k=kubectl

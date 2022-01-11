@@ -121,7 +121,7 @@ github "fzy" {
 github "history-search-multi-word" {
   description = "Multi-word, syntax highlighted history searching for Zsh"
 
-  owner = "zdharma"
+  owner = "zdharma-continuum"
   repo  = "history-search-multi-word"
 
   plugin {
@@ -133,7 +133,7 @@ github "fast-syntax-highlighting" {
   // Similar to zsh-users/zsh-syntax-highlighting
   description = "Syntax-highlighting for Zshell"
 
-  owner = "zdharma"
+  owner = "zdharma-continuum"
   repo  = "fast-syntax-highlighting"
 
   plugin {
@@ -305,25 +305,25 @@ github "gobump" {
 #   }
 # }
 
-github "hclfmt" {
-  description = "Format and prettify HCL files"
-
-  owner = "hashicorp"
-  repo  = "hcl"
-
-  branch = "hcl2"
-
-  command {
-    link {
-      from = "hclfmt"
-      to   = "hclfmt"
-    }
-
-    build {
-      steps = ["go build -o hclfmt cmd/hclfmt/main.go"]
-    }
-  }
-}
+# github "hclfmt" {
+#   description = "Format and prettify HCL files"
+#
+#   owner = "hashicorp"
+#   repo  = "hcl"
+#
+#   branch = "hcl2"
+#
+#   command {
+#     link {
+#       from = "hclfmt"
+#       to   = "hclfmt"
+#     }
+#
+#     build {
+#       steps = ["go build -o hclfmt cmd/hclfmt/main.go"]
+#     }
+#   }
+# }
 
 github "git-open" {
   description = "Type `git open` to open the GitHub page or website for a repository in your browser."

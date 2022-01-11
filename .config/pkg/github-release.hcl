@@ -6,7 +6,7 @@ github "neovim" {
 
   release {
     name = "nvim"
-    tag  = "nightly"
+    tag  = "v0.6.1"
   }
 
   command {

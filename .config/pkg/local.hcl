@@ -1,5 +1,5 @@
 local "zsh" {
-  directory = "/Users/b4b4r07/.zsh"
+  directory = "/Users/babarot/.zsh"
 
   plugin {
     # sources = glob("~/.zsh/[0-9]*.zsh")

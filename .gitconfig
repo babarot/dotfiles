@@ -46,7 +46,7 @@
 [user]
     name  = b4b4r07
     email = b4b4r07@gmail.com
-	signingkey = BD24635709B7BDC1
+	signingkey = D6CF1A347277485E
 
 [pager]
     log  = diff-highlight | less -RX
@@ -71,7 +71,9 @@
 	user = b4b4r07
 
 [commit]
-	gpgSign = true
+	gpgsign = true
 
 [gpg]
-	program = gpg2
+	program = gpg
+[tag]
+	gpgsign = true

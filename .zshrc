@@ -8,7 +8,7 @@ if [[ -x ~/bin/tmuxx ]]; then
 fi
 
 export PATH=~/bin:/usr/local/go/bin:$PATH
-source <(pkg init)
+source <(afx init)
 
 printf "\n"
 printf "${fg_bold[cyan]} ${SHELL} ${fg_bold[red]}${ZSH_VERSION}"

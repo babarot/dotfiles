@@ -844,3 +844,26 @@ github "shox" {
     alias = null
   }
 }
+
+github "tmux" {
+  description = "tmux terminal multiplexer"
+
+  owner = "tmux"
+  repo  = "tmux"
+
+  release {
+    name = "tmux"
+    tag  = "3.2a"
+  }
+
+  command {
+    build {
+      steps = [
+        "pwd; cd tmux-3.2a",
+        "sh autogen.sh",
+        "./configure && make",
+        "sudo make install",
+      ]
+    }
+  }
+}

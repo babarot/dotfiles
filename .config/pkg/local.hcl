@@ -6,3 +6,11 @@ local "zsh" {
     sources = ["[0-9]*.zsh"]
   }
 }
+
+local "gcloud-sdk" {
+  directory = "/Users/babarot/Downloads/google-cloud-sdk"
+
+  plugin {
+    sources = ["*.zsh.inc"]
+  }
+}

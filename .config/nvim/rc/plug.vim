@@ -43,7 +43,6 @@ if g:plug.ready()
     Plug 'mattn/vim-terminal'
     Plug 'mattn/webapi-vim'
     Plug 'mattn/webapi-vim'
-    Plug 'millermedeiros/vim-esformatter'
     Plug 'osyo-manga/vim-anzu'
     Plug 'raphael/vim-present-simple'
     Plug 'thinca/vim-quickrun'
@@ -270,7 +269,7 @@ function! CocCurrentFunction()
 endfunction
 
 let g:lightline = {
-      \ 'colorscheme': 'wambat',
+      \ 'colorscheme': 'wombat',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'cocstatus', 'gitbranch', 'readonly', 'filename', 'modified' ] ],

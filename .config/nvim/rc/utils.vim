@@ -330,9 +330,9 @@ function! s:buf_delete(bang) "{{{1
 endfunction
 
 " Delete the current buffer and the file.
-command! -bang -nargs=0 -complete=buffer Delete call s:buf_delete(<bang>0)
-nnoremap <silent> <C-x>d     :<C-u>Delete<CR>
-nnoremap <silent> <C-x><C-d> :<C-u>Delete!<CR>
+" command! -bang -complete=buffer -nargs=0 Delete call s:buf_delete(<bang>0)
+" nnoremap <silent> <C-x>d     :<C-u>Delete<CR>
+" nnoremap <silent> <C-x><C-d> :<C-u>Delete!<CR>
 
 function! s:open(file) "{{{1
     if !g:env.bin.open

@@ -1,0 +1,42 @@
+config:
+  filter:
+    command: fzf
+    args:
+    - --ansi
+    - --no-preview
+    - --height=50%
+    - --reverse
+
+http:
+- name: gcping
+  description: Like gcping.com but a command line tool
+  url: https://storage.googleapis.com/gcping-release/gcping_darwin_arm64_latest
+  command:
+    link:
+    - from: gcping_*
+      to: gcping
+
+local:
+- name: zsh
+  directory: ~/.zsh
+  plugin:
+    sources:
+    - '[0-9]*.zsh'
+- name: google-cloud-sdk
+  directory: ~/Downloads/google-cloud-sdk
+  plugin:
+    sources:
+    - '*.zsh.inc'
+
+gist:
+- name: misc
+  id: 79ee61f7c140c63d2786
+  owner: b4b4r07
+- name: hoge.sh
+  id: f26dd264f094e0ca834ce9feadc0c3f1
+  owner: b4b4r07
+  description: this is a test for gist
+  command:
+    link:
+    - from: hoge.sh
+      to: hoge

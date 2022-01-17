@@ -1,0 +1,158 @@
+github:
+- name: enhancd
+  owner: b4b4r07
+  repo: enhancd
+  description: A next-generation cd command with your interactive filter
+  plugin:
+    env:
+      ENHANCD_FILTER: fzf --height 25% --reverse --ansi:fzy
+    sources:
+    - init.sh
+- name: fzy
+  owner: jhawthorn
+  repo: fzy
+  description: A better fuzzy finder
+  command:
+    build:
+      steps:
+      - make
+      - sudo make install
+- name: kubectx
+  owner: ahmetb
+  repo: kubectx
+  description: Switch faster between clusters and namespaces in kubectl
+  command:
+    link:
+    - from: kubectx
+      to: kubectl-ctx
+    - from: kubens
+      to: kubectl-ns
+- name: kubetail
+  owner: johanhaleby
+  repo: kubetail
+  description: Bash script to tail Kubernetes logs from multiple pods at the same time
+  command:
+    link:
+    - from: kubetail
+- name: history-search-multi-word
+  owner: zdharma-continuum
+  repo: history-search-multi-word
+  description: Multi-word, syntax highlighted history searching for Zsh
+  plugin:
+    sources:
+    - history-search-multi-word.plugin.zsh
+- name: prok
+  owner: mutantcornholio
+  repo: prok
+  description: easy process grep with ps output
+  command:
+    link:
+    - from: prok.sh
+      to: prok
+- name: zsh-vimode-visual
+  owner: b4b4r07
+  repo: zsh-vimode-visual
+  description: Implement the vim-like visual mode to vi-mode of zsh
+  plugin:
+    sources:
+    - zsh-vimode-visual.zsh
+- name: colordiff
+  owner: daveewart
+  repo: colordiff
+  description: Primary development for colordiff
+  command:
+    alias:
+      diff: colordiff -u
+    link:
+    - from: colordiff.pl
+      to: colordiff
+- name: diff-so-fancy
+  owner: so-fancy
+  repo: diff-so-fancy
+  description: Good-lookin' diffs. Actually… nah… The best-lookin' diffs.
+  command:
+    link:
+    - from: diff-so-fancy
+- name: tpm
+  owner: tmux-plugins
+  repo: tpm
+  description: Tmux Plugin Manager
+  command:
+    link:
+    - from: .
+      to: $HOME/.tmux/plugins/tpm
+- name: red
+  owner: antonmedv
+  repo: red
+  description: Terminal log analysis tools
+  command:
+    build:
+      steps:
+      - go build -o red
+    link:
+    - from: red
+- name: kubectl-trace
+  owner: iovisor
+  repo: kubectl-trace
+  description: Schedule bpftrace programs on your kubernetes cluster using the kubectl
+  command:
+    build:
+      steps:
+      - go build -o kubectl-trace cmd/kubectl-trace/root.go
+    link:
+    - from: kubectl-trace
+      to: kubectl-trace
+- name: gobump
+  owner: motemen
+  repo: gobump
+  description: Bumps up Go program version
+  command:
+    build:
+      steps:
+      - go build -o gobump cmd/gobump/main.go
+    link:
+    - from: gobump
+      to: gobump
+- name: git-open
+  owner: paulirish
+  repo: git-open
+  description: Type `git open` to open the GitHub page or website for a repository in your browser.
+  command:
+    link:
+    - from: git-open
+      to: git-open
+- name: fast-syntax-highlighting # Similar to zsh-users/zsh-syntax-highlighting
+  owner: zdharma-continuum
+  repo: fast-syntax-highlighting
+  description: Syntax-highlighting for Zshell
+  plugin:
+    sources:
+    - fast-syntax-highlighting.plugin.zsh
+- name: distribution
+  owner: philovivero
+  repo: distribution
+  description: New Canonical Project for this is wizzat / distribution
+  branch: master
+  command:
+    link:
+    - from: distribution.py
+      to: distribution
+- name: zsh-prompt-minimal
+  owner: b4b4r07
+  repo: zsh-prompt-minimal
+  description: Super super super minimal prompt for zsh
+  plugin:
+    env:
+      PROMPT_PATH_STYLE: minimal
+      PROMPT_USE_VIM_MODE: true
+    sources:
+    - '*.zsh-theme'
+- name: shlide
+  owner: icyphox
+  repo: shlide
+  description: a slide deck presentation tool written in pure bash
+  branch: master
+  command:
+    link:
+    - from: shlide
+      to: shlide

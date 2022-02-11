@@ -5,7 +5,7 @@ path=( \
     ~/.zplug/bin(N-/) \
     ~/.tmux/bin(N-/) \
     "$path[@]" \
-    )
+)
 
 # NOTE: set fpath before compinit
 typeset -gx -U fpath
@@ -15,7 +15,7 @@ fpath=( \
     ~/.zsh/plugins/zsh-completions(N-/) \
     /usr/local/share/zsh/site-functions(N-/) \
     $fpath \
-    )
+)
 
 # autoload
 autoload -Uz run-help
@@ -99,5 +99,3 @@ fi
 
 # available $INTERACTIVE_FILTER
 export INTERACTIVE_FILTER="fzf:peco:percol:gof:pick"
-
-export DOTPATH=${0:A:h}

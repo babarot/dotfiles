@@ -1,42 +1,6 @@
-#       ___           ___           ___           ___           ___           ___      
-#      /\  \         /\  \         /\  \         /\__\         /\  \         /\  \     
-#     /::\  \       /::\  \       /::\  \       /:/  /        /::\  \       /::\  \    
-#    /:/\:\  \     /:/\:\  \     /:/\ \  \     /:/__/        /:/\:\  \     /:/\:\  \   
-#   /::\~\:\__\   /::\~\:\  \   _\:\~\ \  \   /::\  \ ___   /::\~\:\  \   /:/  \:\  \  
-#  /:/\:\ \:|__| /:/\:\ \:\__\ /\ \:\ \ \__\ /:/\:\  /\__\ /:/\:\ \:\__\ /:/__/ \:\__\ 
-#  \:\~\:\/:/  / \/__\:\/:/  / \:\ \:\ \/__/ \/__\:\/:/  / \/_|::\/:/  / \:\  \  \/__/ 
-#   \:\ \::/  /       \::/  /   \:\ \:\__\        \::/  /     |:|::/  /   \:\  \       
-#    \:\/:/  /        /:/  /     \:\/:/  /        /:/  /      |:|\/__/     \:\  \      
-#     \::/__/        /:/  /       \::/  /        /:/  /       |:|  |        \:\__\     
-#      ~~            \/__/         \/__/         \/__/         \|__|         \/__/     
-#                                                                                      
-
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
-
 [ -n "$VIMRUNTIME" ] && return
-
-# It is necessary for the setting of DOTPATH
-#[ -f ~/.path ] && source ~/.path
-
-# DOTPATH environment variable specifies the location of dotfiles.
-# On Unix, the value is a colon-separated string. On Windows,
-# it is not yet supported.
-# DOTPATH must be set to run make init, make test and shell script library
-# outside the standard dotfiles tree.
-if [ -z "$DOTPATH" ]; then
-    echo "cannot start $SHELL, \$DOTPATH not set" 1>&2
-    return 1
-fi
-
-# Load vital library that is most important and
-# constructed with many minimal functions
-# For more information, see etc/README.md
-. "$DOTPATH"/etc/lib/vital.sh
-if ! vitalize 2>/dev/null; then
-    echo "cannot vitalize, cannot start $SHELL" 1>&2
-    return 1
-fi
 
 export PATH=~/bin:"$PATH"
 export PAGER=less

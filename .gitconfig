@@ -68,12 +68,13 @@
     tool = vimdiff
 
 [github]
-	user = b4b4r07
+    user = b4b4r07
 
 [commit]
-	gpgsign = true
+    gpgsign = false
 
 [gpg]
-	program = gpg
+    program = gpg
+
 [tag]
-	gpgsign = true
+    gpgsign = false

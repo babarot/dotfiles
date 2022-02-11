@@ -25,6 +25,8 @@ local:
 - name: google-cloud-sdk
   directory: ~/Downloads/google-cloud-sdk
   plugin:
+    env:
+      PATH: ~/Downloads/google-cloud-sdk/bin
     sources:
     - '*.zsh.inc'
 
@@ -33,9 +35,9 @@ gist:
   id: 79ee61f7c140c63d2786
   owner: b4b4r07
 - name: hoge.sh
-  id: f26dd264f094e0ca834ce9feadc0c3f1
-  owner: b4b4r07
   description: this is a test for gist
+  owner: b4b4r07
+  id: f26dd264f094e0ca834ce9feadc0c3f1
   command:
     link:
     - from: hoge.sh

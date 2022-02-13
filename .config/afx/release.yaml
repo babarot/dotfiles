@@ -8,8 +8,7 @@ github:
     tag: jq-1.6
   command:
     link:
-    - from: '*jq*'
-      to: jq
+    - from: jq
 - name: neovim/neovim
   description: Vim-fork focused on extensibility and usability
   owner: neovim
@@ -60,18 +59,18 @@ github:
     link:
     - from: conftest
       to: conftest
-- name: open-policy-agent/opa
-  description: An open source, general-purpose policy engine.
-  owner: open-policy-agent
-  repo: opa
-  branch: master
-  command:
-    link:
-    - from: opa
-      to: opa
-  release:
-    name: opa
-    tag: v0.16.2
+# - name: open-policy-agent/opa
+#   description: An open source, general-purpose policy engine.
+#   owner: open-policy-agent
+#   repo: opa
+#   branch: master
+#   command:
+#     link:
+#     - from: opa
+#       to: opa
+#   release:
+#     name: opa
+#     tag: v0.16.2
 - name: ogham/exa
   description: A modern version of 'ls'.
   owner: ogham
@@ -154,27 +153,27 @@ github:
   release:
     name: pet
     tag: v0.3.4
-- name: peco/peco
-  description: Simplistic interactive filtering tool
-  owner: peco
-  repo: peco
-  release:
-    name: peco
-    tag: v0.5.3
-- name: heppu/gkill
-  description: Interactice process killer for Linux and macOS
-  owner: heppu
-  repo: gkill
-  release:
-    name: gkill
-    tag: v1.0.2
-- name: kubernetes-sigs/kustomize
-  description: Customization of kubernetes YAML configurations
-  owner: kubernetes-sigs
-  repo: kustomize
-  release:
-    name: kustomize
-    tag: kustomize/v3.5.4
+# - name: peco/peco
+#   description: Simplistic interactive filtering tool
+#   owner: peco
+#   repo: peco
+#   release:
+#     name: peco
+#     tag: v0.5.3
+# - name: heppu/gkill
+#   description: Interactice process killer for Linux and macOS
+#   owner: heppu
+#   repo: gkill
+#   release:
+#     name: gkill
+#     tag: v1.0.2
+# - name: kubernetes-sigs/kustomize
+#   description: Customization of kubernetes YAML configurations
+#   owner: kubernetes-sigs
+#   repo: kustomize
+#   release:
+#     name: kustomize
+#     tag: kustomize/v3.5.4
 - name: antonmedv/fx
   description: Command-line tool and terminal JSON viewer
   owner: antonmedv
@@ -301,13 +300,13 @@ github:
   release:
     name: httpstat
     tag: v1.0.0
-- name: wercher/stern
-  description: Multi pod and container log tailing for Kubernetes
-  owner: wercker
-  repo: stern
-  release:
-    name: stern
-    tag: 1.11.0
+# - name: wercher/stern
+#   description: Multi pod and container log tailing for Kubernetes
+#   owner: wercker
+#   repo: stern
+#   release:
+#     name: stern
+#     tag: 1.11.0
 - name: ueokande/bow
   description: Exec a command on multiple pods for Kubernetes
   owner: ueokande
@@ -451,20 +450,20 @@ github:
     link:
     - from: procs
       to: procs
-- name: tmux
-  description: tmux terminal multiplexer
-  owner: tmux
-  repo: tmux
-  release:
-    name: tmux
-    tag: 3.2a
-  command:
-    build:
-      steps:
-      - pwd; cd tmux-3.2a
-      - sh autogen.sh
-      - ./configure && make
-      - sudo make install
+# - name: tmux
+#   description: tmux terminal multiplexer
+#   owner: tmux
+#   repo: tmux
+#   release:
+#     name: tmux
+#     tag: 3.2a
+#   command:
+#     build:
+#       steps:
+#       - pwd; cd tmux-3.2a
+#       - sh autogen.sh
+#       - ./configure && make
+#       - sudo make install
 - name: mikefarah/yq
   description: yq is a portable command-line YAML, JSON and XML processor
   owner: mikefarah
@@ -472,3 +471,10 @@ github:
   release:
     name: yq
     tag: v4.19.1
+- name: skanehira/ff
+  description: file manager on terminal written in Go
+  owner: skanehira
+  repo: ff
+  release:
+    name: ff
+    tag: 1.8.0

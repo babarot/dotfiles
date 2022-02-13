@@ -32,8 +32,8 @@ local:
 
 gist:
 - name: misc
-  id: 79ee61f7c140c63d2786
   owner: b4b4r07
+  id: 79ee61f7c140c63d2786
 - name: hoge.sh
   description: this is a test for gist
   owner: b4b4r07

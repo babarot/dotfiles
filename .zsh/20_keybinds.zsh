@@ -48,21 +48,21 @@ fi
 
 if false; then
 # bind P and N for EMACS mode
-has 'history-substring-search-up' &&
+type 'history-substring-search-up' &>/dev/null &&
     bindkey -M emacs '^P' history-substring-search-up
-has 'history-substring-search-down' &&
+type 'history-substring-search-down' &>/dev/null &&
     bindkey -M emacs '^N' history-substring-search-down
 
 # bind k and j for VI mode
-has 'history-substring-search-up' &&
+type 'history-substring-search-up' &>/dev/null &&
     bindkey -M vicmd 'k' history-substring-search-up
-has 'history-substring-search-down' &&
+type 'history-substring-search-down' &>/dev/null &&
     bindkey -M vicmd 'j' history-substring-search-down
 
 # bind P and N keys
-has 'history-substring-search-up' &&
+type 'history-substring-search-up' &>/dev/null &&
     bindkey '^P' history-substring-search-up
-has 'history-substring-search-down' &&
+type 'history-substring-search-down' &>/dev/null &&
     bindkey '^N' history-substring-search-down
 fi
 
@@ -132,7 +132,7 @@ _peco-select-history() {
 
 _start-tmux-if-it-is-not-already-started() {
     BUFFER="${${${(M)${+commands[tmuxx]}#1}:+tmuxx}:-tmux}"
-    if has "tmux_automatically_attach"; then
+    if type "tmux_automatically_attach" &>/dev/null; then
         BUFFER="tmux_automatically_attach"
     fi
     CURSOR=$#BUFFER

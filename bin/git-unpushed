@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -e
-
-branch="$(git branch | awk '$1=="*"{print $2}')"
-git log $@ origin/"${branch:=master}".."$branch"

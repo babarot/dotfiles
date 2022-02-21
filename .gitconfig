@@ -44,8 +44,8 @@
     default = matching
 
 [user]
-    name  = b4b4r07
-    email = b4b4r07@gmail.com
+	name = b4b4r07
+	email = b4b4r07@gmail.com
 	signingkey = D6CF1A347277485E
 
 [pager]

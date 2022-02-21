@@ -36,6 +36,7 @@ if (( $+commands[kubectl] )); then
 fi
 
 # Global aliases
+alias -g L='| less'
 alias -g G='| grep'
 alias -g W='| wc'
 alias -g X='| xargs'

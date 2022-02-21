@@ -1,4 +1,19 @@
 github:
+- name: direnv/direnv
+  description: Unclutter your .profile
+  owner: direnv
+  repo: direnv
+  release:
+    name: direnv
+    tag: v2.30.3
+    # asset:
+    #   filename: '{{ .Release.Name }}.{{ .OS }}-{{ .Arch }}'
+    #   replacements:
+    #     darwin: darwin
+    #     amd64: amd64
+  command:
+    link:
+    - from: direnv
 - name: stedolan/jq
   description: Command-line JSON processor
   owner: stedolan
@@ -29,6 +44,9 @@ github:
   release:
     name: stein
     tag: v0.2.4
+  command:
+    link:
+    - from: '**/stein'
 - name: b4b4r07/blog
   description: A CLI tool for editing blog built by hugo etc
   owner: b4b4r07
@@ -95,13 +113,19 @@ github:
   release:
     name: ghq
     tag: v0.17.3
-- name: viktomas/godu
-  description: Simple golang utility helping to discover large files/folders.
-  owner: viktomas
-  repo: godu
-  release:
-    name: godu
-    tag: v1.1
+  command:
+    link:
+    - from: '**/ghq'
+# - name: viktomas/godu
+#   description: Simple golang utility helping to discover large files/folders.
+#   owner: viktomas
+#   repo: godu
+#   release:
+#     name: godu
+#     tag: v1.1
+#   command:
+#     link:
+#     - from: hoge
 - name: skanehira/pst
   description: TUI process monitor written in Go
   owner: skanehira
@@ -250,6 +274,15 @@ github:
   release:
     name: sd
     tag: 0.6.5
+  command:
+    # if: false
+    snippet: |
+      replace() {
+        case "${#}" in
+          1) git grep "${1}" ;;
+          2) git grep -l "${1}" | xargs -I% sd "${1}" "${2}" % ;;
+        esac
+      }
 - name: sharkdp/bat
   description: A cat(1) clone with wings.
   owner: sharkdp
@@ -257,15 +290,20 @@ github:
   release:
     name: bat
     tag: v0.11.0
+    # asset:
+    #   filename: '{{ .Release.Name }}-{{ .Release.Tag }}-{{ .Arch }}-{{ .OS }}.tar.gz'
+    #   replacements:
+    #     darwin: apple-darwin
+    #     amd64: x86_64
   command:
+    link:
+    - from: '**/bat'
     alias:
       bat-theme: bat --list-themes | fzf --preview='bat --theme={} --color=always ~/.zshrc'
     env:
       BAT_PAGER: less -RF
       BAT_STYLE: numbers,changes
       BAT_THEME: ansi-dark
-    link:
-    - from: '**/bat'
 - name: BurntSushi/xsv
   description: A fast CSV command line toolkit written in Rust.
   owner: BurntSushi
@@ -464,17 +502,27 @@ github:
 #       - sh autogen.sh
 #       - ./configure && make
 #       - sudo make install
-- name: mikefarah/yq
-  description: yq is a portable command-line YAML, JSON and XML processor
-  owner: mikefarah
-  repo: yq
+# - name: mikefarah/yq
+#   description: yq is a portable command-line YAML, JSON and XML processor
+#   owner: mikefarah
+#   repo: yq
+#   release:
+#     name: yq
+#     tag: v4.19.1
+# - name: skanehira/ff
+#   description: file manager on terminal written in Go
+#   owner: skanehira
+#   repo: ff
+#   release:
+#     name: ff
+#     tag: 1.8.0
+- name: caarlos0/jsonfmt
+  description: Like gofmt, but for JSON files.
+  owner: caarlos0
+  repo: jsonfmt
   release:
-    name: yq
-    tag: v4.19.1
-- name: skanehira/ff
-  description: file manager on terminal written in Go
-  owner: skanehira
-  repo: ff
-  release:
-    name: ff
-    tag: 1.8.0
+    name: jsonfmt
+    tag: v0.4.0
+  command:
+    link:
+    - from: jsonfmt

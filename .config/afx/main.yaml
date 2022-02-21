@@ -1,4 +1,5 @@
 config:
+  shell: /bin/zsh
   filter:
     command: fzf
     args:
@@ -20,8 +21,12 @@ local:
 - name: zsh
   directory: ~/.zsh
   plugin:
+    if: |
+      [[ $SHELL == *zsh* ]]
     sources:
     - '[0-9]*.zsh'
+  depends-on:
+  - google-cloud-sdk
 - name: google-cloud-sdk
   directory: ~/Downloads/google-cloud-sdk
   plugin:
@@ -34,11 +39,19 @@ gist:
 - name: misc
   owner: b4b4r07
   id: 79ee61f7c140c63d2786
-- name: hoge.sh
-  description: this is a test for gist
+# - name: hoge.sh
+#   description: this is a test for gist
+#   owner: b4b4r07
+#   id: f26dd264f094e0ca834ce9feadc0c3f1
+#   command:
+#     link:
+#     - from: hoge.sh
+#       to: hoge
+- name: gist/context-scripts
+  description: Get current GCP/Kubernetes context which you are on.
   owner: b4b4r07
-  id: f26dd264f094e0ca834ce9feadc0c3f1
+  id: bb820b99fdba605ea4bd4fb29046ce58
   command:
     link:
-    - from: hoge.sh
-      to: hoge
+    - from: gcp-context
+    - from: kube-context

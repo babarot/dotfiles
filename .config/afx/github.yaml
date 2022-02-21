@@ -151,8 +151,16 @@ github:
   description: a slide deck presentation tool written in pure bash
   owner: icyphox
   repo: shlide
-  branch: master
   command:
     link:
     - from: shlide
       to: shlide
+# - name: hchbaw/auto-fu.zsh
+#   description: |
+#     zsh automatic complete-word and list-choices.
+#     Originally incr-0.2.zsh by y.fujii
+#   owner: hchbaw
+#   repo: auto-fu.zsh
+#   plugin:
+#     sources:
+#     - auto-fu.zsh

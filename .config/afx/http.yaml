@@ -1,0 +1,8 @@
+http:
+- name: gcping
+  description: Like gcping.com but a command line tool
+  url: https://storage.googleapis.com/gcping-release/gcping_darwin_arm64_latest
+  command:
+    link:
+    - from: gcping_*
+      to: gcping

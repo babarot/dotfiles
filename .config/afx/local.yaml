@@ -1,0 +1,17 @@
+local:
+- name: zsh
+  directory: ~/.zsh
+  plugin:
+    if: |
+      [[ $SHELL == *zsh* ]]
+    sources:
+    - '[0-9]*.zsh'
+  depends-on:
+  - google-cloud-sdk
+- name: google-cloud-sdk
+  directory: ~/Downloads/google-cloud-sdk
+  plugin:
+    env:
+      PATH: ~/Downloads/google-cloud-sdk/bin
+    sources:
+    - '*.zsh.inc'

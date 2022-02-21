@@ -15,6 +15,14 @@
 #     return 0
 # fi
 
+autoload -Uz compinit
+compinit
+autoload -Uz colors
+colors
+
+export GOPATH=$HOME
+export PATH=$PATH:/opt/homebrew/bin
+
 source <(afx init)
 
 printf "\n${fg_bold[cyan]} ${SHELL} ${fg_bold[red]}${ZSH_VERSION}"

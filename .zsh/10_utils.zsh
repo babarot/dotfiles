@@ -1,15 +1,3 @@
-autoload -Uz colors; colors
-export PATH=~/bin:$PATH
-export PATH=$PATH:/usr/local/go/bin
-
-# reload resets Completion function
-reload() {
-    local f
-    f=(~/.zsh/Completion/*(.))
-    unfunction $f:t 2>/dev/null
-    autoload -U $f:t
-}
-
 # is_login_shell returns true if current shell is first shell
 is_login_shell() {
     [[ $SHLVL == 1 ]]

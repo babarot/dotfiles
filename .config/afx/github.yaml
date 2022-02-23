@@ -8,15 +8,15 @@ github:
       ENHANCD_FILTER: fzf --height 25% --reverse --ansi:fzy
     sources:
     - init.sh
-- name: jhawthorn/fzy
-  description: A better fuzzy finder
-  owner: jhawthorn
-  repo: fzy
-  command:
-    build:
-      steps:
-      - make
-      - sudo make install
+# - name: jhawthorn/fzy
+#   description: A better fuzzy finder
+#   owner: jhawthorn
+#   repo: fzy
+#   command:
+#     build:
+#       steps:
+#       - make
+#       - sudo make install
 - name: ahmetb/kubectx
   description: Switch faster between clusters and namespaces in kubectl
   owner: ahmetb

@@ -315,7 +315,7 @@ github:
     tag: 0.6.5
   command:
     link:
-    - from: sd
+    - from: '**/sd'
     snippet: |
       replace() {
         case "${#}" in
@@ -344,16 +344,16 @@ github:
       BAT_PAGER: less -RF
       BAT_STYLE: numbers,changes
       BAT_THEME: ansi-dark
-- name: BurntSushi/xsv
-  description: A fast CSV command line toolkit written in Rust.
-  owner: BurntSushi
-  repo: xsv
-  release:
-    name: xsv
-    tag: 0.13.0
-  command:
-    link:
-    - from: xsv
+# - name: BurntSushi/xsv
+#   description: A fast CSV command line toolkit written in Rust.
+#   owner: BurntSushi
+#   repo: xsv
+#   release:
+#     name: xsv
+#     tag: 0.13.0
+#   command:
+#     link:
+#     - from: xsv
 - name: BurntSushi/ripgrep
   description: ripgrep recursively searches directories for a regex pattern
   owner: BurntSushi

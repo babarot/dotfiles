@@ -6,11 +6,11 @@ github:
   release:
     name: direnv
     tag: v2.30.3
-    # asset:
-    #   filename: '{{ .Release.Name }}.{{ .OS }}-{{ .Arch }}'
-    #   replacements:
-    #     darwin: darwin
-    #     amd64: amd64
+    asset:
+      filename: '{{ .Release.Name }}.{{ .OS }}-{{ .Arch }}'
+      replacements:
+        darwin: darwin
+        amd64: amd64
   command:
     link:
     - from: direnv
@@ -188,16 +188,16 @@ github:
   command:
     link:
     - from: '**/fillin'
-- name: knqyf263/pet
-  description: Simple command-line snippet manager
-  owner: knqyf263
-  repo: pet
-  release:
-    name: pet
-    tag: v0.3.4
-  command:
-    link:
-    - from: '**/pet'
+# - name: knqyf263/pet
+#   description: Simple command-line snippet manager
+#   owner: knqyf263
+#   repo: pet
+#   release:
+#     name: pet
+#     tag: v0.3.4
+#   command:
+#     link:
+#     - from: '**/pet'
 # - name: peco/peco
 #   description: Simplistic interactive filtering tool
 #   owner: peco
@@ -344,16 +344,16 @@ github:
       BAT_PAGER: less -RF
       BAT_STYLE: numbers,changes
       BAT_THEME: ansi-dark
-# - name: BurntSushi/xsv
-#   description: A fast CSV command line toolkit written in Rust.
-#   owner: BurntSushi
-#   repo: xsv
-#   release:
-#     name: xsv
-#     tag: 0.13.0
-#   command:
-#     link:
-#     - from: xsv
+- name: BurntSushi/xsv
+  description: A fast CSV command line toolkit written in Rust.
+  owner: BurntSushi
+  repo: xsv
+  release:
+    name: xsv
+    tag: 0.13.0
+  command:
+    link:
+    - from: xsv
 - name: BurntSushi/ripgrep
   description: ripgrep recursively searches directories for a regex pattern
   owner: BurntSushi
@@ -549,20 +549,6 @@ github:
     link:
     - from: procs
       to: procs
-# - name: tmux
-#   description: tmux terminal multiplexer
-#   owner: tmux
-#   repo: tmux
-#   release:
-#     name: tmux
-#     tag: 3.2a
-#   command:
-#     build:
-#       steps:
-#       - pwd; cd tmux-3.2a
-#       - sh autogen.sh
-#       - ./configure && make
-#       - sudo make install
 - name: mikefarah/yq
   description: yq is a portable command-line YAML, JSON and XML processor
   owner: mikefarah
@@ -573,13 +559,15 @@ github:
   command:
     link:
     - from: '**/yq'
+    snippet: |
+      alias -g Y='| yq'
 - name: caarlos0/jsonfmt
   description: Like gofmt, but for JSON files.
   owner: caarlos0
   repo: jsonfmt
   release:
     name: jsonfmt
-    tag: v0.4.0
+    tag: v0.3.0
   command:
     link:
     - from: jsonfmt

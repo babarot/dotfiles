@@ -1,5 +1,6 @@
 local:
 - name: zsh
+  description: My zsh scripts
   directory: ~/.zsh
   plugin:
     if: |
@@ -9,6 +10,7 @@ local:
   depends-on:
   - google-cloud-sdk
 - name: google-cloud-sdk
+  description: Google Cloud SDK
   directory: ~/Downloads/google-cloud-sdk
   plugin:
     env:

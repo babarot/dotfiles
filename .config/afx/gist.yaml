@@ -1,15 +1,4 @@
 gist:
-- name: misc
-  owner: b4b4r07
-  id: 79ee61f7c140c63d2786
-- name: hoge.sh
-  description: this is a test for gist
-  owner: b4b4r07
-  id: f26dd264f094e0ca834ce9feadc0c3f1
-  command:
-    link:
-    - from: hoge.sh
-      to: hoge
 - name: context-scripts
   description: Get current GCP/Kubernetes context which you are on.
   owner: b4b4r07

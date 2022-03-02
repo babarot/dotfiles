@@ -23,7 +23,14 @@ github:
     tag: jq-1.6
   command:
     link:
-    - from: jq
+    - from: '*jq*'
+      to: jq
+    alias:
+      jq: jq -C
+    snippet: |
+      if [[ $SHELL == *zsh* ]]; then
+        alias -g J='| jq -C . | less -F'
+      fi
 - name: neovim/neovim
   description: Vim-fork focused on extensibility and usability
   owner: neovim
@@ -54,7 +61,7 @@ github:
   branch: master
   release:
     name: blog
-    tag: v0.1.4
+    tag: v0.1.6
   command:
     env:
       BLOG_EDITOR: vim
@@ -487,6 +494,8 @@ github:
     link:
     - from: gist
       to: gist
+    env:
+      GIST_USER: b4b4r07
 - name: b4b4r07/gomi
   description: Trash can in CLI
   owner: b4b4r07
@@ -560,7 +569,7 @@ github:
     link:
     - from: '**/yq'
     snippet: |
-      alias -g Y='| yq'
+      alias -g Y='| yq -C | less -F'
 - name: caarlos0/jsonfmt
   description: Like gofmt, but for JSON files.
   owner: caarlos0

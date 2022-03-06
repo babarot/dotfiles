@@ -38,9 +38,7 @@ fi
 # Global aliases
 alias -g L='| less'
 alias -g G='| grep'
-alias -g W='| wc'
 alias -g X='| xargs'
-alias -g S="| sort"
 alias -g N=" >/dev/null 2>&1"
 alias -g N1=" >/dev/null"
 alias -g N2=" 2>/dev/null"

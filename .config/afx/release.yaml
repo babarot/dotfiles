@@ -20,7 +20,7 @@ github:
   repo: jq
   release:
     name: jq
-    tag: jq-1.6
+    tag: latest
   command:
     link:
     - from: '*jq*'
@@ -102,10 +102,12 @@ github:
   repo: exa
   release:
     name: exa
-    tag: v0.9.0
+    tag: latest
   command:
     alias:
       l: exa --group-directories-first -T --git-ignore --level 2
+      lt: exa --group-directories-first -T --git-ignore --level 10
+      lta: exa --group-directories-first -a -T --git-ignore --level 10
       la: exa --group-directories-first -a --header --git
       ll: exa --group-directories-first -l --header --git
       lla: exa --group-directories-first -la --header --git
@@ -319,15 +321,17 @@ github:
   repo: sd
   release:
     name: sd
-    tag: 0.6.5
+    tag: latest
   command:
     link:
     - from: '**/sd'
     snippet: |
       replace() {
         case "${#}" in
+          0) echo "too few arguments" >&2; return 1 ;;
           1) git grep "${1}" ;;
           2) git grep -l "${1}" | xargs -I% sd "${1}" "${2}" % ;;
+          *) git grep -l "${1}" "${@:3}" | xargs -I% sd "${1}" "${2}" % ;;
         esac
       }
 - name: sharkdp/bat

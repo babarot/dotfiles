@@ -7,3 +7,11 @@ gist:
     link:
     - from: gcp-context
     - from: kube-context
+- name: git-replace.sh
+  description: n/a
+  owner: b4b4r07
+  id: 135843910e2294781518587e9e90078e
+  command:
+    link:
+    - from: git-replace.sh
+      to: git-replace

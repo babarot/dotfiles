@@ -31,6 +31,7 @@
     br = switch
     review = diff origin/master...
     review-files = diff origin/master... --name-only
+    review-log = log --oneline ...origin/master
     lg = log --color=always --max-count=10 --oneline origin/master...
     delete-merged-branches = !git branch --merged | grep -v \\* | xargs -I % git branch -d %
 
@@ -44,9 +45,9 @@
     default = matching
 
 [user]
-	name = b4b4r07
-	email = b4b4r07@gmail.com
-	signingkey = D6CF1A347277485E
+    name = b4b4r07
+    email = b4b4r07@gmail.com
+    signingkey = D6CF1A347277485E
 
 [pager]
     log  = diff-highlight | less -RX

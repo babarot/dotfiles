@@ -17,6 +17,7 @@
 
 autoload -Uz compinit
 compinit
+
 autoload -Uz colors
 colors
 
@@ -24,6 +25,7 @@ export GOPATH=$HOME
 export PATH=$PATH:/opt/homebrew/bin
 
 source <(afx init)
+source <(afx completion zsh)
 
 printf "\n${fg_bold[cyan]} ${SHELL} ${fg_bold[red]}${ZSH_VERSION}"
 printf "${fg_bold[cyan]} - DISPLAY on ${fg_bold[red]}${TMUX:+$(tmux -V)}${reset_color}\n\n"

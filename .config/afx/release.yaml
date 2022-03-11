@@ -79,23 +79,23 @@ github:
   branch: master
   release:
     name: conftest
-    tag: v0.16.0
+    tag: v0.30.0
   command:
     link:
     - from: conftest
       to: conftest
-# - name: open-policy-agent/opa
-#   description: An open source, general-purpose policy engine.
-#   owner: open-policy-agent
-#   repo: opa
-#   branch: master
-#   command:
-#     link:
-#     - from: opa
-#       to: opa
-#   release:
-#     name: opa
-#     tag: v0.16.2
+- name: open-policy-agent/opa
+  description: An open source, general-purpose policy engine.
+  owner: open-policy-agent
+  repo: opa
+  branch: master
+  command:
+    link:
+    - from: opa
+      to: opa
+  release:
+    name: opa
+    tag: v0.16.2
 - name: ogham/exa
   description: A modern version of 'ls'.
   owner: ogham
@@ -395,13 +395,16 @@ github:
   command:
     link:
     - from: '**/httpstat'
-# - name: wercher/stern
-#   description: Multi pod and container log tailing for Kubernetes
-#   owner: wercker
-#   repo: stern
-#   release:
-#     name: stern
-#     tag: 1.11.0
+- name: wercher/stern
+  description: Multi pod and container log tailing for Kubernetes
+  owner: wercker
+  repo: stern
+  release:
+    name: stern
+    tag: 1.11.0
+  command:
+    link:
+    - from: '**/stern'
 - name: ueokande/bow
   description: Exec a command on multiple pods for Kubernetes
   owner: ueokande
@@ -584,3 +587,23 @@ github:
   command:
     link:
     - from: jsonfmt
+- name: junegunn/fzf
+  description: A command-line fuzzy finder
+  owner: junegunn
+  repo: fzf
+  command:
+    build:
+      steps:
+        - ./install --all
+    link:
+      - from: 'bin/fzf'
+      - from: 'bin/fzf-tmux'
+  plugin:
+    sources:
+      - ~/.fzf.zsh
+    env:
+      FZF_DEFAULT_COMMAND: fd --type f
+      FZF_DEFAULT_OPTS: --height 50% --reverse
+      FZF_CTRL_T_COMMAND: rg --files --hedden --follow --glob "!.git/*"
+      FZF_CTRL_T_OPTS: --preview "bat --color=always --style=header,grid --line-range :100 {}"
+      FZF_ALT_C_COMMAND: fd --type d

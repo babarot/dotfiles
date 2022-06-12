@@ -7,7 +7,7 @@ http:
     - from: gcping_*
       to: gcping
 - name: docker
-  url: https://download.docker.com/{{ .OS }}/static/stable/{{ .Arch }}/{{ .Name }}-20.10.12.tgz
+  url: 'https://download.docker.com/{{ .OS }}/static/stable/{{ .Arch }}/{{ .Name }}-20.10.12.tgz'
   templates:
     replacements:
       darwin: mac

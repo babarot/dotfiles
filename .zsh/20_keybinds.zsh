@@ -130,18 +130,11 @@ _peco-select-history() {
 # zle -N _peco-select-history
 # bindkey '^r' _peco-select-history
 
-_start-tmux-if-it-is-not-already-started() {
-    BUFFER="${${${(M)${+commands[tmuxx]}#1}:+tmuxx}:-tmux}"
-    if type "tmux_automatically_attach" &>/dev/null; then
-        BUFFER="tmux_automatically_attach"
-    fi
-    CURSOR=$#BUFFER
-    zle accept-line
+# is_git_repo returns true if cwd is in git repository
+is_git_repo() {
+    git rev-parse --is-inside-work-tree &>/dev/null
+    return $status
 }
-zle -N _start-tmux-if-it-is-not-already-started
-if ! is_tmux_runnning; then
-    bindkey '^T' _start-tmux-if-it-is-not-already-started
-fi
 
 do-enter() {
     if [[ -n $BUFFER ]]; then
@@ -207,6 +200,5 @@ globalias() {
   zle self-insert
 }
 
-zle -N globalias
-
-bindkey " " globalias
+# zle -N globalias
+# bindkey " " globalias

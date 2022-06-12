@@ -18,7 +18,6 @@ augroup MyAutoCmd
   autocmd!
 augroup END
 
-" Base functions "{{{1
 function! s:glob(from, pattern)
   return split(globpath(a:from, a:pattern), "[\r\n]")
 endfunction
@@ -55,7 +54,6 @@ function! s:load(...) abort
 
   return found
 endfunction
-"}}}
 
 call s:load('env.vim')
 
@@ -67,8 +65,6 @@ let g:env.vimrc.plugin_on =
       \ : g:env.vimrc.plugin_on
 
 if g:env.is_starting
-  " Necesary for lots of cool vim things
-  " http://rbtnn.hateblo.jp/entry/2014/11/30/174749
 
   scriptencoding utf-8
   set runtimepath&
@@ -93,13 +89,9 @@ if g:env.is_starting
 endif
 
 call s:load("plug.vim")
-
-call s:load("a.vim")
 call s:load("base.vim")
 call s:load("command.vim")
 call s:load("custom.vim")
-" call s:load("dein.vim")
-" call s:load("env.vim")
 call s:load("func.vim")
 call s:load("gui.vim")
 call s:load("map.vim")
@@ -107,8 +99,4 @@ call s:load("option.vim")
 call s:load("utils.vim")
 call s:load("view.vim")
 
-" test
 tnoremap <silent> <ESC> <C-\><C-n>
-
-" Must be written at the last.  see :help 'secure'.
-set secure

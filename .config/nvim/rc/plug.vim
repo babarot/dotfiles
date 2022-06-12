@@ -26,7 +26,8 @@ if g:plug.ready()
     Plug 'chrisbra/csv.vim'
     Plug 'christianrondeau/vim-base64'
     Plug 'cocopon/vaffle.vim'
-    Plug 'fatih/vim-hclfmt'
+    " Plug 'fatih/vim-hclfmt'
+    Plug 'hashivim/vim-terraform'
     Plug 'haya14busa/vim-gofmt'
     Plug 'hotwatermorning/auto-git-diff'
     Plug 'juliosueiras/vim-terraform-completion'
@@ -112,6 +113,7 @@ if g:plug.ready()
     Plug 'caglartoklu/ftcolor.vim'
     Plug 'posva/vim-vue'
     Plug 'google/vim-jsonnet'
+    Plug 'yegappan/mru'
 
     " Add plugins to &runtimepath
     call plug#end()
@@ -120,6 +122,7 @@ endif
 " Add plug's plugins
 let g:plug.plugs = get(g:, 'plugs', {})
 let g:plug.list  = keys(g:plug.plugs)
+let g:terraform_fmt_on_save = 1
 
 if !g:plug.ready()
     function! g:plug.init()

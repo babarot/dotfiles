@@ -164,3 +164,15 @@ github:
 #   plugin:
 #     sources:
 #     - auto-fu.zsh
+
+- name: olets/zsh-abbr
+  description: |
+    The zsh manager for auto-expanding abbreviations,
+    inspired by fish shell.
+  owner: olets
+  repo: zsh-abbr
+  plugin:
+    sources:
+    - zsh-abbr.zsh
+    snippet: |
+      abbr --quiet tf=terraform

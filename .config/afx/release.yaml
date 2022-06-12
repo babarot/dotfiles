@@ -1,4 +1,22 @@
 github:
+- name: jesseduffield/lazygit
+  description: simple terminal UI for git commands
+  owner: jesseduffield
+  repo: lazygit
+  release:
+    name: lazygit
+    tag: v0.34
+    asset:
+      filename: '{{ .Release.Name }}_{{ replace .Release.Tag "v" "" }}_{{ .OS }}_{{ .Arch }}.tar.gz'
+      replacements:
+        amd64: x86_64
+        linux: Linux
+        darwin: Darwin
+  command:
+    link:
+      - from: '**/lazygit'
+    alias:
+      g: lazygit
 - name: direnv/direnv
   description: Unclutter your .profile
   owner: direnv
@@ -41,6 +59,7 @@ github:
   command:
     alias:
       vim: nvim
+      vi: command vim
     link:
     - from: '**/bin/nvim'
       to: nvim
@@ -54,6 +73,16 @@ github:
   command:
     link:
     - from: '**/stein'
+- name: b4b4r07/changed-objects
+  description: Get changed objects in Git commit
+  owner: b4b4r07
+  repo: changed-objects
+  release:
+    name: changed-objects
+    tag: v0.1.9
+  command:
+    link:
+    - from: '**/changed-objects'
 - name: b4b4r07/blog
   description: A CLI tool for editing blog built by hugo etc
   owner: b4b4r07
@@ -105,7 +134,7 @@ github:
     tag: latest
   command:
     alias:
-      l: exa --group-directories-first -T --git-ignore --level 2
+      l: exa --group-directories-first -a -1 -F --git-ignore
       lt: exa --group-directories-first -T --git-ignore --level 10
       lta: exa --group-directories-first -a -T --git-ignore --level 10
       la: exa --group-directories-first -a --header --git
@@ -395,13 +424,23 @@ github:
   command:
     link:
     - from: '**/httpstat'
+- name: boz/kail
+  description: kubernetes log viewer
+  owner: boz
+  repo: kail
+  release:
+    name: kail
+    tag: v0.15.0
+  command:
+    link:
+    - from: '**/kail'
 - name: wercher/stern
   description: Multi pod and container log tailing for Kubernetes
   owner: wercker
   repo: stern
   release:
     name: stern
-    tag: 1.11.0
+    tag: 1.10.0
   command:
     link:
     - from: '**/stern'

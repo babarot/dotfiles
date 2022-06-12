@@ -15,6 +15,8 @@
 #     return 0
 # fi
 
+export WORDCHARS='*?[]~&;!#$%^(){}<>'
+
 autoload -Uz compinit
 compinit
 

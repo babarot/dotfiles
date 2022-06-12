@@ -79,3 +79,7 @@
 
 [tag]
     gpgsign = false
+[url "https://"]
+	insteadOf = git://
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/

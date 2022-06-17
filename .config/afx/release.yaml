@@ -646,3 +646,59 @@ github:
       FZF_CTRL_T_COMMAND: rg --files --hedden --follow --glob "!.git/*"
       FZF_CTRL_T_OPTS: --preview "bat --color=always --style=header,grid --line-range :100 {}"
       FZF_ALT_C_COMMAND: fd --type d
+- name: GoogleCloudPlatform/terraformer
+  owner: GoogleCloudPlatform
+  repo: terraformer
+  release:
+    name: terraformer
+    tag: 0.8.19
+    asset:
+      filename: '{{ .Release.Name }}-all-{{ .OS }}-{{ .Arch }}'
+      replacements:
+        darwin: darwin
+        amd64: amd64
+  command:
+    link:
+    - from: terraformer
+- name: high-moctane/mocword-data
+  description: Predict next words.
+  owner: high-moctane
+  repo: mocword-data
+  release:
+    name: mocword.sqlite.gz
+    tag: eng20200217
+  command:
+    link:
+      - from: mocword.sqlite
+- name: instrumenta/kubeval
+  description: Validate your Kubernetes configuration files, supports multiple Kubernetes versions
+  owner: instrumenta
+  repo: kubeval
+  release:
+    name: kubeval
+    tag: v0.16.1
+  command:
+    link:
+      - from: kubeval
+- name: tmccombs/hcl2json
+  description: Convert hcl2 to json
+  owner: tmccombs
+  repo: hcl2json
+  release:
+    name: hcl2json
+    tag: v0.3.4
+  command:
+    link:
+      - from: hcl2json
+- name: terraform-docs/terraform-docs
+  description: |
+    Generate documentation from Terraform modules in various output formats
+    https://terraform-docs.io/
+  owner: terraform-docs
+  repo: terraform-docs
+  release:
+    name: terraform-docs
+    tag: v0.16.0
+  command:
+    link:
+      - from: terraform-docs

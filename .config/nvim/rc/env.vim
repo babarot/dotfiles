@@ -1,4 +1,3 @@
-
 function! s:vimrc_environment()
     let env = {}
     let env.is_ = {}
@@ -14,7 +13,6 @@ function! s:vimrc_environment()
 
     let env.is_starting = has('vim_starting')
     let env.is_gui      = has('gui_running')
-
     let env.hostname    = substitute(hostname(), '[^\w.]', '', '')
 
     " vim

@@ -9,11 +9,15 @@ local:
     - '[0-9]*.zsh'
   depends-on:
   - google-cloud-sdk
-- name: google-cloud-sdk
-  description: Google Cloud SDK
-  directory: ~/Downloads/google-cloud-sdk
-  plugin:
-    env:
-      PATH: ~/Downloads/google-cloud-sdk/bin
-    sources:
-    - '*.zsh.inc'
+
+# - name: google-cloud-sdk
+#   description: Google Cloud SDK
+#   directory: ~/Downloads/google-cloud-sdk
+#   plugin:
+#     env:
+#       PATH: ~/Downloads/google-cloud-sdk/bin
+#     sources:
+#     - '*.zsh.inc'
+#     snippet: |
+#       ln -s -f ~/Downloads/google-cloud-sdk/bin/gcloud ~/bin/gcloud
+#       ln -s -f ~/Downloads/google-cloud-sdk/bin/kubectl ~/bin/kubectl

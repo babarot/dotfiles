@@ -93,7 +93,7 @@ github:
     tag: v0.1.6
   command:
     env:
-      BLOG_EDITOR: vim
+      BLOG_EDITOR: nvim
       BLOG_POST_DIR: content/post
       BLOG_ROOT: $HOME/src/github.com/b4b4r07/tellme.tokyo
     link:
@@ -549,7 +549,7 @@ github:
   branch: master
   release:
     name: gomi
-    tag: v1.0.2
+    tag: v1.1.3
   command:
     alias:
       rm: gomi
@@ -633,7 +633,7 @@ github:
   command:
     build:
       steps:
-        - ./install --all
+        - ./install --bin --no-update-rc --no-key-bindings
     link:
       - from: 'bin/fzf'
       - from: 'bin/fzf-tmux'
@@ -660,16 +660,6 @@ github:
   command:
     link:
     - from: terraformer
-- name: high-moctane/mocword-data
-  description: Predict next words.
-  owner: high-moctane
-  repo: mocword-data
-  release:
-    name: mocword.sqlite.gz
-    tag: eng20200217
-  command:
-    link:
-      - from: mocword.sqlite
 - name: instrumenta/kubeval
   description: Validate your Kubernetes configuration files, supports multiple Kubernetes versions
   owner: instrumenta

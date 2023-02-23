@@ -142,7 +142,7 @@ github:
       lla: exa --group-directories-first -la --header --git
       ls: exa --group-directories-first
     link:
-    - from: '*exa*'
+    - from: bin/exa*
       to: exa
 - name: motemen/ghq
   description: Remote repository management made easy
@@ -404,16 +404,16 @@ github:
   command:
     link:
     - from: '**/rg'
-- name: docekr/compose
-  description: Define and run multi-container applications with Docker
-  owner: docker
-  repo: compose
-  release:
-    name: docker-compose
-    tag: 1.21.1
-  command:
-    link:
-    - from: '**/docker-compose'
+# - name: docekr/compose
+#   description: Define and run multi-container applications with Docker
+#   owner: docker
+#   repo: compose
+#   release:
+#     name: docker-compose
+#     tag: 1.21.1
+#   command:
+#     link:
+#     - from: '**/docker-compose'
 - name: davecheney/httpstat
   description: It's like curl -v, with colours.
   owner: davecheney
@@ -434,16 +434,16 @@ github:
   command:
     link:
     - from: '**/kail'
-- name: wercher/stern
-  description: Multi pod and container log tailing for Kubernetes
-  owner: wercker
-  repo: stern
-  release:
-    name: stern
-    tag: 1.10.0
-  command:
-    link:
-    - from: '**/stern'
+# - name: wercher/stern
+#   description: Multi pod and container log tailing for Kubernetes
+#   owner: wercker
+#   repo: stern
+#   release:
+#     name: stern
+#     tag: 1.10.0
+#   command:
+#     link:
+#     - from: '**/stern'
 - name: ueokande/bow
   description: Exec a command on multiple pods for Kubernetes
   owner: ueokande
@@ -556,18 +556,18 @@ github:
     link:
     - from: gomi
       to: gomi
-- name: knqyf263/cob
-  description: Continuous Benchmark for Go Project
-  owner: knqyf263
-  repo: cob
-  branch: master
-  release:
-    name: cob
-    tag: v0.0.1
-  command:
-    link:
-    - from: cob
-      to: cob
+# - name: knqyf263/cob
+#   description: Continuous Benchmark for Go Project
+#   owner: knqyf263
+#   repo: cob
+#   branch: master
+#   release:
+#     name: cob
+#     tag: v0.0.1
+#   command:
+#     link:
+#     - from: cob
+#       to: cob
 - name: cli/cli
   description: the GitHub CLI
   owner: cli

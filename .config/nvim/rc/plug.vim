@@ -10,7 +10,7 @@ function! g:plug.ready()
 endfunction
 
 if g:plug.ready()
-    call plug#begin(g:plug.base)
+    call plug#begin()
 
     " file and directory
     Plug 'AndrewRadev/gapply.vim'
@@ -288,15 +288,15 @@ let g:lightline = {
       \ },
       \ }
 
-function! LightlineReload()
-  call lightline#init()
-  call lightline#colorscheme()
-  call lightline#update()
-endfunction
+""function! LightlineReload()
+""  call lightline#init()
+""  call lightline#colorscheme()
+""  call lightline#update()
+""endfunction
 
-function! LightlineFilename()
-  return winwidth(0) > 80 ? expand('%:f') : expand('%:t')
-endfunction
+""function! LightlineFilename()
+""  return winwidth(0) > 80 ? expand('%:f') : expand('%:t')
+""endfunction
 
 function! StatusDiagnostic() abort
   let info = get(b:, 'coc_diagnostic_info', {})
@@ -311,8 +311,8 @@ function! StatusDiagnostic() abort
   return join(msgs, ' '). ' ' . get(g:, 'coc_status', '')
 endfunction
 
-command! LightlineReload call LightlineReload()
-command! StatusDiagnostic call StatusDiagnostic()
+""command! LightlineReload call LightlineReload()
+""command! StatusDiagnostic call StatusDiagnostic()
 
 set showtabline=2
 set laststatus=2
@@ -332,7 +332,7 @@ endfunction
 " let g:lightline.tabline          = {'left': [['buffers']], 'right': [['close']]}
 " let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
 " let g:lightline.component_type   = {'buffers': 'tabsel'}
-autocmd BufWritePost,TextChanged,TextChangedI * call lightline#update()
+""autocmd BufWritePost,TextChanged,TextChangedI * call lightline#update()
 
 let g:ftcolor_plugin_enabled = 1
 let g:ftcolor_redraw = 1
@@ -347,15 +347,16 @@ let g:ftcolor_color_mappings = {
       \ 'sh':   'seoul256',
       \ }
 
-let g:gitgutter_enabled = 1
-" see: https://github.com/airblade/vim-gitgutter#faq
-highlight SignColumn ctermbg=235
-highlight GitGutterAdd guifg=#009900 guibg=NONE ctermfg=2 ctermbg=235
-highlight GitGutterChange guifg=#bbbb00 guibg=NONE ctermfg=3 ctermbg=235
-highlight GitGutterDelete guifg=#ff2222 guibg=NONE ctermfg=1 ctermbg=235
+""let g:gitgutter_enabled = 1
+""" see: https://github.com/airblade/vim-gitgutter#faq
+""highlight SignColumn ctermbg=235
+""highlight GitGutterAdd guifg=#009900 guibg=NONE ctermfg=2 ctermbg=235
+""highlight GitGutterChange guifg=#bbbb00 guibg=NONE ctermfg=3 ctermbg=235
+""highlight GitGutterDelete guifg=#ff2222 guibg=NONE ctermfg=1 ctermbg=235
+""
+""augroup gitgutter
+""  autocmd!
+""  autocmd BufWrite,BufWritePre,BufWritePost * call gitgutter#buffer_enable()
+""  " call gitgutter#all(1)
+""augroup END
 
-augroup gitgutter
-  autocmd!
-  autocmd BufWrite,BufWritePre,BufWritePost * call gitgutter#buffer_enable()
-  " call gitgutter#all(1)
-augroup END

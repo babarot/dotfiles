@@ -176,3 +176,23 @@ github:
     - zsh-abbr.zsh
     snippet: |
       abbr --quiet tf=terraform
+
+# - name: tfutils/tfenv
+#   description: Terraform version manager
+#   owner: tfutils
+#   repo: tfenv
+#   command:
+#     link:
+#     - from: bin/tfenv
+#       to: tfenv
+#     - from: bin/terraform
+#       to: terraform
+#
+- name: drwetter/testssl.sh
+  description: Testing TLS/SSL encryption anywhere on any port
+  owner: drwetter
+  repo: testssl.sh
+  command:
+    link:
+    - from: testssl.sh
+      to: testssl.sh

@@ -64,8 +64,7 @@ let g:env.vimrc.plugin_on =
       \ ? g:false
       \ : g:env.vimrc.plugin_on
 
-if g:env.is_starting
-
+"if g:env.is_starting
   scriptencoding utf-8
   set runtimepath&
 
@@ -86,7 +85,7 @@ if g:env.is_starting
             \ | echomsg 'startuptime: ' . reltimestr(g:startuptime)
     augroup END
   endif
-endif
+"endif
 
 call s:load("plug.vim")
 call s:load("base.vim")

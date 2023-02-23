@@ -79,7 +79,7 @@ github:
   repo: changed-objects
   release:
     name: changed-objects
-    tag: v0.1.9
+    tag: v0.1.14
   command:
     link:
     - from: '**/changed-objects'
@@ -575,7 +575,7 @@ github:
   branch: master
   release:
     name: gh
-    tag: v0.5.2
+    tag: v2.21.2
   command:
     link:
     - from: '*/bin/gh'
@@ -692,3 +692,13 @@ github:
   command:
     link:
       - from: terraform-docs
+- name: lotabout/rargs
+  description:
+  owner: lotabout
+  repo: rargs
+  release:
+    name: rargs
+    tag: v0.3.0
+  command:
+    link:
+      - from: rargs

@@ -15,13 +15,14 @@ gist:
     link:
     - from: git-replace.sh
       to: git-replace
-- name: tmuxx
-  description: ~
-  owner: b4b4r07
-  id: bebec3a4b19764021dca4022e007e266
-  command:
-    link:
-    - from: tmuxx.sh
-      to: tmuxx
-    snippet: |
-      tmuxx
+
+# - name: tmuxx
+#   description: ~
+#   owner: b4b4r07
+#   id: bebec3a4b19764021dca4022e007e266
+#   command:
+#     link:
+#     - from: tmuxx.sh
+#       to: tmuxx
+#     snippet: |
+#       tmuxx

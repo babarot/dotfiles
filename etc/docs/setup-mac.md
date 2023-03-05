@@ -119,17 +119,17 @@ Install extensions: https://pilotmoon.com/popclip/extensions/
 
 Before | After
 ---|---
-<img width="489" alt="" src="https://user-images.githubusercontent.com/4442708/222951896-61c9eb8f-fbf0-475d-a10a-912ab9af86fa.png"> | <img width="" alt="" src="https://user-images.githubusercontent.com/4442708/222951917-0876e2ab-9257-41f7-be18-8abb1f1e6867.png">
-<img width="489" alt="" src="https://user-images.githubusercontent.com/4442708/222951931-0c907c26-1a0d-4851-ad86-3d15eb16149c.png"> | <img width="" alt="" src="https://user-images.githubusercontent.com/4442708/222951934-b87f3d70-22dd-42bf-8a99-6efee863eea3.png">
+<img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222951896-61c9eb8f-fbf0-475d-a10a-912ab9af86fa.png"> | <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222951917-0876e2ab-9257-41f7-be18-8abb1f1e6867.png">
+<img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222951931-0c907c26-1a0d-4851-ad86-3d15eb16149c.png"> | <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222951934-b87f3d70-22dd-42bf-8a99-6efee863eea3.png">
 
 ### System
 
 Guide | What to do
 ---|---
-Appurtenance | <img width="" alt="" src="https://user-images.githubusercontent.com/4442708/222952001-52c98d18-ae81-4292-a3fa-4a5b88be042c.png">
-Desktop | <img width="" alt="" src="https://user-images.githubusercontent.com/4442708/222952030-5126f748-46b1-4c46-a7b2-39a6095a6f7b.png"> <img width="" alt="" src="https://user-images.githubusercontent.com/4442708/222952032-48f614d2-c470-4607-adaa-d3140d58f353.png"> <img width="" alt="" src="https://user-images.githubusercontent.com/4442708/222952035-97e23fad-a009-48ec-8728-7dd31fe4feab.png">
-Keyboads | <img width="" alt="" src="https://user-images.githubusercontent.com/4442708/222952088-fc8a521a-26ae-4dd7-9933-f473ef132ea0.png"> <img width="" alt="" src="https://user-images.githubusercontent.com/4442708/222952089-55d8a3fb-8883-4207-b0dc-12bc2f017306.png">
-Trackpads | <img width="" alt="" src="https://user-images.githubusercontent.com/4442708/222952106-bdfbba95-8b26-4451-bc21-4f0f91c45095.png">
+Appurtenance | <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222952001-52c98d18-ae81-4292-a3fa-4a5b88be042c.png">
+Desktop | <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222952030-5126f748-46b1-4c46-a7b2-39a6095a6f7b.png"> <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222952032-48f614d2-c470-4607-adaa-d3140d58f353.png"> <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222952035-97e23fad-a009-48ec-8728-7dd31fe4feab.png">
+Keyboads | <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222952088-fc8a521a-26ae-4dd7-9933-f473ef132ea0.png"> <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222952089-55d8a3fb-8883-4207-b0dc-12bc2f017306.png">
+Trackpads | <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222952106-bdfbba95-8b26-4451-bc21-4f0f91c45095.png">
 
 
 

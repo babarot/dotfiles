@@ -5,7 +5,16 @@ DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 
 .DEFAULT_GOAL := help
 
-all:
+all: afx brew install
+
+afx: ## Install b4b4r07/afx
+	@curl -sL https://raw.githubusercontent.com/b4b4r07/afx/HEAD/hack/install | sh
+	@echo 'Done. Run "afx install" next.'
+
+brew: ## Install brew and run brew bundle
+	@sh ./etc/scripts/brew.sh
+	@brew bundle
+	@echo 'Done. For saving your brew packages added newly, run "brew bundle dump".'
 
 list: ## Show dot files in this repo
 	@$(foreach val, $(DOTFILES), /bin/ls -dF $(val);)

@@ -1,6 +1,3 @@
--- Basic keymaps
-local set_keymap = vim.keymap.set
-
 vim.keymap.set('n', '<CR>', ':<C-u>w<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', 'j', 'gj', { noremap = true, silent = true })
 vim.keymap.set('n', 'k', 'gk', { noremap = true, silent = true })
@@ -19,16 +16,6 @@ vim.keymap.set('i', 'jj', '<Esc>', { noremap = true, silent = true })
 vim.keymap.set('c', 'jj', "<BS><C-c>", { noremap = true, silent = true })
 vim.keymap.set('v', 'v', '$h', { noremap = true, silent = true })
 
--- set_keymap('c', 'j',
---   function()
---     return vim.fn.getcmdline()[vim.fn.getcmdpos()-2] == 'j' and "<BS><C-c>" or 'j'
---   end,
---   { expr = true }
--- )
-
-
-vim.g.mapleader = ","
-
 vim.keymap.set('c', '<C-k>', '<Up>', { noremap = true, silent = true})
 vim.keymap.set('c', '<C-j>', '<Down>', { noremap = true, silent = true})
 vim.keymap.set('c', '<C-l>', '<Right>', { noremap = true, silent = true})
@@ -41,6 +28,14 @@ vim.keymap.set('c', '<C-b>', '<Left>', { noremap = true, silent = true})
 vim.keymap.set('c', '<C-a>', '<Home>', { noremap = true, silent = true})
 vim.keymap.set('c', '<C-e>', '<End>', { noremap = true, silent = true})
 vim.keymap.set('c', '<C-h>', '<BS>', { noremap = true, silent = true})
+
+vim.keymap.set('n', 'n', 'nzz', { noremap = true, silent = true})
+vim.keymap.set('n', 'N', 'Nzz', { noremap = true, silent = true})
+vim.keymap.set('n', 'S', '*zz', { noremap = true, silent = true})
+vim.keymap.set('n', '*', '*zz', { noremap = true, silent = true})
+vim.keymap.set('n', '#', '#zz', { noremap = true, silent = true})
+vim.keymap.set('n', 'g*', 'g*zz', { noremap = true, silent = true})
+vim.keymap.set('n', 'g#', 'g#zz', { noremap = true, silent = true})
 
 -- nnoremap q: <Nop>
 -- nnoremap q/ <Nop>
@@ -66,13 +61,6 @@ vim.keymap.set('c', '<C-h>', '<BS>', { noremap = true, silent = true})
 -- vnoremap q; q:
 -- cnoreabbrev w!! w !sudo tee > /dev/null %
 --
--- nnoremap n nzz
--- nnoremap N Nzz
--- nnoremap S *zz
--- nnoremap * *zz
--- nnoremap # #zz
--- nnoremap g* g*zz
--- nnoremap g# g#zz
 -- nnoremap <silent><CR> :<C-u>silent update<CR>
 -- noremap gf gF
 -- noremap gF gf

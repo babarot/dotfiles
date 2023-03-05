@@ -38,7 +38,7 @@ require('lazy').setup {
   },
   {
     'hashivim/vim-terraform',
-    ft = {'hcl', 'terraform'}
+    ft = {'hcl', 'terraform'},
   },
   {
     'caglartoklu/ftcolor.vim',
@@ -51,6 +51,7 @@ require('lazy').setup {
         hcl = 'gruvbox',
         go = 'seoul256',
         yaml = 'seoul256',
+        sh = 'despacio',
         bash = 'despacio',
         zsh = 'despacio',
       }
@@ -64,6 +65,10 @@ require('lazy').setup {
         -- Configuration here, or leave empty to use defaults
       })
     end
+  },
+  {
+    'bfontaine/Brewfile.vim',
+    ft = {'brew'},
   },
 
   -- Development
@@ -403,22 +408,24 @@ require('lazy').setup {
     commit = "1867e76e819db182a4fb71f48f4bd36a5e2c6b6e",
     lazy = true,
     event = {"BufReadPost", "BufAdd", "BufNewFile"}
-  }, {
-    'mvllow/modes.nvim',
-    tag = 'v0.2.1',
-    lazy = true,
-    event = {"InsertEnter"},
-    config = function()
-      require('modes').setup({
-        -- colors = {
-        --   copy = "#f5c359",
-        --   delete = "#c75c6a",
-        --   insert = "#78ccc5",
-        --   visual = "#9745be",
-        -- },
-      })
-    end
-  }, {
+  },
+  -- {
+  --   'mvllow/modes.nvim',
+  --   tag = 'v0.2.1',
+  --   lazy = true,
+  --   event = {"InsertEnter"},
+  --   config = function()
+  --     require('modes').setup({
+  --       -- colors = {
+  --       --   copy = "#f5c359",
+  --       --   delete = "#c75c6a",
+  --       --   insert = "#78ccc5",
+  --         -- visual = "#9745be",
+  --       -- },
+  --     })
+  --   end
+  -- },
+  {
     'lukas-reineke/indent-blankline.nvim',
     tag = "v2.20.4",
     lazy = true,
@@ -426,7 +433,11 @@ require('lazy').setup {
     config = function()
       require("indent_blankline").setup {
         show_current_context = true,
-        show_current_context_start = true
+        show_current_context_start = true,
+        char = "┊",
+        filetype = {'yaml'},
+        buftype_exclude = {'terminal', 'nofile', 'NvimTree', 'Neotree'},
+        filetype_exclude = {'help', 'NvimTree', 'Neotree'},
       }
     end
   }, -- Widget
@@ -734,12 +745,12 @@ require('lazy').setup {
     'segeljakt/vim-silicon',
     commit = "4a93122ae2139a12e2a56f064d086c05160b6835",
     lazy = true,
-    cmd = {'Silicon'}
+    cmd = {'Silicon'},
   }, {
     'voldikss/vim-translator',
     commit = "681c6b2f650b699572e6bb55162a3d6e62ee5d43",
     lazy = true,
-    cmd = {'Translate', 'TranslateW'}
+    cmd = {'Translate', 'TranslateW'},
   }, -- Language specific tools
   -- Go
   {
@@ -747,45 +758,45 @@ require('lazy').setup {
     commit = "4d066613379d85094bb4ddd52e34e6d3f55fc24e",
     lazy = true,
     event = {"CursorHold", "CursorHoldI", "CursorMoved", "CursorMovedI"},
-    ft = "go"
+    ft = {"go"},
   }, {
     'ray-x/guihua.lua',
     commit = "a19ac4447021f21383fadd7a9e1fc150d0b67e1f",
     lazy = true,
     event = {"CursorHold", "CursorHoldI", "CursorMoved", "CursorMovedI"},
-    ft = "go"
+    ft = {"go"},
   }, -- Markdown
   {
     'ekickx/clipboard-image.nvim',
     commit = "d1550dc26729b7954f95269952e90471b838fa25",
     lazy = true,
     cmd = {'PasteImg'},
-    ft = "markdown"
+    ft = {'markdown'},
   }, -- Others
   {
     'jsborjesson/vim-uppercase-sql',
     commit = "58bfde1d679a1387dabfe292b38d51d84819b267",
     lazy = true,
     event = {"BufReadPost", "BufAdd", "BufNewFile"},
-    ft = {'sql'}
+    ft = {'sql'},
   }, {
     'google/vim-jsonnet',
     commit = "4ebc6619ddce5d032a985b42a9864154c3d20e4a",
     lazy = true,
     event = {"BufReadPost", "BufAdd", "BufNewFile"},
-    ft = {'jsonnet'}
+    ft = {'jsonnet'},
   }, {
     'hashivim/vim-terraform',
     commit = "d00503de9bed3a1da7206090cb148c6a1acce870",
     lazy = true,
     event = {"BufReadPost", "BufAdd", "BufNewFile"},
-    ft = {'terraform', 'hcl'}
+    ft = {'terraform', 'hcl'},
   }, {
     'juliosueiras/vim-terraform-completion',
     commit = "125d0e892f5fd8f32b57a5a5983d03f1aa611949",
     lazy = true,
     event = {"BufReadPost", "BufAdd", "BufNewFile"},
-    ft = {'terraform', 'hcl'}
+    ft = {'terraform', 'hcl'},
   },
 
   -- Color

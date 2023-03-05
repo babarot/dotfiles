@@ -1,7 +1,7 @@
 vim.keymap.set('n', '<CR>', ':<C-u>w<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', 'j', 'gj', { noremap = true, silent = true })
 vim.keymap.set('n', 'k', 'gk', { noremap = true, silent = true })
-vim.keymap.set('n', 'q', ':<C-u>bdelete<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', 'q', ':<C-u>bdelete<CR>', { noremap = false, silent = true })
 vim.keymap.set('n', 'tt', ':<C-u>tabnew<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-l>', ':<C-u>bnext<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-h>', ':<C-u>bprev<CR>', { noremap = true, silent = true })

@@ -218,8 +218,6 @@ let g:ftcolor_color_mappings = {
 
 set number
 set showtabline=2
-" set laststatus=2
-" set laststatus=2
 set laststatus=3
 set t_Co=256
 set pumheight=10

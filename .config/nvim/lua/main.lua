@@ -1,3 +1,5 @@
+vim.g.mapleader           = ','
+
 vim.g.loaded_gzip         = 1
 vim.g.loaded_man          = 1
 vim.g.loaded_matchit      = 1
@@ -21,10 +23,5 @@ function goto_last_pos()
     vim.api.nvim_win_set_cursor(0, { last_pos, 0 })
   end
 end
-
-
--- Lines below do not exist in vimrc
--- Config
-vim.g.mapleader        = ' '
 
 

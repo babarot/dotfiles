@@ -404,16 +404,16 @@ github:
   command:
     link:
     - from: '**/dockfmt'
-- name: junegunn/fzf-bin
-  description: A command-line fuzzy finder
-  owner: junegunn
-  repo: fzf-bin
-  release:
-    name: fzf
-    tag: 0.23.0
-  command:
-    link:
-    - from: '**/fzf'
+# - name: junegunn/fzf-bin
+#   description: A command-line fuzzy finder
+#   owner: junegunn
+#   repo: fzf-bin
+#   release:
+#     name: fzf
+#     tag: 0.23.0
+#   command:
+#     link:
+#     - from: '**/fzf'
 - name: shyiko/kubesec
   description: |
     Secure Secret management for Kubernetes

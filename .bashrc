@@ -2,7 +2,7 @@
 [[ -z "$PS1" ]] && return
 [[ -n "$VIMRUNTIME" ]] && return
 
-export PATH=~/bin:"$PATH"
+export PATH="$HOME/bin:/usr/local/bin:$PATH"
 export PAGER=less
 export LESS='-i -N -w  -z-4 -g -e -M -X -F -R -P%t?f%f :stdin .?pb%pb\%:?lbLine %lb:?bbByte %bb:-...'
 export LESS='-f -N -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'

@@ -21,14 +21,5 @@ compinit
 autoload -Uz colors
 colors
 
-export GOPATH=$HOME
-export PATH=$PATH:/opt/homebrew/bin
-
 source <(afx init)
 source <(afx completion zsh)
-
-export WORDCHARS='*?[]~&;!#$%^(){}<>'
-
-export HISTFILE=${HOME}/.zsh_history
-export HISTSIZE=100000
-export SAVEHIST=100000

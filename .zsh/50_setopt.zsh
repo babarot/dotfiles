@@ -39,6 +39,7 @@ setopt no_beep
 setopt no_case_glob
 setopt no_clobber
 setopt no_flow_control
+setopt no_global_rcs
 setopt no_hist_beep
 setopt no_list_beep
 setopt no_prompt_cr

@@ -1,14 +1,15 @@
 function! s:rm(bang)
   let file = fnamemodify(expand('%'), ':p')
-  let cmd = "system(printf('%s %s', 'gomi', shellescape(file)))"
+  " https://github.com/b4b4r07/gomi
+  let cmd = "system(printf('%s %s', executable('gomix') ? 'gomi' : 'rm', shellescape(file)))"
 
   if !filereadable(file)
-    return Error("The '" . file . "' does not exist")
+    echo printf("%s does not exist", file)
     return
   endif
 
   if empty(a:bang)
-    redraw | echo 'Delete "' . file . '"? [y/N]: '
+    redraw | echo printf("Delete '%s?' [y/N]: ", file)
   endif
 
   if !empty(a:bang) || nr2char(getchar()) ==? 'y'
@@ -18,12 +19,10 @@ function! s:rm(bang)
       if bufexists(bufname) && buflisted(bufname)
         execute "bwipeout" bufname
       endif
-      echo "Deleted '" . file . "', successfully!"
-      return v:true
+      echo printf("Deleted '%s' successfully!", file)
+    else
+      echo printf("Failed to delete '%s'", file)
     endif
-    return Error("Could not delete '" . file . "'")
-  else
-    echo "Do nothing."
   endif
 endfunction
 

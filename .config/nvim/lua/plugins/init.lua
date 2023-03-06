@@ -1,4 +1,4 @@
-require('lazy').setup {
+require('lazy').setup({
   { 'fatih/vim-go' },
   { 'junegunn/fzf' }, -- {
   { 'junegunn/fzf.vim' },
@@ -933,5 +933,28 @@ require('lazy').setup {
     'ellisonleao/gruvbox.nvim',
     lazy = true,
     event = {"BufReadPost", "BufAdd", "BufNewFile"}
+  },
+
+  -- local plugins
+  -- { 'tp/tp.nvim', dev = true },
+  { dir = "/Users/babarot/src/github.com/b4b4r07/dotfiles/simple-nvim-plugin" },
+},
+  {
+    root = vim.fn.stdpath("data") .. "/lazy", -- directory where plugins will be installed
+    lockfile = vim.fn.stdpath("config") .. "/lazy-lock.json", -- lockfile generated after running update.
+    git = {
+      log = { "--since=3 days ago" },
+      timeout = 120,
+      url_format = "https://github.com/%s.git",
+      filter = true,
+    },
+    dev = {
+      path = vim.fn.stdpath("config") .. "/lua",
+      fallback = false,
+    },
+    install = {
+      missing = true,
+      colorscheme = { "seoul256" },
+    },
   }
-}
+)

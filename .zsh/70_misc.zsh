@@ -41,3 +41,7 @@ autoload -Uz zmv
 autoload -Uz run-help-git
 autoload -Uz run-help-svk
 autoload -Uz run-help-svn
+
+# Automaticall escape URL when copy and paste
+autoload -Uz url-quote-magic
+zle -N self-insert url-quote-magic

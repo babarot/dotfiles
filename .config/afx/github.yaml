@@ -73,18 +73,6 @@ github:
   command:
     link:
     - from: diff-so-fancy
-# - name: tmux/tmux
-#   description: Tmux
-#   owner: tmux
-#   repo: tmux
-#   command:
-#     build:
-#       steps:
-#       - sh autogen.sh
-#       - ./configure && make
-#     link:
-#     - from: tmux
-#       to: tmux
 - name: tmux-plugins/tpm
   description: Tmux Plugin Manager
   owner: tmux-plugins
@@ -188,7 +176,6 @@ github:
     - zsh-abbr.zsh
     snippet: |
       abbr --quiet tf=terraform
-
 # - name: tfutils/tfenv
 #   description: Terraform version manager
 #   owner: tfutils
@@ -199,7 +186,6 @@ github:
 #       to: tfenv
 #     - from: bin/terraform
 #       to: terraform
-#
 # - name: drwetter/testssl.sh
 #   description: Testing TLS/SSL encryption anywhere on any port
 #   owner: drwetter
@@ -208,7 +194,6 @@ github:
 #     link:
 #     - from: testssl.sh
 #       to: testssl.sh
-#
 - name: jesseduffield/lazygit
   description: simple terminal UI for git commands
   owner: jesseduffield
@@ -258,6 +243,8 @@ github:
     snippet: |
       if [[ $SHELL == *zsh* ]]; then
         alias -g J='| jq -C . | less -F'
+        alias -g JQ='| jq -C .'
+        alias -g JL='| jq -C . | less -R -X'
       fi
 - name: neovim/neovim
   description: Vim-fork focused on extensibility and usability

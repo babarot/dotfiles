@@ -19,18 +19,13 @@ http:
     link:
     - from: google-cloud-sdk/bin/gcloud
       to: gcloud
-    - from: google-cloud-sdk/bin/gsutil
-      to: gsutil
     - from: google-cloud-sdk/bin/kubectl
       to: kubectl
+    alias:
+      k: kubectl
   plugin:
     sources:
-    - '*.zsh.inc'
-
-# - name: google-cloud-cli
-#   description: |
-#     asdf
-#   url: 'https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-390.0.0-darwin-arm.tar.gz'
+    - 'google-cloud-sdk/*.zsh.inc'
 
 # - name: docker
 #   url: 'https://download.docker.com/{{ .OS }}/static/stable/{{ .Arch }}/{{ .Name }}-20.10.12.tgz'

@@ -1,4 +1,5 @@
 require('lazy').setup {
+  { 'fatih/vim-go' },
   { 'junegunn/fzf' }, -- {
   { 'junegunn/fzf.vim' },
   { 'ibhagwan/fzf-lua',
@@ -93,14 +94,18 @@ require('lazy').setup {
     },
     config = function()
       require('nvim-treesitter.configs').setup {
-        yati = {enable = true},
-        highlight = {enable = true},
+        yati = { enable = true },
+        highlight = {
+          enable = true,
+          disable = { "go" },
+        },
+        indent = { enable = true },
         auto_install = true,
         ensure_installed = {
           'bash', 'dart', 'gitignore', 'go', 'gosum', 'gomod', 'hcl',
           'lua', 'javascript', 'json', 'jsonnet', 'make', 'markdown',
           'proto', 'python', 'rego', 'sql', 'terraform', 'typescript',
-          'yaml'
+          'yaml',
         }
       }
     end
@@ -267,7 +272,7 @@ require('lazy').setup {
       }, {
         'lukas-reineke/cmp-under-comparator',
         commit = '6857f10272c3cfe930cece2afa2406e1385bfef8'
-      }, {'golang/vscode-go', tag = "v0.37.1"}
+      },
     }
   },
   {
@@ -454,19 +459,19 @@ require('lazy').setup {
     lazy = true,
     event = {"BufReadPost", "BufAdd", "BufNewFile"}
   },
-  {
-    'SmiteshP/nvim-navic',
-    commit = "7e9d2b2b601149fecdccd11b516acb721e571fe6",
-    dependencies = "neovim/nvim-lspconfig"
-  },
-  {
-    'utilyre/barbecue.nvim',
-    tag = "v0.4.1",
-    dependencies = {"SmiteshP/nvim-navic", "nvim-tree/nvim-web-devicons"},
-    config = function()
-      require("barbecue").setup {theme = 'tokyonight'}
-    end
-  },
+  -- {
+  --   'SmiteshP/nvim-navic',
+  --   commit = "7e9d2b2b601149fecdccd11b516acb721e571fe6",
+  --   dependencies = "neovim/nvim-lspconfig"
+  -- },
+  -- {
+  --   'utilyre/barbecue.nvim',
+  --   tag = "v0.4.1",
+  --   dependencies = {"SmiteshP/nvim-navic", "nvim-tree/nvim-web-devicons"},
+  --   config = function()
+  --     require("barbecue").setup {theme = 'tokyonight'}
+  --   end
+  -- },
   {
     "nvim-neo-tree/neo-tree.nvim",
     commit = '74040b34278910d9b467fd914862e2a9a1ebacaa',
@@ -861,6 +866,7 @@ require('lazy').setup {
       vim.g.ftcolor_plugin_enabled = true
       vim.g.ftcolor_default_color_scheme = 'tokyonight'
       vim.g.ftcolor_color_mappings = {
+        vaffle = 'seoul256',
         lua = 'tokyonight',
         vim = 'leaf',
         go = 'seoul256',

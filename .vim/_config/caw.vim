@@ -1,4 +1,4 @@
-if !g:plugin.installed('caw.vim')
+if !g:plug.installed('caw.vim')
   finish
 endif
 

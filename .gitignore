@@ -1,6 +1,4 @@
-.DS_Store
 *~
-!.config/fish
-.zsh/history/
-.config/antidote/state.json
-.tmux/*
+.tmux/plugins
+.DS_Store
+.zsh/history

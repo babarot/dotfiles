@@ -16,7 +16,6 @@ function! s:vimrc_environment()
     let vimpath = expand('~/.vim')
   endif
   " neovim
-  " let vimpath = expand('~/.local/share/nvim/site')
   let env.path = {
         \ 'vim': vimpath,
         \ }
@@ -452,26 +451,9 @@ tnoremap <silent> <ESC> <C-\><C-n>
 
 call map(sort(split(globpath(&runtimepath, '_config/*.vim'))), {->[execute('exec "source" v:val')]})
 
-command! -nargs=? JQ call s:jq(<f-args>)
-function! s:jq(...)
-  if 0 == a:0
-    let l:arg = "."
-  else
-    let l:arg = a:1
-  endif
-  execute "%! jq \"" . l:arg . "\""
-endfunction
-
 nnoremap <Space>j :History<CR>
 nnoremap <Space>k :Files<CR>
 nnoremap <Space>b :Buffers<CR>
-
-
-command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
-command! -bang -nargs=* GGrep
-      \ call fzf#vim#grep(
-      \   'git grep --line-number -- '.shellescape(<q-args>), 0,
-      \   fzf#vim#with_preview({'dir': systemlist('git rev-parse --show-toplevel')[0]}), <bang>0)
 
 augroup vimrc-check-plug
   autocmd!

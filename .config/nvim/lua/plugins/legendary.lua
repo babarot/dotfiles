@@ -31,8 +31,8 @@ return function()
       { '<leader>h',       '<cmd>lua require("spectre").open_file_search()<CR>',              mode = 'n', description = '[Search] Open search/replace pane for file',    opts = { remap = false, silent = true } },
       { '<leader>H',       '<cmd>lua require("spectre").open()<CR>',                          mode = 'n', description = '[Search] Open search/replace pane for project', opts = { remap = false, silent = true } },
       { '<leader>i',       ':lua vim.lsp.buf.implementation()<CR>',                           mode = 'n', description = '[LSP] Go to implementation',                    opts = { remap = false, silent = true } },
-      { '<leader>dj',       ':lua vim.diagnostic.goto_next()<CR>',                             mode = 'n', description = '[Diagnostic] Go to next',                       opts = { remap = false, silent = true } },
-      { '<leader>dk',       ':lua vim.diagnostic.goto_prev()<CR>',                             mode = 'n', description = '[Diagnostic] Go to previous',                   opts = { remap = false, silent = true } },
+      { '<leader>dj',      ':lua vim.diagnostic.goto_next()<CR>',                             mode = 'n', description = '[Diagnostic] Go to next',                       opts = { remap = false, silent = true } },
+      { '<leader>dk',      ':lua vim.diagnostic.goto_prev()<CR>',                             mode = 'n', description = '[Diagnostic] Go to previous',                   opts = { remap = false, silent = true } },
       { '<leader>l',       ':lua vim.lsp.buf.format { async = true }<CR>',                    mode = 'n', description = '[LSP] Format',                                  opts = { remap = false, silent = true } },
       { '<leader>m',       ':lua vim.lsp.buf.rename()<CR>',                                   mode = 'n', description = '[Refactor] Rename',                             opts = { remap = false, silent = true } },
       { '<leader>m',       ':lua vim.lsp.buf.rename()<CR>',                                   mode = 'v', description = '[Refactor] Rename',                             opts = { remap = false, silent = true } },
@@ -92,9 +92,10 @@ return function()
       { '<A-y>',           ':<C-u>Telescope registers<CR>',                                   mode = 'n', description = '[Register] Show list',                          opts = { remap = false, silent = true } },
       { '<A-;>',           'g%',                                                              mode = 'n', description = '[Motion] Move to paired blacket',               opts = { remap = true, silent = true } },
       { '<A-;>',           'g%',                                                              mode = 'v', description = '[Motion] Move to paired blacket',               opts = { remap = true, silent = true } },
+
       -- Others
-      { 'K',               ':lua vim.lsp.buf.hover()<CR>',                                    mode = 'n', description = '[Lsp] Hover description',                       opts = { remap = false, silent = true } },
-      { '<C-k>',           ':lua vim.lsp.buf.signature_help()<CR>',                           mode = 'n', description = '[Lsp] Show signature help',                     opts = { remap = false, silent = true } },
+      -- { 'K',               ':lua vim.lsp.buf.hover()<CR>',                                    mode = 'n', description = '[Lsp] Hover description',                       opts = { remap = false, silent = true } },
+      -- { '<C-k>',           ':lua vim.lsp.buf.signature_help()<CR>',                           mode = 'n', description = '[Lsp] Show signature help',                     opts = { remap = false, silent = true } },
     },
   }
 end

@@ -1,7 +1,7 @@
 function! s:rm(bang)
   let file = fnamemodify(expand('%'), ':p')
   " https://github.com/b4b4r07/gomi
-  let cmd = "system(printf('%s %s', executable('gomix') ? 'gomi' : 'rm', shellescape(file)))"
+  let cmd = "system(printf('%s %s', executable('gomi') ? 'gomi' : 'rm', shellescape(file)))"
 
   if !filereadable(file)
     echo printf("%s does not exist", file)

@@ -793,9 +793,6 @@ require('lazy').setup({
         },
         numhl = true,
         linehl = false,
-        watch_index = {
-          interval = 1000
-        },
         sign_priority = 6,
         update_debounce = 200,
         status_formatter = nil,
@@ -855,7 +852,7 @@ require('lazy').setup({
     commit = "125d0e892f5fd8f32b57a5a5983d03f1aa611949",
     lazy = true,
     event = { "BufReadPost", "BufAdd", "BufNewFile" },
-    ft = { 'terraform', 'hcl' },
+    ft = { 'terraform', 'hcl' }
   },
 
   -- Color
@@ -870,11 +867,11 @@ require('lazy').setup({
         lua       = 'tokyonight',
         vim       = 'leaf',
         go        = 'seoul256',
-        sh        = 'github_dark',
+        sh        = 'material', -- 'palenight'
         bash      = 'github_dark',
         zsh       = 'github_dark',
         hcl       = 'kyotonight',
-        json      = 'kyotonight',
+        json      = 'kanagawa',
         yaml      = 'kyotonight',
         terraform = 'nordfox',
       }
@@ -915,6 +912,70 @@ require('lazy').setup({
             -- comment = "#60728a",
           },
         },
+      })
+    end,
+  },
+  {
+    'rebelot/kanagawa.nvim',
+    config = function()
+      require('kanagawa').setup({
+        compile = false,
+        undercurl = true,
+        commentStyle = { italic = true },
+        functionStyle = {},
+        keywordStyle = { italic = false },
+        statementStyle = { bold = true },
+        typeStyle = {},
+        terminalColors = true,
+        theme = "wave",
+        background = { dark = "wave", light = "lotus" },
+      })
+    end,
+  },
+  {
+    'marko-cerovac/material.nvim',
+    init = function()
+      -- darker, lighter, oceanic, palenight, deep ocean
+      vim.g.material_style = 'palenight'
+    end,
+    config = function()
+      require('material').setup({
+        contrast = {
+          terminal = false,            -- Enable contrast for the built-in terminal
+          sidebars = false,            -- Enable contrast for sidebar-like windows ( for example Nvim-Tree )
+          floating_windows = false,    -- Enable contrast for floating windows
+          cursor_line = false,         -- Enable darker background for the cursor line
+          non_current_windows = false, -- Enable darker background for non-current windows
+          filetypes = {},              -- Specify which filetypes get the contrasted (darker) background
+        },
+        styles = {
+          comments = { --[[ italic = true ]] },
+          strings = { --[[ bold = true ]] },
+          keywords = { --[[ underline = true ]] },
+          functions = { --[[ bold = true, undercurl = true ]] },
+          variables = {},
+          operators = {},
+          types = {},
+        },
+        plugins = {
+          "dashboard", "gitsigns", "indent-blankline", "lspsaga", "nvim-cmp",
+          "nvim-navic", "nvim-tree", "nvim-web-devicons", "telescope", "which-key",
+        },
+        disable = {
+          colored_cursor = false, -- Disable the colored cursor
+          borders = false,        -- Disable borders between verticaly split windows
+          background = false,     -- Prevent the theme from setting the background (NeoVim then uses your terminal background)
+          term_colors = false,    -- Prevent the theme from setting terminal colors
+          eob_lines = false       -- Hide the end-of-buffer lines
+        },
+        high_visibility = {
+          lighter = false,         -- Enable higher contrast text for lighter style
+          darker = false           -- Enable higher contrast text for darker style
+        },
+        lualine_style = "default", -- Lualine style ( can be 'stealth' or 'default' )
+        async_loading = true,      -- Load parts of the theme asyncronously for faster startup (turned on by default)
+        custom_colors = nil,       -- If you want to everride the default colors, set this to a function
+        custom_highlights = {},    -- Overwrite highlights with your own
       })
     end,
   },

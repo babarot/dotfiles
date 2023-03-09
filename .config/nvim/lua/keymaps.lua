@@ -61,7 +61,8 @@ vim.keymap.set('n', 'B', ':<C-u>keepjumps normal! {<CR>', opt)
 -- Set tabs and windows
 vim.keymap.set('n', 'sp', ':<C-u>split<CR>', opt)
 vim.keymap.set('n', 'vs', ':<C-uv>split<CR>', opt)
-vim.keymap.set('n', 'ss', function()
+vim.keymap.set('n', 'ss',
+  function()
     if vim.fn.winnr('$') == 1 then
       return ':<C-u>vsplit<CR>'
     else

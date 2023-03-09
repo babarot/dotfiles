@@ -30,10 +30,3 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     vim.go.backupext = backup
   end,
 })
-
-vim.api.nvim_create_autocmd({ "ColorScheme", "BufEnter", "BufRead", "InsertEnter" }, {
-  callback = function()
-    if vim.g.colors_name == nil then return end
-    vim.cmd("colorscheme " .. vim.g.colors_name)
-  end,
-})

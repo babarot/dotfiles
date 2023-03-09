@@ -15,23 +15,23 @@ return function()
       end,
     },
     mapping = {
-      ['<C-e>']  = cmp.mapping.abort(),
-      ['<C-b>']  = cmp.mapping.scroll_docs( -4),
-      ['<C-f>']  = cmp.mapping.scroll_docs(4),
-      ['<C-k>']  = cmp.mapping.complete(),
-      ['<C-n>']  = cmp.mapping.select_next_item(),
-      ['<C-p>']  = cmp.mapping.select_prev_item(),
-      ['<Down>'] = cmp.mapping.select_next_item(),
-      ['<Up>']   = cmp.mapping.select_prev_item(),
-      ['<CR>']   = cmp.mapping.confirm({ select = true }),
-      ['<Tab>']  = vim.schedule_wrap(function(fallback)
+          ['<C-e>'] = cmp.mapping.abort(),
+          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-f>'] = cmp.mapping.scroll_docs(4),
+          ['<C-k>'] = cmp.mapping.complete(),
+          ['<C-n>'] = cmp.mapping.select_next_item(),
+          ['<C-p>'] = cmp.mapping.select_prev_item(),
+          ['<Down>'] = cmp.mapping.select_next_item(),
+          ['<Up>'] = cmp.mapping.select_prev_item(),
+          ['<CR>'] = cmp.mapping.confirm({ select = true }),
+          ['<Tab>'] = vim.schedule_wrap(function(fallback)
         if cmp.visible() and has_words_before() then
           cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
         else
           fallback()
         end
       end),
-      ['<C-g>']  = cmp.mapping(function(fallback)
+          ['<C-g>'] = cmp.mapping(function(fallback)
         vim.api.nvim_feedkeys(vim.fn['copilot#Accept'](vim.api.nvim_replace_termcodes('<Tab>', true, true, true)), 'n',
           true)
       end)
@@ -70,8 +70,8 @@ return function()
   cmp.setup.cmdline(':', {
     -- mapping = cmp.mapping.preset.cmdline(),
     mapping = cmp.mapping.preset.cmdline({
-      ['<C-n>'] = cmp.mapping.select_next_item(),
-      ['<C-p>'] = cmp.mapping.select_prev_item(),
+          ['<C-n>'] = cmp.mapping.select_next_item(),
+          ['<C-p>'] = cmp.mapping.select_prev_item(),
     }),
     sources = cmp.config.sources({
       { name = 'path' }

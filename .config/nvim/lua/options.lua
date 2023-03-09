@@ -1,6 +1,3 @@
---
--- options
---
 vim.opt.encoding       = "UTF-8"
 vim.opt.cursorline     = true
 vim.opt.showmode       = true
@@ -16,7 +13,7 @@ vim.opt.hlsearch       = true
 vim.opt.smartcase      = true
 vim.opt.ignorecase     = true
 vim.opt.autoindent     = true
--- vim.opt.autochdir      = true
+vim.opt.autochdir      = false
 vim.opt.smartindent    = true
 vim.opt.showmatch      = true
 vim.opt.laststatus     = 3

@@ -226,8 +226,11 @@ require('lazy').setup({
       { 'nvim-treesitter/nvim-treesitter' }
     },
     init = function()
-      -- vim.keymap.set('n', 'K',  '<cmd>Lspsaga hover_doc<CR>')
+      vim.keymap.set('n', '<C-k>', '<cmd>Lspsaga hover_doc<CR>')
       vim.keymap.set('n', 'K', '<cmd>Lspsaga lsp_finder<CR>')
+      vim.keymap.set('n', '<space>lf', '<cmd>Lspsaga lsp_finder<CR>')
+      vim.keymap.set('n', '<space>lo', '<cmd>Lspsaga outline<CR>')
+      vim.keymap.set('n', '<space>lp', '<cmd>Lspsaga peek_defenition<CR>')
     end,
     config = function()
       require('lspsaga').setup({
@@ -487,6 +490,7 @@ require('lazy').setup({
     commit = '74040b34278910d9b467fd914862e2a9a1ebacaa',
     lazy = true,
     cmd = {
+      'Neotree',
       'NeoTreeFocus', 'NeoTreeFocusToggle', 'NeoTreeFloat',
       'NeoTreeFloatToggle', 'NeoTreeShow', 'NeoTreeShowToggle',
       'NeoTreeShowInSplit', 'NeoTreeShowInSplitToggle', 'NeoTreeReveal',
@@ -499,8 +503,14 @@ require('lazy').setup({
       'MunifTanjim/nui.nvim',
     },
     init = function()
-      vim.keymap.set('n', '<space>k', ':<C-u>NeoTreeFocusToggle<CR>', { noremap = true, silent = true })
-      vim.keymap.set('n', '<space><C-k>', ':<C-u>NeoTree dir=%:p:h<CR>')
+      vim.keymap.set('n', '<space>k',
+        function()
+          -- return parent dir but git root if inside git project
+          local dir = vim.fn.fnameescape(vim.fn.fnamemodify(
+            vim.fn.finddir('.git', vim.fn.escape(vim.fn.expand('%:p:h'), ' ') .. ';'), ':h'))
+          return string.format(':<C-u>Neotree focus toggle dir=%s<CR>', dir)
+        end,
+        { noremap = true, silent = true, expr = true })
     end,
     config = function()
       local function gomi(state)
@@ -556,7 +566,11 @@ require('lazy').setup({
             },
           },
         },
+        buffers = {
+          follow_current_file = true,
+        },
         event_handlers = {
+          -- automaticall close neotree after opened file
           {
             event = "file_opened",
             handler = function()
@@ -564,32 +578,6 @@ require('lazy').setup({
             end
           },
         },
-        neogit = function()
-          vim.api.nvim_cmd({
-            cmd = 'Neotree',
-            args = {
-              'source=git_status',
-              'reveal=true',
-              'position=float',
-              'action=focus',
-              'toggle=true',
-            },
-          }, {})
-        end,
-        cwd_changed = function()
-          vim.api.nvim_cmd({
-            cmd = 'Neotree',
-            args = {
-              'dir=' .. vim.fn.getcwd(),
-            },
-          }, {})
-          vim.api.nvim_cmd({
-            cmd = 'Neotree',
-            args = {
-              'close',
-            },
-          }, {})
-        end,
       }
     end
   },

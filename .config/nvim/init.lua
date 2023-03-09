@@ -11,5 +11,19 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require('main')
+vim.g.mapleader           = ','
+vim.g.loaded_gzip         = 1
+vim.g.loaded_man          = 1
+vim.g.loaded_matchit      = 1
+vim.g.loaded_matchparen   = 1
+vim.g.loaded_shada_plugin = 1
+vim.g.loaded_tarPlugin    = 1
+vim.g.loaded_tar          = 1
+vim.g.loaded_zipPlugin    = 1
+vim.g.loaded_zip          = 1
+vim.g.loaded_netrwPlugin  = 1
+
+require('autocmds')
+require('keymaps')
+require('options')
 require('plugins')

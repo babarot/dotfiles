@@ -180,3 +180,7 @@ run_tmux() {
 }
 zle -N run_tmux
 bindkey '^T' run_tmux
+
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey "^O" edit-command-line

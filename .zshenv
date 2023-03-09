@@ -8,7 +8,7 @@ path=( \
     "$path[@]" \
 )
 
-# NOTE: set fpath before compinit
+# set fpath before compinit
 typeset -gx -U fpath
 fpath=( \
     ~/.zsh/Completion(N-/) \
@@ -17,3 +17,5 @@ fpath=( \
     /usr/local/share/zsh/site-functions(N-/) \
     $fpath \
 )
+
+. "$HOME/.cargo/env"

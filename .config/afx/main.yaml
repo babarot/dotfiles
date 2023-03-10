@@ -1,9 +1,0 @@
-main:
-  shell: zsh
-  filter_command: fzf --ansi --no-preview --height=50% --reverse
-  # params:
-  # - os: darwin
-  #   files:
-  #   - hoge.yaml
-  # - os: linux
-  #   files:

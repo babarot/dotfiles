@@ -164,7 +164,6 @@ github:
 #   plugin:
 #     sources:
 #     - auto-fu.zsh
-
 - name: olets/zsh-abbr
   description: |
     The zsh manager for auto-expanding abbreviations,

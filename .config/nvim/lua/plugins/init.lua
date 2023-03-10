@@ -476,6 +476,12 @@ require('lazy').setup({
     tag = 'v3.0.3',
     lazy = true,
     event = { "BufReadPost", "BufAdd", "BufNewFile" },
+    config = function()
+      require('scrollview').setup({
+        excluded_filetypes = { 'neo-tree' },
+        current_only = true,
+      })
+    end,
   },
   -- {
   --   'utilyre/barbecue.nvim',
@@ -588,7 +594,7 @@ require('lazy').setup({
     cmd = { 'Bdelete' },
     config = function()
       vim.keymap.set('n', 'q', ':<C-u>Bdelete<CR>')
-    end
+    end,
   },
   {
     'voldikss/vim-floaterm',
@@ -598,7 +604,7 @@ require('lazy').setup({
     config = function()
       vim.g.floaterm_height = 0.9
       vim.g.floaterm_width = 0.9
-    end
+    end,
   },
   {
     'mrjones2014/legendary.nvim',
@@ -613,7 +619,7 @@ require('lazy').setup({
         lazy = true,
         event = 'VeryLazy'
       }
-    }
+    },
   },
   {
     'folke/which-key.nvim',
@@ -626,7 +632,7 @@ require('lazy').setup({
       require('which-key').setup {
         registers = false,
       }
-    end
+    end,
   },
 
   -- Enhanced motions
@@ -808,11 +814,11 @@ require('lazy').setup({
       'neovim/nvim-lspconfig',
       'nvim-treesitter/nvim-treesitter',
     },
+    event = { 'CmdlineEnter' },
+    ft = { 'go', 'gomod' },
     config = function()
       require('go').setup()
     end,
-    event = { 'CmdlineEnter' },
-    ft = { 'go', 'gomod' },
   },
   {
     'ekickx/clipboard-image.nvim',
@@ -870,12 +876,10 @@ require('lazy').setup({
     tag = 'v1.3.0',
     config = function()
       require 'tokyonight'.setup {
-        -- Disable italic because Windows Terminal does not support it.
         on_highlights = function(highlights, colors)
           highlights['@keyword'].style.italic = false
-          highlights['Comment'].style.italic = false
+          highlights['Comment'].style.italic = true
           highlights['DashboardFooter'].italic = false
-          highlights['Keyword'].style.italic = false
         end
       }
     end
@@ -891,14 +895,6 @@ require('lazy').setup({
             keywords = "bold",
             types = "italic,bold",
           }
-        },
-        palettes = {
-          nordfox = {
-            -- bg1 = "#2e3440",
-            -- sel0 = "#3e4a5b", -- Popup bg, visual selection bg
-            -- sel1 = "#4f6074", -- Popup sel bg, search bg
-            -- comment = "#60728a",
-          },
         },
       })
     end,
@@ -949,21 +945,24 @@ require('lazy').setup({
           "dashboard", "gitsigns", "indent-blankline", "lspsaga", "nvim-cmp",
           "nvim-navic", "nvim-tree", "nvim-web-devicons", "telescope", "which-key",
         },
-        disable = {
-          colored_cursor = false, -- Disable the colored cursor
-          borders = false,        -- Disable borders between verticaly split windows
-          background = false,     -- Prevent the theme from setting the background (NeoVim then uses your terminal background)
-          term_colors = false,    -- Prevent the theme from setting terminal colors
-          eob_lines = false       -- Hide the end-of-buffer lines
+      })
+    end,
+  },
+  {
+    'gbprod/nord.nvim',
+    config = function()
+      require('nord').setup({
+        transparent = false,      -- Enable this to disable setting the background color
+        terminal_colors = true,   -- Configure the colors used when opening a `:terminal` in Neovim
+        diff = { mode = "bg" },   -- enables/disables colorful backgrounds when used in diff mode. values : [bg|fg]
+        borders = true,           -- Enable the border between verticaly split windows visible
+        errors = { mode = "bg" }, -- Display mode for errors and diagnostics
+        styles = {
+          comments = { italic = true },
+          keywords = {},
+          functions = {},
+          variables = {},
         },
-        high_visibility = {
-          lighter = false,         -- Enable higher contrast text for lighter style
-          darker = false           -- Enable higher contrast text for darker style
-        },
-        lualine_style = "default", -- Lualine style ( can be 'stealth' or 'default' )
-        async_loading = true,      -- Load parts of the theme asyncronously for faster startup (turned on by default)
-        custom_colors = nil,       -- If you want to everride the default colors, set this to a function
-        custom_highlights = {},    -- Overwrite highlights with your own
       })
     end,
   },
@@ -978,38 +977,5 @@ require('lazy').setup({
   { 'ellisonleao/gruvbox.nvim' }, -- morhetz/gruvbox for neovim
   { 'maxmx03/solarized.nvim' },
   -- { 'nordtheme/vim' },
-  -- {
-  --   'gbprod/nord.nvim',
-  --   config = function()
-  --     require('nord').setup({
-  --       transparent = false,      -- Enable this to disable setting the background color
-  --       terminal_colors = true,   -- Configure the colors used when opening a `:terminal` in Neovim
-  --       diff = { mode = "bg" },   -- enables/disables colorful backgrounds when used in diff mode. values : [bg|fg]
-  --       borders = true,           -- Enable the border between verticaly split windows visible
-  --       errors = { mode = "bg" }, -- Display mode for errors and diagnostics
-  --       styles = {
-  --         comments = { italic = true },
-  --         keywords = {},
-  --         functions = {},
-  --         variables = {},
-  --         -- To customize lualine/bufferline
-  --         bufferline = {
-  --           current = {},
-  --           modified = { italic = true },
-  --         },
-  --       },
-  --     })
-  --   end,
-  -- },
-  -- {
-  --   'shaunsingh/nord.nvim',
-  --   config = function()
-  --     vim.g.nord_contrast = true
-  --     vim.g.nord_borders = true
-  --     vim.g.nord_disable_background = false
-  --     vim.g.nord_italic = false
-  --     vim.g.nord_uniform_diff_background = true
-  --     vim.g.nord_bold = false
-  --   end,
-  -- },
+  -- { 'shaunsingh/nord.nvim' },
 }, opt)

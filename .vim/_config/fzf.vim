@@ -4,7 +4,7 @@ endif
 
 let g:fzf_preview_window = ['up,70%', 'ctrl-/']
 
-nnoremap <Space>j :History<CR>
+" nnoremap <Space>j :History<CR>
 nnoremap <Space>k :Files<CR>
 nnoremap <Space>b :Buffers<CR>
 

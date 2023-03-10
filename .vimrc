@@ -381,13 +381,15 @@ nnoremap sk <C-w>k
 nnoremap sl <C-w>l
 nnoremap sh <C-w>h
 
-" todo
-if exists('s:MRU_File')
-endif
-
 augroup vimrc-check-plugins
   autocmd!
   autocmd VimEnter * if !argc() | call g:pkg.check_installation() | endif
 augroup END
+
+let g:MRU_Auto_Close = 1
+let g:MRU_Window_Height = 30
+let g:MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*'
+let g:MRU_Max_Entries = 1000
+nnoremap <silent> [Space]j :<C-u>MRU<CR>
 
 call map(sort(split(globpath(&runtimepath, '_config/*.vim'))), {->[execute('exec "source" v:val')]})

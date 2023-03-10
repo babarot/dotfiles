@@ -1,4 +1,6 @@
-"UsePlugin 'anzu.vim'
+if !g:plug.installed('anzu.vim')
+  finish
+endif
 
 nmap n <Plug>(anzu-n)
 nmap N <Plug>(anzu-N)

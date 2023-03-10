@@ -1,4 +1,6 @@
-
+if !g:plug.installed('lightline.vim')
+  finish
+endif
 
 let g:lightline = {
       \ 'colorscheme': 'wombat',
@@ -15,18 +17,18 @@ let g:lightline = {
 let g:lightline = {
       \ 'colorscheme': 'wombat',
       \ 'active': {
-        \   'left': [ [ 'mode', 'paste' ],
-        \             [ 'cocstatus', 'gitbranch', 'readonly', 'filename', 'modified' ] ],
-        \   'right': [ [ 'lineinfo' ],
-        \              [ 'percent' ],
-        \              [ 'filetype' ] ]
-        \ },
-        \ 'component_function': {
-          \   'gitbranch': 'fugitive#head',
-          \   'filename': 'LightlineFilename',
-          \   'cocstatus': 'StatusDiagnostic'
-          \ },
-          \ }
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'cocstatus', 'gitbranch', 'readonly', 'filename', 'modified' ] ],
+      \   'right': [ [ 'lineinfo' ],
+      \              [ 'percent' ],
+      \              [ 'filetype' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'fugitive#head',
+      \   'filename': 'LightlineFilename',
+      \   'cocstatus': 'StatusDiagnostic'
+      \ },
+      \ }
 
 function! StatusDiagnostic() abort
   let info = get(b:, 'coc_diagnostic_info', {})
@@ -40,4 +42,3 @@ function! StatusDiagnostic() abort
   endif
   return join(msgs, ' '). ' ' . get(g:, 'coc_status', '')
 endfunction
-

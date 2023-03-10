@@ -1,3 +1,7 @@
+if !g:plug.installed('ftcolor.vim')
+  finish
+endif
+
 let g:ftcolor_plugin_enabled = 1
 let g:ftcolor_redraw = 1
 let g:ftcolor_default_color_scheme = 'seoul256'

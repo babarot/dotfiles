@@ -1,21 +1,12 @@
+if !g:plug.installed('fzf.vim')
+  finish
+endif
 
 let g:fzf_preview_window = ['up,70%', 'ctrl-/']
 
-" command! -bang -nargs=? FZFMru call fzf_mru#actions#mru(<q-args>,
-"      \{
-"      \'window': {'width': 0.9, 'height': 0.8},
-"      \'options': [
-"        \'--preview', 'cat {}',
-"        \'--preview-window', 'up:60%',
-"        \'--bind', 'ctrl-_:toggle-preview'
-"        \]
-"        \}
-"        \)
-
 nnoremap <Space>j :History<CR>
 nnoremap <Space>k :Files<CR>
-"nnoremap <Space>j :FZFMru<CR>
-"nnoremap <Space>j :History<CR>
+nnoremap <Space>b :Buffers<CR>
 
 function! RipgrepFzf(query, fullscreen)
   let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'

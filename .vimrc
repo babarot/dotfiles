@@ -47,17 +47,9 @@ function! g:plug.check_installation()
 
   if len(list) > 0
     let unplugged = map(list, 'substitute(v:val, "^.*github\.com/\\(.*/.*\\)\.git$", "\\1", "g")')
-    " Ask whether installing plugs like NeoBundle
     echomsg 'Not installed plugs: ' . string(unplugged)
     if confirm('Install plugs now?', "yes\nNo", 2) == 1
       PlugInstall
-      " Close window for vim-plug
-      "silent! close
-      "" Restart vim
-      "if !g:env.is_gui
-      "     silent! !vim
-      "     quit!
-      "endif
     endif
   endif
 endfunction
@@ -71,7 +63,6 @@ if g:plug.ready()
   Plug 'AndrewRadev/gapply.vim'
   Plug 'Dkendal/fzy-vim'
   Plug 'aliou/bats.vim'
-  Plug 'b4b4r07/mru.vim'
   Plug 'b4b4r07/vim-ansible-vault'
   Plug 'b4b4r07/vim-hcl'
   Plug 'b4b4r07/vim-shellutils'
@@ -120,40 +111,8 @@ if g:plug.ready()
   Plug 'nightsense/stellarized'
   Plug 'tomasr/molokai'
   Plug 'w0ng/vim-hybrid'
-  Plug 'whatyouhide/vim-gotham'
   Plug 'yuttie/hydrangea-vim'
-  Plug 'rhysd/wallaby.vim'
-  Plug 'rhysd/vim-color-spring-night'
-
-  Plug 'nvim-lua/plenary.nvim'
-  Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.1' }
   Plug 'caglartoklu/ftcolor.vim'
-
-
-  " Add plugins to &runtimepath
-  Plug 'neovim/nvim-lspconfig'
-  Plug 'hrsh7th/cmp-nvim-lsp'
-  Plug 'hrsh7th/cmp-buffer'
-  Plug 'hrsh7th/cmp-path'
-  Plug 'hrsh7th/cmp-cmdline'
-  Plug 'hrsh7th/nvim-cmp'
-  Plug 'hrsh7th/cmp-vsnip'
-  Plug 'hrsh7th/vim-vsnip'
-  Plug 'L3MON4D3/LuaSnip'
-  Plug 'saadparwaiz1/cmp_luasnip'
-  Plug 'williamboman/mason.nvim'
-  Plug 'williamboman/mason-lspconfig.nvim'
-  Plug 'neovim/nvim-lspconfig'
-  Plug 'quangnguyen30192/cmp-nvim-ultisnips'
-  Plug 'dcampos/nvim-snippy'
-  Plug 'dcampos/cmp-snippy'
-
-  Plug 'nvim-tree/nvim-web-devicons'
-  Plug 'stevearc/dressing.nvim'
-  Plug 'nvim-telescope/telescope-ui-select.nvim'
-  Plug 'nvim-lua/popup.nvim'
-  Plug 'nvim-lua/plenary.nvim'
-  Plug 'MunifTanjim/nui.nvim'
 
   call plug#end()
 endif
@@ -169,14 +128,9 @@ if has('reltime')
   augroup END
 endif
 
-if g:plug.installed('caw.vim')
-  vmap K <Plug>(caw:i:toggle)
-endif
-
 if !g:plug.ready()
   function! g:plug.init()
     let ret = system(printf("curl -fLo %s --create-dirs %s", self.plug, self.url))
-    "call system(printf("git clone %s", self.github))
     if v:shell_error
       return Error('g:plug.init: error occured')
     endif
@@ -194,19 +148,6 @@ if !g:plug.ready()
         \ | echo "You should do ':PlugInit' at first!"
         \ | echohl None
 endif
-
-let g:ftcolor_plugin_enabled = 1
-let g:ftcolor_redraw = 1
-let g:ftcolor_default_color_scheme = 'seoul256'
-let g:ftcolor_color_mappings = {
-      \ 'vim': 'Tomorrow-Night',
-      \ 'hcl':  'gruvbox',
-      \ 'go':   'seoul256',
-      \ 'yaml': 'seoul256',
-      \ 'bash': 'despacio',
-      \ 'zsh':  'despacio',
-      \ 'sh':   'seoul256',
-      \ }
 
 set number
 set showtabline=2
@@ -302,12 +243,6 @@ if has('clipboard')
   set clipboard=unnamed
 endif
 
-" Use backslash
-""if IsMac()
-""  noremap ¥ \
-""  noremap \ ¥
-""endif
-
 " Define mapleader
 let g:mapleader = ','
 let g:maplocalleader = ','
@@ -387,7 +322,7 @@ noremap gf gF
 noremap gF gf
 vnoremap v $h
 nnoremap Y y$
-noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ?  'zt' : (winline() == 1)? 'zb' : 'zz'
+noremap <expr> zz (winline() == (winheight(0)+1)/ 2) ?  'zt' : (winline() == 1) ? 'zb' : 'zz'
 " Jump a next blank line
 nnoremap <silent>W :<C-u>keepjumps normal! }<CR>
 nnoremap <silent>B :<C-u>keepjumps normal! {<CR>
@@ -408,13 +343,11 @@ nnoremap <silent> tm :<C-u>call <SID>move_to_tab()<CR>
 function! s:move_to_tab()
   tab split
   tabprevious
-
   if winnr('$') > 1
     close
   elseif bufnr('$') > 1
     buffer #
   endif
-
   tabnext
 endfunction
 
@@ -447,15 +380,13 @@ nnoremap sk <C-w>k
 nnoremap sl <C-w>l
 nnoremap sh <C-w>h
 
-tnoremap <silent> <ESC> <C-\><C-n>
-
-call map(sort(split(globpath(&runtimepath, '_config/*.vim'))), {->[execute('exec "source" v:val')]})
-
-nnoremap <Space>j :History<CR>
-nnoremap <Space>k :Files<CR>
-nnoremap <Space>b :Buffers<CR>
+" todo
+if exists('s:MRU_File')
+endif
 
 augroup vimrc-check-plug
   autocmd!
   autocmd VimEnter * if !argc() | call g:plug.check_installation() | endif
 augroup END
+
+call map(sort(split(globpath(&runtimepath, '_config/*.vim'))), {->[execute('exec "source" v:val')]})

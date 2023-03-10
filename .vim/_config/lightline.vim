@@ -1,4 +1,4 @@
-if !g:plug.installed('lightline.vim')
+if !g:pkg.installed('lightline.vim')
   finish
 endif
 
@@ -12,7 +12,6 @@ let g:lightline = {
       \   'gitbranch': 'FugitiveHead'
       \ },
       \ }
-
 
 let g:lightline = {
       \ 'colorscheme': 'wombat',

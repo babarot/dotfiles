@@ -9,7 +9,7 @@ function! s:vimrc_environment()
   let env.is_linux = !env.is_mac && has('unix')
   let env.is_starting = has('vim_starting')
   let env.is_gui      = has('gui_running')
-  " vim
+
   if env.is_windows
     let vimpath = expand('~/vimfiles')
   else
@@ -23,23 +23,23 @@ function! s:vimrc_environment()
 endfunction
 
 let g:env = s:vimrc_environment()
-let g:plug = {
+let g:pkg = {
       \ "plug":   expand(g:env.path.vim) . "/autoload/plug.vim",
       \ "url":    "https://raw.github.com/junegunn/vim-plug/master/plug.vim",
       \ "github": "https://github.com/junegunn/vim-plug",
       \ }
 
-function! g:plug.installed(name)
-  return has_key(self.plugs, a:name) ? isdirectory(self.plugs[a:name].dir) : 0
+function! g:pkg.installed(name)
+  return has_key(self.plugins, a:name) ? isdirectory(self.plugins[a:name].dir) : 0
 endfunction
 
-function! g:plug.check_installation()
-  if empty(self.plugs)
+function! g:pkg.check_installation()
+  if empty(self.plugins)
     return
   endif
 
   let list = []
-  for [name, spec] in items(self.plugs)
+  for [name, spec] in items(self.plugins)
     if !isdirectory(spec.dir)
       call add(list, spec.uri)
     endif
@@ -47,18 +47,18 @@ function! g:plug.check_installation()
 
   if len(list) > 0
     let unplugged = map(list, 'substitute(v:val, "^.*github\.com/\\(.*/.*\\)\.git$", "\\1", "g")')
-    echomsg 'Not installed plugs: ' . string(unplugged)
-    if confirm('Install plugs now?', "yes\nNo", 2) == 1
+    echomsg 'Not installed plugins: ' . string(unplugged)
+    if confirm('Install plugins now?', "yes\nNo", 2) == 1
       PlugInstall
     endif
   endif
 endfunction
 
-function! g:plug.ready()
+function! g:pkg.ready()
   return filereadable(self.plug)
 endfunction
 
-if g:plug.ready()
+if g:pkg.ready()
   call plug#begin()
   Plug 'AndrewRadev/gapply.vim'
   Plug 'Dkendal/fzy-vim'
@@ -117,7 +117,8 @@ if g:plug.ready()
   call plug#end()
 endif
 
-let g:plug.plugs = get(g:, 'plugs', {})
+" g:plugs is set by vim-plug
+let g:pkg.plugins = get(g:, 'plugs', {})
 
 if has('reltime')
   let g:startuptime = reltime()
@@ -128,11 +129,11 @@ if has('reltime')
   augroup END
 endif
 
-if !g:plug.ready()
-  function! g:plug.init()
+if !g:pkg.ready()
+  function! g:pkg.init()
     let ret = system(printf("curl -fLo %s --create-dirs %s", self.plug, self.url))
     if v:shell_error
-      return Error('g:plug.init: error occured')
+      return Error('g:pkg.init: error occured')
     endif
 
     " Restart vim
@@ -141,7 +142,7 @@ if !g:plug.ready()
       quit!
     endif
   endfunction
-  command! PlugInit call g:plug.init()
+  command! PlugInit call g:pkg.init()
 
   autocmd! VimEnter * redraw
         \ | echohl WarningMsg
@@ -384,9 +385,9 @@ nnoremap sh <C-w>h
 if exists('s:MRU_File')
 endif
 
-augroup vimrc-check-plug
+augroup vimrc-check-plugins
   autocmd!
-  autocmd VimEnter * if !argc() | call g:plug.check_installation() | endif
+  autocmd VimEnter * if !argc() | call g:pkg.check_installation() | endif
 augroup END
 
 call map(sort(split(globpath(&runtimepath, '_config/*.vim'))), {->[execute('exec "source" v:val')]})

@@ -332,7 +332,7 @@ github:
     alias:
       l: exa --group-directories-first -a -1 -F --git-ignore
       lt: exa --group-directories-first -T --git-ignore --level 10
-      lta: exa --group-directories-first -a -T --git-ignore --level 10
+      lta: exa --group-directories-first -a -T --git-ignore --level 10 --ignore-glob .git
       la: exa --group-directories-first -a --header --git
       ll: exa --group-directories-first -l --header --git
       lla: exa --group-directories-first -la --header --git

@@ -1,4 +1,4 @@
-if !g:plug.installed('fzf.vim')
+if !g:pkg.installed('fzf.vim')
   finish
 endif
 

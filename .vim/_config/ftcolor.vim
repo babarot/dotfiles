@@ -1,4 +1,4 @@
-if !g:plug.installed('ftcolor.vim')
+if !g:pkg.installed('ftcolor.vim')
   finish
 endif
 

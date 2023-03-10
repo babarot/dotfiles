@@ -30,8 +30,17 @@ require('lazy').setup({
     config = function()
       require('nvim-treesitter.configs').setup {
         highlight = { enable = true },
-        indent = { enable = true },
-        yati = { enable = true },
+        yati = {
+          enable = true,
+          default_lazy = true,
+          --   "auto": fallback to vim auto indent
+          --   "asis": use current indent as-is
+          --   "cindent": see `:h cindent()`
+          default_fallback = "auto"
+        },
+        indent = {
+          enable = false -- disable builtin indent module to use yati
+        },
         auto_install = true,
         ensure_installed = {
           'bash', 'dart', 'gitignore', 'go', 'gosum', 'gomod', 'hcl',

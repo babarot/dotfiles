@@ -199,7 +199,7 @@ github:
   repo: lazygit
   release:
     name: lazygit
-    tag: v0.34
+    tag: v0.37.0
     asset:
       filename: '{{ .Release.Name }}_{{ replace .Release.Tag "v" "" }}_{{ .OS }}_{{ .Arch }}.tar.gz'
       replacements:
@@ -529,7 +529,7 @@ github:
   repo: fd
   release:
     name: fd
-    tag: v7.3.0
+    tag: v8.6.0
   command:
     link:
     - from: '**/fd'

@@ -396,7 +396,7 @@ github:
 #   repo: fzf-bin
 #   release:
 #     name: fzf
-#     tag: 0.23.0
+#     tag: 0.24.0
 #   command:
 #     link:
 #     - from: '**/fzf'

@@ -18,4 +18,4 @@ fpath=( \
     $fpath \
 )
 
-. "$HOME/.cargo/env"
+# . "$HOME/.cargo/env"

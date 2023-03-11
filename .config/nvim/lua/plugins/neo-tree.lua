@@ -42,7 +42,7 @@ return function()
     },
     filesystem = {
       follow_current_file = true,
-      hijack_netrw_behavior = 'open_default', -- netrw disabled, opening a directory opens neo-tree
+      -- hijack_netrw_behavior = 'open_default', -- netrw disabled, opening a directory opens neo-tree
       filtered_items = {
         visible = true,
         hide_dotfiles = false,

@@ -1,11 +1,11 @@
 http:
-- name: gcping
-  description: Like gcping.com but a command line tool
-  url: 'https://storage.googleapis.com/gcping-release/{{ .Name }}_{{ .OS }}_{{ .Arch }}_latest'
-  command:
-    link:
-    - from: gcping_*
-      to: gcping
+# - name: gcping
+#   description: Like gcping.com but a command line tool
+#   url: 'https://storage.googleapis.com/gcping-release/{{ .Name }}_{{ .OS }}_{{ .Arch }}_latest'
+#   command:
+#     link:
+#     - from: gcping_*
+#       to: gcping
 - name: google-cloud-sdk
   description: |
     https://cloud.google.com/sdk/docs/install

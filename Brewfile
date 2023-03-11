@@ -16,7 +16,7 @@ brew "kustomize"
 brew "libidn2"
 brew "lua-language-server"
 brew "luarocks"
-brew "mas"
+brew "mas" if OS.mac?
 brew "terraform"
 brew "tmux"
 brew "wget"

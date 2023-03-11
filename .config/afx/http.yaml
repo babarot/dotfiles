@@ -15,7 +15,7 @@ http:
     build:
       steps:
       - google-cloud-sdk/bin/gcloud components install --quiet kubectl
-      - google-cloud-sdk/bin/install.sh --quiet
+      - google-cloud-sdk/install.sh --quiet
     link:
     - from: google-cloud-sdk/bin/gcloud
       to: gcloud

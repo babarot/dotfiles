@@ -1,0 +1,21 @@
+
+
+# 50-character subject line:
+# - <type>[(optional scope)]: <subject>
+#
+# 72-character wrapped longer description. This should answer:
+# - Why was this change necessary?
+# - How does it address the problem?
+# - Are there any side effects?
+
+# type
+#   fix, feat, docs, style, refactor, perf, test, build, ci, chore, revert, wip
+
+# optional scope
+#   init, security, deps, config, i18n, ...
+
+# --------------------
+# Conventional Commits
+# A specification for adding human and machine readable meaning to commit messages
+# Ref: https://www.conventionalcommits.org
+# --------------------

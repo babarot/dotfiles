@@ -277,38 +277,8 @@ require('lazy').setup({
     dependencies = { 'nvim-lua/popup.nvim', 'nvim-lua/plenary.nvim' },
     init = function()
       vim.keymap.set('n', '<space>j', '<Cmd>Telescope oldfiles<CR>')
-      -- vim.keymap.set('n', '<space>f', function() require('fzf-lua').files({ cwd="%:p:h" }) end)
     end,
-    config = function()
-      local actions = require('telescope.actions')
-      local telescope = require('telescope')
-      telescope.setup {
-        defaults = {
-          initial_mode = 'normal',
-          layout_strategy = 'horizontal',
-          layout_config = { horizontal = { width = 0.8 } },
-          mappings = {
-            i = { ['<esc>'] = actions.close,['<C-u>'] = false },
-            n = { ['q'] = actions.close,['<C-u>'] = false },
-          }
-        },
-        extensions = {
-          repo = {
-            list = {
-              fd_opts = { '--no-ignore-vcs' },
-              search_dirs = { '~/src' }
-            }
-          }
-        },
-        pickers = {
-          live_grep = {
-            additional_args = function()
-              return { '--hidden' }
-            end
-          },
-        },
-      }
-    end
+    config = require('plugins.telescope'),
   },
   {
     'cljoly/telescope-repo.nvim',
@@ -834,6 +804,16 @@ require('lazy').setup({
           functions = {},
           variables = {},
         },
+      })
+    end,
+  },
+  {
+    'svrana/neosolarized.nvim',
+    dependencies = { 'tjdevries/colorbuddy.nvim' },
+    config = function()
+      require('neosolarized').setup({
+        comment_italics = true,
+        background_set = true,
       })
     end,
   },

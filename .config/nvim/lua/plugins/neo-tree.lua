@@ -1,12 +1,12 @@
 return function()
   local function gomi(state)
-    local inputs = require "neo-tree.ui.inputs"
+    local inputs = require 'neo-tree.ui.inputs'
     local path = state.tree:get_node().path
     local msg = string.format("Are you sure you want to delete as gomi? '%s'", vim.fn.fnamemodify(path, ':t'))
     inputs.confirm(msg, function(confirmed)
       if not confirmed then return end
-      vim.fn.system { "gomi", vim.fn.fnameescape(path) }
-      require("neo-tree.sources.manager").refresh(state.name)
+      vim.fn.system { 'gomi', vim.fn.fnameescape(path) }
+      require('neo-tree.sources.manager').refresh(state.name)
     end)
   end
 

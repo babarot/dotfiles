@@ -29,3 +29,21 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     vim.go.backupext = backup
   end,
 })
+
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = { '*.go' },
+  callback = function()
+    require('go.format').goimport()
+  end,
+})
+
+vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
+  pattern = { '*.go' },
+  callback = function()
+    vim.opt.autoindent = true
+    vim.opt.expandtab = false
+    vim.opt.shiftwidth = 4
+    vim.opt.softtabstop = 4
+    vim.opt.tabstop = 4
+  end
+})

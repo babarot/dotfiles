@@ -129,7 +129,31 @@ require('lazy').setup({
     event = { 'VimEnter' },
     config = function()
       -- startify, theta, dashboard
-      require 'alpha'.setup(require('alpha.themes.theta').config)
+      -- require 'alpha'.setup(require('alpha.themes.theta').config)
+      local alpha = require('alpha')
+      local theme = require('alpha.themes.theta')
+      local dashboard = require("alpha.themes.dashboard")
+      theme.header.val = {
+        [[ ███╗   ██╗ ███████╗ ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗]],
+        [[ ████╗  ██║ ██╔════╝██╔═══██╗ ██║   ██║ ██║ ████╗ ████║]],
+        [[ ██╔██╗ ██║ █████╗  ██║   ██║ ██║   ██║ ██║ ██╔████╔██║]],
+        [[ ██║╚██╗██║ ██╔══╝  ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║]],
+        [[ ██║ ╚████║ ███████╗╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║]],
+        [[ ╚═╝  ╚═══╝ ╚══════╝ ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝]]
+      }
+      theme.buttons.val = {
+        { type = "text",    val = "Quick links", opts = { hl = "SpecialComment", position = "center" } },
+        { type = "padding", val = 1 },
+        dashboard.button("e", "  New file", "<cmd>ene<CR>"),
+        dashboard.button("m", "  MRU", "<cmd>Telescope oldfiles<CR>"),
+        -- dashboard.button("<leader> l f b", "  File browser"),
+        -- dashboard.button("<leader> l g d", "  Live grep"),
+        dashboard.button("c", "  Configuration", "<cmd>cd " .. vim.fn.stdpath('config') .. " <CR>"),
+        dashboard.button("u", "  Update plugins", "<cmd>Lazy update<CR>"),
+        dashboard.button("p", "  Profile plugins", "<cmd>Lazy profile<CR>"),
+        dashboard.button("q", "  Quit", "<cmd>qa<CR>"),
+      }
+      alpha.setup(theme.config)
     end
   },
   {

@@ -33,6 +33,9 @@ return function()
       },
       dynamic_preview_title = true,
       initial_mode = 'normal',
+      file_ignore_patterns = {
+        ".backup/vim",
+      },
       mappings = {
         i = {
               ['<esc>'] = actions.close,

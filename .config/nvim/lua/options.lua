@@ -1,5 +1,6 @@
 vim.opt.encoding       = "UTF-8"
 vim.opt.cursorline     = true
+vim.opt.cursorcolumn   = false
 vim.opt.showmode       = true
 vim.opt.hidden         = true
 vim.opt.confirm        = true

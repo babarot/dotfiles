@@ -22,6 +22,11 @@ brew "tmux"
 brew "wget"
 brew "yarn"
 
+# it may take a little while
+brew "ffmpeg"
+brew "gifsicle"
+brew "vhs"
+
 cask "1password"
 cask "adobe-creative-cloud"
 cask "appcleaner"

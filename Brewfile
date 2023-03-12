@@ -25,7 +25,7 @@ brew "yarn"
 # it may take a little while
 brew "ffmpeg"
 brew "gifsicle"
-brew "vhs"
+brew "vhs" # faressoft/terminalizer
 
 cask "1password"
 cask "adobe-creative-cloud"

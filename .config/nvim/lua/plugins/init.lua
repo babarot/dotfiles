@@ -8,7 +8,8 @@ local opt = {
     filter = true,
   },
   dev = {
-    path = vim.fn.stdpath("config") .. "/lua",
+    -- path = vim.fn.stdpath("config") .. "/lua",
+    path = "~/src/github.com",
     fallback = false,
   },
   install = {
@@ -70,10 +71,10 @@ require('lazy').setup({
             color_icons = true,
             previewer   = 'git_diff',
             actions     = {
-                  ['right'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
-                  ['left'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
-                  ['ctrl-l'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
-                  ['ctrl-h'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
+              ['right'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
+              ['left'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
+              ['ctrl-l'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
+              ['ctrl-h'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
             },
           },
         },
@@ -127,7 +128,8 @@ require('lazy').setup({
     lazy = true,
     event = { 'VimEnter' },
     config = function()
-      require 'alpha'.setup(require 'alpha.themes.startify'.config)
+      -- startify, theta, dashboard
+      require 'alpha'.setup(require('alpha.themes.theta').config)
     end
   },
   {
@@ -307,17 +309,28 @@ require('lazy').setup({
 
   -- Apperance
   {
+    'b4b4r07/cursor-x.nvim',
+    lazy = true,
+    event = { 'BufRead' },
+    config = function()
+      require('cursor-x').setup({
+        interval = 3000,
+        always_cursorline = vim.opt.cursorline:get(),
+        filetype_exclude = { 'alpha', 'neo-tree', 'yaml' },
+      })
+      vim.api.nvim_create_user_command('CursorOn', function() require('cursor-x').enable() end, {})
+      vim.api.nvim_create_user_command('CursorOff', function() require('cursor-x').disable() end, {})
+    end,
+  },
+  {
     'RRethy/vim-illuminate',
     commit = '49062ab1dd8fec91833a69f0a1344223dd59d643',
     lazy = true,
     event = { 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI' },
     config = function()
       require('illuminate').configure {
-        providers = {
-          'lsp',
-          'treesitter',
-          'regex',
-        },
+        providers = { 'lsp', 'treesitter', 'regex' },
+        filetypes_denylist = { 'dirvish', 'fugitive', 'alpha' },
       }
     end
   },

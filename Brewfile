@@ -25,6 +25,8 @@ brew "yarn"
 # it may take a little while
 brew "ffmpeg"
 brew "gifsicle"
+brew "ttyd"
+brew "gum"
 brew "vhs" # faressoft/terminalizer
 
 cask "1password"

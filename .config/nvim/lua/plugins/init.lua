@@ -47,10 +47,23 @@ require('lazy').setup({
           'bash', 'dart', 'gitignore', 'go', 'gosum', 'gomod', 'hcl',
           'lua', 'javascript', 'json', 'jsonnet', 'make', 'markdown',
           'proto', 'python', 'rego', 'sql', 'terraform', 'typescript',
-          'yaml',
+          'yaml', 'vhs',
         }
       }
     end
+  },
+  {
+    'nathom/filetype.nvim',
+    commit = 'b522628a45a17d58fc0073ffd64f9dc9530a8027',
+    config = function()
+      require('filetype').setup({
+        overrides = {
+          extensions = {
+            tape = 'vhs',
+          },
+        },
+      })
+    end,
   },
   { 'junegunn/fzf' },
   { 'junegunn/fzf.vim' },

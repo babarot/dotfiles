@@ -550,7 +550,7 @@ github:
   repo: bat
   release:
     name: bat
-    tag: v0.11.0
+    tag: v0.22.0
     # asset:
     #   filename: '{{ .Release.Name }}-{{ .Release.Tag }}-{{ .Arch }}-{{ .OS }}.tar.gz'
     #   replacements:
@@ -559,12 +559,18 @@ github:
   command:
     link:
     - from: '**/bat'
-    alias:
-      bat-theme: bat --list-themes | fzf --preview='bat --theme={} --color=always ~/.zshrc'
+    snippet: |
+      bat-theme() {
+        local file=$1
+        if [[ -z $file ]]; then
+          file=$(fzf)
+        fi
+        bat --list-themes | fzf --preview="bat --theme={} --color=always ${file}"
+      }
     env:
       BAT_PAGER: less -RF
       BAT_STYLE: numbers,changes
-      BAT_THEME: ansi-dark
+      BAT_THEME: DarkNeon
 - name: BurntSushi/xsv
   description: A fast CSV command line toolkit written in Rust.
   owner: BurntSushi
@@ -716,7 +722,12 @@ github:
   branch: master
   release:
     name: gist
-    tag: v1.2.1
+    tag: v1.2.6
+    asset:
+      filename: '{{ .Release.Name }}_{{ .OS }}_{{ .Arch }}.tar.gz'
+      replacements:
+        darwin: darwin
+        amd64: arm64
   command:
     link:
     - from: gist

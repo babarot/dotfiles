@@ -952,3 +952,13 @@ github:
   command:
     link:
     - from: rargs
+- name: nektos/act
+  description: Run your GitHub Actions locally
+  owner: nektos
+  repo: act
+  release:
+    name: act
+    tag: v0.2.43
+  command:
+    link:
+    - from: act

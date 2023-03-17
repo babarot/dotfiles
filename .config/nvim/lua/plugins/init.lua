@@ -71,10 +71,10 @@ require('lazy').setup({
             color_icons = true,
             previewer   = 'git_diff',
             actions     = {
-              ['right'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
-              ['left'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
-              ['ctrl-l'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
-              ['ctrl-h'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
+                  ['right'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
+                  ['left'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
+                  ['ctrl-l'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
+                  ['ctrl-h'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
             },
           },
         },
@@ -303,6 +303,11 @@ require('lazy').setup({
     dependencies = { 'nvim-lua/popup.nvim', 'nvim-lua/plenary.nvim' },
     init = function()
       vim.keymap.set('n', '<space>j', '<Cmd>Telescope oldfiles<CR>')
+      vim.keymap.set('n', 'Q',
+        function()
+          return string.format('<cmd>Telescope live_grep default_text=%s<CR>', vim.fn.expand('<cword>'))
+        end,
+        { noremap = true, silent = true, expr = true })
     end,
     config = require('plugins.telescope'),
   },
@@ -340,7 +345,7 @@ require('lazy').setup({
       require('cursor-x').setup({
         interval = 3000,
         always_cursorline = vim.opt.cursorline:get(),
-        filetype_exclude = { 'alpha', 'neo-tree', 'yaml' },
+        filetype_exclude = { 'alpha', 'neo-tree' },
       })
       vim.api.nvim_create_user_command('CursorOn', function() require('cursor-x').enable() end, {})
       vim.api.nvim_create_user_command('CursorOff', function() require('cursor-x').disable() end, {})
@@ -535,6 +540,24 @@ require('lazy').setup({
   },
 
   -- Editing
+  {
+    'Wansmer/treesj',
+    commit = '90248883bdb2d559ff4ba7f0148eb0145d3f0908',
+    lazy = true,
+    cmd = { 'TSJToggle', 'TSJSplit', 'TSJJoin' },
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    config = function()
+      require('treesj').setup({
+        use_default_keymaps = false,
+        check_syntax_error = true,
+        max_join_length = 120,
+        cursor_behavior = 'hold',
+        notify = true,
+        -- langs = [],
+        dot_repeat = true,
+      })
+    end,
+  },
   {
     'EtiamNullam/deferred-clipboard.nvim',
     tag = 'v0.7.0',
@@ -744,7 +767,7 @@ require('lazy').setup({
         zsh       = 'github_dark',
         hcl       = 'kyotonight',
         json      = 'kanagawa',
-        yaml      = 'kyotonight',
+        yaml      = 'tokyonight',
         terraform = 'nordfox',
       }
     end,

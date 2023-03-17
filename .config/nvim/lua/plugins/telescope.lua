@@ -10,7 +10,7 @@ return function()
           local len = vim.api.nvim_win_get_width(status.results_win) - status.picker.selection_caret:len() - 2
           return type(truncate_len) == 'number' and len - truncate_len or len
         end
-        local truncate_len = 3
+        local truncate_len = 1
         if opts.__length == nil then
           opts.__length = calc_result_length(truncate_len)
         end
@@ -20,7 +20,7 @@ return function()
         local transformed_path = path:gsub(os.getenv('HOME'), '~')
         return truncate(transformed_path, opts.__length - opts.__prefix, nil, -1)
       end,
-      scroll_strategy = 'limit',     -- 'cycle'
+      scroll_strategy = 'limit', -- 'cycle'
       sorting_strategy = 'ascending',
       layout_strategy = 'horizontal',
       layout_config = {
@@ -34,7 +34,7 @@ return function()
       dynamic_preview_title = true,
       initial_mode = 'normal',
       file_ignore_patterns = {
-        ".backup/vim",
+        '.backup/vim',
       },
       mappings = {
         i = {
@@ -45,7 +45,7 @@ return function()
         },
         n = {
               ['<esc>'] = actions.close,
-              ['<space>j'] = actions.close,     -- depends on my keymap
+              ['<space>j'] = actions.close, -- depends on my keymap
               ['q'] = actions.close,
               ['<C-d>'] = actions.results_scrolling_down,
               ['<C-u>'] = actions.results_scrolling_up,
@@ -54,6 +54,21 @@ return function()
         },
       }
     },
+    pickers = {
+      find_files = {
+        entry_maker = require('plugins.telescope-custom').file_displayer(),
+        previewer = false,
+      },
+      oldfiles = {
+        entry_maker = require('plugins.telescope-custom').file_displayer(),
+        previewer = false,
+      },
+      live_grep = {
+        additional_args = function()
+          return { '--hidden' }
+        end
+      },
+    },
     extensions = {
       repo = {
         list = {
@@ -61,13 +76,6 @@ return function()
           search_dirs = { '~/src' }
         }
       }
-    },
-    pickers = {
-      live_grep = {
-        additional_args = function()
-          return { '--hidden' }
-        end
-      },
     },
   }
 end

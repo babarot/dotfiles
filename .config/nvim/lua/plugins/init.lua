@@ -325,6 +325,7 @@ require('lazy').setup({
     cmd = { 'Telescope' },
     dependencies = { 'nvim-lua/popup.nvim', 'nvim-lua/plenary.nvim' },
     init = function()
+      vim.keymap.set('n', '<space>l', '<Cmd>Telescope find_files<CR>')
       vim.keymap.set('n', '<space>j', '<Cmd>Telescope oldfiles<CR>')
       vim.keymap.set('n', 'Q',
         function()

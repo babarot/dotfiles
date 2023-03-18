@@ -34,6 +34,7 @@ return function()
       dynamic_preview_title = true,
       initial_mode = 'normal',
       file_ignore_patterns = {
+        '.git/',
         '.backup/vim',
       },
       mappings = {
@@ -52,12 +53,11 @@ return function()
               ['<C-n>'] = actions.preview_scrolling_down,
               ['<C-p>'] = actions.preview_scrolling_up,
         },
-      }
+      },
     },
     pickers = {
       find_files = {
-        entry_maker = require('plugins.telescope-custom').file_displayer(),
-        previewer = false,
+        hidden = true,
       },
       oldfiles = {
         entry_maker = require('plugins.telescope-custom').file_displayer(),

@@ -1,11 +1,4 @@
 github:
-- name: kawarimidoll/gh-q
-  description: A gh extension to clone GitHub repositories using fzf and ghq.
-  owner: kawarimidoll
-  repo: gh-q
-  as:
-    gh-extension:
-      name: gh-q
 - name: dlvhdr/gh-dash
   description: A beautiful CLI dashboard for GitHub
   owner: dlvhdr
@@ -27,6 +20,7 @@ github:
   as:
     gh-extension:
       name: gh-poi
+      tag: v0.9.0
 - name: yusukebe/gh-markdown-preview
   description: GitHub CLI extension to preview Markdown looks like GitHub.
   owner: yusukebe
@@ -34,4 +28,12 @@ github:
   as:
     gh-extension:
       name: gh-markdown-preview
+      tag: v1.4.0
       rename-to: gh-md
+- name: kawarimidoll/gh-q
+  description: A gh extension to clone GitHub repositories using fzf and ghq.
+  owner: kawarimidoll
+  repo: gh-q
+  as:
+    gh-extension:
+      name: gh-q

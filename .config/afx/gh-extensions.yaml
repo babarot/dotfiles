@@ -3,24 +3,35 @@ github:
   description: A gh extension to clone GitHub repositories using fzf and ghq.
   owner: kawarimidoll
   repo: gh-q
-  as: gh-extension
+  as:
+    gh-extension:
+      name: gh-q
 - name: dlvhdr/gh-dash
   description: A beautiful CLI dashboard for GitHub
   owner: dlvhdr
   repo: gh-dash
-  as: gh-extension
+  as:
+    gh-extension:
+      name: gh-dash
 - name: mislav/gh-branch
   description: GitHub CLI extension for fuzzy finding, quickly switching between and deleting branches.
   owner: mislav
   repo: gh-branch
-  as: gh-extension
-- name: yusukebe/gh-markdown-preview
-  description: GitHub CLI extension to preview Markdown looks like GitHub.
-  owner: yusukebe
-  repo: gh-markdown-preview
-  as: gh-extension
+  as:
+    gh-extension:
+      name: gh-branch
 - name: seachicken/gh-poi
   description: Safely clean up your local branches
   owner: seachicken
   repo: gh-poi
-  as: gh-extension
+  as:
+    gh-extension:
+      name: gh-poi
+- name: yusukebe/gh-markdown-preview
+  description: GitHub CLI extension to preview Markdown looks like GitHub.
+  owner: yusukebe
+  repo: gh-markdown-preview
+  as:
+    gh-extension:
+      name: gh-markdown-preview
+      rename-to: gh-md

@@ -290,7 +290,7 @@ require('lazy').setup({
   -- Completion
   {
     'hrsh7th/nvim-cmp',
-    commit = '7a3b1e76f74934b12fda82158237c6ad8bfd3d40',
+    commit = '777450fd0ae289463a14481673e26246b5e38bf2',
     lazy = true,
     event = { 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI' },
     dependencies = {

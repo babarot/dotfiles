@@ -43,7 +43,8 @@ return function()
       { name = 'buffer' },
       { name = 'nvim_lsp_signature_help' },
       { name = 'emoji' },
-      { name = 'cmdline' },
+      -- https://github.com/hrsh7th/nvim-cmp/issues/1310
+      -- { name = 'cmdline' },
       { name = 'copilot' },
     }),
     formatting = {

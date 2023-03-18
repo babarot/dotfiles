@@ -37,17 +37,6 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
-  pattern = { '*.go' },
-  callback = function()
-    vim.opt.autoindent = true
-    vim.opt.expandtab = false
-    vim.opt.shiftwidth = 4
-    vim.opt.softtabstop = 4
-    vim.opt.tabstop = 4
-  end
-})
-
 vim.api.nvim_create_autocmd({ 'BufEnter', 'BufRead' }, {
   group = vim.api.nvim_create_augroup('cd_parent_dir', { clear = true }),
   callback = function()

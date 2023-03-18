@@ -61,6 +61,16 @@ require('lazy').setup({
           extensions = {
             tape = 'vhs',
           },
+          function_extensions = {
+            ['go'] = function()
+              vim.bo.filetype = 'go'
+              vim.bo.autoindent = true
+              vim.bo.expandtab = false
+              vim.bo.shiftwidth = 4
+              vim.bo.softtabstop = 4
+              vim.bo.tabstop = 4
+            end,
+          },
         },
       })
     end,
@@ -84,10 +94,10 @@ require('lazy').setup({
             color_icons = true,
             previewer   = 'git_diff',
             actions     = {
-                  ['right'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
-                  ['left'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
-                  ['ctrl-l'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
-                  ['ctrl-h'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
+              ['right'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
+              ['left'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
+              ['ctrl-l'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
+              ['ctrl-h'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
             },
           },
         },
@@ -689,9 +699,24 @@ require('lazy').setup({
       require('gitsigns').setup {
         signs = {
           add          = { hl = 'GitSignsAdd', text = ' ', numhl = 'GitSignsAddNr', linehl = 'GitSignsAddLn' },
-          change       = { hl = 'GitSignsChange', text = '▎', numhl = 'GitSignsChangeNr', linehl = 'GitSignsChangeLn' },
-          delete       = { hl = 'GitSignsDelete', text = ' ', numhl = 'GitSignsDeleteNr', linehl = 'GitSignsDeleteLn' },
-          topdelete    = { hl = 'GitSignsDelete', text = ' ', numhl = 'GitSignsDeleteNr', linehl = 'GitSignsDeleteLn' },
+          change       = {
+            hl = 'GitSignsChange',
+            text = '▎',
+            numhl = 'GitSignsChangeNr',
+            linehl = 'GitSignsChangeLn'
+          },
+          delete       = {
+            hl = 'GitSignsDelete',
+            text = ' ',
+            numhl = 'GitSignsDeleteNr',
+            linehl = 'GitSignsDeleteLn'
+          },
+          topdelete    = {
+            hl = 'GitSignsDelete',
+            text = ' ',
+            numhl = 'GitSignsDeleteNr',
+            linehl = 'GitSignsDeleteLn'
+          },
           changedelete = {
             hl = 'GitSignsChangeDelete',
             text = '▎',
@@ -768,7 +793,7 @@ require('lazy').setup({
     'caglartoklu/ftcolor.vim',
     config = function()
       -- vim.g.ftcolor_custom_command = [['colorscheme ' . vim.g.colors_name]]
-      vim.g.ftcolor_plugin_enabled = true
+      vim.g.ftcolor_plugin_enabled = false
       vim.g.ftcolor_default_color_scheme = 'tokyonight'
       vim.g.ftcolor_custom_command = [[lua require('lualine').refresh()]]
       vim.g.ftcolor_color_mappings = {
@@ -880,16 +905,16 @@ require('lazy').setup({
       })
     end,
   },
-  {
-    'svrana/neosolarized.nvim',
-    dependencies = { 'tjdevries/colorbuddy.nvim' },
-    config = function()
-      require('neosolarized').setup({
-        comment_italics = true,
-        background_set = true,
-      })
-    end,
-  },
+  -- {
+  --   'svrana/neosolarized.nvim',
+  --   dependencies = { 'tjdevries/colorbuddy.nvim' },
+  --   config = function()
+  --     require('neosolarized').setup({
+  --       comment_italics = true,
+  --       background_set = true,
+  --     })
+  --   end,
+  -- },
   { 'daschw/leaf.nvim',                tag = 'v0.3.1' },
   { 'projekt0n/github-nvim-theme',     tag = 'v0.0.7' },
   { 'olivercederborg/poimandres.nvim', tag = 'v0.5.0' },
@@ -903,3 +928,5 @@ require('lazy').setup({
   -- { 'nordtheme/vim' },
   -- { 'shaunsingh/nord.nvim' },
 }, opt)
+
+vim.cmd [[silent! colorscheme tokyonight]]

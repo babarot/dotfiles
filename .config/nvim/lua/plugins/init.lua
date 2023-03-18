@@ -62,7 +62,8 @@ require('lazy').setup({
             tape = 'vhs',
           },
           function_extensions = {
-            ['go'] = function()
+                ['go'] = function()
+              vim.cmd [[colorscheme seoul256]]
               vim.bo.filetype = 'go'
               vim.bo.autoindent = true
               vim.bo.expandtab = false
@@ -81,7 +82,7 @@ require('lazy').setup({
     'ibhagwan/fzf-lua',
     requires = { 'nvim-tree/nvim-web-devicons' },
     init = function()
-      vim.keymap.set('n', '<space>g', function() require('fzf-lua').git_status() end)
+      -- vim.keymap.set('n', '<space>g', function() require('fzf-lua').git_status() end)
     end,
     config = function()
       local fzf_lua = require('fzf-lua')
@@ -94,10 +95,10 @@ require('lazy').setup({
             color_icons = true,
             previewer   = 'git_diff',
             actions     = {
-              ['right'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
-              ['left'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
-              ['ctrl-l'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
-              ['ctrl-h'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
+                  ['right'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
+                  ['left'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
+                  ['ctrl-l'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
+                  ['ctrl-h'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
             },
           },
         },
@@ -334,6 +335,39 @@ require('lazy').setup({
         { noremap = true, silent = true, expr = true })
     end,
     config = require('plugins.telescope'),
+  },
+  {
+    'axkirillov/easypick.nvim',
+    commit = '3f6af7b34eca30b81a8090ea6e5aa56212f8e746',
+    lazy = true,
+    event = { 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI' },
+    dependencies = { 'nvim-telescope/telescope.nvim' },
+    init = function()
+      vim.keymap.set('n', '<space>g', '<Cmd>Easypic changed_files<CR>')
+    end,
+    config = function()
+      local easypick = require('easypick')
+      local base_branch = 'main'
+      easypick.setup({
+        pickers = {
+          {
+            name = 'ls',
+            command = 'ls',
+            previewer = easypick.previewers.default()
+          },
+          {
+            name = 'changed_files',
+            command = 'git diff --name-only $(git merge-base HEAD ' .. base_branch .. " )",
+            previewer = easypick.previewers.branch_diff({ base_branch = base_branch })
+          },
+          {
+            name = "conflicts",
+            command = "git diff --name-only --diff-filter=U --relative",
+            previewer = easypick.previewers.file_diff()
+          },
+        }
+      })
+    end,
   },
   {
     'cljoly/telescope-repo.nvim',

@@ -26,11 +26,44 @@ require('lazy').setup({
     event = { 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI' },
     build = [[vim.api.nvim_command("TSUpdate")]],
     dependencies = {
-      { 'yioneko/nvim-yati', commit = '8240f369d47c389ac898f87613e0901f126b40f3' }
+      { 'yioneko/nvim-yati', commit = '8240f369d47c389ac898f87613e0901f126b40f3' },
+      {
+        'andymass/vim-matchup',
+        commit = 'f69d1ac5bd3c4e6ad349f64317000cc9a4a895cf',
+        lazy = true,
+        event = { 'BufReadPost' },
+        config = function()
+          vim.g.loaded_matchit = 1
+          vim.g.matchup_matchparen_offscreen = { method = "popup" }
+          vim.g.matchup_matchparen_enabled = 1
+          vim.g.matchup_matchpref = {
+            astro = { tagnameonly = 1 },
+            vue = { tagnameonly = 1 },
+            typescriptreact = { tagnameonly = 1 },
+            tsx = { tagnameonly = 1 },
+            html = { tagnameonly = 1 },
+          }
+          vim.cmd([[
+          " hi MatchParen ctermbg=blue guibg=#364a82 cterm=underline gui=underline guifg=#c0caf5 guibg=#3d59a1
+          hi MatchParen ctermbg=blue guibg=lightblue cterm=underline gui=underline
+          hi MatchWord ctermbg=blue guibg=lightblue cterm=underline gui=underline
+          hi MatchParenCur ctermbg=blue guibg=lightblue cterm=underline gui=underline
+          hi MatchWordCur ctermbg=blue guibg=lightblue cterm=underline gui=underline
+        ]])
+        end,
+      },
     },
     config = function()
       require('nvim-treesitter.configs').setup {
+        auto_install = true,
+        ensure_installed = {
+          'bash', 'dart', 'gitignore', 'go', 'gosum', 'gomod', 'hcl',
+          'lua', 'javascript', 'json', 'jsonnet', 'make', 'markdown',
+          'proto', 'python', 'rego', 'sql', 'terraform', 'typescript',
+          'yaml', 'vhs',
+        },
         highlight = { enable = true },
+        indent = { enable = false }, -- disable builtin indent module to use yati
         yati = {
           enable = true,
           default_lazy = true,
@@ -39,16 +72,10 @@ require('lazy').setup({
           --   "cindent": see `:h cindent()`
           default_fallback = "auto"
         },
-        indent = {
-          enable = false -- disable builtin indent module to use yati
+        matchup = {
+          enable = true,     -- mandatory, false will disable the whole extension
+          disableLangs = {}, -- list of language that will be disabled
         },
-        auto_install = true,
-        ensure_installed = {
-          'bash', 'dart', 'gitignore', 'go', 'gosum', 'gomod', 'hcl',
-          'lua', 'javascript', 'json', 'jsonnet', 'make', 'markdown',
-          'proto', 'python', 'rego', 'sql', 'terraform', 'typescript',
-          'yaml', 'vhs',
-        }
       }
     end
   },
@@ -63,7 +90,6 @@ require('lazy').setup({
           },
           function_extensions = {
                 ['go'] = function()
-              vim.cmd [[colorscheme seoul256]]
               vim.bo.filetype = 'go'
               vim.bo.autoindent = true
               vim.bo.expandtab = false
@@ -166,16 +192,16 @@ require('lazy').setup({
         [[ ╚═╝  ╚═══╝ ╚══════╝ ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝]]
       }
       theme.buttons.val = {
-        { type = "text",    val = "Quick links", opts = { hl = "SpecialComment", position = "center" } },
-        { type = "padding", val = 1 },
-        dashboard.button("e", "  New file", "<cmd>ene<CR>"),
-        dashboard.button("m", "  MRU", "<cmd>Telescope oldfiles<CR>"),
-        -- dashboard.button("<leader> l f b", "  File browser"),
-        -- dashboard.button("<leader> l g d", "  Live grep"),
-        dashboard.button("c", "  Configuration", "<cmd>cd " .. vim.fn.stdpath('config') .. " <CR>"),
-        dashboard.button("u", "  Update plugins", "<cmd>Lazy update<CR>"),
-        dashboard.button("p", "  Profile plugins", "<cmd>Lazy profile<CR>"),
-        dashboard.button("q", "  Quit", "<cmd>qa<CR>"),
+        { type = 'text',    val = 'Quick links', opts = { hl = 'SpecialComment', position = 'center' } },
+        { type = 'padding', val = 1 },
+        dashboard.button('e', '  New file', '<cmd>ene<CR>'),
+        dashboard.button('m', '  MRU', '<cmd>Telescope oldfiles<CR>'),
+        -- dashboard.button('<leader> l f b', '  File browser'),
+        -- dashboard.button('<leader> l g d', '  Live grep'),
+        dashboard.button('c', '  Configuration', '<cmd>cd ' .. vim.fn.stdpath('config') .. ' <CR>'),
+        dashboard.button('u', '  Update plugins', '<cmd>Lazy update<CR>'),
+        dashboard.button('p', '  Profile plugins', '<cmd>Lazy profile<CR>'),
+        dashboard.button('q', '  Quit', '<cmd>qa<CR>'),
       }
       alpha.setup(theme.config)
     end
@@ -333,41 +359,50 @@ require('lazy').setup({
           return string.format('<cmd>Telescope live_grep default_text=%s<CR>', vim.fn.expand('<cword>'))
         end,
         { noremap = true, silent = true, expr = true })
+      vim.keymap.set('n', '<space>g', '<Cmd>Telescope git_status<CR>')
     end,
     config = require('plugins.telescope'),
   },
+  -- {
+  --   'axkirillov/easypick.nvim',
+  --   commit = '3f6af7b34eca30b81a8090ea6e5aa56212f8e746',
+  --   lazy = true,
+  --   event = { 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI' },
+  --   dependencies = { 'nvim-telescope/telescope.nvim' },
+  --   init = function()
+  --     vim.keymap.set('n', '<space>g', '<Cmd>Easypic changed_files<CR>')
+  --   end,
+  --   config = function()
+  --     local easypick = require('easypick')
+  --     local base_branch = 'main'
+  --     easypick.setup({
+  --       pickers = {
+  --         {
+  --           name = 'ls',
+  --           command = 'ls',
+  --           previewer = easypick.previewers.default()
+  --         },
+  --         {
+  --           name = 'changed_files',
+  --           command = 'git diff --name-only $(git merge-base HEAD ' .. base_branch .. " )",
+  --           previewer = easypick.previewers.branch_diff({ base_branch = base_branch })
+  --         },
+  --         {
+  --           name = "conflicts",
+  --           command = "git diff --name-only --diff-filter=U --relative",
+  --           previewer = easypick.previewers.file_diff()
+  --         },
+  --       }
+  --     })
+  --   end,
+  -- },
   {
-    'axkirillov/easypick.nvim',
-    commit = '3f6af7b34eca30b81a8090ea6e5aa56212f8e746',
+    'LinArcX/telescope-command-palette.nvim',
+    commit = 'f7024ea025ed7985d8881d1b535004a1200903f3',
     lazy = true,
     event = { 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI' },
     dependencies = { 'nvim-telescope/telescope.nvim' },
-    init = function()
-      vim.keymap.set('n', '<space>g', '<Cmd>Easypic changed_files<CR>')
-    end,
-    config = function()
-      local easypick = require('easypick')
-      local base_branch = 'main'
-      easypick.setup({
-        pickers = {
-          {
-            name = 'ls',
-            command = 'ls',
-            previewer = easypick.previewers.default()
-          },
-          {
-            name = 'changed_files',
-            command = 'git diff --name-only $(git merge-base HEAD ' .. base_branch .. " )",
-            previewer = easypick.previewers.branch_diff({ base_branch = base_branch })
-          },
-          {
-            name = "conflicts",
-            command = "git diff --name-only --diff-filter=U --relative",
-            previewer = easypick.previewers.file_diff()
-          },
-        }
-      })
-    end,
+    config = function() require('telescope').load_extension('command_palette') end,
   },
   {
     'cljoly/telescope-repo.nvim',
@@ -893,7 +928,7 @@ require('lazy').setup({
   {
     'marko-cerovac/material.nvim',
     init = function()
-      -- darker, lighter, oceanic, palenight, deep ocean
+      -- 'darker', 'lighter', 'oceanic', 'palenight', 'deep ocean'
       vim.g.material_style = 'palenight'
     end,
     config = function()
@@ -940,16 +975,6 @@ require('lazy').setup({
       })
     end,
   },
-  -- {
-  --   'svrana/neosolarized.nvim',
-  --   dependencies = { 'tjdevries/colorbuddy.nvim' },
-  --   config = function()
-  --     require('neosolarized').setup({
-  --       comment_italics = true,
-  --       background_set = true,
-  --     })
-  --   end,
-  -- },
   { 'daschw/leaf.nvim',                tag = 'v0.3.1' },
   { 'projekt0n/github-nvim-theme',     tag = 'v0.0.7' },
   { 'olivercederborg/poimandres.nvim', tag = 'v0.5.0' },

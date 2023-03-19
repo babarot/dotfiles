@@ -68,14 +68,47 @@ return function()
           return { '--hidden' }
         end
       },
+      git_status = {
+        git_icons = {
+          added = 'A',
+          changed = 'M',
+          copied = 'C',
+          deleted = 'D',
+          renamed = 'R',
+          unmerged = 'U',
+          untracked = '?',
+        },
+      },
     },
+
     extensions = {
       repo = {
         list = {
           fd_opts = { '--no-ignore-vcs' },
           search_dirs = { '~/src' }
-        }
-      }
+        },
+      },
+      fzf = {
+        override_generic_sorter = false,
+        override_file_sorter = true,
+        case_mode = "smart_case",
+      },
+      command_palette = {
+        {
+          "CommentBox",
+          { "Left aligned line",                                     ':CBline3' },
+          { "Centered line",                                         ':CBcline3' },
+          { "Left aligned box of fixed size with Left aligned text", ':CBlbox' },
+          { "Centered box of fixed size with Left aligned text",     ':CBclbox' },
+          { "Left aligned box of fixed size with centered text",     ':CBcbox' },
+          { "Centered box of fixed size with centered text",         ':CBccbox' },
+          { "Left aligned adapted box with Left aligned text",       ':CBalbox' },
+          { "Centered adapted box with Left aligned text",           ':CBaclbox' },
+          { "Left aligned adapted box with centered text",           ':CBacbox' },
+          { "Centered adapted box with centered text",               ':CBaccbox' },
+        },
+        { "Vim", { "Reload vimrc", ":source $MYVIMRC" } },
+      },
     },
   }
 end

@@ -1,11 +1,11 @@
 http:
-# - name: gcping
-#   description: Like gcping.com but a command line tool
-#   url: 'https://storage.googleapis.com/gcping-release/{{ .Name }}_{{ .OS }}_{{ .Arch }}_latest'
-#   command:
-#     link:
-#     - from: gcping_*
-#       to: gcping
+- name: gcping
+  description: Like gcping.com but a command line tool
+  url: 'https://storage.googleapis.com/gcping-release/{{ .Name }}_{{ .OS }}_{{ .Arch }}_latest'
+  command:
+    link:
+    - from: gcping_*
+      to: gcping
 - name: google-cloud-sdk
   description: |
     https://cloud.google.com/sdk/docs/install
@@ -26,19 +26,12 @@ http:
   plugin:
     sources:
     - 'google-cloud-sdk/*.zsh.inc'
-
-# - name: docker
-#   url: 'https://download.docker.com/{{ .OS }}/static/stable/{{ .Arch }}/{{ .Name }}-20.10.12.tgz'
-#   templates:
-#     replacements:
-#       darwin: mac
-#       arm64: aarch64
-#       amd64: x86_64
-#   command:
-#     link:
-#     - from: docker/docker
-#       to: docker
-#     - from: docker/cli-plugins/docker-app
-#       to: ~/.docker/cli-plugins/docker-app
-#     - from: docker/cli-plugins/docker-buildx
-#       to: ~/.docker/cli-plugins/docker-buildx
+    snippet: |
+      gcp() {
+        type fzf &>/dev/null || { echo "fzf not found"; return 1; }
+        local project=$(gcloud projects list ${1+--filter ${1}} | grep -v sys- | fzf --height 50% --header-lines=1 --reverse --multi --cycle --exit-0 | awk '{print $1}')
+        if [[ -z ${project} ]]; then
+          return 0
+        fi
+        gcloud config set project "${project}"
+      }

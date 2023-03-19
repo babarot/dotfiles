@@ -7,26 +7,5 @@ local:
       [[ $SHELL == *zsh* ]]
     sources:
     - '[0-9]*.zsh'
-    snippet: |
-      function gcp() {
-        type fzf &>/dev/null || { echo "fzf not found"; return 1; }
-        local project=$(gcloud projects list ${1+--filter ${1}} | grep -v sys- | fzf --height 50% --header-lines=1 --reverse --multi --cycle --exit-0 | awk '{print $1}')
-        if [[ -z ${project} ]]; then
-          return 0
-        fi
-        gcloud config set project "${project}"
-      }
   depends-on:
   - google-cloud-sdk
-
-# - name: google-cloud-sdk
-#   description: Google Cloud SDK
-#   directory: ~/Downloads/google-cloud-sdk
-#   plugin:
-#     env:
-#       PATH: ~/Downloads/google-cloud-sdk/bin
-#     sources:
-#     - '*.zsh.inc'
-#     snippet: |
-#       ln -s -f ~/Downloads/google-cloud-sdk/bin/gcloud ~/bin/gcloud
-#       ln -s -f ~/Downloads/google-cloud-sdk/bin/kubectl ~/bin/kubectl

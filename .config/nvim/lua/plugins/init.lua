@@ -278,7 +278,6 @@ require('lazy').setup({
               'bashls',
               'docker_compose_language_service',
               'dockerls',
-              'fixjson',
               'golangci_lint_ls',
               'gopls',
               'graphql',
@@ -976,6 +975,13 @@ require('lazy').setup({
     lazy = true,
     event = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
     ft = { 'terraform', 'hcl' }
+  },
+  {
+    'rhysd/vim-fixjson',
+    commit = '705cd5d73e55a2ff4d39fca354d502a03cd11ed7',
+    lazy = true,
+    event = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
+    ft = 'json',
   },
 
   -- Color

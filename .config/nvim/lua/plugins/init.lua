@@ -193,13 +193,14 @@ require('lazy').setup({
           { type = 'text',    val = 'Quick links', opts = { hl = 'SpecialComment', position = 'center' } },
           { type = 'padding', val = 1 },
           dashboard.button('r', '  Recent files', ':Telescope oldfiles <CR>'),
-          dashboard.button('f', '  Find files', ':Telescope find_files <CR>'),
-          dashboard.button('d', '  Directories', '<cmd>Neotree float<CR>'),
-          dashboard.button('p', '  Projects', '<cmd>Telescope projects<CR>'),
+          dashboard.button('f', '  Find files', ':Telescope find_files <CR>'),
+          dashboard.button('d', '  Directories', '<cmd>Neotree float<CR>'),
+          dashboard.button('p', '  Projects', '<cmd>Telescope projects<CR>'),
           dashboard.button('n', '  New file', ':ene <BAR> startinsert <CR>'),
           dashboard.button('l', '鈴 Lazy', ':Lazy<CR>'),
-          dashboard.button('c', '  Configuration',
-            '<cmd>e ' .. vim.fn.stdpath('config') .. '/lua/plugins/init.lua<CR>'),
+          -- dashboard.button('c', '  Configuration',
+          --   '<cmd>cd ' .. vim.fn.stdpath('config') .. '/lua<CR>'),
+          --   '<cmd>e ' .. vim.fn.stdpath('config') .. '/lua/plugins/init.lua<CR>'),
           dashboard.button('q', '  Quit', ':qa<CR>'),
           -- dashboard.button('q', '  Quit', '<cmd>qa<CR>'),
         },
@@ -224,6 +225,14 @@ require('lazy').setup({
         opts = {
           noautocmd = false,
           redraw_on_resize = true,
+          setup = function()
+            vim.api.nvim_create_autocmd('DirChanged', {
+              pattern = '*',
+              callback = function()
+                require('alpha').redraw()
+              end,
+            })
+          end,
         },
       }
       return theta

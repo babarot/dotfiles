@@ -4,6 +4,10 @@ tap "homebrew/cask"
 tap "homebrew/cask-fonts"
 tap "homebrew/core"
 
+# https://github.com/yuru7/HackGen
+brew "font-hackgen"
+brew "font-hackgen-nerd"
+
 brew "gawk"
 brew "gnu-sed"
 brew "go"

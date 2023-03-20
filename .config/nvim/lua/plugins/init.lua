@@ -614,7 +614,7 @@ require('lazy').setup({
           -- return parent dir but git root if inside git project
           local dir = vim.fn.fnameescape(vim.fn.fnamemodify(
             vim.fn.finddir('.git', vim.fn.escape(vim.fn.expand('%:p:h'), ' ') .. ';'), ':h'))
-          return string.format(':<C-u>Neotree focus toggle dir=%s<CR>', dir)
+          return string.format(':<C-u>Neotree focus toggle left dir=%s<CR>', dir)
         end,
         { noremap = true, silent = true, expr = true })
     end,

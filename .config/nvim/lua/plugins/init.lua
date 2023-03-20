@@ -1,20 +1,20 @@
 local opt = {
-  root = vim.fn.stdpath("data") .. "/lazy",                 -- directory where plugins will be installed
-  lockfile = vim.fn.stdpath("config") .. "/lazy-lock.json", -- lockfile generated after running update.
+  root = vim.fn.stdpath('data') .. '/lazy',                 -- directory where plugins will be installed
+  lockfile = vim.fn.stdpath('config') .. '/lazy-lock.json', -- lockfile generated after running update.
   git = {
-    log = { "--since=3 days ago" },
+    log = { '--since=3 days ago' },
     timeout = 120,
-    url_format = "https://github.com/%s.git",
+    url_format = 'https://github.com/%s.git',
     filter = true,
   },
   dev = {
-    -- path = vim.fn.stdpath("config") .. "/lua",
-    path = "~/src/github.com",
+    -- path = vim.fn.stdpath('config') .. '/lua',
+    path = '~/src/github.com',
     fallback = false,
   },
   install = {
     missing = true,
-    colorscheme = { "seoul256" },
+    colorscheme = { 'seoul256' },
   },
 }
 
@@ -24,7 +24,7 @@ require('lazy').setup({
     commit = '356c9db3478b1bc6d0f0eefcb397989e50fdc35f',
     lazy = true,
     event = { 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI' },
-    build = [[vim.api.nvim_command("TSUpdate")]],
+    build = [[vim.api.nvim_command('TSUpdate')]],
     dependencies = {
       { 'yioneko/nvim-yati', commit = '8240f369d47c389ac898f87613e0901f126b40f3' },
       {
@@ -34,7 +34,7 @@ require('lazy').setup({
         event = { 'BufReadPost' },
         config = function()
           vim.g.loaded_matchit = 1
-          vim.g.matchup_matchparen_offscreen = { method = "popup" }
+          vim.g.matchup_matchparen_offscreen = { method = 'popup' }
           vim.g.matchup_matchparen_enabled = 1
           vim.g.matchup_matchpref = {
             astro = { tagnameonly = 1 },
@@ -67,10 +67,10 @@ require('lazy').setup({
         yati = {
           enable = true,
           default_lazy = true,
-          --   "auto": fallback to vim auto indent
-          --   "asis": use current indent as-is
-          --   "cindent": see `:h cindent()`
-          default_fallback = "auto"
+          --   'auto': fallback to vim auto indent
+          --   'asis': use current indent as-is
+          --   'cindent': see `:h cindent()`
+          default_fallback = 'auto'
         },
         matchup = {
           enable = true,     -- mandatory, false will disable the whole extension
@@ -89,7 +89,7 @@ require('lazy').setup({
             tape = 'vhs',
           },
           function_extensions = {
-                ['go'] = function()
+            ['go'] = function()
               vim.bo.filetype = 'go'
               vim.bo.autoindent = true
               vim.bo.expandtab = false
@@ -121,10 +121,10 @@ require('lazy').setup({
             color_icons = true,
             previewer   = 'git_diff',
             actions     = {
-                  ['right'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
-                  ['left'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
-                  ['ctrl-l'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
-                  ['ctrl-h'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
+              ['right'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
+              ['left'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
+              ['ctrl-l'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
+              ['ctrl-h'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
             },
           },
         },
@@ -164,47 +164,97 @@ require('lazy').setup({
   { 'bfontaine/Brewfile.vim',      commit = 'f13b98b92f2e9b9e38f3b1d45d41e19049d671df' },
 
   -- Project
-  -- {
-  --   'glepnir/dashboard-nvim',
-  --   commit = '398ba8d9390c13c87a964cbca756319531fffdb7',
-  --   lazy = true,
-  --   event = { 'VimEnter' },
-  --   config = true,
-  --   dependencies = { { 'nvim-tree/nvim-web-devicons' } },
-  -- },
   {
     'goolord/alpha-nvim',
-    requires = { 'nvim-tree/nvim-web-devicons' },
-    lazy = true,
+    commit = '3847d6baf74da61e57a13e071d8ca185f104dc96',
     event = { 'VimEnter' },
-    config = function()
-      -- startify, theta, dashboard
-      -- require 'alpha'.setup(require('alpha.themes.theta').config)
-      local alpha = require('alpha')
-      local theme = require('alpha.themes.theta')
-      local dashboard = require("alpha.themes.dashboard")
-      theme.header.val = {
-        [[ ███╗   ██╗ ███████╗ ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗]],
-        [[ ████╗  ██║ ██╔════╝██╔═══██╗ ██║   ██║ ██║ ████╗ ████║]],
-        [[ ██╔██╗ ██║ █████╗  ██║   ██║ ██║   ██║ ██║ ██╔████╔██║]],
-        [[ ██║╚██╗██║ ██╔══╝  ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║]],
-        [[ ██║ ╚████║ ███████╗╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║]],
-        [[ ╚═╝  ╚═══╝ ╚══════╝ ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝]]
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    opts = function()
+      local theta = require('alpha.themes.theta')
+      local dashboard = require('alpha.themes.dashboard')
+      local header = {
+        type = 'text',
+        val = {
+          [[ ███╗   ██╗ ███████╗ ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗]],
+          [[ ████╗  ██║ ██╔════╝██╔═══██╗ ██║   ██║ ██║ ████╗ ████║]],
+          [[ ██╔██╗ ██║ █████╗  ██║   ██║ ██║   ██║ ██║ ██╔████╔██║]],
+          [[ ██║╚██╗██║ ██╔══╝  ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║]],
+          [[ ██║ ╚████║ ███████╗╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║]],
+          [[ ╚═╝  ╚═══╝ ╚══════╝ ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝]],
+        },
+        opts = {
+          position = 'center',
+          hl = 'Type',
+        },
       }
-      theme.buttons.val = {
-        { type = 'text',    val = 'Quick links', opts = { hl = 'SpecialComment', position = 'center' } },
-        { type = 'padding', val = 1 },
-        dashboard.button('e', '  New file', '<cmd>ene<CR>'),
-        dashboard.button('m', '  MRU', '<cmd>Telescope oldfiles<CR>'),
-        -- dashboard.button('<leader> l f b', '  File browser'),
-        -- dashboard.button('<leader> l g d', '  Live grep'),
-        dashboard.button('c', '  Configuration', '<cmd>cd ' .. vim.fn.stdpath('config') .. ' <CR>'),
-        dashboard.button('u', '  Update plugins', '<cmd>Lazy update<CR>'),
-        dashboard.button('p', '  Profile plugins', '<cmd>Lazy profile<CR>'),
-        dashboard.button('q', '  Quit', '<cmd>qa<CR>'),
+      local links = {
+        type = 'group',
+        val = {
+          { type = 'text',    val = 'Quick links', opts = { hl = 'SpecialComment', position = 'center' } },
+          { type = 'padding', val = 1 },
+          dashboard.button('r', '  Recent files', ':Telescope oldfiles <CR>'),
+          dashboard.button('f', '  Find file', ':Telescope find_files <CR>'),
+          dashboard.button('p', '  Projects', '<cmd>Telescope projects<CR>'),
+          dashboard.button('n', '  New file', ':ene <BAR> startinsert <CR>'),
+          dashboard.button('u', '  Update plugins', '<cmd>Lazy update<CR>'),
+          dashboard.button('l', '鈴 Lazy', ':Lazy<CR>'),
+          dashboard.button('c', '  Configuration',
+            '<cmd>e ' .. vim.fn.stdpath('config') .. '/lua/plugins/init.lua<CR>'),
+          dashboard.button('q', '  Quit', ':qa<CR>'),
+          -- dashboard.button('q', '  Quit', '<cmd>qa<CR>'),
+        },
+        position = 'center',
       }
-      alpha.setup(theme.config)
-    end
+      local recent = require('alpha.themes.theta').config.layout[4]
+      local version = vim.version() or { major = 0, minor = 0, patch = 0 }
+      theta.config = {
+        layout = {
+          { type = 'padding', val = 2 }, header,
+          -- show neovim version
+          {
+            type = 'text',
+            val = ' v' .. version.major .. '.' .. version.minor .. '.' .. version.patch,
+            opts = { hl = 'SpecialComment', position = 'center' },
+          },
+          -- each action
+          { type = 'padding', val = 2 }, links,
+          { type = 'padding', val = 2 }, recent,
+          { type = 'padding', val = 2 },
+        },
+        opts = {
+          noautocmd = false,
+          redraw_on_resize = true,
+        },
+      }
+      return theta
+    end,
+    config = function(_, theta)
+      -- close Lazy and re-open when the dashboard is ready
+      if vim.o.filetype == 'lazy' then
+        vim.cmd.close()
+        vim.api.nvim_create_autocmd('User', {
+          pattern = 'AlphaReady',
+          callback = function()
+            require('lazy').show()
+          end,
+        })
+      end
+      require('alpha').setup(theta.config)
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'LazyVimStarted',
+        callback = function()
+          local stats = require('lazy').stats()
+          local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
+          local loaded = '⚡ Loaded ' .. stats.count .. ' plugins in ' .. ms .. 'ms'
+          table.insert(theta.config.layout, {
+            type = 'text',
+            val = loaded,
+            opts = { hl = 'SpecialComment', position = 'center' }
+          })
+          pcall(vim.cmd.AlphaRedraw)
+        end,
+      })
+    end,
   },
   {
     -- Use commit instead of tag to use lua_ls.
@@ -221,7 +271,28 @@ require('lazy').setup({
       {
         'williamboman/mason-lspconfig.nvim',
         commit = '93e58e100f37ef4fb0f897deeed20599dae9d128',
-        config = true,
+        config = function()
+          require 'mason-lspconfig'.setup {
+            automatic_installation = true,
+            ensure_installed = {
+              'bashls',
+              'docker_compose_language_service',
+              'dockerls',
+              'fixjson',
+              'golangci_lint_ls',
+              'gopls',
+              'graphql',
+              'jsonls',
+              'jsonnet_ls',
+              'lua_ls',
+              'sqlls',
+              'terraformls',
+              'tflint',
+              'yamlls',
+              'zk',
+            },
+          }
+        end,
       },
       {
         'jose-elias-alvarez/null-ls.nvim',
@@ -363,39 +434,6 @@ require('lazy').setup({
     end,
     config = require('plugins.telescope'),
   },
-  -- {
-  --   'axkirillov/easypick.nvim',
-  --   commit = '3f6af7b34eca30b81a8090ea6e5aa56212f8e746',
-  --   lazy = true,
-  --   event = { 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI' },
-  --   dependencies = { 'nvim-telescope/telescope.nvim' },
-  --   init = function()
-  --     vim.keymap.set('n', '<space>g', '<Cmd>Easypic changed_files<CR>')
-  --   end,
-  --   config = function()
-  --     local easypick = require('easypick')
-  --     local base_branch = 'main'
-  --     easypick.setup({
-  --       pickers = {
-  --         {
-  --           name = 'ls',
-  --           command = 'ls',
-  --           previewer = easypick.previewers.default()
-  --         },
-  --         {
-  --           name = 'changed_files',
-  --           command = 'git diff --name-only $(git merge-base HEAD ' .. base_branch .. " )",
-  --           previewer = easypick.previewers.branch_diff({ base_branch = base_branch })
-  --         },
-  --         {
-  --           name = "conflicts",
-  --           command = "git diff --name-only --diff-filter=U --relative",
-  --           previewer = easypick.previewers.file_diff()
-  --         },
-  --       }
-  --     })
-  --   end,
-  -- },
   {
     'LinArcX/telescope-command-palette.nvim',
     commit = 'f7024ea025ed7985d8881d1b535004a1200903f3',
@@ -428,17 +466,32 @@ require('lazy').setup({
     dependencies = { 'nvim-telescope/telescope.nvim' },
     config = function() require('telescope').load_extension('ghq') end,
   },
+  {
+    'ahmedkhalf/project.nvim',
+    commit = '1c2e9c93c7c85126c2197f5e770054f53b1926fb',
+    lazy = true,
+    event = { 'VimEnter', 'BufReadPost', 'BufAdd', 'BufNewFile' },
+    dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-treesitter/nvim-treesitter' },
+    config = function()
+      require('project_nvim').setup {
+        detection_methods = { 'pattern', 'lsp' },
+        patterns = { '.git' },
+      }
+      require('telescope').load_extension('projects')
+    end
+  },
 
   -- Apperance
   {
     'b4b4r07/cursor-x.nvim',
+    commit = '3cc71730b9518c28cfb56d33dab492acbf467845',
     lazy = true,
     event = { 'BufRead' },
     config = function()
       require('cursor-x').setup({
         interval = 3000,
         always_cursorline = vim.opt.cursorline:get(),
-        filetype_exclude = { 'alpha', 'neo-tree' },
+        filetype_exclude = { 'alpha', 'neo-tree', 'NeogitStatus' },
       })
       vim.api.nvim_create_user_command('CursorOn', function() require('cursor-x').enable() end, {})
       vim.api.nvim_create_user_command('CursorOff', function() require('cursor-x').disable() end, {})
@@ -526,14 +579,14 @@ require('lazy').setup({
       })
     end,
   },
-  -- {
-  --   'utilyre/barbecue.nvim',
-  --   tag = 'v0.4.1',
-  --   dependencies = { 'SmiteshP/nvim-navic', 'nvim-tree/nvim-web-devicons' },
-  --   config = function()
-  --     require('barbecue').setup({ theme = 'tokyonight' })
-  --   end
-  -- },
+  {
+    'utilyre/barbecue.nvim',
+    tag = 'v0.4.1',
+    dependencies = { 'SmiteshP/nvim-navic', 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require('barbecue').setup({ theme = 'tokyonight' })
+    end
+  },
   {
     'nvim-neo-tree/neo-tree.nvim',
     commit = '74040b34278910d9b467fd914862e2a9a1ebacaa',
@@ -612,7 +665,6 @@ require('lazy').setup({
   },
 
   -- Enhanced motions
-  -- Lazy load by event is not recommended.
   {
     'bkad/CamelCaseMotion',
     commit = 'de439d7c06cffd0839a29045a103fe4b44b15cdc',
@@ -815,24 +867,9 @@ require('lazy').setup({
       require('gitsigns').setup {
         signs = {
           add          = { hl = 'GitSignsAdd', text = ' ', numhl = 'GitSignsAddNr', linehl = 'GitSignsAddLn' },
-          change       = {
-            hl = 'GitSignsChange',
-            text = '▎',
-            numhl = 'GitSignsChangeNr',
-            linehl = 'GitSignsChangeLn'
-          },
-          delete       = {
-            hl = 'GitSignsDelete',
-            text = ' ',
-            numhl = 'GitSignsDeleteNr',
-            linehl = 'GitSignsDeleteLn'
-          },
-          topdelete    = {
-            hl = 'GitSignsDelete',
-            text = ' ',
-            numhl = 'GitSignsDeleteNr',
-            linehl = 'GitSignsDeleteLn'
-          },
+          change       = { hl = 'GitSignsChange', text = '▎', numhl = 'GitSignsChangeNr', linehl = 'GitSignsChangeLn' },
+          delete       = { hl = 'GitSignsDelete', text = ' ', numhl = 'GitSignsDeleteNr', linehl = 'GitSignsDeleteLn' },
+          topdelete    = { hl = 'GitSignsDelete', text = ' ', numhl = 'GitSignsDeleteNr', linehl = 'GitSignsDeleteLn' },
           changedelete = {
             hl = 'GitSignsChangeDelete',
             text = '▎',
@@ -860,15 +897,52 @@ require('lazy').setup({
     lazy = true,
     cmd = { 'Silicon' },
   },
+  {
+    'TimUntersberger/neogit',
+    commit = '039ff3212ec43cc4d3332956dfb54e263c8d5033',
+    dependencies = { 'sindrets/diffview.nvim' },
+    lazy = true,
+    cmd = { 'Neogit' },
+    config = function()
+      require('neogit').setup({
+        kind                          = 'floating',
+        commit_popup                  = { kind = 'floating' },
+        preview_buffer                = { kind = 'floating' },
+        popup                         = { kind = 'floating' },
+        integrations                  = {
+          diffview = false -- for now
+        },
+        disable_commit_confirmation   = true,
+        disable_builtin_notifications = true,
+        sections                      = {
+          untracked = { folded = false },
+          unstaged  = { folded = false },
+          staged    = { folded = false },
+          stashes   = { folded = false },
+          unpulled  = { folded = false },
+          unmerged  = { folded = true },
+          recent    = { folded = true },
+        },
+        mappings                      = {
+          status = {
+            ['l'] = 'Toggle',
+            ['a'] = 'Stage',
+          },
+        },
+      })
+    end,
+  },
 
   -- Language specific tools
   {
     'ray-x/go.nvim',
+    commit = '933ff9f0d84975122ec62ef98f78511db5c313c1',
     dependencies = {
       'ray-x/guihua.lua',
       'neovim/nvim-lspconfig',
       'nvim-treesitter/nvim-treesitter',
     },
+    lazy = true,
     event = { 'CmdlineEnter' },
     ft = { 'go', 'gomod' },
     config = function()
@@ -907,8 +981,8 @@ require('lazy').setup({
   -- Color
   {
     'caglartoklu/ftcolor.vim',
+    commit = '28a8cf87e6a8b51cfd5fe526d18fd8cc13535158',
     config = function()
-      -- vim.g.ftcolor_custom_command = [['colorscheme ' . vim.g.colors_name]]
       vim.g.ftcolor_plugin_enabled = false
       vim.g.ftcolor_default_color_scheme = 'tokyonight'
       vim.g.ftcolor_custom_command = [[lua require('lualine').refresh()]]
@@ -919,10 +993,11 @@ require('lazy').setup({
         sh        = 'material', -- 'palenight'
         bash      = 'github_dark',
         zsh       = 'github_dark',
-        hcl       = 'kyotonight',
+        hcl       = 'nord',
         json      = 'kanagawa',
         yaml      = 'tokyonight',
-        terraform = 'nordfox',
+        -- terraform = 'nordfox',
+        terraform = 'nord',
       }
     end,
   },
@@ -956,6 +1031,7 @@ require('lazy').setup({
   },
   {
     'rebelot/kanagawa.nvim',
+    commit = 'd8800c36a7f3bcec953288926b00381c028ed97f',
     config = function()
       require('kanagawa').setup({
         compile = false,
@@ -973,6 +1049,7 @@ require('lazy').setup({
   },
   {
     'marko-cerovac/material.nvim',
+    commit = '18d5e8af4c4bc77382bda5e5ae2830ab515cf5c6',
     init = function()
       -- 'darker', 'lighter', 'oceanic', 'palenight', 'deep ocean'
       vim.g.material_style = 'palenight'
@@ -1005,6 +1082,7 @@ require('lazy').setup({
   },
   {
     'gbprod/nord.nvim',
+    commit = 'bd32c0f4d61c4a49a5ea8c2829f370a52fe1bcdd',
     config = function()
       require('nord').setup({
         transparent = false,      -- Enable this to disable setting the background color
@@ -1021,18 +1099,21 @@ require('lazy').setup({
       })
     end,
   },
+  -- alternative nord themes
+  -- { 'nordtheme/vim' },
+  -- { 'shaunsingh/nord.nvim' },
   { 'daschw/leaf.nvim',                tag = 'v0.3.1' },
   { 'projekt0n/github-nvim-theme',     tag = 'v0.0.7' },
   { 'olivercederborg/poimandres.nvim', tag = 'v0.5.0' },
   { 'norcalli/nvim-colorizer.lua',     commit = '36c610a9717cc9ec426a07c8e6bf3b3abcb139d6' },
   { 'cocopon/iceberg.vim',             commit = 'e01ac08c2202e7544531f4d806f6893539da6471' },
-  { 'voidekh/kyotonight.vim' },
-  { 'junegunn/seoul256.vim' },
-  { 'AlessandroYorba/Despacio' },
-  { 'ellisonleao/gruvbox.nvim' }, -- morhetz/gruvbox for neovim
-  { 'maxmx03/solarized.nvim' },
-  -- { 'nordtheme/vim' },
-  -- { 'shaunsingh/nord.nvim' },
+  { 'voidekh/kyotonight.vim',          commit = 'aa2c77aec65393f7d3993b8dbd935dfd53ebc4ec' },
+  { 'junegunn/seoul256.vim',           commit = '8f81a2f9f7ced9f8edea7f8a06caf5eaa9d9a217' },
+  { 'AlessandroYorba/Despacio',        commit = 'd214f8424a97ca35f8c74fbd7e8968326585165c' },
+  -- morhetz/gruvbox for neovim
+  { 'ellisonleao/gruvbox.nvim',        commit = '488acf89979463d3ab77f8a5d35a11a2c809ac19' },
+  { 'maxmx03/solarized.nvim',          commit = '7965990c323089a5afd027adc30435c72db67b58' },
 }, opt)
 
+-- directly set the colorscheme until ftcolor become stable
 vim.cmd [[silent! colorscheme tokyonight]]

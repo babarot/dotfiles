@@ -39,19 +39,19 @@ return function()
       },
       mappings = {
         i = {
-              ['<esc>'] = actions.close,
-              ['jj'] = { '<esc>', type = 'command' },
-              ['<C-d>'] = actions.preview_scrolling_down,
-              ['<C-u>'] = actions.preview_scrolling_up,
+          ['<esc>'] = actions.close,
+          ['jj'] = { '<esc>', type = 'command' },
+          ['<C-d>'] = actions.preview_scrolling_down,
+          ['<C-u>'] = actions.preview_scrolling_up,
         },
         n = {
-              ['<esc>'] = actions.close,
-              ['<space>j'] = actions.close, -- depends on my keymap
-              ['q'] = actions.close,
-              ['<C-d>'] = actions.results_scrolling_down,
-              ['<C-u>'] = actions.results_scrolling_up,
-              ['<C-n>'] = actions.preview_scrolling_down,
-              ['<C-p>'] = actions.preview_scrolling_up,
+          ['<esc>'] = actions.close,
+          ['<space>j'] = actions.close,     -- depends on my keymap
+          ['q'] = actions.close,
+          ['<C-d>'] = actions.results_scrolling_down,
+          ['<C-u>'] = actions.results_scrolling_up,
+          ['<C-n>'] = actions.preview_scrolling_down,
+          ['<C-p>'] = actions.preview_scrolling_up,
         },
       },
     },

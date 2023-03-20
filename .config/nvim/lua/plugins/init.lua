@@ -193,10 +193,10 @@ require('lazy').setup({
           { type = 'text',    val = 'Quick links', opts = { hl = 'SpecialComment', position = 'center' } },
           { type = 'padding', val = 1 },
           dashboard.button('r', '  Recent files', ':Telescope oldfiles <CR>'),
-          dashboard.button('f', '  Find file', ':Telescope find_files <CR>'),
+          dashboard.button('f', '  Find files', ':Telescope find_files <CR>'),
+          dashboard.button('d', '  Directories', '<cmd>Neotree float<CR>'),
           dashboard.button('p', '  Projects', '<cmd>Telescope projects<CR>'),
           dashboard.button('n', '  New file', ':ene <BAR> startinsert <CR>'),
-          dashboard.button('u', '  Update plugins', '<cmd>Lazy update<CR>'),
           dashboard.button('l', '鈴 Lazy', ':Lazy<CR>'),
           dashboard.button('c', '  Configuration',
             '<cmd>e ' .. vim.fn.stdpath('config') .. '/lua/plugins/init.lua<CR>'),
@@ -490,7 +490,12 @@ require('lazy').setup({
       require('cursor-x').setup({
         interval = 3000,
         always_cursorline = vim.opt.cursorline:get(),
-        filetype_exclude = { 'alpha', 'neo-tree', 'NeogitStatus' },
+        filetype_exclude = {
+          'alpha',
+          'neo-tree',
+          'NeogitStatus',
+          'mason',
+        },
       })
       vim.api.nvim_create_user_command('CursorOn', function() require('cursor-x').enable() end, {})
       vim.api.nvim_create_user_command('CursorOff', function() require('cursor-x').disable() end, {})

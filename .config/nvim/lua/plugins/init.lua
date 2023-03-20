@@ -634,6 +634,52 @@ require('lazy').setup({
 
   -- Editing
   {
+    'monaqa/dial.nvim',
+    config = function()
+      local augend = require('dial.augend')
+      local opts = { noremap = true, silent = true }
+
+      require('dial.config').augends:register_group({
+        default = {
+          augend.case.new({
+            types = { 'camelCase', 'snake_case', 'kebab-case', 'PascalCase', 'SCREAMING_SNAKE_CASE' },
+            cyclic = true,
+          }),
+          augend.constant.new({
+            elements = { 'and', 'or' },
+            word = true,
+            cyclic = true,
+          }),
+          augend.constant.new({
+            elements = { '&&', '||' },
+            word = false,
+            cyclic = true,
+          }),
+          augend.constant.new({
+            elements = { 'True', 'False' },
+            word = true,
+            cyclic = true,
+          }),
+          augend.constant.alias.bool,
+          augend.constant.alias.de_weekday,
+          augend.constant.alias.de_weekday_full,
+          augend.date.alias['%Y/%m/%d'],
+          augend.date.alias['%Y-%m-%d'],
+          augend.hexcolor.new({ case = 'lower' }),
+          augend.integer.alias.decimal_int,
+          augend.semver.alias.semver,
+        },
+      })
+
+      vim.keymap.set('n', '<C-a>', require('dial.map').inc_normal(), opts)
+      vim.keymap.set('n', '<C-x>', require('dial.map').dec_normal(), opts)
+      vim.keymap.set('v', '<C-a>', require('dial.map').inc_visual(), opts)
+      vim.keymap.set('v', '<C-x>', require('dial.map').dec_visual(), opts)
+      vim.keymap.set('v', 'g<C-a>', require('dial.map').inc_gvisual(), opts)
+      vim.keymap.set('v', 'g<C-x>', require('dial.map').dec_gvisual(), opts)
+    end,
+  },
+  {
     'Wansmer/treesj',
     commit = '90248883bdb2d559ff4ba7f0148eb0145d3f0908',
     lazy = true,

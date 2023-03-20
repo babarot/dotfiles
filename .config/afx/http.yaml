@@ -29,7 +29,7 @@ http:
     snippet: |
       gcp() {
         type fzf &>/dev/null || { echo "fzf not found"; return 1; }
-        local project=$(gcloud projects list ${1+--filter ${1}} | grep -v sys- | fzf --height 50% --header-lines=1 --reverse --multi --cycle --exit-0 | awk '{print $1}')
+        local project=$(gcloud projects list ${1+--filter ${1}} | grep -v sys- | fzf --height 50% --header-lines=1 --reverse --exit-0 | awk '{print $1}')
         if [[ -z ${project} ]]; then
           return 0
         fi

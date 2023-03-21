@@ -19,6 +19,7 @@ local opt = {
 }
 
 require('lazy').setup({
+  -- Development
   {
     'nvim-treesitter/nvim-treesitter',
     commit = '356c9db3478b1bc6d0f0eefcb397989e50fdc35f',
@@ -80,66 +81,6 @@ require('lazy').setup({
     end
   },
   {
-    'nathom/filetype.nvim',
-    commit = 'b522628a45a17d58fc0073ffd64f9dc9530a8027',
-    config = function()
-      require('filetype').setup({
-        overrides = {
-          extensions = {
-            tape = 'vhs',
-          },
-          function_extensions = {
-            ['go'] = function()
-              vim.bo.filetype = 'go'
-              vim.bo.autoindent = true
-              vim.bo.expandtab = false
-              vim.bo.shiftwidth = 4
-              vim.bo.softtabstop = 4
-              vim.bo.tabstop = 4
-            end,
-          },
-        },
-      })
-    end,
-  },
-  { 'junegunn/fzf' },
-  { 'junegunn/fzf.vim' },
-  {
-    'ibhagwan/fzf-lua',
-    requires = { 'nvim-tree/nvim-web-devicons' },
-    init = function()
-      -- vim.keymap.set('n', '<space>g', function() require('fzf-lua').git_status() end)
-    end,
-    config = function()
-      local fzf_lua = require('fzf-lua')
-      require('fzf-lua').setup {
-        git = {
-          status = {
-            cmd         = 'git status -s',
-            file_icons  = true,
-            git_icons   = true,
-            color_icons = true,
-            previewer   = 'git_diff',
-            actions     = {
-              ['right'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
-              ['left'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
-              ['ctrl-l'] = { fzf_lua.actions.git_unstage, fzf_lua.actions.resume },
-              ['ctrl-h'] = { fzf_lua.actions.git_stage, fzf_lua.actions.resume },
-            },
-          },
-        },
-      }
-    end
-  },
-  {
-    'kylechui/nvim-surround',
-    config = function()
-      require('nvim-surround').setup({})
-    end,
-  },
-
-  -- Development
-  {
     'folke/neodev.nvim',
     tag = 'v2.4.0',
     lazy = true,
@@ -162,6 +103,29 @@ require('lazy').setup({
   { 'MunifTanjim/nui.nvim',        commit = 'd147222a1300901656f3ebd5b95f91732785a329' },
   { 'nvim-tree/nvim-web-devicons', commit = '4709a504d2cd2680fb511675e64ef2790d491d36' },
   { 'bfontaine/Brewfile.vim',      commit = 'f13b98b92f2e9b9e38f3b1d45d41e19049d671df' },
+  {
+    'nathom/filetype.nvim',
+    commit = 'b522628a45a17d58fc0073ffd64f9dc9530a8027',
+    config = function()
+      require('filetype').setup({
+        overrides = {
+          extensions = {
+            tape = 'vhs',
+          },
+          function_extensions = {
+            ['go'] = function()
+              vim.bo.filetype = 'go'
+              vim.bo.autoindent = true
+              vim.bo.expandtab = false
+              vim.bo.shiftwidth = 4
+              vim.bo.softtabstop = 4
+              vim.bo.tabstop = 4
+            end,
+          },
+        },
+      })
+    end,
+  },
 
   -- Project
   {
@@ -192,7 +156,7 @@ require('lazy').setup({
         val = {
           { type = 'text',    val = 'Quick links', opts = { hl = 'SpecialComment', position = 'center' } },
           { type = 'padding', val = 1 },
-          dashboard.button('r', '  Recent files', ':Telescope oldfiles <CR>'),
+          dashboard.button('r', '  Recent files', ':Telescope oldfiles <CR>'),
           dashboard.button('f', '  Find files', ':Telescope find_files <CR>'),
           dashboard.button('d', '  Directories', '<cmd>Neotree float<CR>'),
           dashboard.button('p', '  Projects', '<cmd>Telescope projects<CR>'),
@@ -361,6 +325,8 @@ require('lazy').setup({
   },
   {
     'glepnir/lspsaga.nvim',
+    commit = '44ae62d12b2cd498ed197cde159dfef5b2ea16b0',
+    lazy = true,
     event = { 'BufRead' },
     dependencies = {
       { 'nvim-tree/nvim-web-devicons' },
@@ -478,6 +444,7 @@ require('lazy').setup({
     'ahmedkhalf/project.nvim',
     commit = '1c2e9c93c7c85126c2197f5e770054f53b1926fb',
     lazy = true,
+    -- 'VimEnter' is mainly for alpha (to use it in a menu)
     event = { 'VimEnter', 'BufReadPost', 'BufAdd', 'BufNewFile' },
     dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-treesitter/nvim-treesitter' },
     config = function()
@@ -699,11 +666,19 @@ require('lazy').setup({
 
   -- Editing
   {
+    'kylechui/nvim-surround',
+    tag    = 'v2.0.0',
+    lazy   = true,
+    event  = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
+    config = function()
+      require('nvim-surround').setup({})
+    end,
+  },
+  {
     'monaqa/dial.nvim',
     config = function()
       local augend = require('dial.augend')
       local opts = { noremap = true, silent = true }
-
       require('dial.config').augends:register_group({
         default = {
           augend.case.new({
@@ -735,7 +710,6 @@ require('lazy').setup({
           augend.semver.alias.semver,
         },
       })
-
       vim.keymap.set('n', '<C-a>', require('dial.map').inc_normal(), opts)
       vim.keymap.set('n', '<C-x>', require('dial.map').dec_normal(), opts)
       vim.keymap.set('v', '<C-a>', require('dial.map').inc_visual(), opts)
@@ -787,7 +761,9 @@ require('lazy').setup({
   },
   {
     'numToStr/Comment.nvim',
-    tag = 'v0.7.0',
+    tag    = 'v0.7.0',
+    lazy   = true,
+    event  = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
     config = function()
       require('Comment').setup({
         vim.keymap.set('v', 'K', 'gc', { silent = true, remap = true })
@@ -956,11 +932,12 @@ require('lazy').setup({
       'nvim-treesitter/nvim-treesitter',
     },
     lazy = true,
-    event = { 'CmdlineEnter' },
+    event = { --[[ 'CmdlineEnter', ]] 'BufReadPost', 'BufAdd', 'BufNewFile' },
     ft = { 'go', 'gomod' },
     config = function()
       require('go').setup()
     end,
+    build = [[:lua require('go.install').update_all_sync()]]
   },
   {
     'ekickx/clipboard-image.nvim',

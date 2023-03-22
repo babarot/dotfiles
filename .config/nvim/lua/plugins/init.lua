@@ -977,6 +977,12 @@ require('lazy').setup({
     ft = { 'go', 'gomod' },
     config = function()
       require('go').setup()
+      vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
+        pattern = { '*.go' },
+        callback = function()
+          require('go.format').goimport()
+        end,
+      })
     end,
     build = [[:lua require('go.install').update_all_sync()]]
   },

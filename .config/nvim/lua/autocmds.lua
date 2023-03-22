@@ -20,7 +20,7 @@ vim.api.nvim_create_autocmd({ 'InsertEnter', 'WinLeave' }, {
 
 -- create directories when needed, when saving a file
 vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
-  group = vim.api.nvim_create_augroup('auto_create_dir', { clear = true }),
+  group = vim.api.nvim_create_augroup('auto-create-dir', { clear = true }),
   callback = function(event)
     local file = vim.loop.fs_realpath(event.match) or event.match
     vim.fn.mkdir(vim.fn.fnamemodify(file, ':p:h'), 'p')
@@ -30,15 +30,8 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
-  pattern = { '*.go' },
-  callback = function()
-    require('go.format').goimport()
-  end,
-})
-
 vim.api.nvim_create_autocmd({ 'BufEnter', 'BufRead' }, {
-  group = vim.api.nvim_create_augroup('cd_parent_dir', { clear = true }),
+  group = vim.api.nvim_create_augroup('cd-parent-dir', { clear = true }),
   callback = function()
     local dir = vim.fn.expand("%:p:h")
     if not vim.fn.isdirectory(dir) then

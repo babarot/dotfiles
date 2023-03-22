@@ -26,5 +26,5 @@ vim.g.loaded_netrwPlugin  = 1
 require('autocmds')
 require('keymaps')
 require('options')
-require('plugins')
 require('commands')
+require('plugins')

@@ -473,7 +473,7 @@ require('lazy').setup({
   -- Apperance
   {
     'b4b4r07/cursor-x.nvim',
-    commit = '3cc71730b9518c28cfb56d33dab492acbf467845',
+    commit = 'f99d429663a5c3cd50fdcdf8d65192ac2eaa7b7a',
     lazy = true,
     event = { 'BufRead' },
     config = function()
@@ -958,6 +958,16 @@ require('lazy').setup({
     commit = 'd1550dc26729b7954f95269952e90471b838fa25',
     lazy = true,
     cmd = { 'PasteImg' },
+    ft = { 'markdown' },
+  },
+  {
+    'mzlogin/vim-markdown-toc',
+    commit = '7ec05df27b4922830ace2246de36ac7e53bea1db',
+    lazy = true,
+    cmd = {
+      'GenTocGFM', 'GenTocRedcarpet', 'GenTocGitLab', 'GenTocMarked',
+      'UpdateToc', 'RemoveToc',
+    },
     ft = { 'markdown' },
   },
   {

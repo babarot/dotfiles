@@ -344,6 +344,20 @@ require('lazy').setup({
         lightbulb = {
           enable = false,
         },
+        outline = {
+          win_position = 'right',
+          win_with = '',
+          win_width = 50,
+          show_detail = true,
+          auto_preview = true,
+          auto_refresh = true,
+          auto_close = true,
+          keys = {
+            jump = '<CR>',
+            expand_collapse = 'u',
+            quit = 'q',
+          },
+        },
       })
     end,
   },

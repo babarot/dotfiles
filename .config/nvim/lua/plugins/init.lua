@@ -109,15 +109,23 @@ require('lazy').setup({
   {
     'nathom/filetype.nvim',
     commit = 'b522628a45a17d58fc0073ffd64f9dc9530a8027',
-    lazy = true,
-    event = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
+    -- DO NOT DO LAZY LOAD
     config = function()
       require('filetype').setup({
         overrides = {
           extensions = {
             tape = 'vhs',
           },
+          literal = {
+            Brewfile = 'brewfile'
+          },
           function_extensions = {
+            ['sh'] = function()
+              vim.bo.iskeyword = vim.bo.iskeyword .. ',:'
+            end,
+            ['zsh'] = function()
+              vim.bo.iskeyword = vim.bo.iskeyword .. ',:'
+            end,
             ['go'] = function()
               vim.bo.filetype = 'go'
               vim.bo.autoindent = true
@@ -429,6 +437,14 @@ require('lazy').setup({
       vim.keymap.set('n', '<space>g', '<Cmd>Telescope git_status<CR>')
     end,
     config = require('plugins.telescope'),
+  },
+  {
+    'debugloop/telescope-undo.nvim',
+    commit       = '03ff45fab0c4adad4d252e25b5b194e22caf5b4f',
+    lazy         = true,
+    event        = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
+    dependencies = { 'nvim-telescope/telescope.nvim' },
+    config       = function() require('telescope').load_extension('undo') end,
   },
   {
     'LinArcX/telescope-command-palette.nvim',

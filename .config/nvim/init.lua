@@ -24,7 +24,7 @@ vim.g.loaded_zip          = 1
 vim.g.loaded_netrwPlugin  = 1
 
 require('autocmds')
+require('commands')
 require('keymaps')
 require('options')
-require('commands')
 require('plugins')

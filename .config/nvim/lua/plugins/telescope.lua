@@ -46,7 +46,7 @@ return function()
         },
         n = {
           ['<esc>'] = actions.close,
-          ['<space>j'] = actions.close,     -- depends on my keymap
+          ['<space>j'] = actions.close, -- depends on my keymap
           ['q'] = actions.close,
           ['<C-d>'] = actions.results_scrolling_down,
           ['<C-u>'] = actions.results_scrolling_up,
@@ -82,6 +82,9 @@ return function()
     },
 
     extensions = {
+      undo = {
+        -- telescope-undo.nvim config, see below
+      },
       repo = {
         list = {
           fd_opts = { '--no-ignore-vcs' },

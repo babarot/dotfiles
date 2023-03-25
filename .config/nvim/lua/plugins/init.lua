@@ -107,6 +107,12 @@ require('lazy').setup({
     ft = { 'ruby', 'brewfile' },
   },
   {
+    'moznion/vim-ltsv',
+    commit = 'ef0247cd2132d4832861896694d476a50f7325af',
+    lazy = true,
+    ft = { 'ltsv' },
+  },
+  {
     'nathom/filetype.nvim',
     commit = 'b522628a45a17d58fc0073ffd64f9dc9530a8027',
     -- DO NOT DO LAZY LOAD
@@ -121,9 +127,11 @@ require('lazy').setup({
           },
           function_extensions = {
             ['sh'] = function()
+              vim.bo.filetype = 'sh'
               vim.bo.iskeyword = vim.bo.iskeyword .. ',:'
             end,
             ['zsh'] = function()
+              vim.bo.filetype = 'zsh'
               vim.bo.iskeyword = vim.bo.iskeyword .. ',:'
             end,
             ['go'] = function()

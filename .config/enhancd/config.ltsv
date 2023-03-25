@@ -1,0 +1,1 @@
+short:-G	long:--ghq	desc:Show ghq path	func:ghq list --full-path	condition:which ghq

@@ -5,18 +5,20 @@ github:
   repo: enhancd
   plugin:
     env:
-      ENHANCD_FILTER: fzf --height 25% --reverse --ansi:fzy
+      ENHANCD_FILTER: fzf --preview 'exa --group-directories-first -T --git-ignore --level 1 {}' --preview-window right,50% --height 35% --reverse --ansi:fzy
     sources:
     - init.sh
-# - name: jhawthorn/fzy
-#   description: A better fuzzy finder
-#   owner: jhawthorn
-#   repo: fzy
-#   command:
-#     build:
-#       steps:
-#       - make
-#       - sudo make install
+- name: jhawthorn/fzy
+  description: A better fuzzy finder
+  owner: jhawthorn
+  repo: fzy
+  command:
+    build:
+      steps:
+      - make
+        #- sudo make install
+    link:
+    - from: fzy
 - name: ahmetb/kubectx
   description: Switch faster between clusters and namespaces in kubectl
   owner: ahmetb
@@ -511,7 +513,7 @@ github:
   repo: grex
   release:
     name: grex
-    tag: v0.3.0
+    tag: v1.4.1
   command:
     link:
     - from: '**/grex'

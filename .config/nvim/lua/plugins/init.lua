@@ -107,8 +107,8 @@ require('lazy').setup({
     ft = { 'ruby', 'brewfile' },
   },
   {
-    'moznion/vim-ltsv',
-    commit = 'ef0247cd2132d4832861896694d476a50f7325af',
+    'b4b4r07/vim-ltsv',
+    commit = 'b1b027e29b5c35cfa697a0307e10279111114e03',
     lazy = true,
     ft = { 'ltsv' },
   },

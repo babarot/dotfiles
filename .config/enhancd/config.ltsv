@@ -1,1 +1,2 @@
 short:-G	long:--ghq	desc:Show ghq path	func:ghq list --full-path	condition:which ghq
+short:	long:--home	desc:Go home	func:echo $HOME	condition:which afx

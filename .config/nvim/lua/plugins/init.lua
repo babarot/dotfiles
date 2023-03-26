@@ -143,6 +143,7 @@ require('lazy').setup({
               vim.bo.tabstop = 4
             end,
           },
+          function_literal = {},
         },
       })
     end,
@@ -727,6 +728,12 @@ require('lazy').setup({
   },
 
   -- Editing
+  {
+    'farmergreg/vim-lastplace', -- https://github.com/neovim/neovim/issues/16339
+    commit = 'cef9d62165cd26c3c2b881528a5290a84347059e',
+    lazy = true,
+    event = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
+  },
   {
     'kylechui/nvim-surround',
     tag = 'v2.0.0',

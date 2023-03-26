@@ -832,8 +832,8 @@ github:
     - from: 'bin/fzf'
     - from: 'bin/fzf-tmux'
   plugin:
-    sources:
-    - shell/completion.zsh
+    # sources:
+    # - shell/completion.zsh
     env:
       FZF_DEFAULT_COMMAND: fd --type f
       FZF_DEFAULT_OPTS: >

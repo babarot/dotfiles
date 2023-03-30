@@ -5,7 +5,13 @@ github:
   repo: enhancd
   plugin:
     env:
-      ENHANCD_FILTER: fzf --preview 'exa --group-directories-first -T --git-ignore --level 1 {}' --preview-window right,50% --height 35% --reverse --ansi:fzy
+      # ENHANCD_FILTER: fzf --preview 'exa --group-directories-first -T --git-ignore --level 1 {}' --preview-window right,50% --height 35% --reverse --ansi:fzy
+      ENHANCD_FILTER: >
+        fzf --preview 'exa -al --tree --level 1 --group-directories-first --git-ignore
+        --header --git --no-user --no-time --no-filesize --no-permissions {}'
+        --preview-window right,50% --height 35% --reverse --ansi
+        :fzy
+        :peco
     sources:
     - init.sh
 - name: jhawthorn/fzy
@@ -331,7 +337,7 @@ github:
   repo: exa
   release:
     name: exa
-    tag: latest
+    tag: v0.10.1
   command:
     alias:
       l: exa --group-directories-first -a -1 -F --git-ignore
@@ -832,15 +838,15 @@ github:
     - from: 'bin/fzf'
     - from: 'bin/fzf-tmux'
   plugin:
-    # sources:
-    # - shell/completion.zsh
+    sources:
+    - shell/completion.zsh
     env:
       FZF_DEFAULT_COMMAND: fd --type f
       FZF_DEFAULT_OPTS: >
         --height 75% --multi --reverse --margin=0,1
-        --bind ctrl-f:page-down,ctrl-b:page-up
+        --bind ctrl-f:page-down,ctrl-b:page-up,ctrl-/:toggle-preview
         --bind pgdn:preview-page-down,pgup:preview-page-up
-        --marker="✚" --pointer="▶" --prompt="❯ "
+        --marker="+" --pointer="▶" --prompt="❯ "
         --no-separator --scrollbar="█"
         --color bg+:#262626,fg+:#dadada,hl:#f09479,hl+:#f09479
         --color border:#303030,info:#cfcfb0,header:#80a0ff,spinner:#36c692

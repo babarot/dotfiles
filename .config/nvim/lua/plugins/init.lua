@@ -289,7 +289,19 @@ require('lazy').setup({
               'zk',
             },
           }
-        end,
+          require('mason-lspconfig').setup_handlers({
+            function()
+              require('lspconfig').terraformls.setup({
+                on_attach = function(client, _) -- function(client, bufnr)
+                  client.server_capabilities.document_formatting = false
+                  client.server_capabilities.document_range_formatting = false
+                end,
+                capabilities = require('cmp_nvim_lsp').default_capabilities(),
+                filetypes = { 'terraform', 'tf' },
+              })
+            end,
+          })
+        end
       },
       {
         'jose-elias-alvarez/null-ls.nvim',

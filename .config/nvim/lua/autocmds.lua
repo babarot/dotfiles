@@ -40,3 +40,4 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'BufRead' }, {
     vim.fn.execute(":lcd" .. dir)
   end
 })
+

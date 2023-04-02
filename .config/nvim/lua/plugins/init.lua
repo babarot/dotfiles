@@ -123,7 +123,8 @@ require('lazy').setup({
             tape = 'vhs',
           },
           literal = {
-            Brewfile = 'brewfile'
+            Brewfile = 'brewfile',
+            ['.tagpr'] = 'ini'
           },
           function_extensions = {
             ['sh'] = function()

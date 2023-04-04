@@ -62,3 +62,4 @@ mas "Spark", id: 1176895641
 mas "Things 3", id: 904237743
 mas "Translate Tab", id: 458887729
 mas "Yoink", id: 457622435
+mas "Amphetamine", id: 937984704

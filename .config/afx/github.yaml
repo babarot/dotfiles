@@ -14,6 +14,14 @@ github:
         :peco
     sources:
     - init.sh
+- name: changyuheng/zsh-interactive-cd
+  owner: changyuheng
+  repo: zsh-interactive-cd
+  plugin:
+    sources:
+    - '*.zsh'
+  depends-on:
+  - zsh
 - name: jhawthorn/fzy
   description: A better fuzzy finder
   owner: jhawthorn
@@ -838,8 +846,8 @@ github:
     - from: 'bin/fzf'
     - from: 'bin/fzf-tmux'
   plugin:
-    sources:
-    - shell/completion.zsh
+    # sources:
+    # - shell/completion.zsh
     env:
       FZF_DEFAULT_COMMAND: fd --type f
       FZF_DEFAULT_OPTS: >

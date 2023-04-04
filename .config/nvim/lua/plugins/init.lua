@@ -371,7 +371,7 @@ require('lazy').setup({
       { 'nvim-treesitter/nvim-treesitter' }
     },
     init = function()
-      vim.keymap.set('n', '<C-k>', '<cmd>Lspsaga hover_doc<CR>')
+      vim.keymap.set('n', 'KK', '<cmd>Lspsaga hover_doc<CR>')
       vim.keymap.set('n', 'K', '<cmd>Lspsaga lsp_finder<CR>')
       vim.keymap.set('n', '<space>lf', '<cmd>Lspsaga lsp_finder<CR>')
       vim.keymap.set('n', '<space>lo', '<cmd>Lspsaga outline<CR>')
@@ -612,6 +612,29 @@ require('lazy').setup({
   },
 
   -- Widget
+  {
+    'ghillb/cybu.nvim',
+    commit = '395791b1e1177e3459c85415970ab8216b19a5dc',
+    dependencies = { 'nvim-tree/nvim-web-devicons', 'nvim-lua/plenary.nvim' },
+    config = function()
+      require('cybu').setup({
+        style = {
+          path = 'tail',
+          path_abbreviation = 'shorthand',
+          highlights = {
+            current_buffer = 'CybuFocus',      -- current / selected buffer
+            adjacent_buffers = 'CybuAdjacent', -- buffers not in focus
+            background = 'CybuBackground',     -- window background
+            border = 'CybuBorder',             -- border of the window
+          },
+        },
+      })
+      vim.keymap.set('n', '<C-k>', '<Plug>(CybuPrev)')
+      vim.keymap.set('n', '<C-j>', '<Plug>(CybuNext)')
+      vim.keymap.set({ 'n', 'v' }, '<c-s-tab>', '<plug>(CybuLastusedPrev)')
+      vim.keymap.set({ 'n', 'v' }, '<c-tab>', '<plug>(CybuLastusedNext)')
+    end,
+  },
   {
     'romgrk/barbar.nvim',
     commit = '4573b19e9ac29a58409a9445bf93753fb5a3e0e4',

@@ -1,2 +1,3 @@
 short:-G	long:--ghq	desc:Show ghq path	func:ghq list --full-path	condition:which ghq
-short:	long:--home	desc:Go home	func:echo $HOME	condition:which afx
+short:-g	long:--git	desc:Show dirs managed by Git	func:fd --type d --hidden -E .git . $(git rev-parse --show-superproject-working-tree --show-cdup)	condition:git rev-parse --is-inside-work-tree
+short:-x	long:	desc:Show favorite dirs	func:cat ~/.config/enhancd/*.fav | sort | uniq | xargs -I% sh -c 'echo %'	condition:

@@ -22,7 +22,7 @@ require('lazy').setup({
   -- Development
   {
     'nvim-treesitter/nvim-treesitter',
-    commit = '356c9db3478b1bc6d0f0eefcb397989e50fdc35f',
+    commit = '0efa55ae2e6676b1a4cb66c5ee31ea295c6ebc2f',
     lazy = true,
     event = { 'BufReadPost', 'BufNewFile' },
     build = [[vim.api.nvim_command('TSUpdate')]],
@@ -121,6 +121,7 @@ require('lazy').setup({
         overrides = {
           extensions = {
             tape = 'vhs',
+            tf = 'terraform',
           },
           literal = {
             Brewfile = 'brewfile',
@@ -444,7 +445,7 @@ require('lazy').setup({
   -- Telescope
   {
     'nvim-telescope/telescope.nvim',
-    tag = '0.1.1',
+    commit = '6258d50b09f9ae087317e392efe7c05a7323492d',
     lazy = true,
     cmd = { 'Telescope' },
     dependencies = { 'nvim-lua/popup.nvim', 'nvim-lua/plenary.nvim' },
@@ -612,29 +613,29 @@ require('lazy').setup({
   },
 
   -- Widget
-  {
-    'ghillb/cybu.nvim',
-    commit = '395791b1e1177e3459c85415970ab8216b19a5dc',
-    dependencies = { 'nvim-tree/nvim-web-devicons', 'nvim-lua/plenary.nvim' },
-    config = function()
-      require('cybu').setup({
-        style = {
-          path = 'tail',
-          path_abbreviation = 'shorthand',
-          highlights = {
-            current_buffer = 'CybuFocus',      -- current / selected buffer
-            adjacent_buffers = 'CybuAdjacent', -- buffers not in focus
-            background = 'CybuBackground',     -- window background
-            border = 'CybuBorder',             -- border of the window
-          },
-        },
-      })
-      vim.keymap.set('n', '<C-k>', '<Plug>(CybuPrev)')
-      vim.keymap.set('n', '<C-j>', '<Plug>(CybuNext)')
-      vim.keymap.set({ 'n', 'v' }, '<c-s-tab>', '<plug>(CybuLastusedPrev)')
-      vim.keymap.set({ 'n', 'v' }, '<c-tab>', '<plug>(CybuLastusedNext)')
-    end,
-  },
+  -- {
+  --   'ghillb/cybu.nvim',
+  --   commit = '395791b1e1177e3459c85415970ab8216b19a5dc',
+  --   dependencies = { 'nvim-tree/nvim-web-devicons', 'nvim-lua/plenary.nvim' },
+  --   config = function()
+  --     require('cybu').setup({
+  --       style = {
+  --         path = 'tail',
+  --         path_abbreviation = 'shorthand',
+  --         highlights = {
+  --           current_buffer = 'CybuFocus',      -- current / selected buffer
+  --           adjacent_buffers = 'CybuAdjacent', -- buffers not in focus
+  --           background = 'CybuBackground',     -- window background
+  --           border = 'CybuBorder',             -- border of the window
+  --         },
+  --       },
+  --     })
+  --     vim.keymap.set('n', '<C-k>', '<Plug>(CybuPrev)')
+  --     vim.keymap.set('n', '<C-j>', '<Plug>(CybuNext)')
+  --     vim.keymap.set({ 'n', 'v' }, '<c-s-tab>', '<plug>(CybuLastusedPrev)')
+  --     vim.keymap.set({ 'n', 'v' }, '<c-tab>', '<plug>(CybuLastusedNext)')
+  --   end,
+  -- },
   {
     'romgrk/barbar.nvim',
     commit = '4573b19e9ac29a58409a9445bf93753fb5a3e0e4',
@@ -765,6 +766,7 @@ require('lazy').setup({
 
   -- Editing
   {
+    -- vs. https://github.com/ethanholz/nvim-lastplace
     'farmergreg/vim-lastplace', -- https://github.com/neovim/neovim/issues/16339
     commit = 'cef9d62165cd26c3c2b881528a5290a84347059e',
     lazy = true,

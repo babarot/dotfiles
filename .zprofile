@@ -42,8 +42,8 @@ export PATH=~/bin:/opt/homebrew/bin:$PATH
 export CORRECT_IGNORE='_*'
 export CORRECT_IGNORE_FILE='.*'
 
-export WORDCHARS='*?[]~&;!#$%^(){}<>'
-export WORDCHARS='*?.[]~&;!#$%^(){}<>'
+#export WORDCHARS='*?[]~&;!#$%^(){}<>'
+#export WORDCHARS='*?.[]~&;!#$%^(){}<>'
 export WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 
 # History file and its size

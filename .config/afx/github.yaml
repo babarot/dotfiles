@@ -978,3 +978,12 @@ github:
   command:
     link:
     - from: act
+- name: reegnz/jq-zsh-plugin
+  description: jq zsh plugin
+  owner: reegnz
+  repo: jq-zsh-plugin
+  plugin:
+    sources:
+    - jq.plugin.zsh
+    snippet: |
+      bindkey '^j' jq-complete

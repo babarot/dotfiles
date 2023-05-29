@@ -8,6 +8,7 @@ tap "homebrew/core"
 # Brew
 #   https://formulae.brew.sh/
 #
+brew "exiftool"
 brew "gawk"
 brew "gnu-sed"
 brew "go"
@@ -18,6 +19,7 @@ brew "helmfile"
 brew "hugo"
 brew "kustomize"
 brew "libidn2"
+brew "litecli"
 brew "lua-language-server"
 brew "luarocks"
 brew "mas" if OS.mac?
@@ -65,6 +67,10 @@ cask "tableplus"
 cask "the-unarchiver"
 cask "typora"
 
+#
+# Mac App Store
+#   https://github.com/mas-cli/mas
+#
 mas "Fantastical", id: 975937182
 mas "LadioCast", id: 411213048
 mas "Magnet", id: 441258766
@@ -75,3 +81,6 @@ mas "Things 3", id: 904237743
 mas "Translate Tab", id: 458887729
 mas "Yoink", id: 457622435
 mas "Amphetamine", id: 937984704
+mas "Rename X", id: 1438841416
+# mas "Name Mangler 3", id: 603637384
+mas "DaisyDisk", id: 411643860

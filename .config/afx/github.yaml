@@ -267,7 +267,7 @@ github:
   repo: neovim
   release:
     name: nvim
-    tag: v0.8.0
+    tag: v0.9.0
   command:
     env:
       EDITOR: nvim

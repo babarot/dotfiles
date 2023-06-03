@@ -22,7 +22,7 @@ require('lazy').setup({
   -- Development
   {
     'nvim-treesitter/nvim-treesitter',
-    commit = '0efa55ae2e6676b1a4cb66c5ee31ea295c6ebc2f',
+    commit = '05df88ebaa94d30d682d076244615786d9e7c1a5',
     lazy = true,
     event = { 'BufReadPost', 'BufNewFile' },
     build = [[vim.api.nvim_command('TSUpdate')]],
@@ -33,24 +33,25 @@ require('lazy').setup({
         lazy = true,
         event = { 'BufReadPost', 'BufNewFile' },
       },
-      {
-        'andymass/vim-matchup',
-        commit = 'f69d1ac5bd3c4e6ad349f64317000cc9a4a895cf',
-        lazy = true,
-        event = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
-        config = function()
-          vim.g.loaded_matchit = 1
-          vim.g.matchup_matchparen_offscreen = { method = 'popup' }
-          vim.g.matchup_matchparen_enabled = 1
-          vim.cmd([[
-          " hi MatchParen ctermbg=blue guibg=#364a82 cterm=underline gui=underline guifg=#c0caf5 guibg=#3d59a1
-          hi MatchParen ctermbg=blue guibg=lightblue cterm=underline gui=underline
-          hi MatchWord ctermbg=blue guibg=lightblue cterm=underline gui=underline
-          hi MatchParenCur ctermbg=blue guibg=lightblue cterm=underline gui=underline
-          hi MatchWordCur ctermbg=blue guibg=lightblue cterm=underline gui=underline
-        ]])
-        end,
-      },
+      -- something wrong recently
+      -- {
+      --   'andymass/vim-matchup',
+      --   commit = 'b8eca3b588e41e0bb1b3ae200fae88183b91a76d',
+      --   lazy = true,
+      --   event = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
+      --   config = function()
+      --     vim.g.loaded_matchit = 1
+      --     vim.g.matchup_matchparen_offscreen = { method = 'popup' }
+      --     vim.g.matchup_matchparen_enabled = 1
+      --     vim.cmd([[
+      --     " hi MatchParen ctermbg=blue guibg=#364a82 cterm=underline gui=underline guifg=#c0caf5 guibg=#3d59a1
+      --     hi MatchParen ctermbg=blue guibg=lightblue cterm=underline gui=underline
+      --     hi MatchWord ctermbg=blue guibg=lightblue cterm=underline gui=underline
+      --     hi MatchParenCur ctermbg=blue guibg=lightblue cterm=underline gui=underline
+      --     hi MatchWordCur ctermbg=blue guibg=lightblue cterm=underline gui=underline
+      --   ]])
+      --   end,
+      -- },
     },
     config = function()
       require('nvim-treesitter.configs').setup {
@@ -149,6 +150,21 @@ require('lazy').setup({
         },
       })
     end,
+  },
+  {
+    'Rawnly/gist.nvim',
+    cmd = { 'GistCreate', 'GistCreateFromFile', 'GistsList' },
+    config = true
+  },
+  -- `GistsList` opens the selected gif in a terminal buffer,
+  -- nvim-unception uses neovim remote rpc functionality to open the gist in an actual buffer
+  -- and prevents neovim buffer inception
+  {
+    'samjwill/nvim-unception',
+    lazy = false,
+    init = function()
+      vim.g.unception_block_while_host_edits = true
+    end
   },
 
   -- Project
@@ -425,7 +441,7 @@ require('lazy').setup({
   -- Completion
   {
     'hrsh7th/nvim-cmp',
-    commit = '777450fd0ae289463a14481673e26246b5e38bf2',
+    commit = '3ac8d6cd29c74ff482d8ea47d45e5081bfc3f5ad',
     lazy = true,
     event = { 'BufReadPost', 'BufNewFile' },
     dependencies = {

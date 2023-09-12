@@ -85,3 +85,5 @@ mas "Amphetamine", id: 937984704
 mas "Rename X", id: 1438841416
 # mas "Name Mangler 3", id: 603637384
 mas "DaisyDisk", id: 411643860
+mas "ToyViewer", id: 414298354
+

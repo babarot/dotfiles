@@ -242,13 +242,13 @@ github:
   command:
     link:
     - from: direnv
-- name: stedolan/jq
+- name: jqlang/jq
   description: Command-line JSON processor
-  owner: stedolan
+  owner: jqlang
   repo: jq
   release:
     name: jq
-    tag: latest
+    tag: jq-1.7
   command:
     link:
     - from: '*jq*'

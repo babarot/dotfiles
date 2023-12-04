@@ -23,11 +23,11 @@ xcode-select --install
 ```
 
 ```bash
-git clone git@github.com:b4b4r07/dotfiles.git ~/src/github.com/b4b4r07/dotfiles
+git clone git@github.com:babarot/dotfiles.git ~/src/github.com/babarot/dotfiles
 ```
 
 ```bash
-cd ~/src/github.com/b4b4r07/dotfiles
+cd ~/src/github.com/babarot/dotfiles
 make install
 ```
 
@@ -36,7 +36,7 @@ The `make install` will create symbolic links from the dotfiles directory into t
 ### GitHub
 
 ```bash
-ssh-keygen -t rsa -C "b4b4r07@gmail.com"
+ssh-keygen -t rsa -C "babarot@gmail.com"
 ```
 
 ```bash
@@ -51,22 +51,22 @@ cat ~/.ssh/id_rsa.pub | pbcopy
 
 ```console
 $ ssh -T git@github.com
-Hi b4b4r07! You've successfully authenticated, but GitHub does not provide shell access.
+Hi babarot! You've successfully authenticated, but GitHub does not provide shell access.
 ```
 
 ### AFX/Zsh
 
-[afx](https://github.com/b4b4r07/afx/) is a CLI packages (tools, shell plugins, etc) manager. Almost all ZSH configurations are also related to the afx settings, so once you run `afx install` and then relaunch your shell, you can enter the CLI world in the usual state of your shell.
+[afx](https://github.com/babarot/afx/) is a CLI packages (tools, shell plugins, etc) manager. Almost all ZSH configurations are also related to the afx settings, so once you run `afx install` and then relaunch your shell, you can enter the CLI world in the usual state of your shell.
 
 ```bash
-curl -sL https://raw.githubusercontent.com/b4b4r07/afx/HEAD/hack/install | bash
+curl -sL https://raw.githubusercontent.com/babarot/afx/HEAD/hack/install | bash
 ```
 
 ```bash
 afx install
 ```
 
-afx settings: [.config/afx](https://github.com/b4b4r07/dotfiles/tree/HEAD/.config/afx)
+afx settings: [.config/afx](https://github.com/babarot/dotfiles/tree/HEAD/.config/afx)
 
 Refs:
 
@@ -82,7 +82,7 @@ Refs:
 brew bundle
 ```
 
-Once homebrew is installed, it executes the `brew bundle` command which will install the packages listed in the [Brewfile](https://github.com/b4b4r07/dotfiles/blob/HEAD/Brewfile).
+Once homebrew is installed, it executes the `brew bundle` command which will install the packages listed in the [Brewfile](https://github.com/babarot/dotfiles/blob/HEAD/Brewfile).
 
 Refs:
 

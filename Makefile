@@ -7,8 +7,8 @@ DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 
 all: afx brew install
 
-afx: ## Install b4b4r07/afx
-	@curl -sL https://raw.githubusercontent.com/b4b4r07/afx/HEAD/hack/install | sh
+afx: ## Install babarot/afx
+	@curl -sL https://raw.githubusercontent.com/babarot/afx/HEAD/hack/install | sh
 	@echo 'Done. Run "afx install" next.'
 
 brew: ## Install brew and run brew bundle

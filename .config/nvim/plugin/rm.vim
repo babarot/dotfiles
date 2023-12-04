@@ -1,6 +1,6 @@
 function! s:rm(bang)
   let file = fnamemodify(expand('%'), ':p')
-  " https://github.com/b4b4r07/gomi
+  " https://github.com/babarot/gomi
   let cmd = "system(printf('%s %s', executable('gomi') ? 'gomi' : 'rm', shellescape(file)))"
 
   if !filereadable(file)

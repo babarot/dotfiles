@@ -13,7 +13,7 @@ return function()
     else
       -- just call original delete function
       -- if not `gomi` exists
-      -- https://github.com/b4b4r07/gomi
+      -- https://github.com/babarot/gomi
       require('neo-tree.sources.filesystem.commands').delete(state)
     end
   end

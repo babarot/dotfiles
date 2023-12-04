@@ -5,7 +5,7 @@
 Setup guide is here: [setup-mac.md](./etc/docs/setup-mac.md)
 
 - Shell: zsh
-  - Package manager: [afx](https://github.com/b4b4r07/afx/)
+  - Package manager: [afx](https://github.com/babarot/afx/)
 - Terminal: [iTerm2](https://iterm2.com/)
 - Editor: [Neovim](https://github.com/neovim/neovim)
 - Multiplexer: [tmux](https://github.com/tmux/tmux)
@@ -16,7 +16,7 @@ Setup guide is here: [setup-mac.md](./etc/docs/setup-mac.md)
 [![][neovim]](https://neovim.io/)
 [![][tmux]](https://github.com/tmux/tmux/wiki)
 
-[afx]:    https://img.shields.io/github/v/release/b4b4r07/afx?color=EF2D5E&display_name=release&label=AFX&logo=alchemy&logoColor=EF2D5E&sort=semver
+[afx]:    https://img.shields.io/github/v/release/babarot/afx?color=EF2D5E&display_name=release&label=AFX&logo=alchemy&logoColor=EF2D5E&sort=semver
 [tmux]:   https://img.shields.io/github/v/tag/tmux/tmux?color=1BB91F&display_name=release&label=tmux&logo=tmux&logoColor=&sort=semver
 [neovim]: https://img.shields.io/badge/neovim-v0.8.0-57A143.svg?style=popout&logo=neovim&logoColor=
 

@@ -1,5 +1,5 @@
 #compdef gist
-# URL: https://github.com/b4b4r07/gist
+# URL: https://github.com/babarot/gist
 # vim: ft=zsh
 
 _gist () {

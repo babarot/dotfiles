@@ -1,6 +1,6 @@
 #compdef gomi
 
-# Copyright (c) 2015 b4b4r07
+# Copyright (c) 2015 babarot
 # License: MIT
 
 function _gomi() {

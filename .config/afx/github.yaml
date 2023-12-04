@@ -1,7 +1,7 @@
 github:
-- name: b4b4r07/enhancd
+- name: babarot/enhancd
   description: A next-generation cd command with your interactive filter
-  owner: b4b4r07
+  owner: babarot
   repo: enhancd
   plugin:
     env:
@@ -65,9 +65,9 @@ github:
     link:
     - from: prok.sh
       to: prok
-- name: b4b4r07/zsh-vimode-visual
+- name: babarot/zsh-vimode-visual
   description: Implement the vim-like visual mode to vi-mode of zsh
-  owner: b4b4r07
+  owner: babarot
   repo: zsh-vimode-visual
   plugin:
     sources:
@@ -153,9 +153,9 @@ github:
     link:
     - from: distribution.py
       to: distribution
-- name: b4b4r07/zsh-prompt-minimal
+- name: babarot/zsh-prompt-minimal
   description: Super super super minimal prompt for zsh
-  owner: b4b4r07
+  owner: babarot
   repo: zsh-prompt-minimal
   plugin:
     env:
@@ -191,6 +191,7 @@ github:
     - zsh-abbr.zsh
     snippet: |
       abbr --quiet tf=terraform
+      abbr --quiet cf=conftest
 # - name: tfutils/tfenv
 #   description: Terraform version manager
 #   owner: tfutils
@@ -277,9 +278,9 @@ github:
     link:
     - from: '**/bin/nvim'
       to: nvim
-- name: b4b4r07/stein
+- name: babarot/stein
   description: A linter for config files with a customizable rule set
-  owner: b4b4r07
+  owner: babarot
   repo: stein
   release:
     name: stein
@@ -287,19 +288,19 @@ github:
   command:
     link:
     - from: '**/stein'
-- name: b4b4r07/changed-objects
+- name: babarot/changed-objects
   description: Get changed objects in Git commit
-  owner: b4b4r07
+  owner: babarot
   repo: changed-objects
   release:
     name: changed-objects
-    tag: v0.1.14
+    tag: v0.3.7
   command:
     link:
     - from: '**/changed-objects'
-- name: b4b4r07/blog
+- name: babarot/blog
   description: A CLI tool for editing blog built by hugo etc
-  owner: b4b4r07
+  owner: babarot
   repo: blog
   branch: master
   release:
@@ -309,7 +310,7 @@ github:
     env:
       BLOG_EDITOR: nvim
       BLOG_POST_DIR: content/post
-      BLOG_ROOT: $HOME/src/github.com/b4b4r07/tellme.tokyo
+      BLOG_ROOT: $HOME/src/github.com/babarot/tellme.tokyo
     link:
     - from: blog
       to: blog
@@ -322,7 +323,7 @@ github:
   branch: master
   release:
     name: conftest
-    tag: v0.30.0
+    tag: v0.34.0
   command:
     link:
     - from: conftest
@@ -557,7 +558,12 @@ github:
           0) echo "too few arguments" >&2; return 1 ;;
           1) git grep "${1}" ;;
           2) git grep -l "${1}" | xargs -I% sd "${1}" "${2}" % ;;
-          *) git grep -l "${1}" "${@:3}" | xargs -I% sd "${1}" "${2}" % ;;
+          *)
+            arg1="${@:${#@}-1:1}"
+            arg2="${@:${#@}:1}"
+            args="${@:0:${#@}-1}"
+            git grep -l "${args[@]}" "${arg1}" | xargs -I% sd "${arg1}" "${arg2}" %
+            ;;
         esac
       }
 - name: sharkdp/bat
@@ -731,9 +737,9 @@ github:
     link:
     - from: get-all-*
       to: ketall
-- name: b4b4r07/gist
+- name: babarot/gist
   description: A simple gist editor for CLI
-  owner: b4b4r07
+  owner: babarot
   repo: gist
   branch: master
   release:
@@ -749,10 +755,10 @@ github:
     - from: gist
       to: gist
     env:
-      GIST_USER: b4b4r07
-- name: b4b4r07/gomi
+      GIST_USER: babarot
+- name: babarot/gomi
   description: Trash can in CLI
-  owner: b4b4r07
+  owner: babarot
   repo: gomi
   branch: master
   release:

@@ -108,7 +108,7 @@ require('lazy').setup({
     ft = { 'ruby', 'brewfile' },
   },
   {
-    'b4b4r07/vim-ltsv',
+    'babarot/vim-ltsv',
     commit = 'b1b027e29b5c35cfa697a0307e10279111114e03',
     lazy = true,
     ft = { 'ltsv' },
@@ -538,7 +538,7 @@ require('lazy').setup({
 
   -- Apperance
   {
-    'b4b4r07/cursor-x.nvim',
+    'babarot/cursor-x.nvim',
     commit = 'f99d429663a5c3cd50fdcdf8d65192ac2eaa7b7a',
     lazy = true,
     event = { 'BufRead' },

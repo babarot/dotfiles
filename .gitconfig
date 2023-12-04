@@ -1,5 +1,5 @@
 [github]
-  user = b4b4r07
+  user = babarot
 
 [core]
   editor = nvim
@@ -42,8 +42,8 @@
   autocorrect = 1
 
 [user]
-  name = b4b4r07
-  email = b4b4r07@gmail.com
+  name = babarot
+  email = babarot@gmail.com
   signingkey = D6CF1A347277485E
 
 [pager]
@@ -88,7 +88,7 @@
 
 [ghq]
   root = ~/src
-  user = b4b4r07
+  user = babarot
 
 [sequence]
   editor = nvim

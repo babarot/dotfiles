@@ -1,7 +1,7 @@
 gist:
 - name: context-scripts
   description: Get current GCP/Kubernetes context which you are on.
-  owner: b4b4r07
+  owner: babarot
   id: bb820b99fdba605ea4bd4fb29046ce58
   command:
     link:
@@ -9,7 +9,7 @@ gist:
     - from: kube-context
 - name: git-replace.sh
   description: n/a
-  owner: b4b4r07
+  owner: babarot
   id: 135843910e2294781518587e9e90078e
   command:
     link:
@@ -18,7 +18,7 @@ gist:
 
 # - name: tmuxx
 #   description: ~
-#   owner: b4b4r07
+#   owner: babarot
 #   id: bebec3a4b19764021dca4022e007e266
 #   command:
 #     link:

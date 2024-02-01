@@ -1240,6 +1240,12 @@ require('lazy').setup({
       })
     end,
   },
+  {
+    'akinsho/horizon.nvim',
+    commit = 'b4d7b1e7c3aa77aea31b9ced8960e49fd8682c47',
+    config = function()
+    end,
+  },
   -- alternative nord themes
   -- { 'nordtheme/vim' },
   -- { 'shaunsingh/nord.nvim' },

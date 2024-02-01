@@ -339,7 +339,7 @@ github:
       to: opa
   release:
     name: opa
-    tag: v0.16.2
+    tag: v0.59.0
 - name: ogham/exa
   description: A modern version of 'ls'.
   owner: ogham

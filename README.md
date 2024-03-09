@@ -1,6 +1,12 @@
+# TODO:
+
+- [ ] Install my powerline10k prompt
+- [ ] finish moving bootstrap-todo.sh to the brewfile
+- [ ]
+
 # dotfiles
 
-<img width="500" alt="" src="https://user-images.githubusercontent.com/4442708/222952851-12e3765b-44c2-49c2-93e5-07eb16502994.png">
+
 
 Setup guide is here: [setup-mac.md](./etc/docs/setup-mac.md)
 
@@ -14,10 +20,9 @@ Setup guide is here: [setup-mac.md](./etc/docs/setup-mac.md)
 
 [![][afx]](https://babarot.me/afx)
 [![][neovim]](https://neovim.io/)
-[![][tmux]](https://github.com/tmux/tmux/wiki)
+
 
 [afx]:    https://img.shields.io/github/v/release/babarot/afx?color=EF2D5E&display_name=release&label=AFX&logo=alchemy&logoColor=EF2D5E&sort=semver
-[tmux]:   https://img.shields.io/github/v/tag/tmux/tmux?color=1BB91F&display_name=release&label=tmux&logo=tmux&logoColor=&sort=semver
 [neovim]: https://img.shields.io/badge/neovim-v0.8.0-57A143.svg?style=popout&logo=neovim&logoColor=
 
 <!--

@@ -45,3 +45,6 @@ autoload -Uz run-help-svn
 # Automaticall escape URL when copy and paste
 autoload -Uz url-quote-magic
 zle -N self-insert url-quote-magic
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

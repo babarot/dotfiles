@@ -1,2 +1,3 @@
 abbr cf="conftest"
 abbr tf="terraform"
+abbr k8="kubectl"

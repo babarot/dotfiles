@@ -7,11 +7,7 @@ github:
     env:
       # ENHANCD_FILTER: fzf --preview 'exa --group-directories-first -T --git-ignore --level 1 {}' --preview-window right,50% --height 35% --reverse --ansi:fzy
       ENHANCD_FILTER: >
-        fzf --preview 'exa -al --tree --level 1 --group-directories-first --git-ignore
-        --header --git --no-user --no-time --no-filesize --no-permissions {}'
-        --preview-window right,50% --height 35% --reverse --ansi
-        :fzy
-        :peco
+        fzf --preview 'exa -al --tree --level 1 --group-directories-first --git-ignore --header --git --no-user --no-time --no-filesize --no-permissions {}' --preview-window right,50% --height 35% --reverse --ansi :fzy :peco
     sources:
     - init.sh
 - name: changyuheng/zsh-interactive-cd
@@ -30,7 +26,7 @@ github:
     build:
       steps:
       - make
-        #- sudo make install
+      #- sudo make install
     link:
     - from: fzy
 - name: ahmetb/kubectx
@@ -65,13 +61,13 @@ github:
     link:
     - from: prok.sh
       to: prok
-- name: babarot/zsh-vimode-visual
-  description: Implement the vim-like visual mode to vi-mode of zsh
-  owner: babarot
-  repo: zsh-vimode-visual
-  plugin:
-    sources:
-    - zsh-vimode-visual.zsh
+# - name: babarot/zsh-vimode-visual
+#   description: Implement the vim-like visual mode to vi-mode of zsh
+#   owner: babarot
+#   repo: zsh-vimode-visual
+#   plugin:
+#     sources:
+#     - zsh-vimode-visual.zsh
 - name: daveewart/colordiff
   description: Primary development for colordiff
   owner: daveewart
@@ -118,17 +114,26 @@ github:
     link:
     - from: kubectl-trace
       to: kubectl-trace
-- name: motemen/gobump
-  description: Bumps up Go program version
-  owner: motemen
-  repo: gobump
-  command:
-    build:
-      steps:
-      - go build -o gobump cmd/gobump/main.go
-    link:
-    - from: gobump
-      to: gobump
+- name: ohmyzsh/ohmyzsh
+  description: install some ohmyzsh plugins
+  owner: ohmyzsh
+  repo: ohmyzsh
+  plugin:
+    sources:
+    - plugins/asdf/asdf.plugin.zsh
+    - plugins/direnv/direnv.plugin.zsh
+    - plugins/extract/extract.plugin.zsh
+    - plugins/gulp/gulp.plugin.zsh
+    # - plugins/helm/helm.plugin.zsh
+    - plugins/kubectl/kubectl.plugin.zsh
+    - plugins/httpie/httpie.plugin.zsh
+    - plugins/iterm2/iterm2.plugin.zsh
+    - plugins/iterm2/iterm2_shell_integration.zsh
+    # - plugins/minikube/minikube.plugin.zsh
+    # - plugins/rails/rails.plugin.zsh
+    - plugins/rsync/rsync.plugin.zsh
+    - plugins/colored-man-pages/colored-man-pages.plugin.zsh
+    # - plugins/skaffold/skaffold.plugin.zsh
 - name: paulirish/git-open
   description: Type `git open` to open the GitHub page or website for a repository in your browser.
   owner: paulirish
@@ -144,42 +149,13 @@ github:
   plugin:
     sources:
     - fast-syntax-highlighting.plugin.zsh
-- name: philovivero/distribution
-  description: New Canonical Project for this is wizzat / distribution
-  owner: philovivero
-  repo: distribution
-  branch: master
-  command:
-    link:
-    - from: distribution.py
-      to: distribution
-- name: babarot/zsh-prompt-minimal
+- name: romkatv/powerlevel10k
   description: Super super super minimal prompt for zsh
-  owner: babarot
-  repo: zsh-prompt-minimal
+  owner: romkatv
+  repo: powerlevel10k
   plugin:
-    env:
-      PROMPT_PATH_STYLE: minimal
-      PROMPT_USE_VIM_MODE: true
     sources:
-    - '*.zsh-theme'
-- name: icyphox/shlide
-  description: a slide deck presentation tool written in pure bash
-  owner: icyphox
-  repo: shlide
-  command:
-    link:
-    - from: shlide
-      to: shlide
-# - name: hchbaw/auto-fu.zsh
-#   description: |
-#     zsh automatic complete-word and list-choices.
-#     Originally incr-0.2.zsh by y.fujii
-#   owner: hchbaw
-#   repo: auto-fu.zsh
-#   plugin:
-#     sources:
-#     - auto-fu.zsh
+    - 'powerlevel10k.zsh-theme'
 - name: olets/zsh-abbr
   description: |
     The zsh manager for auto-expanding abbreviations,
@@ -189,9 +165,9 @@ github:
   plugin:
     sources:
     - zsh-abbr.zsh
-    snippet: |
-      abbr --quiet tf=terraform
-      abbr --quiet cf=conftest
+    # snippet: |
+    # abbr --quiet tf=terraform
+    # abbr --quiet cf=conftest
 # - name: tfutils/tfenv
 #   description: Terraform version manager
 #   owner: tfutils
@@ -202,14 +178,33 @@ github:
 #       to: tfenv
 #     - from: bin/terraform
 #       to: terraform
-# - name: drwetter/testssl.sh
-#   description: Testing TLS/SSL encryption anywhere on any port
-#   owner: drwetter
-#   repo: testssl.sh
-#   command:
-#     link:
-#     - from: testssl.sh
-#       to: testssl.sh
+- name: drwetter/testssl.sh
+  description: Testing TLS/SSL encryption anywhere on any port
+  owner: drwetter
+  repo: testssl.sh
+  command:
+    link:
+    - from: testssl.sh
+      to: testssl.sh
+
+  # - name: jesseduffield/lazygit
+  #   description: simple terminal UI for git commands
+  #   owner: jesseduffield
+  #   repo: lazygit
+  #   release:
+  #     name: lazygit
+  #     tag: v0.37.0
+  #   asset:
+  #     filename: '{{ .Release.Name }}_{{ replace .Release.Tag "v" "" }}_{{ .OS }}_{{ .Arch }}.tar.gz'
+  #     replacements:
+  #       amd64: x86_64
+  #       linux: Linux
+  #       darwin: Darwin
+  # command:
+  #   link:
+  #   - from: '**/lazygit'
+  #   alias:
+  #     g: lazygit
 - name: jesseduffield/lazygit
   description: simple terminal UI for git commands
   owner: jesseduffield
@@ -237,9 +232,9 @@ github:
     tag: v2.30.3
     asset:
       filename: '{{ .Release.Name }}.{{ .OS }}-{{ .Arch }}'
-      replacements:
-        darwin: darwin
-        amd64: amd64
+      # replacements:
+      #   darwin: darwin
+      #   amd64: amd64
   command:
     link:
     - from: direnv
@@ -278,16 +273,6 @@ github:
     link:
     - from: '**/bin/nvim'
       to: nvim
-- name: babarot/stein
-  description: A linter for config files with a customizable rule set
-  owner: babarot
-  repo: stein
-  release:
-    name: stein
-    tag: v0.2.4
-  command:
-    link:
-    - from: '**/stein'
 - name: babarot/changed-objects
   description: Get changed objects in Git commit
   owner: babarot
@@ -298,22 +283,22 @@ github:
   command:
     link:
     - from: '**/changed-objects'
-- name: babarot/blog
-  description: A CLI tool for editing blog built by hugo etc
-  owner: babarot
-  repo: blog
-  branch: master
-  release:
-    name: blog
-    tag: v0.1.6
-  command:
-    env:
-      BLOG_EDITOR: nvim
-      BLOG_POST_DIR: content/post
-      BLOG_ROOT: $HOME/src/github.com/babarot/tellme.tokyo
-    link:
-    - from: blog
-      to: blog
+# - name: babarot/blog
+#   description: A CLI tool for editing blog built by hugo etc
+#   owner: babarot
+#   repo: blog
+#   branch: master
+#   release:
+#     name: blog
+#     tag: v0.1.6
+#   command:
+#     env:
+#       BLOG_EDITOR: nvim
+#       BLOG_POST_DIR: content/post
+#       BLOG_ROOT: $HOME/src/github.com/babarot/tellme.tokyo
+#     link:
+#     - from: blog
+#       to: blog
 - name: instrumenta/conftest
   description: |
     Write tests against structured configuration data using the Open
@@ -355,7 +340,7 @@ github:
       la: exa --group-directories-first -a --header --git
       ll: exa --group-directories-first -l --header --git
       lla: exa --group-directories-first -la --header --git
-      ls: exa --group-directories-first
+      ls: exa --header --git --group-directories-first
     link:
     - from: bin/exa*
       to: exa
@@ -379,26 +364,28 @@ github:
 #   command:
 #     link:
 #     - from: hoge
-- name: skanehira/pst
-  description: TUI process monitor written in Go
-  owner: skanehira
-  repo: pst
-  release:
-    name: pst
-    tag: 1.2.0
-  command:
-    link:
-    - from: '**/pst'
-- name: tomnomnom/gron
-  description: Make JSON greppable!
-  owner: tomnomnom
-  repo: gron
-  release:
-    name: gron
-    tag: v0.6.0
-  command:
-    link:
-    - from: '**/gron'
+
+# Currently has bad CPU type, not supported on M1
+# - name: skanehira/pst
+#   description: TUI process monitor written in Go
+#   owner: skanehira
+#   repo: pst
+#   release:
+#     name: pst
+#     tag: 1.2.0
+#   command:
+#     link:
+#     - from: '**/pst'
+# - name: tomnomnom/gron
+#   description: Make JSON greppable!
+#   owner: tomnomnom
+#   repo: gron
+#   release:
+#     name: gron
+#     tag: v0.6.0
+#   command:
+#     link:
+#     - from: '**/gron'
 - name: jessfraz/dockfmt
   description: Dockerfile format and parser. Like `gofmt` but for Dockerfiles.
   owner: jessfraz
@@ -466,16 +453,16 @@ github:
     link:
     - from: '*fx*'
       to: fx
-- name: moncho/dry
-  description: A Docker manager for the terminal
-  owner: moncho
-  repo: dry
-  release:
-    name: dry
-    tag: v0.9-beta.10
-  command:
-    link:
-    - from: '**/dry'
+# - name: moncho/dry
+#   description: A Docker manager for the terminal
+#   owner: moncho
+#   repo: dry
+#   release:
+#     name: dry
+#     tag: v0.9-beta.10
+#   command:
+#     link:
+#     - from: '**/dry'
 - name: ynqa/ktop
   description: top for k8s
   owner: ynqa
@@ -496,30 +483,30 @@ github:
   command:
     link:
     - from: '**/ctop'
-- name: goreleaser/goreleaser
-  description: Deliver Go binaries as fast and easily as possible
-  owner: goreleaser
-  repo: goreleaser
-  release:
-    name: goreleaser
-    tag: v0.114.0
-  command:
-    link:
-    - from: '**/goreleaser'
-- name: gotestyourself/gotestsum
-  description: |
-    '`go test` runner with output optimized for humans, JUnit XML for
-    CI integration, and a summary of the test run results.'
-  owner: gotestyourself
-  repo: gotestsum
-  release:
-    name: gotestsum
-    tag: v0.3.5
-  command:
-    alias:
-      gotest: gotestsum --format short-verbose
-    link:
-    - from: gotestsum
+# - name: goreleaser/goreleaser
+#   description: Deliver Go binaries as fast and easily as possible
+#   owner: goreleaser
+#   repo: goreleaser
+#   release:
+#     name: goreleaser
+#     tag: v0.114.0
+#   command:
+#     link:
+#     - from: '**/goreleaser'
+# - name: gotestyourself/gotestsum
+#   description: |
+#     '`go test` runner with output optimized for humans, JUnit XML for
+#     CI integration, and a summary of the test run results.'
+#   owner: gotestyourself
+#   repo: gotestsum
+#   release:
+#     name: gotestsum
+#     tag: v0.3.5
+#   command:
+#     alias:
+#       gotest: gotestsum --format short-verbose
+#     link:
+#     - from: gotestsum
 - name: pemistahl/grex
   description: |
     A command-line tool for generating regular expressions from user-provided
@@ -593,6 +580,8 @@ github:
       BAT_PAGER: less -RF
       BAT_STYLE: numbers,changes
       BAT_THEME: DarkNeon
+    alias:
+      cat: bat
 - name: BurntSushi/xsv
   description: A fast CSV command line toolkit written in Rust.
   owner: BurntSushi
@@ -847,24 +836,17 @@ github:
   command:
     build:
       steps:
-        - ./install --bin --no-update-rc --no-key-bindings
+      - ./install --bin --no-update-rc --no-key-bindings
     link:
     - from: 'bin/fzf'
     - from: 'bin/fzf-tmux'
   plugin:
-    # sources:
-    # - shell/completion.zsh
+    sources:
+    - shell/completion.zsh
     env:
       FZF_DEFAULT_COMMAND: fd --type f
       FZF_DEFAULT_OPTS: >
-        --height 75% --multi --reverse --margin=0,1
-        --bind ctrl-f:page-down,ctrl-b:page-up,ctrl-/:toggle-preview
-        --bind pgdn:preview-page-down,pgup:preview-page-up
-        --marker="+" --pointer="▶" --prompt="❯ "
-        --no-separator --scrollbar="█"
-        --color bg+:#262626,fg+:#dadada,hl:#f09479,hl+:#f09479
-        --color border:#303030,info:#cfcfb0,header:#80a0ff,spinner:#36c692
-        --color prompt:#87afff,pointer:#ff5189,marker:#f09479
+        --height 75% --multi --reverse --margin=0,1 --bind ctrl-f:page-down,ctrl-b:page-up,ctrl-/:toggle-preview --bind pgdn:preview-page-down,pgup:preview-page-up --marker="+" --pointer="▶" --prompt="❯ " --no-separator --scrollbar="█" --color bg+:#262626,fg+:#dadada,hl:#f09479,hl+:#f09479 --color border:#303030,info:#cfcfb0,header:#80a0ff,spinner:#36c692 --color prompt:#87afff,pointer:#ff5189,marker:#f09479
       FZF_CTRL_T_COMMAND: rg --files --hedden --follow --glob "!.git/*"
       FZF_CTRL_T_OPTS: --preview "bat --color=always --style=header,grid --line-range :100 {}"
       FZF_ALT_C_COMMAND: fd --type d
@@ -918,20 +900,20 @@ github:
           git unadd $files
         fi
       }
-- name: GoogleCloudPlatform/terraformer
-  owner: GoogleCloudPlatform
-  repo: terraformer
-  release:
-    name: terraformer
-    tag: 0.8.19
-    asset:
-      filename: '{{ .Release.Name }}-all-{{ .OS }}-{{ .Arch }}'
-      replacements:
-        darwin: darwin
-        amd64: amd64
-  command:
-    link:
-    - from: terraformer
+# - name: GoogleCloudPlatform/terraformer
+#   owner: GoogleCloudPlatform
+#   repo: terraformer
+#   release:
+#     name: terraformer
+#     tag: 0.8.19
+#     asset:
+#       filename: '{{ .Release.Name }}-all-{{ .OS }}-{{ .Arch }}'
+#       replacements:
+#         darwin: darwin
+#         amd64: amd64
+#   command:
+#     link:
+#     - from: terraformer
 - name: instrumenta/kubeval
   description: Validate your Kubernetes configuration files, supports multiple Kubernetes versions
   owner: instrumenta

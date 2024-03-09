@@ -1,5 +1,5 @@
 [github]
-  user = babarot
+  user = TheBranchDriftCatalyst
 
 [core]
   editor = nvim
@@ -10,17 +10,17 @@
   ui = auto
 
 [color "diff"]
-  meta = 242 238
-  frag = 239 236
-  old = 167 normal
-  new = 030 normal
+  # meta = 242 238
+  # frag = 239 236
+  # old = 167 normal
+  # new = 030 normal
   context = 240
   commit = 246 024
-  # meta = yellow bold
-  # frag = magenta bold
-  # old = red bold
-  # new = green bold
-  # whitespace = red reverse
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+  whitespace = red reverse
 
 [alias]
   st = status
@@ -42,15 +42,15 @@
   autocorrect = 1
 
 [user]
-  name = babarot
-  email = b4b4r07@gmail.com
-  signingkey = D6CF1A347277485E
+  name = TheBranchDriftCatalyst
+  email = djdanielsh@gmail.com
+  # signingkey = 
 
 [pager]
-  log  = diff-highlight | less -RX
-  show = diff-highlight | less -RX
-  diff = diff-highlight | less -RX
-  # diff = diff-so-fancy | less --tabs=4 -RFX
+  # log  = diff-highlight | less -RX
+  # show = diff-highlight | less -RX
+  # diff = diff-highlight | less -RX
+  diff = diff-so-fancy | less --tabs=4 -RFX
   # diff = delta --dark --plus-color="#012800" --minus-color="#340001"
 
 [diff]
@@ -88,7 +88,7 @@
 
 [ghq]
   root = ~/src
-  user = babarot
+  user = TheBranchDriftCatalyst
 
 [sequence]
   editor = nvim

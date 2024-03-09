@@ -6,32 +6,32 @@ http:
     link:
     - from: gcping_*
       to: gcping
-- name: google-cloud-sdk
-  description: |
-    https://cloud.google.com/sdk/docs/install
-    https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl
-  url: 'https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-370.0.0-darwin-arm.tar.gz'
-  command:
-    build:
-      steps:
-      - google-cloud-sdk/bin/gcloud components install --quiet kubectl
-      - google-cloud-sdk/install.sh --quiet
-    link:
-    - from: google-cloud-sdk/bin/gcloud
-      to: gcloud
-    - from: google-cloud-sdk/bin/kubectl
-      to: kubectl
-    alias:
-      k: kubectl
-  plugin:
-    sources:
-    - 'google-cloud-sdk/*.zsh.inc'
-    snippet: |
-      gcp() {
-        type fzf &>/dev/null || { echo "fzf not found"; return 1; }
-        local project=$(gcloud projects list ${1+--filter ${1}} | grep -v sys- | fzf --height 50% --header-lines=1 --reverse --exit-0 | awk '{print $1}')
-        if [[ -z ${project} ]]; then
-          return 0
-        fi
-        gcloud config set project "${project}"
-      }
+# - name: google-cloud-sdk
+#   description: |
+#     https://cloud.google.com/sdk/docs/install
+#     https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl
+#   url: 'https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-370.0.0-darwin-arm.tar.gz'
+#   command:
+#     build:
+#       steps:
+#       - google-cloud-sdk/bin/gcloud components install --quiet kubectl
+#       - google-cloud-sdk/install.sh --quiet
+#     link:
+#     - from: google-cloud-sdk/bin/gcloud
+#       to: gcloud
+#     - from: google-cloud-sdk/bin/kubectl
+#       to: kubectl
+#     alias:
+#       k: kubectl
+#   plugin:
+#     sources:
+#     - 'google-cloud-sdk/*.zsh.inc'
+#     snippet: |
+#       gcp() {
+#         type fzf &>/dev/null || { echo "fzf not found"; return 1; }
+#         local project=$(gcloud projects list ${1+--filter ${1}} | grep -v sys- | fzf --height 50% --header-lines=1 --reverse --exit-0 | awk '{print $1}')
+#         if [[ -z ${project} ]]; then
+#           return 0
+#         fi
+#         gcloud config set project "${project}"
+#       }

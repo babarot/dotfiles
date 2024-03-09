@@ -15,14 +15,3 @@ gist:
     link:
     - from: git-replace.sh
       to: git-replace
-
-# - name: tmuxx
-#   description: ~
-#   owner: babarot
-#   id: bebec3a4b19764021dca4022e007e266
-#   command:
-#     link:
-#     - from: tmuxx.sh
-#       to: tmuxx
-#     snippet: |
-#       tmuxx

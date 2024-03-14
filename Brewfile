@@ -2,9 +2,16 @@
 
 tap "hashicorp/tap"
 tap "homebrew/bundle"
-tap "homebrew/cask"
+# tap "homebrew/cask"
 tap "homebrew/cask-fonts"
-tap "homebrew/core"
+# tap "homebrew/core"
+
+cask "font-hack-nerd-font"
+
+brew "hashicorp/tap/terraform-ls"
+brew "helmfile"
+brew "kustomize"
+brew "terraform"
 
 #
 # Brew
@@ -16,17 +23,14 @@ brew "gnu-sed"
 brew "go"
 brew "goreleaser"
 brew "grep"
-brew "hashicorp/tap/terraform-ls"
-brew "helmfile"
-brew "hugo"
-brew "kustomize"
+# brew "hugo"
+
 brew "libidn2"
 brew "litecli"
 brew "lua-language-server"
 brew "luarocks"
 brew "mas" if OS.mac?
 brew "mysql"
-brew "terraform"
 brew "tmux"
 brew "wget"
 
@@ -43,21 +47,21 @@ brew "gifsicle"
 brew "ttyd"
 brew "gum"
 brew "vhs" # faressoft/terminalizer
-brew "exa"
-brew "neofetch"
-brew "asdf"
+# brew "exa"
+# brew "neofetch"
+# brew "asdf"
 
 brew "unrar"
 brew "unzip"
 brew "p7zip" # 7z
 brew "pigz"  # gz
-brew  "git"
+brew "git"
 brew "git-lfs"
 
 
 # https://github.com/yuru7/HackGen
-brew "font-hackgen"
-brew "font-hackgen-nerd"
+# brew "font-hackgen"
+# brew "font-hackgen-nerd"
 
 #
 # Cask
@@ -67,9 +71,7 @@ cask "1password"
 cask "adobe-creative-cloud"
 cask "appcleaner"
 cask "docker"
-cask "font-hack-nerd-font"
 cask "google-chrome"
-cask "google-japanese-ime"
 cask "hiddenbar" # alternative for "bartender"
 cask "inkdrop"
 cask "iterm2"

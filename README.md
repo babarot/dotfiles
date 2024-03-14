@@ -1,12 +1,9 @@
-# TODO:
+# Important Note
 
-- [ ] Install my powerline10k prompt
-- [ ] finish moving bootstrap-todo.sh to the brewfile
-- [ ]
+Not all programs will work initially, all of the steps need to be completed:
+- e.g., neovim plugins wont install until npm (asdf) is installed
 
 # dotfiles
-
-
 
 Setup guide is here: [setup-mac.md](./etc/docs/setup-mac.md)
 

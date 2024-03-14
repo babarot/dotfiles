@@ -149,6 +149,23 @@ github:
   plugin:
     sources:
     - fast-syntax-highlighting.plugin.zsh
+- name: zsh-users/zsh-completions
+  description: zsh-users/zsh-completions
+  owner: zsh-users
+  repo: zsh-completions
+  plugin:
+    sources:
+    - 'zsh-completions.plugin.zsh'
+- name: zsh-users/zsh-autosuggestions
+  description: zsh-users/zsh-autosuggestions
+  owner: zsh-users
+  repo: zsh-autosuggestions
+  plugin:
+    sources:
+    - 'zsh-autosuggestions.plugin.zsh'
+    # env:
+    # ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE: fg=#ff00ff,bg=cyan,bold,underline
+    # ZSH_AUTOSUGGEST_STRATEGY: (history match_prev_cmd completion)
 - name: romkatv/powerlevel10k
   description: Super super super minimal prompt for zsh
   owner: romkatv
@@ -229,7 +246,7 @@ github:
   repo: direnv
   release:
     name: direnv
-    tag: v2.30.3
+    # tag: v2.30.3
     asset:
       filename: '{{ .Release.Name }}.{{ .OS }}-{{ .Arch }}'
       # replacements:
@@ -263,7 +280,7 @@ github:
   repo: neovim
   release:
     name: nvim
-    tag: v0.9.0
+    # tag: v0.9.0
   command:
     env:
       EDITOR: nvim
@@ -331,7 +348,6 @@ github:
   repo: exa
   release:
     name: exa
-    tag: v0.10.1
   command:
     alias:
       l: exa --group-directories-first -a -1 -F --git-ignore

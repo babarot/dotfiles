@@ -52,6 +52,13 @@ brew "vhs" # faressoft/terminalizer
 # brew "neofetch"
 # brew "asdf"
 
+# TODO: move these to a kube script
+# cask "virtualbox"
+cask "docker"
+brew "kubectl"
+brew "minikube"
+
+
 brew "unrar"
 brew "unzip"
 brew "p7zip" # 7z
@@ -83,6 +90,9 @@ cask "adobe-creative-cloud"
 
 cask "appcleaner"
 
+cask "font-hack-nerd-font"
+cask "google-chrome"
+cask "google-japanese-ime"
 cask "hiddenbar" # alternative for "bartender"
 cask "inkdrop"
 cask "numi"

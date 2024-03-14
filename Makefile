@@ -5,7 +5,21 @@ DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 
 .DEFAULT_GOAL := help
 
-all: install afx brew install
+all: brew install asdf afx
+
+k8: ## maybe use helmfile???
+    cask install --cask docker
+	brew install minikube
+	brew install helm 
+	brew install kubectl
+	brew install kubectx	
+
+asdf: ## NOTE, neovim wont work till asdf install NPM dependency
+	@asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+	@asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
+	@asdf plugin-add python
+	@asdf plugin-add rust https://github.com/asdf-community/asdf-rust.git 
+	@asdf install
 
 afx: ## Install babarot/afx
 	@curl -sL https://raw.githubusercontent.com/babarot/afx/HEAD/hack/install | sh
@@ -36,4 +50,4 @@ help: ## Self-documented Makefile
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 
-ln -sfnv $(abspath $(val)) $(HOME)/$(val);
+

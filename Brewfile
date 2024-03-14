@@ -7,6 +7,7 @@ tap "homebrew/cask-fonts"
 # tap "homebrew/core"
 
 cask "font-hack-nerd-font"
+cask "font-3270-nerd-font"
 
 brew "hashicorp/tap/terraform-ls"
 brew "helmfile"
@@ -67,14 +68,23 @@ brew "git-lfs"
 # Cask
 #   https://formulae.brew.sh/cask/
 #
+cask "iterm2"
 cask "1password"
-cask "adobe-creative-cloud"
-cask "appcleaner"
-cask "docker"
+cask "visual-studio-code"
+cask "spectacle"
+cask "dropbox"
+cask "alfred"
+# TODO: get intellij here
+
 cask "google-chrome"
+cask "docker"
+cask "adobe-creative-cloud"
+
+
+cask "appcleaner"
+
 cask "hiddenbar" # alternative for "bartender"
 cask "inkdrop"
-cask "iterm2"
 cask "numi"
 cask "obs"
 cask "obsidian"
@@ -94,11 +104,11 @@ cask "typora"
 cask "xquartz"
 cask "keepingyouawake"
 # cask "adoptopenjdk"
-cask "dropbox"
+
 cask "istat-menus"
-cask "1password"
+# cask "1password"
 cask "daisydisk"
-cask "alfred"
+
 cask "bartender"
 cask "dash"
 cask "little-snitch"
@@ -120,37 +130,43 @@ cask "geektool"
 cask "atom"
 cask "jetbrains-toolbox"
 cask "gitkraken"
-cask "kdiff3"
+# cask "kdiff3"
 cask "kindle"
-cask "spectacle"
+
 cask "wireshark-chmodbpf"
 cask "beamer"
-cask "libreoffice"
+
 cask "spotify"
 cask "cakebrew"
 cask "cardhop"
-cask "grammarly"
+# cask "grammarly"
 cask "mactracker"
 cask "teamviewer"
 cask "charles"
 cask "hex-fiend"
-cask "meld"
+# cask "meld"
 cask "transmission"
-cask "timely"
+# cask "timely"
+
+# Encryption
 cask "gpg-suite"
 cask "veracrypt"
-cask "exodus"
-cask "wine-stable"
-cask "battle-net"
-cask "wineskin-winery"
-cask "steam"
-cask "firestormos"
-cask "epic-games"
-cask "unity"
+# cask "exodus"
+
+# cask "wineskin-winery"
 cask "vlc"
 
+# cask "firestormos"
+cask "wine-stable"
+cask "battle-net"
+cask "steam"
+cask "epic-games"
+cask "unity"
+
+
 # Virtual SubSystem
-cask "virtualbox"
+
+cask "virtualbox" # Not working on M1
 cask "docker"
 
 #  CTF Tools

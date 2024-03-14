@@ -18,9 +18,9 @@
 #
 
 # Return if zsh is called from Vim
-# if [[ -n $VIMRUNTIME ]]; then
-#     return 0
-# fi
+if [[ -n $VIMRUNTIME ]]; then
+    return 0
+fi
 
 autoload -Uz compinit
 compinit
@@ -28,8 +28,19 @@ compinit
 autoload -Uz colors
 colors
 
+
+
 source <(afx init)
+
+source <(kubectl completion zsh)
+source <(helm completion zsh)
+
+# FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
+
+
 source <(afx completion zsh)
 
 # word split: `-`, `_`, `.`, `=`
 export WORDCHARS='*?[]~&;!#$%^(){}<>'
+

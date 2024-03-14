@@ -1,13 +1,16 @@
 # TODO: move some of these (CLI related dependencies into the AFX setup as possible)
 
+# These top two are no longer needed
+# tap "homebrew/cask"
+# tap "homebrew/core"
 tap "hashicorp/tap"
 tap "homebrew/bundle"
-# tap "homebrew/cask"
 tap "homebrew/cask-fonts"
-# tap "homebrew/core"
+
 
 cask "font-hack-nerd-font"
 cask "font-3270-nerd-font"
+
 
 brew "hashicorp/tap/terraform-ls"
 brew "helmfile"
@@ -90,10 +93,10 @@ cask "adobe-creative-cloud"
 
 cask "appcleaner"
 
-cask "font-hack-nerd-font"
+
 cask "google-chrome"
-cask "google-japanese-ime"
-cask "hiddenbar" # alternative for "bartender"
+# cask "google-japanese-ime"
+# cask "hiddenbar" # alternative for "bartender"
 cask "inkdrop"
 cask "numi"
 cask "obs"

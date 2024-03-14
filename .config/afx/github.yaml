@@ -120,7 +120,7 @@ github:
   repo: ohmyzsh
   plugin:
     sources:
-    - plugins/asdf/asdf.plugin.zsh
+    # - plugins/asdf/asdf.plugin.zsh
     - plugins/direnv/direnv.plugin.zsh
     - plugins/extract/extract.plugin.zsh
     - plugins/gulp/gulp.plugin.zsh
@@ -388,20 +388,20 @@ github:
 #   repo: pst
 #   release:
 #     name: pst
-#     tag: 1.2.0
+#     # tag: 1.2.0
 #   command:
 #     link:
 #     - from: '**/pst'
-# - name: tomnomnom/gron
-#   description: Make JSON greppable!
-#   owner: tomnomnom
-#   repo: gron
-#   release:
-#     name: gron
-#     tag: v0.6.0
-#   command:
-#     link:
-#     - from: '**/gron'
+- name: tomnomnom/gron
+  description: Make JSON greppable!
+  owner: tomnomnom
+  repo: gron
+  release:
+    name: gron
+    # tag: v0.6.0
+  command:
+    link:
+    - from: '**/gron'
 - name: jessfraz/dockfmt
   description: Dockerfile format and parser. Like `gofmt` but for Dockerfiles.
   owner: jessfraz
@@ -451,13 +451,13 @@ github:
 #   release:
 #     name: peco
 #     tag: v0.5.3
-# - name: heppu/gkill
-#   description: Interactice process killer for Linux and macOS
-#   owner: heppu
-#   repo: gkill
-#   release:
-#     name: gkill
-#     tag: v1.0.2
+- name: heppu/gkill
+  description: Interactice process killer for Linux and macOS
+  owner: heppu
+  repo: gkill
+  # release:
+  # name: gkill
+  # tag: v1.0.2
 - name: antonmedv/fx
   description: Command-line tool and terminal JSON viewer
   owner: antonmedv
@@ -469,23 +469,23 @@ github:
     link:
     - from: '*fx*'
       to: fx
-# - name: moncho/dry
-#   description: A Docker manager for the terminal
-#   owner: moncho
-#   repo: dry
-#   release:
-#     name: dry
-#     tag: v0.9-beta.10
-#   command:
-#     link:
-#     - from: '**/dry'
+- name: moncho/dry
+  description: A Docker manager for the terminal
+  owner: moncho
+  repo: dry
+  release:
+    name: dry
+    # tag: v0.9-beta.10
+  command:
+    link:
+    - from: '**/dry'
 - name: ynqa/ktop
   description: top for k8s
   owner: ynqa
   repo: ktop
   release:
     name: ktop
-    tag: v0.1.1
+    # tag: v0.1.1
   command:
     link:
     - from: '**/ktop'
@@ -684,7 +684,7 @@ github:
   repo: delta
   release:
     name: delta
-    tag: 0.0.10
+    # tag: 0.0.10
   command:
     link:
     - from: '**/delta'
@@ -794,7 +794,7 @@ github:
   branch: master
   release:
     name: gh
-    tag: v2.21.2
+    # tag: v2.21.2
   command:
     link:
     - from: '*/bin/gh'

@@ -166,30 +166,6 @@ References:
 
 # 3. Configure Apps
 
-## PopClip
-
-Install extensions: https://pilotmoon.com/popclip/extensions/
-
-https://www.popclip.app/extensions/
-
-- Base64: https://www.popclip.app/extensions/x/19SiD
-- Translate Tab: https://www.popclip.app/extensions/x/14UeG
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/9fca0072-9fee-439c-9185-52aff8d77653"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/b5f685fc-188e-4de9-a06a-1ccc20ab1393">
-
-## iTerm2
-
-I usually use iTerm2 for developing something but it's not installed at this time, so at first let's use Terminal.app for this set up.
-
-- https://ethanschoonover.com/solarized/
-- https://github.com/todylu/monaco.ttf
-
-Area | Guides
----|---
-General | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/2e708423-462b-499c-8be4-8483dbd41c2e"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/56ab5bd1-5118-4d47-9410-4a841344e546">
-Appearance | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/9a46b49d-c310-41ad-ab54-c3758ebae678">
-Profile | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/382a5509-755b-4252-8eca-91e5a5bc22cd"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/38cacf00-5558-4831-9c79-1e9b721f1328"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/22b335f5-b439-4a8b-bc1d-b3ad5595bc4b"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/b1e6c400-4ab9-42b5-8124-cb19b735140a">
-
 ## 1Password
 
 Log in with Setup Code (this is most easier among these methods).
@@ -199,6 +175,24 @@ Log in with Setup Code (this is most easier among these methods).
 Configure the appearance.
 
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/17dd37b2-2af5-47d2-a252-daecc82ff598">
+
+## Google Japanese IME
+
+<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/e208b204-1f0b-4bfc-8020-23a9d6bb1761"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c8b7ae19-744d-462a-8acd-92cb72472e3d"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/f57a6418-8265-4e33-ade5-c68998ce40e1"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/f3fe14cf-6d5b-4d13-a7dc-933740ba49c3"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/86d09068-5b07-4a25-be97-ea912df2901e">
+
+## iTerm2
+
+### Install a colorscheme
+
+https://ethanschoonover.com/solarized/
+
+### Configure
+
+Area | Guides
+---|---
+General | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/2e708423-462b-499c-8be4-8483dbd41c2e"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/56ab5bd1-5118-4d47-9410-4a841344e546">
+Appearance | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/9a46b49d-c310-41ad-ab54-c3758ebae678">
+Profile | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/382a5509-755b-4252-8eca-91e5a5bc22cd"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/38cacf00-5558-4831-9c79-1e9b721f1328"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/22b335f5-b439-4a8b-bc1d-b3ad5595bc4b"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/b1e6c400-4ab9-42b5-8124-cb19b735140a">
 
 ## Obsidian
 
@@ -219,6 +213,15 @@ Run sync.
 Turn on Things Cloud.
 
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/51c58f87-d332-4185-ba4e-1a7db0c61901">
+
+## PopClip
+
+Install extensions from https://www.popclip.app/extensions/
+
+- [Base64](https://www.popclip.app/extensions/x/19SiD)
+- [Translate Tab](https://www.popclip.app/extensions/x/14UeG)
+
+<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/9fca0072-9fee-439c-9185-52aff8d77653"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/b5f685fc-188e-4de9-a06a-1ccc20ab1393">
 
 ## Spark
 
@@ -249,9 +252,3 @@ Log in.
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/b8a6512f-87b3-421b-9d46-20bdbf3305f2">
 
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/54620cec-6b87-41d6-a684-e58428318a2f"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/ddeeabdb-5fe6-4b73-b06a-8227c50d04e9">
-
-
-## Google Japanese IME
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/e208b204-1f0b-4bfc-8020-23a9d6bb1761"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c8b7ae19-744d-462a-8acd-92cb72472e3d"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/f57a6418-8265-4e33-ade5-c68998ce40e1"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/f3fe14cf-6d5b-4d13-a7dc-933740ba49c3"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/86d09068-5b07-4a25-be97-ea912df2901e">
-

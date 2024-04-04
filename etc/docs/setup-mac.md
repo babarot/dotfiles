@@ -168,6 +168,8 @@ References:
 
 ## 1Password
 
+https://1password.com/
+
 Log in with Setup Code (this is most easier among these methods).
 
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/b2ef6f71-d7a4-4add-8926-3ea838f45cab"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5472aeeb-2742-40b0-8049-3d1eee1a81bb">
@@ -178,9 +180,13 @@ Configure the appearance.
 
 ## Google Japanese IME
 
+https://www.google.co.jp/ime/
+
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/e208b204-1f0b-4bfc-8020-23a9d6bb1761"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c8b7ae19-744d-462a-8acd-92cb72472e3d"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/f57a6418-8265-4e33-ade5-c68998ce40e1"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/f3fe14cf-6d5b-4d13-a7dc-933740ba49c3"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/86d09068-5b07-4a25-be97-ea912df2901e">
 
 ## iTerm2
+
+https://iterm2.com/
 
 ### Install a colorscheme
 
@@ -196,6 +202,8 @@ Profile | <img width="200" alt="" src="https://github.com/babarot/dotfiles/asset
 
 ## Obsidian
 
+https://obsidian.md/
+
 Setup Obsidian account and Vault.
 
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/bd26762b-ccde-49d6-8b54-ec29f9af39b4"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/d5b95ea7-dee9-4995-8704-96c02e6fb77f"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/bd5b1ed9-500c-421a-8669-88f9f0dcb9ff"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/e6972e20-8701-41a6-bb95-fb04bdbb5cc4">
@@ -210,15 +218,21 @@ Run sync.
 
 ## Things 3
 
+https://culturedcode.com/things/
+
 Turn on Things Cloud.
 
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/51c58f87-d332-4185-ba4e-1a7db0c61901">
 
 ## CleanShot X
 
+https://cleanshot.com/
+
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5e9b6abd-8a35-43af-9fba-9e9275acc2a8"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/4ce287ea-c36b-4510-9cd7-f9e76be0613a"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/a09beb6d-c6f5-41ae-8c28-ba8b4d0f3ec9">
 
 ## PopClip
+
+https://www.popclip.app/
 
 Install extensions from https://www.popclip.app/extensions/
 
@@ -229,29 +243,43 @@ Install extensions from https://www.popclip.app/extensions/
 
 ## Spark
 
+https://sparkmailapp.com/
+
 Log in.
 
 ## Spotify
+
+https://open.spotify.com/
 
 Log in.
 
 ## Hidden Bar
 
+https://github.com/dwarvesf/hidden
+
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/16f7a3db-7dbc-45c3-a335-805b59363cc0">
 
 ## Magnet
 
+https://magnet.crowdcafe.com/
+
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/2d5c6c14-a429-4ee5-8b4e-8948a4ca3bab"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/605e0be0-6c2a-4876-aa38-9c21209cb6d4">
 
-## Meeting Bar
+## MeetingBar
+
+https://meetingbar.app/
 
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c85a5528-70ce-4df1-8193-129102ab0f32"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/85daebaa-d77c-43bc-b2d1-b956f2f2ecf2"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5a349124-dbff-40ff-9b8e-7396c0d37ebf">
 
 ## Paste
 
+https://pasteapp.io/
+
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/8e3bb2fe-697d-4e59-a88e-a495ff016355"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/95eead1f-6ff9-415d-a1b1-384791df78ca">
 
 ## Yoink
+
+https://eternalstorms.at/yoink/mac/
 
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/b8a6512f-87b3-421b-9d46-20bdbf3305f2">
 

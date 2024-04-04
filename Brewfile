@@ -40,6 +40,7 @@ brew "vhs" # faressoft/terminalizer
 cask "1password"
 cask "adobe-creative-cloud"
 cask "appcleaner"
+cast "cleanshot"
 cask "docker"
 cask "font-hack-nerd-font"
 cask "google-chrome"

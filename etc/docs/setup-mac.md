@@ -214,6 +214,10 @@ Turn on Things Cloud.
 
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/51c58f87-d332-4185-ba4e-1a7db0c61901">
 
+## CleanShot X
+
+<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5e9b6abd-8a35-43af-9fba-9e9275acc2a8"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/4ce287ea-c36b-4510-9cd7-f9e76be0613a"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/a09beb6d-c6f5-41ae-8c28-ba8b4d0f3ec9">
+
 ## PopClip
 
 Install extensions from https://www.popclip.app/extensions/

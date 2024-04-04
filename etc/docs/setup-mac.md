@@ -34,35 +34,37 @@ Trackpad | <img width="200" alt="" src="https://github.com/babarot/dotfiles/asse
 
 ## 2. Developments
 
-Let's configure a development environment through a console. At this time, A console app which is pre-installed is only `Terminal.app` by default.
+Let's configure a development environment through a console. At this time, the console app which is pre-installed is only `Terminal.app` by default. So you need to use it to set up these configurations.
 
 <!--
 <img width="400" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/2b7d358c-f68a-472f-ad3d-a2f9e3d5a6e2">
 -->
 <img width="400" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/216d22e3-0fb5-4e62-b8f6-b56361eae810">
 
-### Install Git
+### Prerequisites
+
+Install Git.
 
 ```bash
 xcode-select --install
 ```
 
-### Install Rosetta
+Install Rosetta 2.
 
 ```bash
 sudo softwareupdate --install-rosetta
 ```
 
 ### Connections for GitHub
-
-Check your keys in .ssh folder.
+j
+Check your keys in `.ssh` folder.
 
 ```console
 $ ls ~/.ssh
 id_rsa id_rsa.pub
 ```
 
-Create key pairs (with Enter).
+If you don't have them, create key pairs with the command. (all questions are compulsory but it's OK to leave it blank these)
 
 ```bash
 cd ~/.ssh && ssh-keygen -t rsa -C "babarot@gmail.com"
@@ -74,11 +76,15 @@ Copy a public key.
 cat ~/.ssh/id_rsa.pub | pbcopy
 ```
 
+Next,
+
 1. Go to https://github.com/settings/ssh/new
 2. Paste the public key to the text area
 3. Confirm to OK or not: `ssh -T git@github.com`
 
 <img width="400" alt="" src="https://user-images.githubusercontent.com/4442708/222950511-ec47abf9-f307-497d-83eb-7907524d9868.png">
+
+Let's check the connectivity for your GitHub account is working. It goes well if your account name is just displayed.
 
 ```console
 $ ssh -T git@github.com
@@ -97,7 +103,7 @@ git clone git@github.com:babarot/dotfiles.git ~/src/github.com/babarot/dotfiles
 cd ~/src/github.com/babarot/dotfiles && make install
 ```
 
-`make install` will create symbolic links from the dotfiles directory into the `$HOME` directory, allowing for all of the configuration to *act* as if it were there without being there, making it easier to maintain the dotfiles in isolation.
+The `make install` will create symbolic links from the dotfiles directory into the `$HOME` directory, allowing for all of the configuration to *act* as if it were there without being there, making it easier to maintain the dotfiles in isolation.
 
 ### AFX/Zsh
 
@@ -111,42 +117,46 @@ curl -sL https://raw.githubusercontent.com/babarot/afx/HEAD/hack/install | bash
 afx install
 ```
 
-afx settings: [.config/afx](https://github.com/babarot/dotfiles/tree/HEAD/.config/afx)
 
 References:
 
-- Usage https://babarot.me/afx
+- My plugins list: [.config/afx](https://github.com/babarot/dotfiles/tree/HEAD/.config/afx)
+- Guide & Usage: https://babarot.me/afx
 
-### Brew
+### Homebrew
+
+Almost all apps except for CLI tools (commands/plugins, etc...) are managed by Homebrew (package manager for macOS).
+
+Install `brew` command.
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 ```
 
+Install apps based on this list: [Brewfile](https://github.com/babarot/dotfiles/tree/HEAD/Brewfile).
+
 ```bash
 brew bundle
 ```
-
-> [!IMPORTANT]
->
-> <img width="600" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/9e2ff51c-4927-4c6f-965b-a2cf011eb462">
->
-> https://github.com/mas-cli/mas
->
-> ```
-> mas list
-> ```
->
-> ```bash
-> mas install <id>
-> ```
-
-Once homebrew is installed, it executes the `brew bundle` command which will install the packages listed in the [Brewfile](https://github.com/babarot/dotfiles/blob/HEAD/Brewfile).
 
 References:
 
 - https://brew.sh/
 - https://formulae.brew.sh/
+
+> [!TIP]
+> Some apps are managed via [mas-cli/mas](https://github.com/mas-cli/mas) (Mac App Store command line interface). Sometimes, the installation by `brew bundle` is failed by various reasons. The most mainly reason for the installation failing is the app is already installed by the organization of Mac owner or the app listed on Mac App Store has been already deleted. In such a case, it is recommended that you install them individually through `mas` command manually as follows.
+>
+> <img width="600" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/9e2ff51c-4927-4c6f-965b-a2cf011eb462">
+>
+> (List installed apps via `mas`)
+> ```
+> mas list
+> ```
+> (Install an app via `mas`)
+> ```bash
+> mas install <appid>
+> ```
 
 ### Tmux
 

@@ -60,6 +60,7 @@ cask "spotify"
 cask "tableplus"
 cask "the-unarchiver"
 cask "typora"
+cask "zoom"
 
 #
 # Mac App Store
@@ -75,8 +76,9 @@ mas "Things 3", id: 904237743
 mas "Translate Tab", id: 458887729
 mas "Yoink", id: 457622435
 mas "Amphetamine", id: 937984704
-mas "Rename X", id: 1438841416
+# mas "Rename X", id: 1438841416
 # mas "Name Mangler 3", id: 603637384
 mas "DaisyDisk", id: 411643860
-mas "ToyViewer", id: 414298354
+# mas "ToyViewer", id: 414298354
 mas "MeetingBar for Meet, Zoom & Co", id: 1532419400
+mas "1Password for Safari", id: 1569813296

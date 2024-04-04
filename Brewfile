@@ -1,8 +1,5 @@
 tap "hashicorp/tap"
 tap "homebrew/bundle"
-tap "homebrew/cask"
-tap "homebrew/cask-fonts"
-tap "homebrew/core"
 
 #
 # Brew
@@ -36,10 +33,6 @@ brew "ttyd"
 brew "gum"
 brew "vhs" # faressoft/terminalizer
 
-# https://github.com/yuru7/HackGen
-brew "font-hackgen"
-brew "font-hackgen-nerd"
-
 #
 # Cask
 #   https://formulae.brew.sh/cask/
@@ -47,6 +40,7 @@ brew "font-hackgen-nerd"
 cask "1password"
 cask "adobe-creative-cloud"
 cask "appcleaner"
+cast "cleanshot"
 cask "docker"
 cask "font-hack-nerd-font"
 cask "google-chrome"
@@ -55,7 +49,7 @@ cask "hiddenbar" # alternative for "bartender"
 cask "inkdrop"
 cask "iterm2"
 cask "numi"
-cask "obs"
+#cask "obs" # no longer used
 cask "obsidian"
 cask "path-finder"
 cask "popclip"
@@ -67,6 +61,7 @@ cask "spotify"
 cask "tableplus"
 cask "the-unarchiver"
 cask "typora"
+cask "zoom"
 
 #
 # Mac App Store
@@ -82,8 +77,9 @@ mas "Things 3", id: 904237743
 mas "Translate Tab", id: 458887729
 mas "Yoink", id: 457622435
 mas "Amphetamine", id: 937984704
-mas "Rename X", id: 1438841416
+# mas "Rename X", id: 1438841416
 # mas "Name Mangler 3", id: 603637384
 mas "DaisyDisk", id: 411643860
-mas "ToyViewer", id: 414298354
+# mas "ToyViewer", id: 414298354
 mas "MeetingBar for Meet, Zoom & Co", id: 1532419400
+mas "1Password for Safari", id: 1569813296

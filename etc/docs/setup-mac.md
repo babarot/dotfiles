@@ -127,7 +127,7 @@ References:
 brew bundle
 ```
 
-> [!IMPORTANT] mas
+> [!IMPORTANT]
 >
 > <img width="600" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/9e2ff51c-4927-4c6f-965b-a2cf011eb462">
 >

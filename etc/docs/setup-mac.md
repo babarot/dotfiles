@@ -1,43 +1,74 @@
-# Setup Mac
+Setup Mac
+=========
 
 This page guides you to set up the new machine to usual state.
 
-## Developments
+## 1. UI Settings
 
-### Terminal.app
+### Finder
 
-I usually use iTerm2 for developing something but it's not installed at this time, so at first let's use Terminal.app for this set up.
+<!--
+Finder Settings | Guides
+---|---
+General | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/55dabfcd-eed8-4ea9-a66a-3af3f509d773">
+Sidebar | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/7309a814-3c5f-4a88-8146-ed4f91dbac95">
+Advanced | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/d1e70e17-b4cb-4cb5-8e9f-b422868c76e8">
+-->
 
-- https://ethanschoonover.com/solarized/
-- https://github.com/todylu/monaco.ttf
+Area | Guides
+---|---
+Finder Settings | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/55dabfcd-eed8-4ea9-a66a-3af3f509d773"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/7309a814-3c5f-4a88-8146-ed4f91dbac95"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/d1e70e17-b4cb-4cb5-8e9f-b422868c76e8">
 
-### git/dotfiles
+### System Settings
 
-The first thing you need to do is to clone this repo into a location of your choosing. For example, if you have a `~/Developer` directory where you clone all of your git repos, that's a good choice for this one, too. This repo is setup to not rely on the location of the dotfiles, so you can place it anywhere.
+Area | Guides
+---|---
+Appearance | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/fc7aabba-ab4f-4c52-89c5-be3679b48822">
+Accessibility | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/2aa24213-e601-40e4-b82c-4f4c73c5380f"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/dfa10f37-6c88-483d-b26c-2a51bfac3031">
+Control Center | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/3dce23a7-5ed6-4352-854c-235687328676">
+Desktop & Dock | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/20bebaf4-b5c1-4635-a124-390e57ef0534"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/bacaef47-87c8-447b-a572-02efd6db5113">
+Displays | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/1ff3f3a1-a052-478b-b9da-8c317a6d6030">
+Touch ID & Password | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c61af4f6-4673-48ef-afb8-2c1876e27439">
+Keyboad | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/8f3f919e-700e-4d1a-bb8a-dea3eed53822"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/747ef146-b573-4d15-94b8-353499f933aa">
+Trackpad | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/34c925a0-a438-43c4-9525-e5dedfb24127">
 
-> **Note**
-> If you're on macOS, you'll also need to install the XCode CLI tools before continuing.
+## 2. Developments
+
+Let's configure a development environment through a console. At this time, A console app which is pre-installed is only `Terminal.app` by default.
+
+<!--
+<img width="400" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/2b7d358c-f68a-472f-ad3d-a2f9e3d5a6e2">
+-->
+<img width="400" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/216d22e3-0fb5-4e62-b8f6-b56361eae810">
+
+### Install Git
 
 ```bash
 xcode-select --install
 ```
 
-```bash
-git clone git@github.com:babarot/dotfiles.git ~/src/github.com/babarot/dotfiles
-```
+### Install Rosetta
 
 ```bash
-cd ~/src/github.com/babarot/dotfiles
-make install
+sudo softwareupdate --install-rosetta
 ```
 
-The `make install` will create symbolic links from the dotfiles directory into the `$HOME` directory, allowing for all of the configuration to *act* as if it were there without being there, making it easier to maintain the dotfiles in isolation.
+### Connections for GitHub
 
-### GitHub
+Check your keys in .ssh folder.
+
+```console
+$ ls ~/.ssh
+id_rsa id_rsa.pub
+```
+
+Create key pairs (with Enter).
 
 ```bash
-ssh-keygen -t rsa -C "babarot@gmail.com"
+cd ~/.ssh && ssh-keygen -t rsa -C "babarot@gmail.com"
 ```
+
+Copy a public key.
 
 ```bash
 cat ~/.ssh/id_rsa.pub | pbcopy
@@ -54,6 +85,20 @@ $ ssh -T git@github.com
 Hi babarot! You've successfully authenticated, but GitHub does not provide shell access.
 ```
 
+### Dotfiles
+
+The first thing you need to do is to clone this repo into a location of your choosing. For example, if you have a `~/Developer` directory where you clone all of your git repos, that's a good choice for this one, too. This repo is setup to not rely on the location of the dotfiles, so you can place it anywhere.
+
+```bash
+git clone git@github.com:babarot/dotfiles.git ~/src/github.com/babarot/dotfiles
+```
+
+```bash
+cd ~/src/github.com/babarot/dotfiles && make install
+```
+
+`make install` will create symbolic links from the dotfiles directory into the `$HOME` directory, allowing for all of the configuration to *act* as if it were there without being there, making it easier to maintain the dotfiles in isolation.
+
 ### AFX/Zsh
 
 [afx](https://github.com/babarot/afx/) is a CLI packages (tools, shell plugins, etc) manager. Almost all ZSH configurations are also related to the afx settings, so once you run `afx install` and then relaunch your shell, you can enter the CLI world in the usual state of your shell.
@@ -68,7 +113,7 @@ afx install
 
 afx settings: [.config/afx](https://github.com/babarot/dotfiles/tree/HEAD/.config/afx)
 
-Refs:
+References:
 
 - Usage https://babarot.me/afx
 
@@ -82,9 +127,23 @@ Refs:
 brew bundle
 ```
 
+>[!IMPORTANT] mas
+>
+> <img width="600" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/9e2ff51c-4927-4c6f-965b-a2cf011eb462">
+>
+> https://github.com/mas-cli/mas
+>
+> ```
+> mas list
+> ```
+>
+> ```bash
+> mas install <id>
+> ```
+
 Once homebrew is installed, it executes the `brew bundle` command which will install the packages listed in the [Brewfile](https://github.com/babarot/dotfiles/blob/HEAD/Brewfile).
 
-Refs:
+References:
 
 - https://brew.sh/
 - https://formulae.brew.sh/
@@ -95,41 +154,25 @@ Refs:
 
 ### Go
 
-> **Note**
+> [!NOTE]
 > This step may become done by `brew` (Brewfile). If so, no longer needed to run this step.
 
 1. Go to https://go.dev/dl/
 2. Install via the installer
 
-Refs:
+References:
 
 - https://www.sambaiz.net/article/261/
 
-### iTerm2
+## 3. Configure Apps
 
 ### PopClip
 
 Install extensions: https://pilotmoon.com/popclip/extensions/
 
+### Colorschemes for the terminal app
 
+I usually use iTerm2 for developing something but it's not installed at this time, so at first let's use Terminal.app for this set up.
 
-## System preferences
-
-### Finder
-
-Before | After
----|---
-<img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222951896-61c9eb8f-fbf0-475d-a10a-912ab9af86fa.png"> | <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222951917-0876e2ab-9257-41f7-be18-8abb1f1e6867.png">
-<img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222951931-0c907c26-1a0d-4851-ad86-3d15eb16149c.png"> | <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222951934-b87f3d70-22dd-42bf-8a99-6efee863eea3.png">
-
-### System
-
-Guide | What to do
----|---
-Appurtenance | <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222952001-52c98d18-ae81-4292-a3fa-4a5b88be042c.png">
-Desktop | <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222952030-5126f748-46b1-4c46-a7b2-39a6095a6f7b.png"> <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222952032-48f614d2-c470-4607-adaa-d3140d58f353.png"> <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222952035-97e23fad-a009-48ec-8728-7dd31fe4feab.png">
-Keyboads | <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222952088-fc8a521a-26ae-4dd7-9933-f473ef132ea0.png"> <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222952089-55d8a3fb-8883-4207-b0dc-12bc2f017306.png">
-Trackpads | <img width="200" alt="" src="https://user-images.githubusercontent.com/4442708/222952106-bdfbba95-8b26-4451-bc21-4f0f91c45095.png">
-
-
-
+- https://ethanschoonover.com/solarized/
+- https://github.com/todylu/monaco.ttf

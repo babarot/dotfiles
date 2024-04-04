@@ -1,8 +1,5 @@
 tap "hashicorp/tap"
 tap "homebrew/bundle"
-tap "homebrew/cask"
-tap "homebrew/cask-fonts"
-tap "homebrew/core"
 
 #
 # Brew
@@ -36,10 +33,6 @@ brew "ttyd"
 brew "gum"
 brew "vhs" # faressoft/terminalizer
 
-# https://github.com/yuru7/HackGen
-brew "font-hackgen"
-brew "font-hackgen-nerd"
-
 #
 # Cask
 #   https://formulae.brew.sh/cask/
@@ -55,7 +48,7 @@ cask "hiddenbar" # alternative for "bartender"
 cask "inkdrop"
 cask "iterm2"
 cask "numi"
-cask "obs"
+#cask "obs" # no longer used
 cask "obsidian"
 cask "path-finder"
 cask "popclip"

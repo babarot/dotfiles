@@ -86,9 +86,14 @@
 [url "ssh://git@github.com/"]
   insteadOf = https://github.com/
 
+[url "ssh://git@ssh.github.com:443/"]
+	insteadOf = git@github.com:
+
 [ghq]
   root = ~/src
   user = babarot
 
 [sequence]
   editor = nvim
+[url "https://github.com/"]
+	insteadOf = git://github.com/

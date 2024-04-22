@@ -3,7 +3,7 @@ Setup Mac
 
 This page guides you to set up the new machine to usual state.
 
-# 1. UI Settings
+# 1. Built-in Software / OS Preferences
 
 ## Finder
 
@@ -11,7 +11,7 @@ This page guides you to set up the new machine to usual state.
 
 ## System Settings
 
-Area | Guides
+/ | Guides
 ---|---
 Appearance | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/fc7aabba-ab4f-4c52-89c5-be3679b48822">
 Accessibility | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/2aa24213-e601-40e4-b82c-4f4c73c5380f"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/dfa10f37-6c88-483d-b26c-2a51bfac3031">
@@ -21,8 +21,17 @@ Displays | <img width="200" alt="" src="https://github.com/babarot/dotfiles/asse
 Touch ID & Password | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c61af4f6-4673-48ef-afb8-2c1876e27439">
 Keyboad | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/8f3f919e-700e-4d1a-bb8a-dea3eed53822"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/747ef146-b573-4d15-94b8-353499f933aa">
 Trackpad | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/34c925a0-a438-43c4-9525-e5dedfb24127">
+Mouse | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/56f226f7-3cd0-4a13-a33a-6c835075db88">
 
-# 2. Developments
+# 2. Hardware
+
+- Keyboards
+  - https://happyhackingkb.com/jp/download/
+  - https://origin.pfultd.com/downloads/hhkb/manual/P3PC-6641-05.pdf
+- Mouse
+  - https://www.logicool.co.jp/ja-jp/setup/ergosetup/mouse-setup/bluetooth.html
+
+# 3. Developments
 
 Let's configure a development environment through a console. At this time, the console app which is pre-installed is only `Terminal.app` by default. So you need to use it to set up these configurations.
 
@@ -164,6 +173,28 @@ References:
 
 - https://www.sambaiz.net/article/261/
 
+## Some migrations
+
+### History (Z shell)
+
+```
+cp ~/.zsh_history PATH
+```
+
+### History (directory changes)
+
+I use [enhancd](https://github.com/babarot/enhancd) to jump a directory. A history of directory changes is `enhancd.log` file.
+
+```
+cp ~/.enhancd/enhancd.log PATH
+```
+
+### GitHub repositories
+
+```
+open ~/src/github.com/babarot
+```
+
 # 3. Configure Apps
 
 ## 1Password
@@ -216,6 +247,12 @@ Run sync.
 
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5f22ab4c-d7cf-4705-82ae-3cabd32764fb">
 
+Enable [Vimrc Support](https://github.com/esm7/obsidian-vimrc-support) plugin
+
+```
+cp /path/to/.obsidian.vimrc ~/Documents/(Obsidian Vault)
+```
+
 ## Things 3
 
 https://culturedcode.com/things/
@@ -228,7 +265,7 @@ Turn on Things Cloud.
 
 https://cleanshot.com/
 
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5e9b6abd-8a35-43af-9fba-9e9275acc2a8"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/4ce287ea-c36b-4510-9cd7-f9e76be0613a"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/a09beb6d-c6f5-41ae-8c28-ba8b4d0f3ec9">
+<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5e9b6abd-8a35-43af-9fba-9e9275acc2a8"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/4ce287ea-c36b-4510-9cd7-f9e76be0613a"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/a09beb6d-c6f5-41ae-8c28-ba8b4d0f3ec9"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/e4b55262-ae18-4957-8072-b0ca2894644d">
 
 ## PopClip
 

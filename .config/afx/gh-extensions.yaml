@@ -29,7 +29,7 @@ github:
     gh-extension:
       name: gh-markdown-preview
       tag: v1.4.0
-      rename-to: gh-md
+      rename-to: gh-preview
 - name: kawarimidoll/gh-q
   description: A gh extension to clone GitHub repositories using fzf and ghq.
   owner: kawarimidoll

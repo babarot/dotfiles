@@ -22,23 +22,22 @@ if [[ -n $VIMRUNTIME ]]; then
     return 0
 fi
 
+source <(kubectl completion zsh)
+source <(helm completion zsh)
+source <(skaffold completion zsh)
+source <(minikube completion zsh)
+source <(docker completion zsh)
+
+FPATH="$(brew --prefix asdf)/share/zsh/site-functions:${FPATH}"
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
+
 autoload -Uz compinit
 compinit
 
 autoload -Uz colors
 colors
 
-
-
 source <(afx init)
-
-source <(kubectl completion zsh)
-source <(helm completion zsh)
-
-# FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
-
-
 source <(afx completion zsh)
 
 # word split: `-`, `_`, `.`, `=`

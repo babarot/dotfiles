@@ -109,7 +109,7 @@ alias kj="killjobs"
 killjobs(){
   kill $(jobs | awk '{b=substr($1,2,1); c="%"; print c b}')
 }
-alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
+alias cleanup="find /path/to/root/dir -type d -regex '.*/\(node_modules\|.DS_Store\)' -prune -exec rm -rf '{}' +"
 
 
 brew-force-update() {

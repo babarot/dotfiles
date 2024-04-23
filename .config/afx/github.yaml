@@ -43,9 +43,20 @@ github:
   description: Bash script to tail Kubernetes logs from multiple pods at the same time
   owner: johanhaleby
   repo: kubetail
+  plugin:
   command:
     link:
     - from: kubetail
+      # - from: completion/kubetail.zsh
+      # to: $HOME/.zsh/Completion/_kubetail
+# - name: joshskidmore/zsh-fzf-history-search
+#   description: FZF history search for Zsh
+#   owner: joshskidmore
+#   repo: zsh-fzf-history-search
+#   plugin:
+#     sources:
+#     - zsh-fzf-history-search.plugin.zsh
+#  These might effectively be the same things ^ and down
 - name: zdharma-continuum/history-search-multi-word
   description: Multi-word, syntax highlighted history searching for Zsh
   owner: zdharma-continuum
@@ -121,6 +132,7 @@ github:
   plugin:
     sources:
     # - plugins/asdf/asdf.plugin.zsh
+    # - plugins/yarn/yarn.plugin.zsh
     - plugins/direnv/direnv.plugin.zsh
     - plugins/extract/extract.plugin.zsh
     - plugins/gulp/gulp.plugin.zsh
@@ -360,6 +372,24 @@ github:
     link:
     - from: bin/exa*
       to: exa
+# - name: eza-community/eza
+#   description: A modern version of 'ls'.
+#   owner: eza-community
+#   repo: eza
+#   release:
+#     name: eza
+#   command:
+#     alias:
+#       l: eza --group-directories-first -a -1 -F --git-ignore
+#       lt: eza --group-directories-first -T --git-ignore --level 10
+#       lta: eza --group-directories-first -a -T --git-ignore --level 10 --ignore-glob .git
+#       la: eza --group-directories-first -a --header --git
+#       ll: eza --group-directories-first -l --header --git
+#       lla: eza --group-directories-first -la --header --git
+#       ls: eza --header --git --group-directories-first
+#     link:
+#     - from: bin/eza*
+#       to: eza
 - name: motemen/ghq
   description: Remote repository management made easy
   owner: motemen
@@ -594,8 +624,8 @@ github:
       }
     env:
       BAT_PAGER: less -RF
-      BAT_STYLE: numbers,changes
-      BAT_THEME: DarkNeon
+      # BAT_STYLE: all
+      BAT_THEME: OneHalfDark
     alias:
       cat: bat
 - name: BurntSushi/xsv
@@ -608,7 +638,17 @@ github:
   command:
     link:
     - from: xsv
-- name: BurntSushi/ripgrep
+- name: d-kuro/kubectl-fuzzy
+  owner: d-kuro
+  repo: kubectl-fuzzy
+  # release:
+  #   name: kubectl-fuzzy
+  #   tag: 1.9.0
+  # command:
+  #   build:
+  #     steps:
+  #     - make install
+- name: BurntSushi/ripgrep #  this fucker requires github_token for some reason
   description: ripgrep recursively searches directories for a regex pattern
   owner: BurntSushi
   repo: ripgrep
@@ -618,6 +658,8 @@ github:
   command:
     link:
     - from: '**/rg'
+      # snippet: |
+
 # - name: docekr/compose
 #   description: Define and run multi-container applications with Docker
 #   owner: docker
@@ -688,6 +730,18 @@ github:
   command:
     link:
     - from: '**/delta'
+# - name: g-plane/zsh-yarn-autocompletions
+#   description: Yarn autocompletions for Zsh
+#   owner: g-plane
+#   repo: zsh-yarn-autocompletions
+#   plugin:
+#     sources:
+#     - yarn-autocompletions.plugin.zsh
+#     command:
+#       build:
+#         steps:
+#         - ./install.zsh
+
 - name: charmbracelet/glow
   description: Render markdown on the CLI, with pizzazz!
   owner: charmbracelet

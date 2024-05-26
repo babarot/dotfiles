@@ -19,7 +19,7 @@
 
 # Return if zsh is called from Vim
 if [[ -n $VIMRUNTIME ]]; then
-    return 0
+  return 0
 fi
 
 source <(kubectl completion zsh)
@@ -27,6 +27,7 @@ source <(helm completion zsh)
 source <(skaffold completion zsh)
 source <(minikube completion zsh)
 source <(docker completion zsh)
+
 
 FPATH="$(brew --prefix asdf)/share/zsh/site-functions:${FPATH}"
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
@@ -40,6 +41,7 @@ colors
 source <(afx init)
 source <(afx completion zsh)
 
+eval "$(fzf --zsh)"
+
 # word split: `-`, `_`, `.`, `=`
 export WORDCHARS='*?[]~&;!#$%^(){}<>'
-

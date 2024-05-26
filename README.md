@@ -1,6 +1,9 @@
 # TODO
 
-Need to streamline this a bit more.
+install fzf-git
+and some of these https://www.youtube.com/watch?v=mmqDYw9C30I
+
+Need to streamline this a bit more.  Also... might just move as much as i can to NIX
 
 - change the .afx manifest structure
   - i want a file for each functional component block
@@ -29,3 +32,4 @@ Setup guide is here: [setup-mac.md](./etc/docs/setup-mac.md)
 
 [afx]:    https://img.shields.io/github/v/release/babarot/afx?color=EF2D5E&display_name=release&label=AFX&logo=alchemy&logoColor=EF2D5E&sort=semver
 [neovim]: https://img.shields.io/badge/neovim-v0.8.0-57A143.svg?style=popout&logo=neovim&logoColor=
+

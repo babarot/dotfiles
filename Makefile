@@ -8,7 +8,7 @@ DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 all: brew install asdf afx
 
 k8: ## maybe use helmfile???
-    cask install --cask docker
+  cask install --cask docker
 	brew install minikube
 	brew install helm 
 	brew install kubectl

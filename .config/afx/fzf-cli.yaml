@@ -1,0 +1,106 @@
+# Readme: This is my fzf powered CLI dynamic completions
+# - docker rmi **tab
+# - TODO: git checkout **tab 
+# - Kubernetes
+# http:
+# - name: fzf-git
+#   description: A command-line fuzzy finder
+#   url: https://raw.githubusercontent.com/junegunn/fzf-git.sh/main/fzf-git.sh
+#   plugin:
+#     sources:
+#     - fzf-git.sh
+github:
+- name: bigH/git-fuzzy
+  description: Terraform version manager
+  owner: bigH
+  repo: git-fuzzy
+  command:
+    link:
+    - from: bin/git-fuzzy
+      to: git-fuzzy
+- name: pierpo/fzf-docker
+  description: FZF docker auto completion plugin
+  owner: pierpo
+  repo: fzf-docker
+  plugin:
+    sources:
+    - fzf-docker.plugin.zsh
+# - name: junegunn/fzf-git
+#   owner: junegunn this requires authentication :()
+#   description: FZF git plugin
+#   repo: git@github.com:junegunn/fzf-git.sh.git
+#   plugin:
+#     sources:
+#     - fzf-git.sh
+- name: junegunn/fzf
+  description: A command-line fuzzy finder
+  owner: junegunn
+  repo: fzf
+  command:
+    build:
+      steps:
+      - ./install --bin
+    link:
+    - from: 'bin/fzf'
+    - from: 'bin/fzf-tmux'
+  plugin:
+    sources:
+    - shell/completion.zsh
+    env:
+      FZF_COMPLETION_TRIGGER: '**'
+      FZF_DEFAULT_COMMAND: fd --type f
+      FZF_DEFAULT_OPTS: >
+        --height 75% --multi --reverse --margin=0,1 --bind ctrl-f:page-down,ctrl-b:page-up,ctrl-/:toggle-preview --bind pgdn:preview-page-down,pgup:preview-page-up --marker="+" --pointer="▶" --prompt="❯ " --no-separator --scrollbar="█" --color bg+:#262626,fg+:#dadada,hl:#f09479,hl+:#f09479 --color border:#303030,info:#cfcfb0,header:#80a0ff,spinner:#36c692 --color prompt:#87afff,pointer:#ff5189,marker:#f09479
+      FZF_CTRL_T_COMMAND: rg --files --hedden --follow --glob "!.git/*"
+      FZF_CTRL_T_OPTS: --preview "bat --color=always --style=header,grid --line-range :100 {}"
+      FZF_ALT_C_COMMAND: fd --type d
+      FZF_ALT_C_OPTS: --preview "tree -C {} | head -100"
+    snippet: |
+      fzf_find_edit() {
+        local file=$(
+          fzf --query="$1" --no-multi --select-1 --exit-0 \
+              --preview 'bat --color=always --line-range :500 {}'
+          )
+        if [[ -n $file ]]; then
+          $EDITOR "$file"
+        fi
+      }
+      fzf_git_add() {
+        local selections=$(
+          git status --porcelain | \
+          fzf --ansi \
+              --preview 'if (git ls-files --error-unmatch {2} &>/dev/null); then
+                           git diff --color=always {2} | delta
+                         else
+                           bat --color=always --line-range :500 {2}
+                         fi'
+          )
+        if [[ -n $selections ]]; then
+          local files=$(echo "$selections" | cut -c 4- | tr '\n' ' ')
+          git add --verbose $files
+        fi
+      }
+      fzf_git_log() {
+        local command='ll'
+        if [[ "$1" == "all" ]]; then
+          command='lla'
+        fi
+        shift # Consume the first argument of this function
+        local selections=$(
+          git $command --color=always "$@" |
+            fzf --ansi --no-sort --no-height \
+                --preview "echo {} | grep -o '[a-f0-9]\{7\}' | head -1 |
+                           xargs -I@ sh -c 'git show --color=always @' |
+                           delta"
+          )
+        if [[ -n $selections ]]; then
+          local commits=$(echo "$selections" | sed 's/^[* |]*//' | awk '{print $1}' | tr '\n' ' ')
+          git show $commits
+        fi
+      }
+      fzf_git_unadd() {
+        local files=$(git diff --name-only --cached | fzf --ansi)
+        if [[ -n $files ]]; then
+          git unadd $files
+        fi
+      }

@@ -7,8 +7,10 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	ui "github.com/gizak/termui/v3"
@@ -23,6 +25,7 @@ type Process struct {
 	LogChan chan string
 	ErrChan chan string
 	Mutex   sync.Mutex
+	Running bool
 }
 
 var processes []*Process
@@ -47,19 +50,47 @@ func main() {
 	initializeUI()
 
 	uiEvents := ui.PollEvents()
-	ticker := time.NewTicker(500 * time.Millisecond)
+	ticker := time.NewTicker(100 * time.Millisecond)
 	defer ticker.Stop()
+
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGABRT)
 
 	for {
 		select {
+		case <-sigChan:
+			cleanup()
+			ticker.Stop()
+			return
 		case e := <-uiEvents:
-			handleEvent(e)
+			if handleEvent(e) { // Modified to check if we should quit
+				cleanup()
+				ticker.Stop()
+				return
+			}
 			renderActiveTab()
 		case <-ticker.C:
 			renderActiveTab()
 		}
 		ui.Render(grid)
 	}
+}
+
+func cleanup() {
+	for _, proc := range processes {
+		proc.Running = false // Set running to false to stop goroutines
+		if proc.Cmd != nil && proc.Cmd.Process != nil {
+			proc.Cmd.Process.Kill() // Ensure each process is killed
+		}
+		// Wait for the process's goroutines to finish (captureOutput)
+		time.Sleep(100 * time.Millisecond) // Give some time for goroutines to exit
+	}
+	// Close channels after ensuring no more data is being sent
+	// for _, proc := range processes {
+	// 	close(proc.LogChan)
+	// 	close(proc.ErrChan)
+	// }
+	ui.Close() // Close the UI cleanly
 }
 
 func createGrid() *ui.Grid {
@@ -91,10 +122,10 @@ func createGrid() *ui.Grid {
 	return grid
 }
 
-func handleEvent(e ui.Event) {
+func handleEvent(e ui.Event) bool {
 	switch e.ID {
 	case "q", "<C-c>":
-		ui.Close()
+		return true
 	case "<Left>", "l":
 		tabPane.FocusLeft()
 	case "<Right>", "j":
@@ -124,15 +155,16 @@ func handleEvent(e ui.Event) {
 		logDisplay.ScrollBottom()
 		autoScroll = true
 	}
+	return false
 }
 
 func setupProcesses(commands []string) []*Process {
 	processes := make([]*Process, len(commands))
 	for i, cmd := range commands {
-		parts := strings.SplitN(cmd, " ", 2)
+		parts := strings.Fields(cmd) // Splits the command into all parts
 		processes[i] = &Process{
-			Name:    parts[0],
-			Cmd:     exec.Command(parts[0], parts[1:]...),
+			Name:    strings.Join(parts, ""),
+			Cmd:     exec.Command(parts[0], parts[1:]...), // parts[1:] will correctly pass all arguments and flags
 			Status:  "Starting",
 			LogText: widgets.NewList(),
 			LogChan: make(chan string, 100),
@@ -141,6 +173,8 @@ func setupProcesses(commands []string) []*Process {
 		processes[i].LogText.Title = "Logs for " + parts[0]
 		processes[i].LogText.WrapText = true
 		processes[i].Cmd.Env = os.Environ() // Inherit environment
+		processes[i].Running = true
+
 		go runProcess(processes[i], i)
 	}
 	return processes
@@ -150,8 +184,8 @@ func runProcess(p *Process, index int) {
 	stdout, _ := p.Cmd.StdoutPipe()
 	stderr, _ := p.Cmd.StderrPipe()
 
-	go captureOutput(stdout, p.LogChan)
-	go captureOutput(stderr, p.ErrChan)
+	go captureOutput(stdout, p.LogChan, p)
+	go captureOutput(stderr, p.ErrChan, p)
 
 	if err := p.Cmd.Start(); err != nil {
 		p.LogChan <- fmt.Sprintf("Error starting process: %v", err)
@@ -173,15 +207,15 @@ func runProcess(p *Process, index int) {
 	p.Status = "Running"
 	updateUI(index)
 	if err := p.Cmd.Wait(); err != nil {
-		p.LogChan <- fmt.Sprintf("Process ended with error: %v", err)
+		// p.LogChan <- fmt.Sprintf("Process ended with error: %v", err)
 		p.Status = "Error"
 	}
 	updateUI(index)
 }
 
-func captureOutput(pipe io.ReadCloser, channel chan<- string) {
+func captureOutput(pipe io.ReadCloser, channel chan<- string, proc *Process) {
 	scanner := bufio.NewScanner(pipe)
-	for scanner.Scan() {
+	for scanner.Scan() && proc.Running { // Check if still running
 		channel <- scanner.Text()
 	}
 	close(channel)

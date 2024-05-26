@@ -12,7 +12,7 @@ export LC_ALL="${LANGUAGE}"
 export LC_CTYPE="${LANGUAGE}"
 
 # Editor
-export EDITOR=vim
+export EDITOR=nvim
 export CVSEDITOR="${EDITOR}"
 export SVN_EDITOR="${EDITOR}"
 export GIT_EDITOR="${EDITOR}"
@@ -54,8 +54,8 @@ export SAVEHIST=1000000
 export LISTMAX=50
 # Do not add in root
 if [[ $UID == 0 ]]; then
-    unset HISTFILE
-    export SAVEHIST=0
+  unset HISTFILE
+  export SAVEHIST=0
 fi
 
 # fzf - command-line fuzzy finder (https://github.com/junegunn/fzf)

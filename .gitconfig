@@ -1,94 +1,95 @@
 [github]
-  user = TheBranchDriftCatalyst
+user = TheBranchDriftCatalyst
 
 [core]
-  editor = nvim
-  excludesfile = ~/.gitignore
-  preloadindex = true
+editor = nvim
+excludesfile = ~/.gitignore
+preloadindex = true
 
 [color]
-  ui = auto
+ui = auto
 
 [color "diff"]
-  # meta = 242 238
-  # frag = 239 236
-  # old = 167 normal
-  # new = 030 normal
-  context = 240
-  commit = 246 024
-  meta = yellow bold
-  frag = magenta bold
-  old = red bold
-  new = green bold
-  whitespace = red reverse
+# meta = 242 238
+# frag = 239 236
+# old = 167 normal
+# new = 030 normal
+context = 240
+commit = 246 024
+meta = yellow bold
+frag = magenta bold
+old = red bold
+new = green bold
+whitespace = red reverse
 
 [alias]
-  st = status
-  co = checkout
-  ci = commit
-  br = switch
-  lo = log --color=always --max-count=15 --oneline
-  ll  = lla --first-parent
-  lla = "log --graph --date=human --format='%C(#e3c78a)%h%C(#ff5454)%d%C(reset) - %C(#36c692)(%ad)%C(reset) %s %C(#80a0ff){%an}%C(reset)'"
-  graph = log --graph --date-order --all --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=short
-  unadd = restore --staged
-  review = diff origin/HEAD...
-  rvf = diff origin/HEAD... --name-only
-  rvc = log --oneline ...origin/HEAD
-  typechange = status -s | awk '$1=="T"{print $2}' | xargs git checkout
-  delete-merged-branches = !git branch --merged | grep -v \\* | xargs -I % git branch -d %
+st = status
+co = checkout
+ci = commit
+br = switch
+lo = log --color=always --max-count=15 --oneline
+ll = lla --first-parent
+lla = "log --graph --date=human --format='%C(#e3c78a)%h%C(#ff5454)%d%C(reset) - %C(#36c692)(%ad)%C(reset) %s %C(#80a0ff){%an}%C(reset)'"
+graph = log --graph --date-order --all --pretty=format:'%h %Cred%d %Cgreen%ad %Cblue%cn %Creset%s' --date=short
+unadd = restore --staged
+review = diff origin/HEAD...
+rvf = diff origin/HEAD... --name-only
+rvc = log --oneline ...origin/HEAD
+typechange = status -s | awk '$1=="T"{print $2}' | xargs git checkout
+delete-merged-branches = !git branch --merged | grep -v \\* | xargs -I % git branch -d %
 
 [help]
-  autocorrect = 1
+autocorrect = 1
 
 [user]
-  name = TheBranchDriftCatalyst
-  email = djdanielsh@gmail.com
-  # signingkey = 
+name = TheBranchDriftCatalyst
+email = djdanielsh@gmail.com
+# signingkey =
 
 [pager]
-  # log  = diff-highlight | less -RX
-  # show = diff-highlight | less -RX
-  # diff = diff-highlight | less -RX
-  diff = diff-so-fancy | less --tabs=4 -RFX
-  # diff = delta --dark --plus-color="#012800" --minus-color="#340001"
+# log  = diff-highlight | less -RX
+# show = diff-highlight | less -RX
+# diff = diff-highlight | less -RX
+# diff = diff-so-fancy | less --tabs=4 -RFX
+diff = delta --dark
 
 [diff]
-  tool                = vimdiff
-  algorithm           = histogram
-  compactionHeuristic = true
+# tool = vimdiff
+algorithm = histogram
+compactionHeuristic = true
 
 [init]
-  defaultBranch = main
+defaultBranch = main
 
 [merge]
-  tool = vimdiff
+# tool = vimdiff
 
 [commit]
-  gpgsign = false
-  template = ~/.gitmessage
+gpgsign = false
+template = ~/.gitmessage
+tool = nvim
 
 [push]
-  # Use the Git 1.x.x default to avoid errors on machines with old Git
-  # installations. To use `simple` instead, add this to your `~/.extra` file:
-  # `git config --global push.default simple`. See http://git.io/mMah-w.
-  default = matching
+# Use the Git 1.x.x default to avoid errors on machines with old Git
+# installations. To use `simple` instead, add this to your `~/.extra` file:
+# `git config --global push.default simple`. See http://git.io/mMah-w.
+default = matching
 
 [tag]
-  gpgsign = false
+gpgsign = false
 
 [gpg]
-  program = gpg
+program = gpg
 
 [url "https://"]
-  insteadOf = git://
+insteadOf = git://
 
 [url "ssh://git@github.com/"]
-  insteadOf = https://github.com/
+insteadOf = https://github.com/
 
 [ghq]
-  root = ~/src
-  user = TheBranchDriftCatalyst
+root = ~/src
+user = TheBranchDriftCatalyst
 
 [sequence]
-  editor = nvim
+editor = nvim

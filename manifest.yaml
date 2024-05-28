@@ -1,6 +1,5 @@
 entries:
-# TODO: need to have it collapse the home directory to ~... for now just do it manually
-- original_path: ~/.kube
-  # also... i need to invert this structure, the dotfiles need to be in my workspaces and symlinked to ~... not
-  # the current v0 other way around
-  new_path: ~/dotfiles-2024/.kube
+    - original_path: ~/.kube
+      new_path: ~/dotfiles-2024/.kube
+    - original_path: /etc/nix/nix.conf
+      new_path: /Users/panda/dotfiles-2024/nix.conf

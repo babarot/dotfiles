@@ -1,0 +1,7 @@
+task:
+
+  dev:
+    desc: "Run AIR for hot reload TODO"
+    cmds:
+    # - "go run main.go"
+    - "echo 'TODO dev task'"

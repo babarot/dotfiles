@@ -1,4 +1,4 @@
-package main
+package stor_test
 
 import (
 	"fmt"

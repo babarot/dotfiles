@@ -1,8 +1,11 @@
-module github.com/TheBranchDriftCatalyst/cli-scripts/m/v2
+module github.com/TheBranchDriftCatalyst/dotfiles-2024/cli
 
 go 1.22.1
 
-require github.com/gizak/termui/v3 v3.1.0
+require (
+	github.com/gizak/termui/v3 v3.1.0
+	gopkg.in/yaml.v3 v3.0.1
+)
 
 require (
 	github.com/mattn/go-runewidth v0.0.2 // indirect

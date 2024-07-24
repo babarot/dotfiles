@@ -42,12 +42,14 @@ func main() {
 	name := filepath.Base(absPath)
 
 	// Get the current working directory
+	// This is where we are going to place the original file/directory
 	currentDir, err := os.Getwd()
 	if err != nil {
 		log.Fatalf("Error getting current directory: %v", err)
 	}
 
 	// Create a backup of the original file/directory
+	// Instead of move we are doing a copy
 	backupPath := absPath + ".bak"
 	if err := os.Rename(absPath, backupPath); err != nil {
 		log.Fatalf("Error creating backup of the original file or directory: %v", err)

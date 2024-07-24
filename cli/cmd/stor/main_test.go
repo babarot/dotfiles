@@ -50,6 +50,7 @@ func TestMoveAndSymlink(t *testing.T) {
 	}
 
 	// Check if the symlink points to the new file location
+	//  this doesnt quiet work, paths are a bit weird
 	// linkDest, err := os.Readlink(tmpFilePath)
 	// if err != nil {
 	// 	t.Fatalf("Error reading symlink: %v", err)

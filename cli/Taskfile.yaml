@@ -1,9 +1,30 @@
-task:
+version: 3
 
-  dev:
-    desc: "Run AIR for hot reload TODO"
+vars:
+  CMD_SRC: ./cmd
+  TEMP_BIN: ./bin
+  # NOTE That this is added to via my asfx configuration
+  DEPLOY_BIN: ../bin
+
+
+tasks:
+
+  build:
+    desc: Build the CLI commands
+    sources:
+    - ./{{ .CMD_SRC }}/**/main.go
+    generates:
+    - ./bin/*
     cmds:
-    # - "go run main.go"
-    - "echo 'TODO dev task'"
-    
-  
+    - for: sources
+      cmd: go build -o ./bin/{{ trimPrefix "cmd/" (dir .ITEM) }} {{ .ITEM }}
+
+  deploy:
+    deps: [build]
+    desc: symlink all binary files from ./bin/** to ../bin/**
+    sources:
+    - "{{ .TEMP_BIN }}/*"
+    generates:
+    - "{{ .DEPLOY_BIN }}/*"
+    cmds:
+

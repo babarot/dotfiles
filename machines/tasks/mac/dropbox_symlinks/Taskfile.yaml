@@ -1,0 +1,62 @@
+version: '3'
+
+vars:
+  DROPBOX_PAT H: "~/Library/CloudStorage/Dropbox"
+  USER:
+    sh: "echo $USER"
+  BACKUP_PATH: "./backups"
+  current_time: "{{.TIMESTAMP}}"
+
+  FOLDERS:
+    map:
+    - name: "Test"
+    source: "/Users/{{ .USER }}/Documents"
+    target: "{{ .DROPBOX_PATH }}/Documents"
+    # FOLDERS:
+    #   map:
+    #   - name: "Documents"
+    #     source: "/Users/{{ .USER }}/Documents"
+    #     target: "{{ .DROPBOX_PATH }}/Documents"
+    #   - name: "Downloads"
+    #     source: "/Users/{{ .USER }}/Downloads"
+    #     target: "{{ .DROPBOX_PATH }}/Downloads"
+    #   - name: "Pictures"
+    #     source: "/Users/{{ .USER }}/Pictures"
+    #     target: "{{ .DROPBOX_PATH }}/Pictures"
+
+tasks:
+  default:
+    cmds:
+    - task: ensure_backup_dir_exists
+    - task: backup_and_symlink_all
+    - task: add_all_to_favorites
+
+  ensure_backup_dir_exists:
+    cmds:
+    - mkdir -p {{.BACKUP_PATH}}
+
+  backup_and_symlink_all:
+    desc: "Backup existing directories and create symlinks to Dropbox for all folders"
+    cmds:
+    - |
+      for folder in {{.folders}}; do
+        task backup_and_symlink_single name="$folder.name" source="$folder.source" target="$folder.target"
+      done
+
+  backup_and_symlink_single:
+    desc: "Backup and symlink a single directory"
+    cmds:
+    - |
+      if [ -d "{{.source}}" ] && [ "$(ls -A {{.source}})" ]; then
+        zip -r "{{.BACKUP_PATH}}/{{.name}}_{{.current_time}}.zip" "{{.source}}"
+        rm -rf "{{.source}}"
+      fi
+    - ln -s "{{.target}}" "{{.source}}"
+
+  add_all_to_favorites:
+    desc: "Add Dropbox symlinked folders to Finder favorites"
+    cmds:
+    - |
+      for folder in {{.folders}}; do
+        osascript -e 'tell application "Finder" to make new alias at POSIX file "/Users/{{ .USER }}/" to POSIX file "$folder.source"'
+      done

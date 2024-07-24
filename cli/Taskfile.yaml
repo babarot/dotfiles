@@ -2,29 +2,44 @@ version: 3
 
 vars:
   CMD_SRC: ./cmd
-  TEMP_BIN: ./bin
-  # NOTE That this is added to via my asfx configuration
-  DEPLOY_BIN: ../bin
+  DEPLOY_BIN:
+    sh: realpath ../bin
 
 
 tasks:
 
+  default:
+    desc: Run the build and deploy tasks
+    cmds:
+    - echo {{ .DEPLOY_BIN }}
+
   build:
     desc: Build the CLI commands
     sources:
-    - ./{{ .CMD_SRC }}/**/main.go
-    generates:
-    - ./bin/*
-    cmds:
-    - for: sources
-      cmd: go build -o ./bin/{{ trimPrefix "cmd/" (dir .ITEM) }} {{ .ITEM }}
-
-  deploy:
-    deps: [build]
-    desc: symlink all binary files from ./bin/** to ../bin/**
-    sources:
-    - "{{ .TEMP_BIN }}/*"
+    - "{{ .CMD_SRC }}/**/main.go"
     generates:
     - "{{ .DEPLOY_BIN }}/*"
     cmds:
+    - for: sources
+      # cmd: echo {{ .DEPLOY_BIN }}/{{ trimPrefix "cmd/" (dir .ITEM) }}
+      cmd: go build -o {{ .DEPLOY_BIN }}/{{ trimPrefix "cmd/" (dir .ITEM) }} {{ .ITEM }}
+    - task: permissions
 
+  # deploy:
+  #   deps: [build, permissions]
+  #   desc: symlink all binary files from ./bin/** to ../bin/**
+  #   sources:
+  #   - "{{ .TEMP_BIN }}/*"
+  #   generates:
+  #   - "{{ .DEPLOY_BIN }}/*"
+  #   cmds:
+  #   - for: sources
+  #     cmd: ln -sf $(realpath {{ .ITEM }}) {{ .DEPLOY_BIN }}/{{ base .ITEM}}
+
+
+  permissions:
+    desc: Set permissions for the binary files
+    sources: ["{{ .DEPLOY_BIN }}/*"]
+    cmds:
+    - for: sources
+      cmd: chmod +x {{ .ITEM }}

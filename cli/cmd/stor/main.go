@@ -1,4 +1,4 @@
-package stor_test
+package main
 
 import (
 	"fmt"
@@ -49,7 +49,7 @@ func main() {
 	}
 
 	// Create a backup of the original file/directory
-	// Instead of move we are doing a copy
+	// Instead of move we are doing
 	backupPath := absPath + ".bak"
 	if err := os.Rename(absPath, backupPath); err != nil {
 		log.Fatalf("Error creating backup of the original file or directory: %v", err)

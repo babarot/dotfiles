@@ -1,0 +1,35 @@
+version: 3
+
+# vars:
+
+tasks:
+
+  default:
+    desc: Run the build and deploy tasks
+    cmds:
+    - echo "List of tasks:"
+    - echo "  - run"
+
+  deploy_ssh_key:
+    desc: Run ansible playbook to deploy local ssh id_rsa to remotes authorized_keys
+    cmds:
+    - ansible-playbook -i inventory.yaml ./tasks/webservers/deploy_ssh_key.ansible.yaml -l homelab -k
+
+  # # deploy:
+  # #   deps: [build, permissions]
+  # #   desc: symlink all binary files from ./bin/** to ../bin/**
+  # #   sources:
+  # #   - "{{ .TEMP_BIN }}/*"
+  # #   generates:
+  # #   - "{{ .DEPLOY_BIN }}/*"
+  # #   cmds:
+  # #   - for: sources
+  # #     cmd: ln -sf $(realpath {{ .ITEM }}) {{ .DEPLOY_BIN }}/{{ base .ITEM}}
+
+
+  # permissions:
+  #   desc: Set permissions for the binary files
+  #   sources: ["{{ .DEPLOY_BIN }}/*"]
+  #   cmds:
+  #   - for: sources
+  #     cmd: chmod +x {{ .ITEM }}

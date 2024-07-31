@@ -1,0 +1,50 @@
+version: '3'
+
+tasks:
+
+  run_test:
+    cmds:
+    - task: main:run
+      vars:
+        DROPBOX_PATH:
+          sh: "echo $(realpath ~/Library/CloudStorage/Dropbox)"
+        SYMLINK_ENTRANCE:
+          sh: realpath ~ # This is pretty much just the home directory for the current used
+        BACKUP_DIR:
+          sh: "echo $(realpath {{ .TASKFILE_DIR }})/.backup"
+        FOLDERS: ['Downloads', 'Documents', 'Pictures', 'Videos']
+
+    #  This tests takes alpha- the canon - and bravo the target and creates a symlink from alpha to bravo
+    # in the case of bravo containing a file that is also in alpha, the file in alpha is moved to the backup directory
+
+
+  # add_to_finder_favorites:
+  #   desc: Add a folder to Finder Favorites
+  #   cmds:
+  #     - |
+  #       FOLDER_PATH="{{.FOLDER_PATH}}"
+  #       SIDEBAR_PLIST="${HOME}/Library/Preferences/com.apple.sidebarlists.plist"
+  #       /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0 dict" "$SIDEBAR_PLIST"
+  #       /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0:AliasData data $(/usr/bin/osascript -e \"get POSIX file \\\"$FOLDER_PATH\\\" as alias\")" "$SIDEBAR_PLIST"
+  #       /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0:Name string $(basename "$FOLDER_PATH")" "$SIDEBAR_PLIST"
+  #       /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0:URL string file://$FOLDER_PATH" "$SIDEBAR_PLIST"
+  #       killall Finder
+
+
+  #!/bin/bash
+
+# add_to_finder_favorites() {
+#   local folderPath="$1"
+#   local sidebarPlist="${HOME}/Library/Preferences/com.apple.sidebarlists.plist"
+
+#   /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0 dict" "$sidebarPlist"
+#   /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0:AliasData data $(/usr/bin/osascript -e "get POSIX file \"$folderPath\" as alias")" "$sidebarPlist"
+#   /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0:Name string $(basename "$folderPath")" "$sidebarPlist"
+#   /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0:URL string file://$folderPath" "$sidebarPlist"
+
+#   # Restart Finder to apply changes
+#   killall Finder
+# }
+
+# # Example usage
+# add_to_finder_favorites "/path/to/your/folder"

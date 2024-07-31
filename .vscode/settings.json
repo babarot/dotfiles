@@ -1,7 +1,16 @@
 {
     "cSpell.words": [
-        "enhancd",
-        "neovim",
-        "nvim"
-    ]
+      "enhancd",
+      "localdomain",
+      "neovim",
+      "nvim"
+    ],
+    "yaml.schemas": {
+      "https://taskfile.dev/schema.json": [
+        "**/Taskfile.**.yml",
+        "**/**.Taskfile.yml",
+        "**/Taskfile.yml",
+      ]
+    }
+    
 }

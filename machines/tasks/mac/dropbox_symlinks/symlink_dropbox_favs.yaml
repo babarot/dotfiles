@@ -1,0 +1,72 @@
+- name: Set up Dropbox symlinks
+  hosts: all
+  gather_facts: yes
+  become: yes
+  vars:
+    DROPBOX_PATH: "{{ lookup('pipe', 'realpath ~/Library/CloudStorage/Dropbox') }}"
+    SYMLINK_ENTRANCE: "{{ lookup('pipe', 'realpath ~') }}"
+    BACKUP_DIR: "{{ lookup('pipe', 'realpath .') }}/.backup"
+    FOLDERS: ['Downloads', 'Documents', 'Pictures', 'Videos']
+
+  tasks:
+  - name: Print variables
+    debug:
+      msg:
+      - "BACKUP_DIR = {{ BACKUP_DIR }}"
+      - "USER = {{ ansible_user }}"
+      - "DROPBOX_PATH = {{ DROPBOX_PATH }}"
+      - "SYMLINK_ENTRANCE = {{ SYMLINK_ENTRANCE }}"
+
+  - name: Display folder symlinks
+    debug:
+      msg: "{{ SYMLINK_ENTRANCE }}/{{ item }} ---> {{ DROPBOX_PATH }}/{{ item }}"
+    loop: "{{ FOLDERS }}"
+
+  - name: Check existing folders in home directory
+    command: ls -la ~
+    register: home_listing
+
+  - name: Print Dropbox folders in home directory
+    debug:
+      msg: "{{ home_listing.stdout_lines | select('search', 'Dropbox') | list }}"
+
+  - name: Prompt for confirmation
+    pause:
+      prompt: "Are you positive you want to perform the symlink operation described above???"
+
+  - name: Create backup directory
+    file:
+      path: "{{ BACKUP_DIR }}"
+      state: directory
+
+  - name: Backup existing directories
+    command: >
+      rsync --exclude='*.photoslibrary' -aP {{ SYMLINK_ENTRANCE }}/{{ item }} {{ BACKUP_DIR }}
+    loop: "{{ FOLDERS }}"
+    ignore_errors: yes
+
+  - name: Clear existing directories
+    file:
+      path: "{{ SYMLINK_ENTRANCE }}/{{ item }}"
+      state: absent
+    loop: "{{ FOLDERS }}"
+
+  - name: Create symlinks to Dropbox
+    file:
+      src: "{{ DROPBOX_PATH }}/{{ item }}"
+      dest: "{{ SYMLINK_ENTRANCE }}/{{ item }}"
+      state: link
+    loop: "{{ FOLDERS }}"
+
+  - name: Post execution messages
+    debug:
+      msg:
+      - "All done"
+      - "Check the backup directory for any old files that need to be dealt with"
+      - "{{ BACKUP_DIR }}"
+
+  - name: Create symlink for Movies to Videos
+    file:
+      src: "{{ DROPBOX_PATH }}/Videos"
+      dest: "~/Movies"
+      state: link

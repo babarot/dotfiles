@@ -12,5 +12,8 @@
 **/.next/
 **/.yarn/
 
+
 .kube/http-cache/
 .kube/cache/
+
+/.backup

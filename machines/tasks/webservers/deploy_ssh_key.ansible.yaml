@@ -1,0 +1,35 @@
+---
+- name: Deploy id_rsa.pub to remote hosts
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure .ssh directory exists
+      file:
+        path: "{{ ansible_user_dir }}/.ssh"
+        state: directory
+        mode: '0700'
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+
+    - name: Copy the public key to the remote hosts
+      ansible.builtin.copy:
+        src: ~/.ssh/id_rsa.pub
+        dest: "{{ ansible_user_dir }}/.ssh/authorized_keys"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0600'
+      register: copy_result
+
+    - name: Add the public key to authorized_keys if not already present
+      lineinfile:
+        path: "{{ ansible_user_dir }}/.ssh/authorized_keys"
+        create: yes
+        line: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+        state: present
+        mode: '0600'
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+
+    - name: Report result of key deployment
+      debug:
+        msg: "Public key deployed to {{ inventory_hostname }} with result: {{ copy_result }}"

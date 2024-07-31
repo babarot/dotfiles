@@ -1,0 +1,1 @@
+osascript -e 'tell application "Finder" to make new alias at POSIX file "/System/Library/CoreServices/Finder.app/Contents/Resources/MySidebarFavorite" to POSIX file "/Users/username/MyNewFolder"'

@@ -1,10 +1,10 @@
 version: 3
 
 vars:
-  CMD_SRC: ./cmd
+  CMD_SRC:
+    sh: realpath ./cmd
   DEPLOY_BIN:
     sh: realpath ../bin
-
 
 tasks:
 
@@ -25,6 +25,18 @@ tasks:
       cmd: go build -o {{ .DEPLOY_BIN }}/{{ trimPrefix "cmd/" (dir .ITEM) }} {{ .ITEM }}
     - task: permissions
 
+  # deploy-shell:
+  #   desc: Deploy the shell scripts
+  #   sources:
+  #   - "{{ .CMD_SRC }}/**/shell/*"
+  #   generates:
+  #   - "{{ .DEPLOY_BIN }}/*"
+  #   cmds:
+  #   - for: sources
+  #     # TODOneed to get the file name again...
+  #     # cmd: cp {{ trimSuffix "" (dir .ITEM) }} {{ .DEPLOY_BIN }}
+
+  # for now we are just building straight to the target bin
   # deploy:
   #   deps: [build, permissions]
   #   desc: symlink all binary files from ./bin/** to ../bin/**
@@ -35,7 +47,6 @@ tasks:
   #   cmds:
   #   - for: sources
   #     cmd: ln -sf $(realpath {{ .ITEM }}) {{ .DEPLOY_BIN }}/{{ base .ITEM}}
-
 
   permissions:
     desc: Set permissions for the binary files

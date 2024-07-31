@@ -1,62 +1,111 @@
 version: '3'
 
 vars:
-  DROPBOX_PAT H: "~/Library/CloudStorage/Dropbox"
-  USER:
-    sh: "echo $USER"
-  BACKUP_PATH: "./backups"
-  current_time: "{{.TIMESTAMP}}"
+  DROPBOX_PATH:
+    sh: "echo $(realpath ~/Library/CloudStorage/Dropbox)"
+  SYMLINK_ENTRANCE:
+    sh: realpath ~ # This is pretty much just the home directory for the current used
+  BACKUP_DIR:
+    sh: "echo $(realpath {{ .TASKFILE_DIR }})/.backup"
+  FOLDERS: ['Downloads', 'Documents', 'Pictures', 'Videos']
+  # FOLDERS: ['Pictures']
 
-  FOLDERS:
-    map:
-    - name: "Test"
-    source: "/Users/{{ .USER }}/Documents"
-    target: "{{ .DROPBOX_PATH }}/Documents"
-    # FOLDERS:
-    #   map:
-    #   - name: "Documents"
-    #     source: "/Users/{{ .USER }}/Documents"
-    #     target: "{{ .DROPBOX_PATH }}/Documents"
-    #   - name: "Downloads"
-    #     source: "/Users/{{ .USER }}/Downloads"
-    #     target: "{{ .DROPBOX_PATH }}/Downloads"
-    #   - name: "Pictures"
-    #     source: "/Users/{{ .USER }}/Pictures"
-    #     target: "{{ .DROPBOX_PATH }}/Pictures"
+# NOTE: MAc recreates these folders really fucking fast when deleted... need to figure out how to better that
 
 tasks:
+
   default:
+    silent: true
     cmds:
-    - task: ensure_backup_dir_exists
-    - task: backup_and_symlink_all
-    - task: add_all_to_favorites
+    - echo BACKUP_DIR = {{ .BACKUP_DIR }}
+    - echo USER = {{ .USER }}
+    - echo DROPBOX_PATH {{ .DROPBOX_PATH }}
+    - echo SYMLINK_ENTRANCE {{ .SYMLINK_ENTRANCE }}
+    - echo ""
+    - for: {var: FOLDERS, as: folder_name}
+      cmd: "echo '{{ .SYMLINK_ENTRANCE }}/{{ .folder_name }} ---> {{ .DROPBOX_PATH }}/{{ .folder_name }}'"
+    - echo "checking existing folders"
+    - ls -la ~ | grep Dropbox
 
-  ensure_backup_dir_exists:
+  run:
+    desc: "Run the task"
     cmds:
-    - mkdir -p {{.BACKUP_PATH}}
+    - task: default
+    - task: gatekeeper
+    - task: backup
+    # - task: clear-anchor-points
+    - task: execute
+    - task: post_execute
 
-  backup_and_symlink_all:
-    desc: "Backup existing directories and create symlinks to Dropbox for all folders"
+  gatekeeper:
+    desc: "Check if the user is allowed to run the task"
+    internal: true
+    prompt: "Are you positive you want to perform the following symlink operation described above???"
     cmds:
-    - |
-      for folder in {{.folders}}; do
-        task backup_and_symlink_single name="$folder.name" source="$folder.source" target="$folder.target"
-      done
+    - echo 'Proceeding with task'
 
-  backup_and_symlink_single:
-    desc: "Backup and symlink a single directory"
+  backup:
+    desc: "Moving existing directories to backup"
     cmds:
-    - |
-      if [ -d "{{.source}}" ] && [ "$(ls -A {{.source}})" ]; then
-        zip -r "{{.BACKUP_PATH}}/{{.name}}_{{.current_time}}.zip" "{{.source}}"
-        rm -rf "{{.source}}"
-      fi
-    - ln -s "{{.target}}" "{{.source}}"
+    - echo "Backing up existing directories"
+    - for: {var: FOLDERS, as: folder_name}
+      cmd: "rsync --exclude='*.photoslibrary' -aP {{ .SYMLINK_ENTRANCE }}/{{ .folder_name }} {{ .BACKUP_DIR }}"
+      # - task: clear-anchor-points
 
-  add_all_to_favorites:
-    desc: "Add Dropbox symlinked folders to Finder favorites"
+  # clear-anchor-points:
+  #   desc: "Clearing anchor points"
+  #   internal: true
+  #   prompt: "Are you sure you want to clear the anchor points? (check .backup/*)"
+  #   cmds:
+  #   - for: {var: FOLDERS, as: folder_name}
+  #     cmd: "sudo rm -rf {{ .SYMLINK_ENTRANCE }}/{{ .folder_name }} || true"
+
+  execute:
+    desc: "Run the task"
+    internal: true
     cmds:
-    - |
-      for folder in {{.folders}}; do
-        osascript -e 'tell application "Finder" to make new alias at POSIX file "/Users/{{ .USER }}/" to POSIX file "$folder.source"'
-      done
+    - for: {var: FOLDERS, as: folder_name}
+      cmd: "sudo rm -rf {{ .SYMLINK_ENTRANCE }}/{{ .folder_name }} && ln -sF {{ .DROPBOX_PATH }}/{{ .folder_name }} {{ .SYMLINK_ENTRANCE }}/{{ .folder_name }}"
+
+  post_execute:
+    desc: "Post execution task"
+    silent: true
+    cmds:
+    - echo "All done"
+    - echo "Check the backup directory for any old files that need to be dealt with"
+    - echo {{ .BACKUP_DIR }}
+    - sudo rm -rf ~/Movies && ln -sF ~/Dropbox/Videos ~/Movie
+
+  # add_to_finder_single:
+
+
+  # add_to_finder_favorites:
+  #   desc: Add a folder to Finder Favorites
+  #   cmds:
+  #     - |
+  #       FOLDER_PATH="{{.FOLDER_PATH}}"
+  #       SIDEBAR_PLIST="${HOME}/Library/Preferences/com.apple.sidebarlists.plist"
+  #       /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0 dict" "$SIDEBAR_PLIST"
+  #       /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0:AliasData data $(/usr/bin/osascript -e \"get POSIX file \\\"$FOLDER_PATH\\\" as alias\")" "$SIDEBAR_PLIST"
+  #       /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0:Name string $(basename "$FOLDER_PATH")" "$SIDEBAR_PLIST"
+  #       /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0:URL string file://$FOLDER_PATH" "$SIDEBAR_PLIST"
+  #       killall Finder
+
+
+  #!/bin/bash
+
+# add_to_finder_favorites() {
+#   local folderPath="$1"
+#   local sidebarPlist="${HOME}/Library/Preferences/com.apple.sidebarlists.plist"
+
+#   /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0 dict" "$sidebarPlist"
+#   /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0:AliasData data $(/usr/bin/osascript -e "get POSIX file \"$folderPath\" as alias")" "$sidebarPlist"
+#   /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0:Name string $(basename "$folderPath")" "$sidebarPlist"
+#   /usr/libexec/PlistBuddy -c "Add :favorites:CustomListItems:0:URL string file://$folderPath" "$sidebarPlist"
+
+#   # Restart Finder to apply changes
+#   killall Finder
+# }
+
+# # Example usage
+# add_to_finder_favorites "/path/to/your/folder"

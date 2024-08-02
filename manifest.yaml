@@ -3,3 +3,5 @@ entries:
       new_path: ~/dotfiles-2024/.kube
     - original_path: /etc/nix/nix.conf
       new_path: /Users/panda/dotfiles-2024/nix.conf
+    - original_path: /Users/panda/.sops.yaml
+      new_path: /Users/panda/dotfiles-2024/.sops.yaml

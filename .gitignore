@@ -1,3 +1,7 @@
+# ?? ************************************
+# !! NOTE: this is the global git ignore
+# ?? ************************************
+
 *~
 .tmux/plugins
 .DS_Store
@@ -15,5 +19,7 @@
 
 .kube/http-cache/
 .kube/cache/
+
+**/.tasks/
 
 /.backup

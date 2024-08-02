@@ -1,0 +1,6 @@
+[submodule "@cli-tools"]
+	path = @cli-tools
+	url = git@github.com:TheBranchDriftCatalyst/cli-tools.git
+[submodule "@machines"]
+	path = @machines
+	url = git@github.com:TheBranchDriftCatalyst/machines.git

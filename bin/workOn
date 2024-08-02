@@ -1,0 +1,21 @@
+#!/bin/zsh
+
+# Set the directory to search for .code-workspace files
+local workspace_dir="${WORKSPACE_ROOT}/.vscode" # Changed from "./.workspaces" to "./.vscode"
+local workspace_file
+
+# Inform the user of the search directory
+echo "Searching for workspace files in ${workspace_dir}..."
+
+# Use find to locate all .code-workspace files in the specified directory
+# and allow the user to select one using fzf
+workspace_file=$(find "${workspace_dir}" -name '*.code-workspace' | fzf --prompt='Select workspace: ')
+
+# Check if a file was selected
+if [[ -n "$workspace_file" ]]; then
+  echo "Opening $workspace_file..."
+  code "$workspace_file"
+else
+  echo "No workspace selected."
+fi
+# }

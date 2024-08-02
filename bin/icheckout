@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Step 1: Interactively select the target branch
+branch_name=$(git branch -r | sed 's/origin\///' | fzf --prompt="Select a branch: ")
+
+# Ensure a branch name is selected
+if [ -z "$branch_name" ]; then
+    echo "No branch selected."
+    exit 1
+fi
+
+# Step 2: Fetch the remote branch and list files
+git fetch --quiet
+file_list=$(git ls-tree --name-only -r "origin/$branch_name" | rg "$@")
+
+# Step 3: Use fzf with bat preview to select the file
+selected_file=$(echo "$file_list" | fzf --prompt="Select a file to restore: " --preview "git show origin/$branch_name:{} | bat --style=numbers --color=always" --preview-window=right:60%)
+
+# Step 4: Checkout the selected file from the target branch
+if [ -n "$selected_file" ]; then
+    git checkout "origin/$branch_name" -- "$selected_file"
+    echo "Checked out $selected_file from $branch_name"
+else
+    echo "No file selected."
+fi

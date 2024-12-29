@@ -6,7 +6,7 @@ Setup guide is here: [setup-mac.md](./etc/docs/setup-mac.md)
 
 - Shell: zsh
   - Package manager: [afx](https://github.com/babarot/afx/)
-- Terminal: [iTerm2](https://iterm2.com/)
+- Terminal: [Ghostty](https://ghostty.org/)
 - Editor: [Neovim](https://github.com/neovim/neovim)
 - Multiplexer: [tmux](https://github.com/tmux/tmux)
   - Plugin manager: [tpm](https://github.com/tmux-plugins/tpm) (Press `prefix` + <kbd>I</kbd> to install)

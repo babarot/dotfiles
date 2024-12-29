@@ -789,7 +789,7 @@ github:
   branch: master
   release:
     name: gh
-    tag: v2.21.2
+    tag: v2.52.0
   command:
     link:
     - from: '*/bin/gh'

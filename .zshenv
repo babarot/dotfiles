@@ -1,3 +1,5 @@
+XDG_CONFIG_HOME=$HOME/.config
+
 typeset -gx -U path
 path=( \
     /usr/local/bin(N-/) \
@@ -5,6 +7,7 @@ path=( \
     ~/.zplug/bin(N-/) \
     ~/.tmux/bin(N-/) \
     /usr/local/go/bin \
+    /opt/homebrew/bin \
     "$path[@]" \
 )
 

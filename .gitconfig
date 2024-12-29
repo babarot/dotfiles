@@ -37,6 +37,10 @@
   rvc = log --oneline ...origin/HEAD
   typechange = status -s | awk '$1=="T"{print $2}' | xargs git checkout
   delete-merged-branches = !git branch --merged | grep -v \\* | xargs -I % git branch -d %
+  branch-log = log --oneline HEAD --not main
+  blog = log --oneline HEAD --not main
+  ; mylog = log --oneline HEAD --not main
+  ; mylog = log --oneline HEAD --not main | fzf | awk '{print $1}'
 
 [help]
   autocorrect = 1

@@ -14,9 +14,9 @@ alias egrep='egrep --color=auto'
 # Use plain vim.
 alias suvim='vim -N -u NONE -i NONE'
 
-# if (( $+commands[kubectl] )); then
-#   alias k=kubectl
-# fi
+if (( $+commands[kubectl] )); then
+  alias k=kubectl
+fi
 
 # Global aliases
 alias -g L='| less'
@@ -33,7 +33,8 @@ alias -g T='| tail'
 alias -g CP='| pbcopy'
 alias -g CC='| tee /dev/tty | pbcopy'
 alias -g P='$(kubectl get pods | fzf-tmux --header-lines=1 --reverse --multi --cycle | awk "{print \$1}")'
-alias -g F='| fzf --height 30 --reverse --multi --cycle'
+# alias -g F='| fzf --height 30 --reverse --multi --cycle'
+alias -g F='`fzf`'
 
 awk_alias2() {
   local -a options fields words
@@ -75,3 +76,8 @@ gchange() {
   fi
   gcloud config configurations activate $(gcloud config configurations list | fzf-tmux --reverse --header-lines=1 | awk '{print $1}')
 }
+
+alias -g Q="| gawk 'match(\$0, /\"(.*?)\"/, a) {print a[1]}'"
+alias -g QQ="| gawk 'match(\$0, /(\".*?\")/, a) {print a[1]}'"
+alias -g ESC='| sed -r "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
+alias -g ANSI='| sed -r "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'

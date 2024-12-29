@@ -123,6 +123,7 @@ require('lazy').setup({
           extensions = {
             tape = 'vhs',
             tf = 'terraform',
+            tfvars = 'terraform',
           },
           literal = {
             Brewfile = 'brewfile',

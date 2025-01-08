@@ -1,6 +1,5 @@
 # Config generator https://ghostty.zerebos.com/
 
-
 command = /opt/homebrew/bin/tmux
 clipboard-read = allow
 clipboard-write = allow
@@ -10,15 +9,16 @@ window-width = 150
 window-padding-x = 10
 window-padding-y = 2
 window-padding-balance = true
-background-opacity = 0.85
+background-opacity = 0.95
 background-blur-radius = 20
 macos-titlebar-style = transparent
+
 theme = Solarized Dark Higher Contrast
 background = #001e27
 foreground = #9cc2c3
 selection-background = #003748
 selection-foreground = #7a8f8e
-cursor-color = #f34b00
+cursor-color = #dcdcdc
 palette = 0=#002831
 palette = 1=#d11c24
 palette = 2=#6cbe6c
@@ -35,5 +35,8 @@ palette = 12=#178ec8
 palette = 13=#e24d8e
 palette = 14=#00b39e
 palette = 15=#fcf4dc
-font-size = 20
-font-family = Hack Nerd Font Mono
+
+font-family = "Menlo"
+font-family = "Hiragino Kaku Gothic ProN"
+font-size = 18
+font-feature = -dlig

@@ -81,3 +81,11 @@ alias -g Q="| gawk 'match(\$0, /\"(.*?)\"/, a) {print a[1]}'"
 alias -g QQ="| gawk 'match(\$0, /(\".*?\")/, a) {print a[1]}'"
 alias -g ESC='| sed -r "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
 alias -g ANSI='| sed -r "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
+
+pskill() {
+  ps -ef | fzf \
+    --bind 'ctrl-r:reload(ps -ef),enter:execute(kill {2})+reload(ps -ef)' \
+    --header 'Press CTRL-R to reload' \
+    --header-lines=1 \
+    --height=50
+}

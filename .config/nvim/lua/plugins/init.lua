@@ -113,45 +113,47 @@ require('lazy').setup({
     lazy = true,
     ft = { 'ltsv' },
   },
-  {
-    'nathom/filetype.nvim',
-    commit = 'b522628a45a17d58fc0073ffd64f9dc9530a8027',
-    -- DO NOT DO LAZY LOAD
-    config = function()
-      require('filetype').setup({
-        overrides = {
-          extensions = {
-            tape = 'vhs',
-            tf = 'terraform',
-            tfvars = 'terraform',
-          },
-          literal = {
-            Brewfile = 'brewfile',
-            ['.tagpr'] = 'ini'
-          },
-          function_extensions = {
-            ['sh'] = function()
-              vim.bo.filetype = 'sh'
-              vim.bo.iskeyword = vim.bo.iskeyword .. ',:'
-            end,
-            ['zsh'] = function()
-              vim.bo.filetype = 'zsh'
-              vim.bo.iskeyword = vim.bo.iskeyword .. ',:'
-            end,
-            ['go'] = function()
-              vim.bo.filetype = 'go'
-              vim.bo.autoindent = true
-              vim.bo.expandtab = false
-              vim.bo.shiftwidth = 4
-              vim.bo.softtabstop = 4
-              vim.bo.tabstop = 4
-            end,
-          },
-          function_literal = {},
-        },
-      })
-    end,
-  },
+  -- this plugin has been merged into neovim core
+  -- https://github.com/neovim/neovim/pull/16600
+  -- {
+  --   'nathom/filetype.nvim',
+  --   commit = 'b522628a45a17d58fc0073ffd64f9dc9530a8027',
+  --   -- DO NOT DO LAZY LOAD
+  --   config = function()
+  --     require('filetype').setup({
+  --       overrides = {
+  --         extensions = {
+  --           tape = 'vhs',
+  --           tf = 'terraform',
+  --           tfvars = 'terraform',
+  --         },
+  --         literal = {
+  --           Brewfile = 'brewfile',
+  --           ['.tagpr'] = 'ini'
+  --         },
+  --         function_extensions = {
+  --           ['sh'] = function()
+  --             vim.bo.filetype = 'sh'
+  --             vim.bo.iskeyword = vim.bo.iskeyword .. ',:'
+  --           end,
+  --           ['zsh'] = function()
+  --             vim.bo.filetype = 'zsh'
+  --             vim.bo.iskeyword = vim.bo.iskeyword .. ',:'
+  --           end,
+  --           ['go'] = function()
+  --             vim.bo.filetype = 'go'
+  --             vim.bo.autoindent = true
+  --             vim.bo.expandtab = false
+  --             vim.bo.shiftwidth = 4
+  --             vim.bo.softtabstop = 4
+  --             vim.bo.tabstop = 4
+  --           end,
+  --         },
+  --         function_literal = {},
+  --       },
+  --     })
+  --   end,
+  -- },
   {
     'Rawnly/gist.nvim',
     cmd = { 'GistCreate', 'GistCreateFromFile', 'GistsList' },
@@ -501,15 +503,6 @@ require('lazy').setup({
     event        = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
     dependencies = { 'nvim-telescope/telescope.nvim' },
     config       = function() require('telescope').load_extension('repo') end,
-  },
-  {
-    'nvim-telescope/telescope-fzf-native.nvim',
-    commit       = '580b6c48651cabb63455e97d7e131ed557b8c7e2',
-    lazy         = true,
-    build        = 'make',
-    event        = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
-    dependencies = { 'nvim-telescope/telescope.nvim' },
-    config       = function() require('telescope').load_extension('fzf') end,
   },
   {
     'nvim-telescope/telescope-ghq.nvim',

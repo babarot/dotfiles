@@ -844,13 +844,12 @@ github:
   description: A command-line fuzzy finder
   owner: junegunn
   repo: fzf
+  release:
+    name: fzf
+    tag: v0.57.0
   command:
-    build:
-      steps:
-        - ./install --bin --no-update-rc --no-key-bindings
     link:
-    - from: 'bin/fzf'
-    - from: 'bin/fzf-tmux'
+    - from: 'fzf'
   plugin:
     sources:
     - shell/completion.zsh

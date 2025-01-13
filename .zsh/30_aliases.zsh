@@ -89,3 +89,5 @@ pskill() {
     --header-lines=1 \
     --height=50
 }
+
+alias naminator='command naminator --group-by-date --group-by-ext --clean'

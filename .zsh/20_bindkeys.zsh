@@ -183,10 +183,6 @@ bindkey '^T' run_tmux
 
 autoload -Uz edit-command-line
 zle -N edit-command-line
-<<<<<<< HEAD
-bindkey '^Y' edit-command-line
-=======
 bindkey '^S' edit-command-line
->>>>>>> 6ed197c (Update from private)
 
 bindkey '^I' expand-or-complete

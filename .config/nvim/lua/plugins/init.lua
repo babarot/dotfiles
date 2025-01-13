@@ -19,6 +19,32 @@ local opt = {
 }
 
 require('lazy').setup({
+  -- filer
+  {
+    'stevearc/oil.nvim',
+    ---@module 'oil'
+    ---@type oil.SetupOpts
+    opts = {},
+    -- Optional dependencies
+    dependencies = { { "echasnovski/mini.icons", opts = {} } },
+    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if prefer nvim-web-devicons
+    -- dependencies = { 'nvim-tree/nvim-web-devicons' },
+    tag = 'v2.8.0',
+    config = function()
+      require('oil').setup {
+        default_file_explorer = true,
+        view_options = {
+          show_hidden = true,
+        },
+        float = {
+          padding = 2,
+          max_width = 60,
+          max_height = 30,
+          border = 'rounded',
+        },
+      }
+    end,
+  },
   -- Development
   {
     'nvim-treesitter/nvim-treesitter',

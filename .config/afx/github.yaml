@@ -192,6 +192,8 @@ github:
     snippet: |
       abbr --quiet tf=terraform
       abbr --quiet cf=conftest
+      abbr --quiet k=kubectl
+      abbr --quiet "d c"="docker compose"
 # - name: tfutils/tfenv
 #   description: Terraform version manager
 #   owner: tfutils
@@ -268,7 +270,7 @@ github:
   repo: neovim
   release:
     name: nvim
-    tag: v0.9.0
+    tag: v0.8.0
   command:
     env:
       EDITOR: nvim
@@ -566,6 +568,16 @@ github:
             ;;
         esac
       }
+- name: bootandy/dust
+  description: A more intuitive version of du in rust
+  owner: bootandy
+  repo: dust
+  release:
+    name: dust
+    tag: v0.8.6
+  command:
+    link:
+    - from: '**/dust'
 - name: sharkdp/bat
   description: A cat(1) clone with wings.
   owner: sharkdp

@@ -1,2 +1,5 @@
+abbr "d c"="docker compose"
+abbr d="docker"
+abbr k="kubectl"
 abbr cf="conftest"
 abbr tf="terraform"

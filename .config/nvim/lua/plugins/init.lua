@@ -383,7 +383,7 @@ require('lazy').setup({
   },
   {
     'glepnir/lspsaga.nvim',
-    commit = '44ae62d12b2cd498ed197cde159dfef5b2ea16b0',
+    commit = '4f075452c466df263e69ae142f6659dcf9324bf6',
     lazy = true,
     event = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
     dependencies = {
@@ -504,6 +504,15 @@ require('lazy').setup({
     dependencies = { 'nvim-telescope/telescope.nvim' },
     config       = function() require('telescope').load_extension('repo') end,
   },
+  -- {
+  --   'nvim-telescope/telescope-fzf-native.nvim',
+  --   commit       = '580b6c48651cabb63455e97d7e131ed557b8c7e2',
+  --   lazy         = true,
+  --   build        = 'make',
+  --   event        = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
+  --   dependencies = { 'nvim-telescope/telescope.nvim' },
+  --   config       = function() require('telescope').load_extension('fzf') end,
+  -- },
   {
     'nvim-telescope/telescope-ghq.nvim',
     lazy         = true,
@@ -559,7 +568,7 @@ require('lazy').setup({
   },
   {
     'RRethy/vim-illuminate',
-    commit = '49062ab1dd8fec91833a69f0a1344223dd59d643',
+    commit = 'a2907275a6899c570d16e95b9db5fd921c167502',
     lazy = true,
     event = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
     config = function()

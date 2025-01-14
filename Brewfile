@@ -5,6 +5,7 @@ tap "homebrew/bundle"
 # Brew
 #   https://formulae.brew.sh/
 #
+brew "difftastic"
 brew "exiftool"
 brew "gawk"
 brew "gnu-sed"

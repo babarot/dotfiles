@@ -1014,3 +1014,13 @@ github:
   command:
     link:
     - from: air
+- name: noborus/ov
+  description: Feature-rich terminal-based text viewer. It is a so-called terminal pager.
+  owner: noborus
+  repo: ov
+  release:
+    name: ov
+    tag: v0.37.0
+  command:
+    link:
+    - from: ov

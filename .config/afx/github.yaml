@@ -862,13 +862,10 @@ github:
   command:
     link:
     - from: 'fzf'
-  plugin:
-    sources:
-    - shell/completion.zsh
     env:
       FZF_DEFAULT_COMMAND: fd --type f
       FZF_DEFAULT_OPTS: >
-        --height 75% --multi --reverse --margin=0,1
+        --height 75% --multi --layout=reverse --margin=0,1
         --bind ctrl-f:page-down,ctrl-b:page-up,ctrl-/:toggle-preview
         --bind pgdn:preview-page-down,pgup:preview-page-up
         --marker="+" --pointer="▶" --prompt="❯ "
@@ -880,55 +877,58 @@ github:
       FZF_CTRL_T_OPTS: --preview "bat --color=always --style=header,grid --line-range :100 {}"
       FZF_ALT_C_COMMAND: fd --type d
       FZF_ALT_C_OPTS: --preview "tree -C {} | head -100"
-    snippet: |
-      fzf_find_edit() {
-        local file=$(
-          fzf --query="$1" --no-multi --select-1 --exit-0 \
-              --preview 'bat --color=always --line-range :500 {}'
-          )
-        if [[ -n $file ]]; then
-          $EDITOR "$file"
-        fi
-      }
-      fzf_git_add() {
-        local selections=$(
-          git status --porcelain | \
-          fzf --ansi \
-              --preview 'if (git ls-files --error-unmatch {2} &>/dev/null); then
-                           git diff --color=always {2} | delta
-                         else
-                           bat --color=always --line-range :500 {2}
-                         fi'
-          )
-        if [[ -n $selections ]]; then
-          local files=$(echo "$selections" | cut -c 4- | tr '\n' ' ')
-          git add --verbose $files
-        fi
-      }
-      fzf_git_log() {
-        local command='ll'
-        if [[ "$1" == "all" ]]; then
-          command='lla'
-        fi
-        shift # Consume the first argument of this function
-        local selections=$(
-          git $command --color=always "$@" |
-            fzf --ansi --no-sort --no-height \
-                --preview "echo {} | grep -o '[a-f0-9]\{7\}' | head -1 |
-                           xargs -I@ sh -c 'git show --color=always @' |
-                           delta"
-          )
-        if [[ -n $selections ]]; then
-          local commits=$(echo "$selections" | sed 's/^[* |]*//' | awk '{print $1}' | tr '\n' ' ')
-          git show $commits
-        fi
-      }
-      fzf_git_unadd() {
-        local files=$(git diff --name-only --cached | fzf --ansi)
-        if [[ -n $files ]]; then
-          git unadd $files
-        fi
-      }
+  # plugin:
+  #   sources:
+  #   - shell/completion.zsh
+  #   snippet: |
+  #     fzf_find_edit() {
+  #       local file=$(
+  #         fzf --query="$1" --no-multi --select-1 --exit-0 \
+  #             --preview 'bat --color=always --line-range :500 {}'
+  #         )
+  #       if [[ -n $file ]]; then
+  #         $EDITOR "$file"
+  #       fi
+  #     }
+  #     fzf_git_add() {
+  #       local selections=$(
+  #         git status --porcelain | \
+  #         fzf --ansi \
+  #             --preview 'if (git ls-files --error-unmatch {2} &>/dev/null); then
+  #                          git diff --color=always {2} | delta
+  #                        else
+  #                          bat --color=always --line-range :500 {2}
+  #                        fi'
+  #         )
+  #       if [[ -n $selections ]]; then
+  #         local files=$(echo "$selections" | cut -c 4- | tr '\n' ' ')
+  #         git add --verbose $files
+  #       fi
+  #     }
+  #     fzf_git_log() {
+  #       local command='ll'
+  #       if [[ "$1" == "all" ]]; then
+  #         command='lla'
+  #       fi
+  #       shift # Consume the first argument of this function
+  #       local selections=$(
+  #         git $command --color=always "$@" |
+  #           fzf --ansi --no-sort --no-height \
+  #               --preview "echo {} | grep -o '[a-f0-9]\{7\}' | head -1 |
+  #                          xargs -I@ sh -c 'git show --color=always @' |
+  #                          delta"
+  #         )
+  #       if [[ -n $selections ]]; then
+  #         local commits=$(echo "$selections" | sed 's/^[* |]*//' | awk '{print $1}' | tr '\n' ' ')
+  #         git show $commits
+  #       fi
+  #     }
+  #     fzf_git_unadd() {
+  #       local files=$(git diff --name-only --cached | fzf --ansi)
+  #       if [[ -n $files ]]; then
+  #         git unadd $files
+  #       fi
+  #     }
 - name: GoogleCloudPlatform/terraformer
   owner: GoogleCloudPlatform
   repo: terraformer

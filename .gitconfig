@@ -55,12 +55,12 @@
   ; log  = diff-highlight | less -RX
   ; show = diff-highlight | less -RX
   ; diff = less
-  ; branch = less -X
   ; diff = diff-so-fancy | less --tabs=4 -RFX
   ; diff = delta --dark --plus-color="#012800" --minus-color="#340001"
-  diff = "ov -F --section-delimiter ' --- ' --section-header"
+  diff = "ov --section-delimiter ' --- ' --section-header"
   log = "ov -F --section-delimiter '^commit' --section-header-num 3"
   show = "ov -F --header 3"
+  branch = less -X
 
 [diff]
   tool                = vimdiff

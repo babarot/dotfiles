@@ -270,7 +270,7 @@ github:
   repo: neovim
   release:
     name: nvim
-    tag: v0.8.0
+    tag: v0.9.5
   command:
     env:
       EDITOR: nvim
@@ -504,7 +504,7 @@ github:
   repo: goreleaser
   release:
     name: goreleaser
-    tag: v0.114.0
+    tag: v2.5.1
   command:
     link:
     - from: '**/goreleaser'
@@ -1024,3 +1024,13 @@ github:
   command:
     link:
     - from: ov
+- name: babarot/naminator
+  description: Bulk-rename w/ EXIF metadata
+  owner: babarot
+  repo: naminator
+  release:
+    name: naminator
+    tag: v0.1.5
+  command:
+    link:
+    - from: naminator

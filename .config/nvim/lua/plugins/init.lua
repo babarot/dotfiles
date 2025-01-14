@@ -26,9 +26,8 @@ require('lazy').setup({
     ---@type oil.SetupOpts
     opts = {},
     -- Optional dependencies
-    dependencies = { { "echasnovski/mini.icons", opts = {} } },
-    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if prefer nvim-web-devicons
-    -- dependencies = { 'nvim-tree/nvim-web-devicons' },
+    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
+    -- dependencies = { 'nvim-tree/nvim-web-devicons' }, -- use if prefer nvim-web-devicons
     tag = 'v2.8.0',
     config = function()
       require('oil').setup {
@@ -42,6 +41,20 @@ require('lazy').setup({
           max_height = 30,
           border = 'rounded',
         },
+      }
+    end,
+  },
+  {
+    'nvim-tree/nvim-web-devicons',
+    commit = '4709a504d2cd2680fb511675e64ef2790d491d36',
+    config = function()
+      require('nvim-web-devicons').setup {
+        -- override = {
+        --   go = {
+        --     icon = '󰟓',
+        --     -- color = '#00ADD8',
+        --   }
+        -- }
       }
     end,
   },
@@ -123,10 +136,9 @@ require('lazy').setup({
     commit = '0a314644c38402b659482568525b1303f7d0e01d',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
   },
-  { 'nvim-lua/plenary.nvim',       tag = 'v0.1.3' },
-  { 'nvim-lua/popup.nvim',         commit = 'b7404d35d5d3548a82149238289fa71f7f6de4ac' },
-  { 'MunifTanjim/nui.nvim',        commit = 'd147222a1300901656f3ebd5b95f91732785a329' },
-  { 'nvim-tree/nvim-web-devicons', commit = '4709a504d2cd2680fb511675e64ef2790d491d36' },
+  { 'nvim-lua/plenary.nvim', tag = 'v0.1.3' },
+  { 'nvim-lua/popup.nvim',   commit = 'b7404d35d5d3548a82149238289fa71f7f6de4ac' },
+  { 'MunifTanjim/nui.nvim',  commit = 'd147222a1300901656f3ebd5b95f91732785a329' },
   {
     'bfontaine/Brewfile.vim',
     commit = 'f13b98b92f2e9b9e38f3b1d45d41e19049d671df',
@@ -225,15 +237,16 @@ require('lazy').setup({
         val = {
           { type = 'text',    val = 'Quick links', opts = { hl = 'SpecialComment', position = 'center' } },
           { type = 'padding', val = 1 },
-          dashboard.button('r', '  Recent files', ':Telescope oldfiles <CR>'),
-          dashboard.button('f', '  Find files', ':Telescope find_files <CR>'),
-          dashboard.button('d', '  Directories', '<cmd>Neotree float<CR>'),
+          -- https://www.nerdfonts.com/cheat-sheet
+          dashboard.button('r', '  Recent files', ':Telescope oldfiles <CR>'),
+          dashboard.button('f', '  Find files', ':Telescope find_files <CR>'),
+          dashboard.button('d', '  Directories', '<cmd>Neotree float<CR>'),
           dashboard.button('p', '  Projects',
             -- at this time, telescope-projects has not been loaded, so directly call it
             -- [[<cmd>lua require('telescope').load_extension('projects').load_commnad('projects')<CR>]]),
             [[<cmd>lua require('telescope').load_extension('projects')<CR><cmd>Telescope projects<CR>]]),
           dashboard.button('n', '  New file', ':ene <BAR> startinsert <CR>'),
-          dashboard.button('l', '鈴 Lazy', ':Lazy<CR>'),
+          dashboard.button('l', '  Lazy', ':Lazy<CR>'),
           -- dashboard.button('c', '  Configuration',
           --   '<cmd>cd ' .. vim.fn.stdpath('config') .. '/lua<CR>'),
           --   '<cmd>e ' .. vim.fn.stdpath('config') .. '/lua/plugins/init.lua<CR>'),

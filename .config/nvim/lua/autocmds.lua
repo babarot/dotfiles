@@ -30,14 +30,14 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ 'BufEnter', 'BufRead' }, {
-  group = vim.api.nvim_create_augroup('cd-parent-dir', { clear = true }),
-  callback = function()
-    local dir = vim.fn.expand("%:p:h")
-    if not vim.fn.isdirectory(dir) then
-      return
-    end
-    vim.fn.execute(":lcd" .. dir)
-  end
-})
-
+-- vim.api.nvim_create_autocmd({ 'BufEnter', 'BufRead' }, {
+--   group = vim.api.nvim_create_augroup('cd-parent-dir', { clear = true }),
+--   callback = function()
+--     local dir = vim.fn.expand("%:p:h")
+--     if not vim.fn.isdirectory(dir) then
+--       return
+--     end
+--     vim.fn.execute(":lcd" .. dir)
+--   end
+-- })
+--

@@ -17,7 +17,6 @@ vim.opt.showmatch      = true
 vim.opt.laststatus     = 3
 vim.opt.scrolloff      = 8
 vim.opt.errorbells     = false
-vim.opt.pastetoggle    = "<C-\\>"
 vim.opt.shiftwidth     = 0
 vim.opt.softtabstop    = 2
 vim.opt.tabstop        = 2

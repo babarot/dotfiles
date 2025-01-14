@@ -44,19 +44,24 @@ require('lazy').setup({
       }
     end,
   },
+  -- {
+  --   'cocopon/vaffle.vim',
+  --   commit = '0a314644c38402b659482568525b1303f7d0e01d',
+  --   dependencies = { 'nvim-tree/nvim-web-devicons' },
+  -- },
   {
     'nvim-tree/nvim-web-devicons',
     commit = '4709a504d2cd2680fb511675e64ef2790d491d36',
-    config = function()
-      require('nvim-web-devicons').setup {
-        -- override = {
-        --   go = {
-        --     icon = '󰟓',
-        --     -- color = '#00ADD8',
-        --   }
-        -- }
-      }
-    end,
+    -- config = function()
+    --   require('nvim-web-devicons').setup {
+    --     -- override = {
+    --     --   go = {
+    --     --     icon = '󰟓',
+    --     --     -- color = '#00ADD8',
+    --     --   }
+    --     -- }
+    --   }
+    -- end,
   },
   -- Development
   {
@@ -66,12 +71,12 @@ require('lazy').setup({
     event = { 'BufReadPost', 'BufNewFile' },
     build = [[vim.api.nvim_command('TSUpdate')]],
     dependencies = {
-      {
-        'yioneko/nvim-yati',
-        commit = '8240f369d47c389ac898f87613e0901f126b40f3',
-        lazy = true,
-        event = { 'BufReadPost', 'BufNewFile' },
-      },
+      -- {
+      --   'yioneko/nvim-yati',
+      --   commit = '8240f369d47c389ac898f87613e0901f126b40f3',
+      --   lazy = true,
+      --   event = { 'BufReadPost', 'BufNewFile' },
+      -- },
       -- something wrong recently
       -- {
       --   'andymass/vim-matchup',
@@ -112,8 +117,8 @@ require('lazy').setup({
           default_fallback = 'auto'
         },
         matchup = {
-          enable = true,     -- mandatory, false will disable the whole extension
-          disableLangs = {}, -- list of language that will be disabled
+          enable = true,            -- mandatory, false will disable the whole extension
+          disableLangs = { 'oil' }, -- list of language that will be disabled
         },
       }
     end
@@ -130,11 +135,6 @@ require('lazy').setup({
     tag = 'v4.3.0',
     lazy = true,
     cmd = { 'StartupTime' }
-  },
-  {
-    'cocopon/vaffle.vim',
-    commit = '0a314644c38402b659482568525b1303f7d0e01d',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
   },
   { 'nvim-lua/plenary.nvim', tag = 'v0.1.3' },
   { 'nvim-lua/popup.nvim',   commit = 'b7404d35d5d3548a82149238289fa71f7f6de4ac' },

@@ -37,3 +37,10 @@ github:
   as:
     gh-extension:
       name: gh-q
+- name: kranurag7/gh-fetch
+  description:
+  owner: kranurag7
+  repo: gh-fetch
+  as:
+    gh-extension:
+      name: gh-fetch

@@ -32,9 +32,7 @@ alias -g T='| tail'
 
 alias -g CP='| pbcopy'
 alias -g CC='| tee /dev/tty | pbcopy'
-alias -g P='$(kubectl get pods | fzf-tmux --header-lines=1 --reverse --multi --cycle | awk "{print \$1}")'
-# alias -g F='| fzf --height 30 --reverse --multi --cycle'
-alias -g F='`fzf`'
+alias -g F='$(fzf)'
 
 awk_alias2() {
   local -a options fields words
@@ -65,10 +63,6 @@ alias -g A="| awk_alias2"
 alias galias="alias | command grep -E '^[A-Z]'"
 alias yy="fc -ln -1 | tr -d '\n' | pbcopy"
 
-if (( $+commands[iap_curl] )); then
-  alias iap='iap_curl $(iap_curl --list | fzf --height 30% --reverse)'
-fi
-
 gchange() {
   if ! type gcloud &>/dev/null; then
     echo "gcloud not found" >&2
@@ -89,5 +83,3 @@ pskill() {
     --header-lines=1 \
     --height=50
 }
-
-alias naminator='command naminator --group-by-date --group-by-ext --clean'

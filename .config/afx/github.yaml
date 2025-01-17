@@ -260,7 +260,8 @@ github:
       jq: jq -C
     snippet: |
       if [[ $SHELL == *zsh* ]]; then
-        alias -g J='| jq -C . | less -F'
+        #alias -g J='| jq -C . | less -F'
+        alias -g J='| jq -C . | ov'
         alias -g JQ='| jq -C .'
         alias -g JL='| jq -C . | less -R -X'
       fi
@@ -1024,13 +1025,27 @@ github:
   command:
     link:
     - from: ov
+    snippet: |
+      alias -g L='| ov'
 - name: babarot/naminator
   description: Bulk-rename w/ EXIF metadata
   owner: babarot
   repo: naminator
   release:
     name: naminator
-    tag: v0.1.5
+    tag: v0.1.8
   command:
     link:
     - from: naminator
+    alias:
+      naminator: naminator --group-by-date --group-by-ext --clean
+- name: babarot/path
+  description: A CLI command to operate a path, such as changing the order of a path with any index
+  owner: babarot
+  repo: path
+  release:
+    name: path
+    tag: v0.1.0
+  command:
+    link:
+    - from: path

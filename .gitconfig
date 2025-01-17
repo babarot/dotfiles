@@ -68,7 +68,7 @@
   compactionHeuristic = true
   # https://difftastic.wilfred.me.uk/
   # https://difftastic.wilfred.me.uk/git.html
-  external            = difft
+  external            = difft --syntax-highlight=off
 
 [init]
   defaultBranch = main

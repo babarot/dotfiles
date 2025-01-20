@@ -1049,3 +1049,26 @@ github:
   command:
     link:
     - from: path
+- name: imgcat
+  description:
+  owner: trashhalo
+  repo: imgcat
+  release:
+    name: imgcat
+    tag: v1.2.0
+  command:
+    link:
+    - from: imgcat
+
+- name: golangci/golangci-lint
+  description:
+  owner: golangci
+  repo: golangci-lint
+  release:
+    name: golangci-lint
+    tag: v1.63.4
+  command:
+    link:
+      - from: "*/golangci-lint"
+
+

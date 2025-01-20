@@ -1,0 +1,9 @@
+ui:
+  show_description: false
+
+inventory:
+  exclude:
+    files:
+    - ".DS_Store"
+    - "oil:"
+    patterns: []

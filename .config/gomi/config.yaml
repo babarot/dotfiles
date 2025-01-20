@@ -1,9 +1,16 @@
 ui:
-  show_description: false
+  show_description: true
 
 inventory:
   exclude:
     files:
-    - ".DS_Store"
+    - .DS_Store
     - "oil:"
-    patterns: []
+    patterns:
+    - "^LINE_ALBUM.*"
+    globs:
+    - "*.y{,a}ml"
+    size_above:
+    - 100MB
+    size_below:
+    - 0KB

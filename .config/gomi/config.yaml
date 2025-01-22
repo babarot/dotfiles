@@ -1,7 +1,14 @@
 ui:
   show_description: true
+  preview:
+    enable_syntax_highlight: true
+    colorscheme: tokyonight-night
+    directory: exa -T --color=always --icons
 
 inventory:
+  include:
+    deleted_within_days:
+    - "90 days"
   exclude:
     files:
     - .DS_Store
@@ -9,7 +16,8 @@ inventory:
     patterns:
     - "^LINE_ALBUM.*"
     globs:
-    - "*.y{,a}ml"
+    # - "*.y{,a}ml"
+    - "*.jpg"
     size_above:
     - 100MB
     size_below:

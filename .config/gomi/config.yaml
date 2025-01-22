@@ -1,4 +1,5 @@
 ui:
+  bye_message: BYE!
   show_description: true
   preview:
     enable_syntax_highlight: true
@@ -19,6 +20,6 @@ inventory:
     # - "*.y{,a}ml"
     - "*.jpg"
     size_above:
-    - 100MB
+    - 1000MB
     size_below:
     - 0KB

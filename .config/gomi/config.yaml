@@ -1,15 +1,21 @@
 ui:
-  bye_message: BYE!
   show_description: true
   preview:
     enable_syntax_highlight: true
     colorscheme: tokyonight-night
     directory: exa -T --color=always --icons
+  color:
+    preview_boarder:
+      fg: "#3C3C3C"
+      bg: "#EEEEDD"
+  bye_message: bye!
+  paginator_style: dots
 
 inventory:
   include:
-    deleted_within_days:
-    - "90 days"
+    in_last: 20
+    within_days: 100
+    in_last_days: 20
   exclude:
     files:
     - .DS_Store
@@ -20,6 +26,6 @@ inventory:
     # - "*.y{,a}ml"
     - "*.jpg"
     size_above:
-    - 1000MB
+    - 10GB
     size_below:
     - 0KB

@@ -1,13 +1,23 @@
 ui:
-  show_description: true
+  density: "spacious"
   preview:
-    enable_syntax_highlight: true
-    colorscheme: tokyonight-night
-    directory: exa -T --color=always --icons
-  color:
-    preview_boarder:
-      fg: "#3C3C3C"
-      bg: "#EEEEDD"
+    syntax_highlight: true
+    colorscheme: nord  # https://xyproto.github.io/splash/docs/index.html
+    directory_command: exa -T --color=always --icons
+  style:
+    window:
+      border: "#EEEEDD"
+      section:
+        fg: "#EEEEEE"
+        bg: "#1C1C1C"
+    preview_pane:
+      border: "#3C3C3C"
+      size:
+        fg: "#EEEEDD"
+        bg: "#3C3C3C"
+      scroll:
+        fg: "#EEEEDD"
+        bg: "#3C3C3C"
   bye_message: bye!
   paginator_style: dots
 

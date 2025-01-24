@@ -1,5 +1,10 @@
+core:
+  restore:
+    confirm: true
+    verbose: true
+
 ui:
-  density: "spacious"
+  density: "spacious" # or "compact"
   preview:
     syntax_highlight: true
     colorscheme: nord  # https://xyproto.github.io/splash/docs/index.html
@@ -19,23 +24,18 @@ ui:
         fg: "#EEEEDD"
         bg: "#3C3C3C"
   bye_message: bye!
-  paginator_style: dots
+  paginator: dots
 
 inventory:
   include:
-    in_last: 20
     within_days: 100
-    in_last_days: 20
   exclude:
     files:
     - .DS_Store
-    - "oil:"
+    - "oil:"  # oil.nvim
     patterns:
     - "^LINE_ALBUM.*"
     globs:
-    # - "*.y{,a}ml"
     - "*.jpg"
-    size_above:
-    - 10GB
-    size_below:
-    - 0KB
+    size_above: 10GB
+    size_below: 0KB

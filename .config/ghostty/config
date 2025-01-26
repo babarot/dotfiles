@@ -16,11 +16,12 @@ macos-titlebar-style = transparent
 ## Light
 # theme = Belafonte Day
 # theme = Apple Classic
+# theme = seoulbones_light
 ## Dark
-theme = tokyonight_moon
 # theme = Solarized Dark Higher Contrast
 # theme = Builtin Solarized Dark
 # theme = Solarized Dark - Patched
+theme = tokyonight_moon
 
 
 font-family = "Menlo"

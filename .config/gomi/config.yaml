@@ -1,30 +1,40 @@
 core:
+  log:
+    type: default # or json
   restore:
-    confirm: true
+    confirm: false
     verbose: true
 
 ui:
-  density: "spacious" # or "compact"
+  density: spacious # or compact
   preview:
     syntax_highlight: true
     colorscheme: nord  # https://xyproto.github.io/splash/docs/index.html
     directory_command: exa -T --color=always --icons
   style:
-    window:
-      border: "#EEEEDD"
-      section:
-        fg: "#EEEEEE"
-        bg: "#1C1C1C"
-    preview_pane:
-      border: "#3C3C3C"
-      size:
-        fg: "#EEEEDD"
-        bg: "#3C3C3C"
-      scroll:
-        fg: "#EEEEDD"
-        bg: "#3C3C3C"
-  bye_message: bye!
-  paginator: dots
+    list_view:
+      cursor: "#AD58B4"   # purple
+      selected: "#5FB458" # purple
+      indent_on_select: false
+    detail_view:
+      border: "#FFFFFF"
+      info_pane:
+        deleted_from:
+          fg: "#EEEEEE"
+          bg: "#1C1C1C"
+        deleted_at:
+          fg: "#EEEEEE"
+          bg: "#1C1C1C"
+      preview_pane:
+        border: "#3C3C3C"
+        size:
+          fg: "#EEEEDD"
+          bg: "#3C3C3C"
+        scroll:
+          fg: "#EEEEDD"
+          bg: "#3C3C3C"
+  exit_message: bye!
+  paginator_type: dots
 
 inventory:
   include:
@@ -37,5 +47,6 @@ inventory:
     - "^LINE_ALBUM.*"
     globs:
     - "*.jpg"
-    size_above: 10GB
-    size_below: 0KB
+    size:
+      min: 0KB
+      max: 10GB

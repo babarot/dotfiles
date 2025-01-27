@@ -40,6 +40,7 @@
   delete-merged-branches = !git branch --merged | grep -v \\* | xargs -I % git branch -d %
   branch-log = log --oneline HEAD --not main
   blog = log --oneline HEAD --not main
+  df = diff --no-ext-diff
   ; mylog = log --oneline HEAD --not main
   ; mylog = log --oneline HEAD --not main | fzf | awk '{print $1}'
 
@@ -68,6 +69,9 @@
   compactionHeuristic = true
   # https://difftastic.wilfred.me.uk/
   # https://difftastic.wilfred.me.uk/git.html
+  # to DISABLE external diff, these options are available
+  #   1. GIT_EXTERNAL_DIFF= git diff
+  #   2. git diff --no-ext-diff
   external            = difft --syntax-highlight=off
 
 [init]

@@ -28,6 +28,12 @@ require('lazy').setup({
     -- Optional dependencies
     dependencies = { { 'echasnovski/mini.icons', opts = {} } },
     -- dependencies = { 'nvim-tree/nvim-web-devicons' }, -- use if prefer nvim-web-devicons
+    --
+    init = function()
+      vim.keymap.set("n", "<Space>o", function()
+        require("oil").open()
+      end, { desc = "Oil current buffer's directory" })
+    end,
     tag = 'v2.8.0',
     config = function()
       require('oil').setup {
@@ -51,7 +57,7 @@ require('lazy').setup({
   -- },
   {
     'nvim-tree/nvim-web-devicons',
-    commit = '4709a504d2cd2680fb511675e64ef2790d491d36',
+    commit = '92833cd8c646c92f9013aaaa05aefa18bce74c45',
     -- config = function()
     --   require('nvim-web-devicons').setup {
     --     -- override = {
@@ -694,11 +700,26 @@ require('lazy').setup({
   --     vim.keymap.set({ 'n', 'v' }, '<c-tab>', '<plug>(CybuLastusedNext)')
   --   end,
   -- },
+  -- {
+  --   'romgrk/barbar.nvim',
+  --   commit = '4573b19e9ac29a58409a9445bf93753fb5a3e0e4',
+  -- },
   {
     'romgrk/barbar.nvim',
-    commit = '4573b19e9ac29a58409a9445bf93753fb5a3e0e4',
-    lazy   = true,
-    event  = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
+    dependencies = {
+      'lewis6991/gitsigns.nvim',     -- OPTIONAL: for git status
+      'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
+    },
+    lazy         = true,
+    event        = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
+    init         = function() vim.g.barbar_auto_setup = false end,
+    opts         = {
+      -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
+      -- animation = true,
+      -- insert_at_start = true,
+      -- …etc.
+    },
+    version      = '^1.0.0', -- optional: only update when a new 1.x version is released
   },
   {
     'dstein64/nvim-scrollview',
@@ -735,16 +756,19 @@ require('lazy').setup({
       'NeoTreeRevealInSplitToggle'
     },
     dependencies = {
-      'nvim-lua/plenary.nvim',
       'nvim-tree/nvim-web-devicons',
+      'nvim-lua/plenary.nvim',
       'MunifTanjim/nui.nvim',
     },
     init = function()
       vim.keymap.set('n', '<space>k',
         function()
-          -- return parent dir but git root if inside git project
-          local dir = vim.fn.fnameescape(vim.fn.fnamemodify(
-            vim.fn.finddir('.git', vim.fn.escape(vim.fn.expand('%:p:h'), ' ') .. ';'), ':h'))
+          local file_path = vim.fn.expand('%:p:h')  -- Get the parent directory of the current file
+          local git_dir = vim.fn.finddir('.git', vim.fn.escape(file_path, ' ') .. ';')
+          -- If .git is not found, use the parent directory of the current file
+          local dir = git_dir ~= "" and vim.fn.fnamemodify(git_dir, ':h') or file_path
+          -- Escape the directory and generate the Neotree command
+          dir = vim.fn.fnameescape(dir)
           return string.format(':<C-u>Neotree focus toggle left dir=%s<CR>', dir)
         end,
         { noremap = true, silent = true, expr = true })

@@ -14,7 +14,7 @@ ui:
   style:
     list_view:
       cursor: "#AD58B4"   # purple
-      selected: "#5FB458" # purple
+      selected: "#5FB458" # green
       indent_on_select: false
     detail_view:
       border: "#FFFFFF"
@@ -36,7 +36,7 @@ ui:
   exit_message: bye!
   paginator_type: dots
 
-inventory:
+history:
   include:
     within_days: 100
   exclude:

@@ -1,6 +1,4 @@
 core:
-  log:
-    type: default # or json
   restore:
     confirm: false
     verbose: true

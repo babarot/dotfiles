@@ -97,6 +97,8 @@ github:
     link:
     - from: .
       to: $HOME/.tmux/plugins/tpm
+    snippet: |
+      ~/.tmux/plugins/tpm/tpm
 - name: antonmedv/red
   description: Terminal log analysis tools
   owner: antonmedv
@@ -776,7 +778,7 @@ github:
   branch: master
   release:
     name: gomi
-    tag: v1.1.3
+    tag: v1.2.2
   command:
     alias:
       rm: gomi

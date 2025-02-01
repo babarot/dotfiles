@@ -140,6 +140,28 @@ do-enter() {
 zle -N do-enter
 bindkey '^m' do-enter
 
+do-enter2() {
+  if [[ -n ${BUFFER} ]]; then
+    zle accept-line
+    return ${status}
+  fi
+
+  if git rev-parse --is-inside-work-tree &>/dev/null; then
+    if [[ -n $(git status --short) ]]; then
+      git status
+    else
+      zle accept-line
+      return
+    fi
+  else
+    ls
+  fi
+
+  zle reset-prompt
+}
+zle -N do-enter2
+# bindkey '^m' do-enter2
+
 peco-select-gitadd() {
   local selected_file_to_add
   selected_file_to_add="$(

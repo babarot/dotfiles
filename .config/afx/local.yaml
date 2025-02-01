@@ -7,5 +7,5 @@ local:
       [[ $SHELL == *zsh* ]]
     sources:
     - '[0-9]*.zsh'
-  # depends-on:
-  # - google-cloud-sdk
+  depends-on:
+  - zdharma-continuum/history-search-multi-word

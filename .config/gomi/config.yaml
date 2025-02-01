@@ -42,9 +42,9 @@ history:
     - .DS_Store
     - "oil:"  # oil.nvim
     patterns:
-    - "^LINE_ALBUM.*"
+    # - "^LINE_ALBUM.*"
     globs:
-    - "*.jpg"
+    # - "*.jpg"
     size:
       min: 0KB
       max: 10GB

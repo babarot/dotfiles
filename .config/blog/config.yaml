@@ -1,0 +1,6 @@
+editor: nvim
+
+hugo:
+  command: hugo server --buildDrafts
+  root_dir: $HOME/src/github.com/babarot/tellme.tokyo
+  content_dir: content/post

@@ -763,7 +763,7 @@ require('lazy').setup({
     init = function()
       vim.keymap.set('n', '<space>k',
         function()
-          local file_path = vim.fn.expand('%:p:h')  -- Get the parent directory of the current file
+          local file_path = vim.fn.expand('%:p:h') -- Get the parent directory of the current file
           local git_dir = vim.fn.finddir('.git', vim.fn.escape(file_path, ' ') .. ';')
           -- If .git is not found, use the parent directory of the current file
           local dir = git_dir ~= "" and vim.fn.fnamemodify(git_dir, ':h') or file_path

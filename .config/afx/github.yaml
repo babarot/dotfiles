@@ -304,13 +304,12 @@ github:
     link:
     - from: '**/changed-objects'
 - name: babarot/blog
-  description: A CLI tool for editing blog built by hugo etc
+  description: Makes writing blogs easier!
   owner: babarot
   repo: blog
-  branch: master
   release:
     name: blog
-    tag: v0.1.6
+    tag: v0.1.10
   command:
     env:
       BLOG_EDITOR: nvim

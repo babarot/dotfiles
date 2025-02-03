@@ -3,6 +3,7 @@ site:
   url: https://tellme.tokyo
 
 editor: nvim
+open_command: open -R
 
 hugo:
   command: hugo server #--buildDrafts

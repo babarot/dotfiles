@@ -363,6 +363,13 @@ github:
     link:
     - from: bin/exa*
       to: exa
+# - name: eza-community/eza
+#   description: A modern alternative to ls
+#   owner: eza-community
+#   repo: eza
+#   release:
+#     name: eza
+#     tag: v0.20.19
 - name: motemen/ghq
   description: Remote repository management made easy
   owner: motemen

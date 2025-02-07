@@ -42,8 +42,8 @@ delete-merged-branches = !git branch --merged | grep -v \\* | xargs -I % git bra
 autocorrect = 1
 
 [user]
-name = TheBranchDriftCatalyst
-email = djdanielsh@gmail.com
+name = DJ Daniels
+email = h.daniels@protecht.com
 # signingkey =
 
 [pager]
@@ -73,7 +73,7 @@ tool = nvim
 # Use the Git 1.x.x default to avoid errors on machines with old Git
 # installations. To use `simple` instead, add this to your `~/.extra` file:
 # `git config --global push.default simple`. See http://git.io/mMah-w.
-default = matching
+default = simple
 
 [tag]
 gpgsign = false
@@ -93,3 +93,8 @@ user = TheBranchDriftCatalyst
 
 [sequence]
 editor = nvim
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+CLUSTER=public-cluster-ProtechtDev
+# SERVICE_NAME=platform-api
+SERVICE_NAME=platform-api
+ENV=dev
+
+saml2aws login -a $ENV
+
+TASK_ID=$(saml2aws exec -a $ENV -- aws ecs list-tasks --cluster $CLUSTER --service-name $SERVICE_NAME | jq -r '.taskArns[0] | split("/") | last')
+saml2aws exec -a $ENV -- aws ecs execute-command --cluster $CLUSTER --task $TASK_ID --container $SERVICE_NAME --command "/bin/bash" --interactive

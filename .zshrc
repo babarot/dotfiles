@@ -22,12 +22,15 @@ if [[ -n $VIMRUNTIME ]]; then
   return 0
 fi
 
+# Move this to setups or somewhere elese in the afx provisioning process
+zshaddhistory() { whence ${${(z)1}[1]} >| /dev/null || return 1 }
+eval "$(saml2aws --completion-script-zsh)"
+
 source <(kubectl completion zsh)
 source <(helm completion zsh)
 source <(skaffold completion zsh)
 source <(minikube completion zsh)
 source <(docker completion zsh)
-
 
 FPATH="$(brew --prefix asdf)/share/zsh/site-functions:${FPATH}"
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
@@ -45,3 +48,5 @@ eval "$(fzf --zsh)"
 
 # word split: `-`, `_`, `.`, `=`
 export WORDCHARS='*?[]~&;!#$%^(){}<>'
+
+. "$HOME/.cargo/env"

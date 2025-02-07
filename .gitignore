@@ -16,6 +16,7 @@
 **/.next/
 **/.yarn/
 
+.envrc
 
 .kube/http-cache/
 .kube/cache/
@@ -23,3 +24,6 @@
 **/.tasks/
 
 /.backup
+.tool-versions
+.scratch/
+.codegpt/

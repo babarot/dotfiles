@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# Ensure that asdf, fzf, and bat are installed
+for cmd in asdf fzf bat; do
+    if ! command -v "$cmd" &> /dev/null; then
+        echo "$cmd could not be found. Please install $cmd."
+        exit 1
+    fi
+done
+
+# Get the list of installed plugins
+plugins=$(asdf plugin list)
+
+# Check if any plugins are installed
+if [ -z "$plugins" ]; then
+    echo "No asdf plugins installed. Please add plugins using 'asdf plugin-add <name>'."
+    exit 1
+fi
+
+# Use fzf to select a plugin
+selected_plugin=$(echo "$plugins" | fzf --prompt="Select a plugin: ")
+
+# If no plugin selected, exit
+if [ -z "$selected_plugin" ]; then
+    echo "No plugin selected."
+    exit 1
+fi
+
+# Get the list of available versions for the selected plugin
+versions=$(asdf list-all "$selected_plugin")
+
+# Prepare the installed versions for preview
+installed_versions=$(asdf list "$selected_plugin" 2>/dev/null | sed 's/^/  /')
+
+# Use fzf to select a version, with bat to preview installed versions
+selected_version=$(echo "$versions" | fzf --prompt="Select a version to install: " \
+    --preview="echo 'Installed versions for $selected_plugin:'; echo '$installed_versions' | bat --plain")
+
+# If no version selected, exit
+if [ -z "$selected_version" ]; then
+    echo "No version selected."
+    exit 1
+fi
+
+# Install the selected version
+echo "Installing $selected_plugin $selected_version..."
+asdf install "$selected_plugin" "$selected_version"
+
+echo "Installation complete."

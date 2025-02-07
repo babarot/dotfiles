@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+import subprocess
+from datetime import datetime
+
+from git import Repo
+from rich.console import Console
+from rich.table import Table
+
+# Initialize console
+console = Console()
+
+# Path to your Git repository
+repo_path = "."  # Change this to the path of your repo if not the current directory
+repo = Repo(repo_path)
+
+# Table for displaying data
+table = Table(title="Git Branches Information")
+table.add_column("Local Branch", style="cyan", justify="left")
+table.add_column("Remote", style="green", justify="left")
+table.add_column("Last Updated", style="yellow", justify="left")
+table.add_column("Merged", style="red", justify="center")
+table.add_column("Pull Request (State & Link)", style="blue", justify="left")
+
+
+# Helper function to check if a branch is merged
+def is_branch_merged(branch_name):
+    merged_branches = repo.git.branch("--merged").split("\n")
+    merged_branches = [b.strip("* ").strip() for b in merged_branches]
+    return branch_name in merged_branches
+
+
+# Helper function to get pull request details
+def get_pull_request(branch_name):
+    try:
+        # Use `gh` CLI to check pull requests
+        pr_output = subprocess.check_output(
+            ["gh", "pr", "list", "--head", branch_name, "--json", "url,state"],
+            text=True,
+        )
+        if pr_output.strip():
+            import json
+
+            if pr_data := json.loads(pr_output):
+                prs = []
+                for pr in pr_data:
+                    pr = pr_data[0]  # Only take the first PR if multiple exist
+                    prs.append(f"[link={pr['url']}]{pr['state']}")
+                return ", ".join(prs)
+        return "None"
+    except Exception:
+        return "gh CLI not available or error fetching PR"
+
+
+# Get all local branches
+branches = repo.branches
+
+for branch in branches:
+    # Local branch name
+    local_branch_name = branch.name
+
+    # Get remote tracking branch
+    remote_branch = branch.tracking_branch()
+    remote_name = remote_branch.name if remote_branch else "No remote"
+
+    # Get last commit date
+    last_commit = branch.commit
+    last_updated = datetime.fromtimestamp(last_commit.committed_date).strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
+
+    # Check if merged
+    merged_status = "Yes" if is_branch_merged(local_branch_name) else "No"
+
+    # Get PR details (state and link)
+    pr_info = get_pull_request(local_branch_name)
+
+    # Add row to the table
+    table.add_row(local_branch_name, remote_name, last_updated, merged_status, pr_info)
+
+# Print the table
+console.print(table)

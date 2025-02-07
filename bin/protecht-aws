@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Ensure jq and fzf are installed
+if ! command -v jq &> /dev/null || ! command -v fzf &> /dev/null; then
+  echo "This script requires both jq and fzf to be installed."
+  exit 1
+fi
+
+# Default constants (change these as needed)
+DEFAULT_AWS_PROFILE="default"
+DEFAULT_REGION="us-east-1"
+DEFAULT_CLUSTER=""
+DEFAULT_TASK="" 
+DEFAULT_CONTAINER=""
+
+# Step 1: Select the AWS CLI profile (default if not chosen)
+AWS_PROFILE=$(aws configure list-profiles | fzf --prompt="Select AWS Profile (default: $DEFAULT_AWS_PROFILE): " --header="Press Enter to use default" || echo "$DEFAULT_AWS_PROFILE")
+if [ -z "$AWS_PROFILE" ]; then
+  echo "No profile selected. Exiting."
+  exit 1
+fi
+
+# Step 2: Select the AWS region (default if not chosen)
+REGION=$(aws ec2 describe-regions --profile "$AWS_PROFILE" --query "Regions[].RegionName" --output text | tr '\t' '\n' | fzf --prompt="Select AWS Region (default: $DEFAULT_REGION): " --header="Press Enter to use default" || echo "$DEFAULT_REGION")
+if [ -z "$REGION" ]; then
+  echo "No region selected. Exiting."
+  exit 1
+fi
+
+# Step 3: Select the ECS cluster (default if set)
+if [ -n "$DEFAULT_CLUSTER" ]; then
+  CLUSTER="$DEFAULT_CLUSTER"
+else
+  CLUSTER=$(aws ecs list-clusters --region "$REGION" --profile "$AWS_PROFILE" | jq -r '.clusterArns[]' | fzf --prompt="Select ECS Cluster: ")
+fi
+if [ -z "$CLUSTER" ]; then
+  echo "No cluster selected. Exiting."
+  exit 1
+fi
+
+# Step 4: Select the ECS task (default if set)
+if [ -n "$DEFAULT_TASK" ]; then
+  TASK="$DEFAULT_TASK"
+else
+  TASK=$(aws ecs list-tasks --cluster "$CLUSTER" --region "$REGION" --profile "$AWS_PROFILE" | jq -r '.taskArns[]' | fzf --prompt="Select ECS Task: ")
+fi
+if [ -z "$TASK" ]; then
+  echo "No task selected. Exiting."
+  exit 1
+fi
+
+# Step 5: Select the container within the task (default if set)
+if [ -n "$DEFAULT_CONTAINER" ]; then
+  CONTAINER="$DEFAULT_CONTAINER"
+else
+  CONTAINER=$(aws ecs describe-tasks --cluster "$CLUSTER" --tasks "$TASK" --region "$REGION" --profile "$AWS_PROFILE" \
+    | jq -r '.tasks[].containers[].name' | fzf --prompt="Select ECS Container: ")
+fi
+if [ -z "$CONTAINER" ]; then
+  echo "No container selected. Exiting."
+  exit 1
+fi
+
+# Step 6: Execute the ECS command interactively
+saml2aws exec -a dev -- aws --region "$REGION" ecs execute-command \
+  --cluster "$CLUSTER" \
+  --task "$TASK" \
+  --container "$CONTAINER" \
+  --command "/bin/bash" \
+  --interactive

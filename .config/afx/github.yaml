@@ -47,8 +47,8 @@ github:
   command:
     link:
     - from: kubetail
-      # - from: completion/kubetail.zsh
-      # to: $HOME/.zsh/Completion/_kubetail
+    # - from: completion/kubetail.zsh
+    #   to: $HOME/.zsh/Completion/_kubetail
 # - name: joshskidmore/zsh-fzf-history-search
 #   description: FZF history search for Zsh
 #   owner: joshskidmore

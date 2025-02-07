@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# Check for required commands
+for cmd in docker fzf bat; do
+  if ! command -v "$cmd" &> /dev/null; then
+    echo "Error: '$cmd' is not installed. Please install it before running this script."
+    exit 1
+  fi
+done
+
+# Generate the list of Docker resources without square brackets
+resource_list=$(
+  {
+    docker images --format 'Image {{.Repository}}:{{.Tag}} {{.ID}}'
+    docker ps -a --format 'Container {{.Names}} {{.ID}}'
+    docker network ls --format 'Network {{.Name}} {{.ID}}'
+    docker volume ls --format 'Volume {{.Name}}'
+  } 2>/dev/null
+)
+
+# Check if any resources were found
+if [ -z "$resource_list" ]; then
+  echo "No Docker resources found."
+  exit 0
+fi
+
+# Use fzf to select a resource with a preview
+echo "$resource_list" | fzf --ansi \
+  --preview '
+    line="{}"
+    type=$(echo "$line" | awk "{print \$1}")
+    name=$(echo "$line" | awk "{print \$2}")
+    id=$(echo "$line" | awk "{print \$3}")
+    case "$type" in
+      'Image')
+        docker image inspect "$id" 2>/dev/null | bat --language=json --paging=never
+        ;;
+      'Container')
+        docker container inspect "$id" 2>/dev/null | bat --language=json --paging=never
+        ;;
+      'Network')
+        docker network inspect "$id" 2>/dev/null | bat --language=json --paging=never
+        ;;
+      'Volume')
+        docker volume inspect "$id" 2>/dev/null | bat --language=json --paging=never
+        ;;
+      *)
+        echo "Unknown resource type: $type"
+        ;;
+    esac
+  ' \
+  --bind 'enter:execute(
+    echo "{}" | awk "{print \$1, \$2}" |
+    while read -r res_type res_name; do
+      echo "Selected $res_type: $res_name"
+    done
+  )+abort'
+

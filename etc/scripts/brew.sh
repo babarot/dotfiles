@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if command -v brew &>/dev/null; then
-  echo "${0}: brew is already installed"
+echo "${0}: brew is already installed"
   exit 0
 fi
 

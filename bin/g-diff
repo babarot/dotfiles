@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Check if a Git reference is provided as an argument
+if [ -z "$1" ]; then
+  echo "Usage: $0 <git-ref>"
+  exit 1
+fi
+
+# Use the provided reference (e.g., HEAD~1, HEAD, or a commit SHA)
+GIT_REF="$1"
+
+# Fetch the list of changed files for the given Git reference
+changed_files=$(git diff --name-only "$GIT_REF")
+
+# Check if there are any changed files
+if [ -z "$changed_files" ]; then
+  echo "No changes found for the reference: $GIT_REF"
+  exit 1
+fi
+
+# Use fzf to select a file interactively and preview the diff using bat
+echo "$changed_files" | fzf --preview "git diff $GIT_REF --color=always -- {} | bat --paging=always" --preview-window=right:70%

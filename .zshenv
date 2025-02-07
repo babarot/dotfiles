@@ -1,5 +1,6 @@
 typeset -gx -U path
 path=( \
+    ~/protecht_devspace/dotfiles-2024/bin \
     ~/.local/bin \
     /usr/local/bin(N-/) \
     ~/bin(N-/) \

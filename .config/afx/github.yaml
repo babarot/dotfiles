@@ -784,7 +784,7 @@ github:
   branch: master
   release:
     name: gomi
-    tag: v1.2.2
+    tag: v1.3.0
   command:
     alias:
       rm: gomi
@@ -1041,7 +1041,7 @@ github:
   repo: naminator
   release:
     name: naminator
-    tag: v0.1.8
+    tag: v0.2.0
   command:
     link:
     - from: naminator

@@ -1,4 +1,5 @@
 core:
+  # trash_dir: ~/.trash_gomi
   restore:
     confirm: false
     verbose: true

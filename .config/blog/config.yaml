@@ -6,6 +6,6 @@ editor: nvim
 open_command: open -R
 
 hugo:
-  command: hugo server #--buildDrafts
+  command: hugo server --disableFastRender #--buildDrafts
   root_dir: $HOME/src/github.com/babarot/tellme.tokyo
   content_dir: content/post

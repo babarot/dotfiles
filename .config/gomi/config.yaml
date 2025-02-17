@@ -1,5 +1,9 @@
 core:
-  # trash_dir: ~/.trash_gomi
+  # trash_dir: ~/.gomi
+  trash:
+    strategy: auto
+    # gomi_dir: ~/.trash_gomi
+
   restore:
     confirm: false
     verbose: true
@@ -43,9 +47,9 @@ history:
     - .DS_Store
     - "oil:"  # oil.nvim
     patterns:
-    # - "^LINE_ALBUM.*"
+    # - "^CH.*"
     globs:
-    # - "*.jpg"
+    # - "*.go"
     size:
       min: 0KB
-      max: 10GB
+      max: 13GB

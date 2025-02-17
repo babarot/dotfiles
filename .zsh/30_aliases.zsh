@@ -29,6 +29,7 @@ alias -g VI='| xargs -o vim'
 alias -g CSV="| sed 's/,,/, ,/g;s/,,/, ,/g' | column -s, -t"
 alias -g H='| head'
 alias -g T='| tail'
+alias -g W='| wc -l'
 
 alias -g CP='| pbcopy'
 alias -g CC='| tee /dev/tty | pbcopy'

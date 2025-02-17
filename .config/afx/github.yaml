@@ -309,7 +309,7 @@ github:
   repo: blog
   release:
     name: blog
-    tag: v0.1.10
+    tag: v0.1.11
   command:
     env:
       BLOG_EDITOR: nvim
@@ -513,7 +513,7 @@ github:
   repo: goreleaser
   release:
     name: goreleaser
-    tag: v2.5.1
+    tag: v2.7.0
   command:
     link:
     - from: '**/goreleaser'
@@ -553,6 +553,8 @@ github:
   command:
     link:
     - from: '**/fd'
+    alias:
+      fd: fd --hidden
 - name: chmln/sd
   description: Intuitive find & replace CLI (sed alternative)
   owner: chmln
@@ -784,7 +786,7 @@ github:
   branch: master
   release:
     name: gomi
-    tag: v1.3.0
+    tag: v1.4.3
   command:
     alias:
       rm: gomi

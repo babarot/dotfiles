@@ -15,6 +15,9 @@ ui:
     colorscheme: nord  # https://xyproto.github.io/splash/docs/index.html
     directory_command: exa -T --color=always --icons
   style:
+    deletion_dialog: "#FF007F"
+    # deletion_dialog: "#F93769"
+    # deletion_dialog: "#FE7E39"
     list_view:
       cursor: "#AD58B4"   # purple
       selected: "#5FB458" # green

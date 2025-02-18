@@ -1,11 +1,12 @@
-site:
+blog:
   name: tellme.tokyo
   url: https://tellme.tokyo
-
-editor: nvim
-open_command: open -R
+  dev_port: 1313
 
 hugo:
   command: hugo server --disableFastRender #--buildDrafts
   root_dir: $HOME/src/github.com/babarot/tellme.tokyo
   content_dir: content/post
+
+editor: nvim
+open_command: open -R

@@ -459,6 +459,7 @@ require('lazy').setup({
     init = function()
       vim.keymap.set('n', 'KK', '<cmd>Lspsaga hover_doc<CR>')
       vim.keymap.set('n', 'K', '<cmd>Lspsaga lsp_finder<CR>')
+      vim.keymap.set('n', '<space>R', '<cmd>Lspsaga rename<CR>')
       vim.keymap.set('n', '<space>lf', '<cmd>Lspsaga lsp_finder<CR>')
       vim.keymap.set('n', '<space>lo', '<cmd>Lspsaga outline<CR>')
       vim.keymap.set('n', '<space>lp', '<cmd>Lspsaga peek_defenition<CR>')

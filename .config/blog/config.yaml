@@ -2,6 +2,9 @@ blog:
   name: tellme.tokyo
   url: https://tellme.tokyo
   dev_port: 1313
+  draft:
+    color: "#5FB458"
+    suffix: "::Draft"
 
 hugo:
   command: hugo server --disableFastRender #--buildDrafts

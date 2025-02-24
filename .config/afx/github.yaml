@@ -1082,3 +1082,5 @@ github:
       - from: "*/golangci-lint"
 
 
+# Install
+# https://github.com/Aloxaf/fzf-tab

@@ -262,8 +262,8 @@ github:
       jq: jq -C
     snippet: |
       if [[ $SHELL == *zsh* ]]; then
-        #alias -g J='| jq -C . | less -F'
-        alias -g J='| jq -C . | ov'
+        alias -g J='| jq -C . | less -F'
+        #alias -g J='| jq -C . | ov'
         alias -g JQ='| jq -C .'
         alias -g JL='| jq -C . | less -R -X'
       fi
@@ -786,7 +786,7 @@ github:
   branch: master
   release:
     name: gomi
-    tag: v1.4.3
+    tag: v1.5.1
   command:
     alias:
       rm: gomi

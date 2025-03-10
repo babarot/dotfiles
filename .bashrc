@@ -64,4 +64,3 @@ trap _exit EXIT
   shopt -s autocd
   shopt -s dirspell
 } &>/dev/null
-. "$HOME/.cargo/env"

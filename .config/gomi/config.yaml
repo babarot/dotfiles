@@ -11,13 +11,6 @@ core:
   permanent_delete:
     enable: true
 
-  # logging:
-  #   enabled: true
-  #   level: debug
-  #   rotation:
-  #     max_size: 10MB
-  #     max_files: 3
-
 ui:
   density: spacious # or compact
   preview:

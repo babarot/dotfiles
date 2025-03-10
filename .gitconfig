@@ -37,9 +37,9 @@
   rvf = diff origin/HEAD... --name-only
   rvc = log --oneline ...origin/HEAD
   typechange = status -s | awk '$1=="T"{print $2}' | xargs git checkout
-  delete-merged-branches = !git branch --merged | grep -v \\* | xargs -I % git branch -d %
+  delete-merged-branches = !git fetch -p && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs git branch -D
   branch-log = log --oneline HEAD --not main
-  blog = log --oneline HEAD --not main
+  blog = log --oneline HEAD --not origin/main
   df = diff --no-ext-diff
   ; dft = difft --syntax-highlight=off
   ; mylog = log --oneline HEAD --not main

@@ -89,16 +89,29 @@ return function()
   end, json_schemas)
 
   local yaml_config = require("yaml-companion").setup({
-    schemas = {
-      {
-        name = "Kubernetes",
-        uri = "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.25.6-standalone-strict/all.json",
-      },
-    },
+    -- schemas = {
+    --   {
+    --     name = "Kubernetes",
+    --     uri = "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.25.6-standalone-strict/all.json",
+    --   },
+    --   {
+    --     name = "OpenAPI 3.0",
+    --     uri = "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.0/schema.json",
+    --   },
+    --   {
+    --     name = "OpenAPI 3.1",
+    --     uri = "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.1/schema.json",
+    --   },
+    -- },
+    capabilities = capabilities,
+    on_attach = on_attach,
     lspconfig = {
       settings = {
         yaml = {
-          schemas = yaml_schemas,
+          schemaStore = {
+            enable = true,
+            url = "https://www.schemastore.org/api/json/catalog.json",
+          }
         }
       }
     }

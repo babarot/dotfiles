@@ -534,18 +534,126 @@ require('lazy').setup({
     commit = '6258d50b09f9ae087317e392efe7c05a7323492d',
     lazy = true,
     cmd = { 'Telescope' },
-    dependencies = { 'nvim-lua/popup.nvim', 'nvim-lua/plenary.nvim' },
+    dependencies = {
+      'nvim-lua/popup.nvim',
+      'nvim-lua/plenary.nvim',
+      'ThePrimeagen/git-worktree.nvim',
+      { "nvim-telescope/telescope-fzf-native.nvim",    build = "make" },
+      { "nvim-telescope/telescope-live-grep-args.nvim" }, -- live_grep_args を追加
+      { "L3MON4D3/LuaSnip" },                             -- snacks.nvim の依存関係
+      { "David-Kunz/snacks.nvim" },                       -- snacks.nvim を Lazy.nvim に追加
+    },
     init = function()
-      vim.keymap.set('n', '<space>l', '<Cmd>Telescope find_files<CR>')
+      vim.keymap.set('n', '<space>f', '<Cmd>Telescope find_files<CR>')
       vim.keymap.set('n', '<space>j', '<Cmd>Telescope oldfiles<CR>')
+      vim.keymap.set('n', '<space>g', '<Cmd>Telescope git_status<CR>')
+      vim.keymap.set('n', '<space>G', '<Cmd>Telescope git_files<CR>')
+      vim.keymap.set("n", "<space>l", "<cmd>Telescope live_grep<CR>")
+      -- vim.keymap.set("n", "<space>lg", function()
+      --   require("telescope").extensions.live_grep_args.live_grep_args()
+      -- end)
       vim.keymap.set('n', 'Q',
         function()
           return string.format('<cmd>Telescope live_grep default_text=%s<CR>', vim.fn.expand('<cword>'))
         end,
         { noremap = true, silent = true, expr = true })
-      vim.keymap.set('n', '<space>g', '<Cmd>Telescope git_status<CR>')
     end,
-    config = require('plugins.telescope'),
+    config = function()
+      -- telescope のセットアップ
+      require('telescope').setup {
+        path_display = { "truncate", "smart", "head" }, -- パスの先頭部分を削る
+        defaults = {
+          layout_strategy = "horizontal",               -- 横並びのレイアウト（縦でも可）
+          layout_config = {
+            prompt_position = "top",                    -- 検索ボックスを上部に表示
+            preview_width = 0.5,                        -- プレビューの幅を調整（必要に応じて）
+          },
+          initial_mode = "normal",                      -- `Telescope` 起動時に normal mode にする
+          mappings = {
+            i = {
+              ["<Esc>"] = require('telescope.actions').close, -- Escape で閉じる
+            },
+            n = {
+              ["q"] = require('telescope.actions').close, -- normal mode で `q` で閉じる
+            },
+          },
+          vimgrep_arguments = {
+            "rg",
+            "--color=never",
+            "--no-heading",
+            "--with-filename",
+            "--line-number",
+            "--column",
+            "--smart-case",
+            "--hidden",            -- ドットファイルも検索対象にする
+            "--glob", "!**/.git/*" -- `.git` ディレクトリは無視
+          },
+          -- prompt_prefix = " ",
+          selection_caret = " ",
+          entry_prefix = "  ",
+          -- layout_strategy = "vertical",                                    -- 検索結果を縦長に表示
+          -- layout_config = {
+          --   prompt_position = "top",                                             -- 検索ボックスを上に配置
+          --   width = 0.9,                                                         -- ウィンドウ幅
+          --   height = 0.8,                                                        -- ウィンドウ高さ
+          --   preview_cutoff = 120,                                                -- プレビューのカットオフ値
+          -- },
+          file_ignore_patterns = { ".git/", "node_modules/", "dist/", "venv/" }, -- 無視するパターン
+          -- path_display = { "truncate" },                                   -- ファイルパスを適切に省略
+        },
+        pickers = {
+          live_grep = {
+            sorting_strategy = "ascending", -- 最近のファイルを上に表示
+            -- only_sort_text = true,          -- マッチしたテキストのみをソート
+            -- theme = "dropdown",             -- ドロップダウン形式で表示
+            -- previewer = false,              -- プレビューをオフにする
+          },
+          git_files = {
+            sorting_strategy = "ascending", -- 最近のファイルを上に表示
+          },
+          git_status = {
+            sorting_strategy = "ascending", -- 最近のファイルを上に表示
+            symbols = {
+              added = "+",                  -- Staged file に対してアイコンを変更
+              changed = "~",                -- Modified file
+              deleted = "-",                -- Deleted file
+              renamed = "R",                -- Renamed file (変更)
+              untracked = "?",              -- Untracked file
+              unstaged = "!",               -- Unstaged file に対してアイコンを変更
+              unmerged = "X",               -- Merge conflict file
+            },
+          },
+          git_worktree = {
+            sorting_strategy = "ascending", -- 最近のファイルを上に表示
+          },
+          find_files = {
+            sorting_strategy = "ascending", -- 最近のファイルを上に表示
+          },
+          oldfiles = {
+            -- sort_lastused = true,           -- 最後に使った順番で並べ替え
+            -- 逆順（新しいファイルを上に）にしたい場合は、このオプションを true に設定
+            sorting_strategy = "ascending", -- 最近のファイルを上に表示
+          },
+        },
+        extensions = {
+          fzf = {
+            fuzzy = true,                   -- Fuzzy matching を有効化
+            override_generic_sorter = true, -- デフォルトのソートを上書き
+            override_file_sorter = true,    -- ファイル検索のソートを上書き
+            case_mode = "smart_case",       -- 大文字小文字の扱い
+          },
+          git_worktree = {
+            update_on_change = true,     -- 作業ツリーの変更時に自動更新
+            clearjumps_on_switch = true, -- 切り替え時にジャンプ履歴を消す
+          },
+        },
+      }
+
+      -- 拡張をロード
+      require('telescope').load_extension('git_worktree')
+      require('telescope').load_extension('fzf')
+      require('telescope').load_extension('live_grep_args') -- 拡張をロード
+    end
   },
   {
     'debugloop/telescope-undo.nvim',
@@ -571,6 +679,12 @@ require('lazy').setup({
     dependencies = { 'nvim-telescope/telescope.nvim' },
     config       = function() require('telescope').load_extension('repo') end,
   },
+  -- {
+  --   'ThePrimeagen/telescope-git-worktree.nvim',
+  --   lazy         = true,
+  --   event        = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
+  --   dependencies = { 'nvim-telescope/telescope.nvim' },
+  -- },
   -- {
   --   'nvim-telescope/telescope-fzf-native.nvim',
   --   commit       = '580b6c48651cabb63455e97d7e131ed557b8c7e2',

@@ -1,0 +1,109 @@
+#!/bin/zsh
+
+# Description:
+# This script searches the current directory and all subdirectories for folders
+# matching any of the patterns defined in the `patterns` array and deletes them.
+# It supports a --dry-run option to list directories without deleting them.
+
+# Usage:
+#   ./delete_folders.zsh [--dry-run]
+#
+# Options:
+#   --dry-run    List directories that would be deleted without deleting them.
+
+# Define an array of glob patterns for folder names to delete
+patterns=(
+  '**/__pycache__'
+  '**/__*_cache'
+  '**/.DS_Store'
+
+)
+
+# Initialize variables
+DRY_RUN=false
+
+# Function to display usage information
+usage() {
+  echo "Usage: $0 [--dry-run]"
+  echo
+  echo "Options:"
+  echo "  --dry-run    List directories that would be deleted without deleting them."
+  exit 1
+}
+
+# Parse command-line arguments
+if [[ $# -gt 1 ]]; then
+  echo "Error: Too many arguments."
+  usage
+fi
+
+if [[ $# -eq 1 ]]; then
+  case $1 in
+    --dry-run)
+      DRY_RUN=true
+      ;;
+    -*)
+      echo "Error: Unknown option: $1"
+      usage
+      ;;
+    *)
+      echo "Error: Unexpected argument: $1"
+      usage
+      ;;
+  esac
+fi
+
+# Function to delete directories
+delete_directories() {
+  local dirs=("$@")
+  if [[ $DRY_RUN == true ]]; then
+    echo "Directories to delete:"
+    for dir in "${dirs[@]}"; do
+      echo "  - $dir"
+    done
+  else
+    echo "Deleting directories:"
+    for dir in "${dirs[@]}"; do
+      echo "  - $dir"
+      rm -rf -- "$dir"
+    done
+    echo "Deletion completed."
+  fi
+}
+
+# Iterate over each pattern in the array
+for pattern in "${patterns[@]}"; do
+  # Use Zsh's glob qualifiers to match directories only
+  # (D: include dotfiles, N: no error if no match, k: sort by name, )
+  directories=( $~pattern(DN) )
+  
+  # Check if any directories matched the pattern
+  if (( ${#directories} )); then
+    echo "Found directories matching pattern: $pattern"
+    delete_directories "${directories[@]}"
+  else
+    echo "No directories found for pattern: $pattern"
+  fi
+done
+
+echo "Process completed."
+
+# Optional: Add a final confirmation when not in dry-run mode
+if [[ $DRY_RUN == false ]]; then
+  read "confirm?Are you sure you want to proceed with the deletions? (y/n) "
+  if [[ $confirm =~ ^[yY]$ ]]; then
+    # Re-iterate to perform deletion after confirmation
+    for pattern in "${patterns[@]}"; do
+      directories=( $~pattern(DN) )
+      if (( ${#directories} )); then
+        for dir in "${directories[@]}"; do
+          echo "Deleting: $dir"
+          rm -rf -- "$dir"
+        done
+      fi
+    done
+    echo "All specified directories have been deleted."
+  else
+    echo "Deletion aborted by user."
+  fi
+fi

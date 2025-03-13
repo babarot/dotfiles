@@ -98,41 +98,6 @@ gcf() {
   fi
 }
 
-# Interactive 
-gcb() {
-  # Build the list of local and remote branches
-  local branches=$( (
-    git for-each-ref --format='[local] %(refname:short):%(refname)' refs/heads/
-    git for-each-ref --format='[remote] %(refname:lstrip=3):%(refname)' refs/remotes/
-  ) )
-
-  # Use fzf to select a branch
-  local selection=$(echo "$branches" | fzf --height 40% --reverse --prompt="Select branch> " \
-    --with-nth=1 \
-    --delimiter=":" \
-    --preview='
-      ref=$(echo {} | awk -F ":" "{print \$2}");
-      git_log=$(git log --color=always --oneline --graph --decorate HEAD.."$ref");
-      if [ -z "$git_log" ]; then
-        echo "No differences between HEAD and $(git rev-parse --abbrev-ref "$ref")";
-      else
-        echo "$git_log" | bat --style=plain --color=always --pager=never;
-      fi
-    ')
-
-  [ -z "$selection" ] && return
-
-  # Extract the full refname
-  local ref=$(echo "$selection" | awk -F ":" '{print $2}')
-
-  # Check if it's a remote branch and needs tracking
-  if echo "$selection" | grep -q '^\[remote\]'; then
-    git checkout --track "${ref#refs/remotes/}"
-  else
-    git checkout "${ref#refs/heads/}"
-  fi
-}
-
 # Exec into running containers and try to determine the shell type automatically
 dexec() {
   # List running containers and select one

@@ -109,9 +109,6 @@ alias kj="killjobs"
 killjobs(){
   kill $(jobs | awk '{b=substr($1,2,1); c="%"; print c b}')
 }
-alias cleanup="find . -type d \( -name '__pycache__' -o -name '.DS_Store' \) -prune -exec rm -rf '{}' +"
-
-
 
 brew-force-update() {
   brew cleanup -s
@@ -166,10 +163,6 @@ whatsOnPort () {
 start-docker(){
   docker-machine start
   eval "$(docker-machine env)"
-}
-
-dbash() {
-  docker exec -ti "$(did $1)" bash
 }
 
 did() {
@@ -503,6 +496,6 @@ function o() {
 # the `.git` directory, listing directories first. The output gets piped into
 # `less` with options to preserve color and line numbers, unless the output is
 # small enough for one screen.
-function tre() {
+function tree() {
 	tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRNX;
 }

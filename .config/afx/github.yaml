@@ -49,14 +49,14 @@ github:
     - from: kubetail
     # - from: completion/kubetail.zsh
     #   to: $HOME/.zsh/Completion/_kubetail
-# - name: joshskidmore/zsh-fzf-history-search
-#   description: FZF history search for Zsh
-#   owner: joshskidmore
-#   repo: zsh-fzf-history-search
-#   plugin:
-#     sources:
-#     - zsh-fzf-history-search.plugin.zsh
-#  These might effectively be the same things ^ and down
+    # - name: joshskidmore/zsh-fzf-history-search
+    #   description: FZF history search for Zsh
+    #   owner: joshskidmore
+    #   repo: zsh-fzf-history-search
+    #   plugin:
+    #     sources:
+    #     - zsh-fzf-history-search.plugin.zsh
+    #  These might effectively be the same things ^ and down
 - name: mutantcornholio/prok
   description: easy process grep with ps output
   owner: mutantcornholio
@@ -190,16 +190,16 @@ github:
     # snippet: |
     # abbr --quiet tf=terraform
     # abbr --quiet cf=conftest
-# - name: tfutils/tfenv
-#   description: Terraform version manager
-#   owner: tfutils
-#   repo: tfenv
-#   command:
-#     link:
-#     - from: bin/tfenv
-#       to: tfenv
-#     - from: bin/terraform
-#       to: terraform
+    # - name: tfutils/tfenv
+    #   description: Terraform version manager
+    #   owner: tfutils
+    #   repo: tfenv
+    #   command:
+    #     link:
+    #     - from: bin/tfenv
+    #       to: tfenv
+    #     - from: bin/terraform
+    #       to: terraform
 - name: drwetter/testssl.sh
   description: Testing TLS/SSL encryption anywhere on any port
   owner: drwetter
@@ -208,7 +208,6 @@ github:
     link:
     - from: testssl.sh
       to: testssl.sh
-
   # - name: jesseduffield/lazygit
   #   description: simple terminal UI for git commands
   #   owner: jesseduffield
@@ -653,16 +652,16 @@ github:
     - from: '**/rg'
       # snippet: |
 
-# - name: docekr/compose
-#   description: Define and run multi-container applications with Docker
-#   owner: docker
-#   repo: compose
-#   release:
-#     name: docker-compose
-#     tag: 1.21.1
-#   command:
-#     link:
-#     - from: '**/docker-compose'
+      # - name: docekr/compose
+      #   description: Define and run multi-container applications with Docker
+      #   owner: docker
+      #   repo: compose
+      #   release:
+      #     name: docker-compose
+      #     tag: 1.21.1
+      #   command:
+      #     link:
+      #     - from: '**/docker-compose'
 - name: davecheney/httpstat
   description: It's like curl -v, with colours.
   owner: davecheney
@@ -815,7 +814,7 @@ github:
   branch: master
   release:
     name: gomi
-    tag: v1.1.3
+    # tag: v1.1.3
   command:
     alias:
       rm: gomi

@@ -5,17 +5,15 @@
 # tap "homebrew/core"
 tap "hashicorp/tap"
 tap "homebrew/bundle"
-tap "homebrew/cask-fonts"
+# tap "homebrew/cask-fonts"
 
 
 cask "font-hack-nerd-font"
 cask "font-3270-nerd-font"
 
 
-brew "hashicorp/tap/terraform-ls"
 brew "helmfile"
 brew "kustomize"
-brew "terraform"
 
 #
 # Brew
@@ -80,15 +78,15 @@ brew "git-lfs"
 #
 cask "iterm2"
 cask "1password"
-cask "visual-studio-code"
-cask "spectacle"
-cask "dropbox"
+cask "cursor"
+# cask "spectacle"
+# cask "dropbox"
 cask "alfred"
 # TODO: get intellij here
 
 cask "google-chrome"
 cask "docker"
-cask "adobe-creative-cloud"
+# cask "adobe-creative-cloud"
 
 
 cask "appcleaner"
@@ -102,20 +100,20 @@ cask "numi"
 cask "obs"
 cask "obsidian"
 cask "path-finder"
-cask "popclip"
+# cask "popclip"
 cask "postman"
 cask "qlmarkdown"
 cask "rectangle" # alternative for "Magnet"
-cask "slack"
-cask "spotify"
-cask "tableplus"
-cask "the-unarchiver"
+# cask "slack"
+# cask "spotify"
+# cask "tableplus"
+# cask "the-unarchiver"
 cask "typora"
 
 # cant be installed for this computer (assume M1
 # cask "osxfuse"
 cask "xquartz"
-cask "keepingyouawake"
+# cask "keepingyouawake"
 # cask "adoptopenjdk"
 
 cask "istat-menus"
@@ -127,22 +125,22 @@ cask "dash"
 cask "little-snitch"
 cask "micro-snitch"
 # cask "ipartition"
-cask "fantastical"
-cask "slack"
-cask "zoom"
+# cask "fantastical"
+# cask "slack"
+# cask "zoom"
 cask "google-chrome"
 # cask "google-chrome-canary"
 cask "firefox"
 cask "wifi-explorer"
 cask "hazel"
 cask "textual"
-cask "freecad"
+# cask "freecad"
 cask "postman"
 cask "appcleaner"
 cask "geektool"
-cask "atom"
+# cask "atom"
 cask "jetbrains-toolbox"
-cask "gitkraken"
+# cask "gitkraken"
 # cask "kdiff3"
 cask "kindle"
 
@@ -154,11 +152,11 @@ cask "cakebrew"
 cask "cardhop"
 # cask "grammarly"
 cask "mactracker"
-cask "teamviewer"
+# cask "teamviewer"
 cask "charles"
 cask "hex-fiend"
 # cask "meld"
-cask "transmission"
+# cask "transmission"
 # cask "timely"
 
 # Encryption
@@ -170,11 +168,11 @@ cask "veracrypt"
 cask "vlc"
 
 # cask "firestormos"
-cask "wine-stable"
-cask "battle-net"
-cask "steam"
-cask "epic-games"
-cask "unity"
+# cask "wine-stable"
+# cask "battle-net"
+# cask "steam"
+# cask "epic-games"
+# cask "unity"
 
 
 # Virtual SubSystem
@@ -220,17 +218,17 @@ brew "eigen"
 #   https://github.com/mas-cli/mas
 #
 mas "Fantastical", id: 975937182
-mas "LadioCast", id: 411213048
-mas "Magnet", id: 441258766
-mas "MenubarX", id: 1575588022
-mas "Paste", id: 967805235
-mas "Spark", id: 1176895641
-mas "Things 3", id: 904237743
-mas "Translate Tab", id: 458887729
+# mas "LadioCast", id: 411213048
+# mas "Magnet", id: 441258766
+# mas "MenubarX", id: 1575588022
+# mas "Paste", id: 967805235
+# mas "Spark", id: 1176895641
+# mas "Things 3", id: 904237743
+# mas "Translate Tab", id: 458887729
 mas "Yoink", id: 457622435
 mas "Amphetamine", id: 937984704
-mas "Rename X", id: 1438841416
+# mas "Rename X", id: 1438841416
 # mas "Name Mangler 3", id: 603637384
-mas "DaisyDisk", id: 411643860
-mas "ToyViewer", id: 414298354
-mas "MeetingBar for Meet, Zoom & Co", id: 1532419400
+# mas "DaisyDisk", id: 411643860
+# mas "ToyViewer", id: 414298354
+# mas "MeetingBar for Meet, Zoom & Co", id: 1532419400

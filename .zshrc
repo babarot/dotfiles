@@ -23,6 +23,7 @@ if [[ -n $VIMRUNTIME ]]; then
 fi
 
 # Move this to setups or somewhere elese in the afx provisioning process
+# only add successfuly commands to the history
 zshaddhistory() { whence ${${(z)1}[1]} >| /dev/null || return 1 }
 eval "$(saml2aws --completion-script-zsh)"
 
@@ -32,14 +33,9 @@ source <(skaffold completion zsh)
 source <(minikube completion zsh)
 source <(docker completion zsh)
 
-FPATH="$(brew --prefix asdf)/share/zsh/site-functions:${FPATH}"
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
 
-autoload -Uz compinit
-compinit
-
-autoload -Uz colors
-colors
+export fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
+export PATH="$HOME/.asdf/shims:$PATH"
 
 source <(afx init)
 source <(afx completion zsh)
@@ -50,3 +46,10 @@ eval "$(fzf --zsh)"
 export WORDCHARS='*?[]~&;!#$%^(){}<>'
 
 . "$HOME/.cargo/env"
+
+
+autoload -Uz compinit
+compinit
+
+autoload -Uz colors
+colors

@@ -1,5 +1,5 @@
 core:
-  trash_dir: ~/.gomi
+  # trash_dir: ~/.gomi
     # Path to store trashed files. Can be changed to another location.
     # Supports environment variable expansion like $HOME or ~.
     # If empty, defaults to ~/.gomi.

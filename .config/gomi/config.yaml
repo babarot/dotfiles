@@ -1,8 +1,22 @@
 core:
   trash:
     strategy: auto
-    # gomi_dir: ~/.trash_gomi
     home_fallback: true
+    forbidden_paths:
+      - $HOME/.local/share/Trash
+      - $HOME/.trash
+      - $XDG_DATA_HOME/Trash
+      - /tmp/Trash
+      - /var/tmp/Trash
+      - $HOME/.gomi
+      - /
+      - /etc
+      - /usr
+      - /var
+      - /bin
+      - /sbin
+      - /lib
+      - /lib64
 
   restore:
     confirm: true

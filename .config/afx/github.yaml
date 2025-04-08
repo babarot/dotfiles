@@ -171,13 +171,13 @@ github:
     # env:
     # ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE: fg=#ff00ff,bg=cyan,bold,underline
     # ZSH_AUTOSUGGEST_STRATEGY: (history match_prev_cmd completion)
-- name: romkatv/powerlevel10k
-  description: Super super super minimal prompt for zsh
-  owner: romkatv
-  repo: powerlevel10k
-  plugin:
-    sources:
-    - 'powerlevel10k.zsh-theme'
+    # - name: romkatv/powerlevel10k
+    #   description: Super super super minimal prompt for zsh
+    #   owner: romkatv
+    #   repo: powerlevel10k
+    #   plugin:
+    #     sources:
+    #     - 'powerlevel10k.zsh-theme'
 - name: olets/zsh-abbr
   description: |
     The zsh manager for auto-expanding abbreviations,

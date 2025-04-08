@@ -34,8 +34,8 @@ source <(minikube completion zsh)
 source <(docker completion zsh)
 
 
-export fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
-export PATH="$HOME/.asdf/shims:$PATH"
+# export fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
+# export PATH="$HOME/.asdf/shims:$PATH"
 
 source <(afx init)
 source <(afx completion zsh)
@@ -47,9 +47,13 @@ export WORDCHARS='*?[]~&;!#$%^(){}<>'
 
 . "$HOME/.cargo/env"
 
+eval "$(mise activate zsh)"
+
+export STARSHIP_CONFIG=~/protecht_devspace/dotfiles-2024/starship.toml
+
+eval "$(starship init zsh)"
 
 autoload -Uz compinit
 compinit
 
 autoload -Uz colors
-colors

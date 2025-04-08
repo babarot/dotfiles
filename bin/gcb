@@ -7,7 +7,7 @@
 # Then checks out the chosen branch (local or remote).
 #
 # Enhancements:
-#  - Ensures branches are sorted by the last commit date ("date changed").
+#  - Ensures branches are gcbed by the last commit date ("date changed").
 #  - Adjusts formatting based on terminal width.
 #  - Disables preview by default; use the -p flag to force the preview.
 

@@ -22,15 +22,6 @@ tasks:
     - brew install kubectl
     - brew install kubectx
 
-  asdf:
-    desc: "NOTE, neovim wont work till asdf install NPM dependency"
-    cmds:
-    # - asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
-    - asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
-    - asdf plugin add python
-    # - asdf plugin add rust https://github.com/asdf-community/asdf-rust.git
-    - asdf install
-
   afx:
     desc: "Install babarot/afx"
     cmds:

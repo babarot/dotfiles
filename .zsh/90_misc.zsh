@@ -4,7 +4,7 @@
 
 # export WORKSPACE_ROOT=$HOME/Code/active_workspaces
 
-export KUBECONFIG=~/.kube/config:$(find ~/.kube/contexts -type f -name '*_config' | tr '\n' ':')
+# export KUBECONFIG=~/.kube/config:$(find ~/.kube/contexts -type f -name '*_config' | tr '\n' ':')
 
 neofetch
 

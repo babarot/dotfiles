@@ -1,0 +1,50 @@
+#!/usr/bin/env zsh
+
+local ref
+local ref_preview_list
+
+ref_preview_list=$(
+  {
+    git for-each-ref --format='[local] %(refname:short)' refs/heads/
+    git for-each-ref --format='[remote] %(refname:short)' refs/remotes/
+    git stash list --format='[stash] %gd: %gs'
+    git log --pretty=format:'[commit] %h: %s' --abbrev-commit
+  } | fzf --height 40% --reverse --prompt="Select source> " \
+        --preview='
+          selected=$(echo {} | sed "s/^\[[^]]*\] \([^:]*\).*/\1/")
+          if [[ $selected == stash@* ]]; then
+            git ls-tree -r "$selected^1" --name-only
+          else
+            git ls-tree -r "$selected" --name-only
+          fi'
+)
+
+[[ -z "$ref_preview_list" ]] && return
+
+ref=$(echo "$ref_preview_list" | sed 's/^\[[^]]*\] \([^:]*\).*/\1/')
+export FZF_PREVIEW_REF="$ref"
+
+local file_or_folder
+file_or_folder=$(
+  git ls-tree -r -t --name-only "$ref" | fzf --height 40% --reverse --prompt="Select file or folder> " \
+    --preview='
+      path="{}"
+      if [[ -d "$path" ]]; then
+        echo "Directory: $path"
+        git ls-tree -r "$FZF_PREVIEW_REF" "$path" --name-only | while read -r file; do
+          status=$(git status --short "$file" | cut -c1-2)
+          echo "$status $file"
+        done
+      else
+        git show "$FZF_PREVIEW_REF:$path" 2>/dev/null | bat --style=numbers --color=always --pager=never || echo "File does not exist in selected ref"
+      fi'
+)
+
+[[ -z "$file_or_folder" ]] && return
+
+if git cat-file -e "$ref:$file_or_folder" 2>/dev/null; then
+  git checkout "$ref" -- "$file_or_folder"
+else
+  echo "Error: The file or folder '$file_or_folder' does not exist in '$ref'."
+  return 1
+fi

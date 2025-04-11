@@ -47,56 +47,57 @@ tfind() {
         --preview 'echo {} | awk -F: '\''{start=$2-10; if(start<0) start=0; end=$2+10; print "--style=numbers --color=always --decorations=always --line-range "start":"end" --highlight-line "$2" "$1}'\'' | xargs bat'
 }
 
-gcf() {
-  # Build the list of refs
-  local refs=$(
-    (
-      git for-each-ref --format='[local] %(refname:short)' refs/heads/
-      git for-each-ref --format='[remote] %(refname:short)' refs/remotes/
-      git stash list --format='[stash] %gd: %gs'
-    ) | fzf --height 40% --reverse --prompt="Select source> " \
-         --preview='
-           ref=$(echo {} | sed "s/^\[[^]]*\] \([^:]*\).*/\1/");
-           if [[ $ref == stash@* ]]; then
-             git ls-tree -r "$ref^1" --name-only
-           else
-             git ls-tree -r "$ref" --name-only
-           fi'
-    )
+# Moved to bin/gcf
+# gcf() {
+#   # Build the list of refs
+#   local refs=$(
+#     (
+#       git for-each-ref --format='[local] %(refname:short)' refs/heads/
+#       git for-each-ref --format='[remote] %(refname:short)' refs/remotes/
+#       git stash list --format='[stash] %gd: %gs'
+#     ) | fzf --height 40% --reverse --prompt="Select source> " \
+#          --preview='
+#            ref=$(echo {} | sed "s/^\[[^]]*\] \([^:]*\).*/\1/");
+#            if [[ $ref == stash@* ]]; then
+#              git ls-tree -r "$ref^1" --name-only
+#            else
+#              git ls-tree -r "$ref" --name-only
+#            fi'
+#     )
 
-  [ -z "$refs" ] && return
+#   [ -z "$refs" ] && return
 
-  # Extract the ref name
-  local ref=$(echo "$refs" | sed 's/^\[[^]]*\] \([^:]*\).*/\1/')
+#   # Extract the ref name
+#   local ref=$(echo "$refs" | sed 's/^\[[^]]*\] \([^:]*\).*/\1/')
 
-  # Export ref for use in the preview command
-  export FZF_PREVIEW_REF="$ref"
+#   # Export ref for use in the preview command
+#   export FZF_PREVIEW_REF="$ref"
 
-  # Get the list of files and directories in the ref
-  local file_or_folder=$(git ls-tree -r -t --name-only "$ref" | fzf --height 40% --reverse --prompt="Select file or folder> " \
-      --preview='
-        path="{}"
-        if [[ -d "$path" ]]; then
-          echo "Directory: $path"
-          git ls-tree -r "$FZF_PREVIEW_REF" "$path" --name-only | while read -r file; do
-            status=$(git status --short "$file" | cut -c1-2)
-            echo "$status $file"
-          done
-        else
-          git show "$FZF_PREVIEW_REF:$path" 2>/dev/null | bat --style=numbers --color=always --pager=never || echo "File does not exist in base branch"
-        fi'
-    )
+#   # Get the list of files and directories in the ref
+#   local file_or_folder=$(git ls-tree -r -t --name-only "$ref" | fzf --height 40% --reverse --prompt="Select file or folder> " \
+#       --preview='
+#         path="{}"
+#         if [[ -d "$path" ]]; then
+#           echo "Directory: $path"
+#           git ls-tree -r "$FZF_PREVIEW_REF" "$path" --name-only | while read -r file; do
+#             status=$(git status --short "$file" | cut -c1-2)
+#             echo "$status $file"
+#           done
+#         else
+#           git show "$FZF_PREVIEW_REF:$path" 2>/dev/null | bat --style=numbers --color=always --pager=never || echo "File does not exist in base branch"
+#         fi'
+#     )
 
-  [ -z "$file_or_folder" ] && return
+#   [ -z "$file_or_folder" ] && return
 
-  # Check if the selected file or folder exists in the target ref
-  if git cat-file -e "$ref:$file_or_folder" 2>/dev/null; then
-    # Check out the selected file or folder
-    git checkout "$ref" -- "$file_or_folder"
-  else
-    echo "Error: The file or folder '$file_or_folder' does not exist in '$ref'."
-  fi
-}
+#   # Check if the selected file or folder exists in the target ref
+#   if git cat-file -e "$ref:$file_or_folder" 2>/dev/null; then
+#     # Check out the selected file or folder
+#     git checkout "$ref" -- "$file_or_folder"
+#   else
+#     echo "Error: The file or folder '$file_or_folder' does not exist in '$ref'."
+#   fi
+# }
 
 # Exec into running containers and try to determine the shell type automatically
 dexec() {

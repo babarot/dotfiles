@@ -12,7 +12,7 @@
         "**/Taskfile.yml",
       ]
     },
-    "python.defaultInterpreterPath": "/Users/hdaniels/.local/share/mise/installs/python/3.13.2/bin/python",
+    "python.defaultInterpreterPath": "/Users/hdaniels/.local/share/mise/installs/python/3.12.6/bin/python",
     "go.goroot": "/Users/hdaniels/.local/share/mise/installs/go/1.24.2",
     "debug.javascript.defaultRuntimeExecutable": {
       "pwa-node": "/Users/hdaniels/.local/share/mise/shims/node"

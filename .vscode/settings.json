@@ -12,13 +12,13 @@
         "**/Taskfile.yml",
       ]
     },
-    "python.defaultInterpreterPath": "/Users/hdaniels/.local/share/mise/installs/python/3.12.6/bin/python",
-    "go.goroot": "/Users/hdaniels/.local/share/mise/installs/go/1.24.2",
+    "python.defaultInterpreterPath": "/Users/panda/.local/share/mise/installs/python/3.12.6/bin/python",
+    "go.goroot": "/Users/panda/.local/share/mise/installs/go/1.22.1",
     "debug.javascript.defaultRuntimeExecutable": {
-      "pwa-node": "/Users/hdaniels/.local/share/mise/shims/node"
+      "pwa-node": "/Users/panda/.local/share/mise/shims/node"
     },
     "go.alternateTools": {
-      "go": "/Users/hdaniels/.local/share/mise/shims/go"
+      "go": "/Users/panda/.local/share/mise/shims/go"
     }
     
 }

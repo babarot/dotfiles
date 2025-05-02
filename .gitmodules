@@ -1,0 +1,5 @@
+[submodule "etc/@dotbot"]
+	path = etc/@dotbot
+	url = https://github.com/anishathalye/dotbot.git
+	ignore = dirty
+	

@@ -50,7 +50,7 @@ export WORDCHARS='*?[]~&;!#$%^(){}<>'
 
 eval "$(mise activate zsh)"
 
-export STARSHIP_CONFIG=~/protecht_devspace/dotfiles-2024/starship.toml
+export STARSHIP_CONFIG=~/starship.toml
 
 eval "$(starship init zsh)"
 

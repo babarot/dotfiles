@@ -1,0 +1,18 @@
+# TODO: spruve this up a bit
+# https://github.com/anishathalye/dotbot
+# https://github.com/anishathalye/dotbot/wiki/Plugins
+# https://github.com/elogiclab/dotbot-sops
+# https://github.com/j1r1k/dotbot-sync
+- defaults:
+    link:
+      create: true # Auto-create directories if missing
+      relink: true # Relink existing symlinks
+
+- link:
+    ~/:
+      glob: true
+      path: './dotfiles/.*'
+- link:
+    ~/:
+      glob: true
+      path: './dotfiles/*'

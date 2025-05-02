@@ -3,65 +3,86 @@ version: '3'
 default: help
 
 tasks:
-  all:
-    desc: "Run brew, install, asdf, and afx tasks"
-    deps:
-    - brew
-    - install
-    - asdf
-    - afx
-    # Run dependencies sequentially (as in Makefile)
-    parallel: false
 
-  k8:
-    desc: "maybe use helmfile???"
+  setup:
+    desc: "Initialize dotbot submodule"
     cmds:
-    - cask install --cask docker
-    - brew install minikube
-    - brew install helm
-    - brew install kubectl
-    - brew install kubectx
-
-  afx:
-    desc: "Install babarot/afx"
-    cmds:
-    - curl -sL https://raw.githubusercontent.com/babarot/afx/HEAD/hack/install | sh
-    - echo 'Done. Run "afx install" next.'
-
-  brew:
-    desc: "Install brew and run brew bundle"
-    cmds:
-    - sh ./etc/scripts/brew.sh
-    - brew bundle
-    - echo 'Done. For saving your brew packages added newly, run "brew bundle dump".'
-
-  list:
-    desc: "Show dot files in this repo"
-    cmds:
-    - |
-      for file in $(echo .??* bin); do
-        if [[ ! "$file" =~ ^(\.DS_Store|\.git|\.gitmodules|\.travis\.yml|\.vscode|\.scratch)$ ]]; then
-          /bin/ls -dF "$file"
-        fi
-      done
+    - git submodule update --init --recursive
 
   install:
-    desc: "Create symlink to home directory"
+    desc: "Install dotfiles using dotbot"
     cmds:
-    - echo 'Copyright (c) 2013-2015 BABAROT All Rights Reserved.'
-    - echo '==> Start to link dotfiles to home directory.'
-    - echo ''
-    - |
-      for file in $(echo .??* bin); do
-        if [[ ! "$file" =~ ^(\.DS_Store|\.git|\.gitmodules|\.travis\.yml|\.vscode|\.scratch)$ ]]; then
-          ln -sfnv "$(pwd)/$file" "$HOME/$file"
-        fi
-      done
+    - ./install
 
-  clean:
-    desc: "Remove the dot file symlinks"
+  update-submodules:
+    desc: "Update Dotbot to latest version"
     cmds:
-    - echo 'Remove dot files in your home directory...'
-    - |
-      for file in $(echo .??* bin); do
-        if [[ ! "$file" =~ ^(\.DS_Store|\.git|\.gitmodules_
+    - git submodule update --remote dotbot
+
+  sync:
+    desc: "Sync repo and reinstall dotfiles"
+    cmds:
+    - git pull origin main
+    - task: install
+  # all:
+  #   desc: "Run brew, install, asdf, and afx tasks"
+  #   deps:
+  #   - brew
+  #   - install
+  #   - asdf
+  #   - afx
+  #   # Run dependencies sequentially (as in Makefile)
+  #   parallel: false
+
+  # k8:
+  #   desc: "maybe use helmfile???"
+  #   cmds:
+  #   - cask install --cask docker
+  #   - brew install minikube
+  #   - brew install helm
+  #   - brew install kubectl
+  #   - brew install kubectx
+
+  # afx:
+  #   desc: "Install babarot/afx"
+  #   cmds:
+  #   - curl -sL https://raw.githubusercontent.com/babarot/afx/HEAD/hack/install | sh
+  #   - echo 'Done. Run "afx install" next.'
+
+  # brew:
+  #   desc: "Install brew and run brew bundle"
+  #   cmds:
+  #   - sh ./etc/scripts/brew.sh
+  #   - brew bundle
+  #   - echo 'Done. For saving your brew packages added newly, run "brew bundle dump".'
+
+  # list:
+  #   desc: "Show dot files in this repo"
+  #   cmds:
+  #   - |
+  #     for file in $(echo .??* bin); do
+  #       if [[ ! "$file" =~ ^(\.DS_Store|\.git|\.gitmodules|\.travis\.yml|\.vscode|\.scratch)$ ]]; then
+  #         /bin/ls -dF "$file"
+  #       fi
+  #     done
+
+  # install:
+  #   desc: "Create symlink to home directory"
+  #   cmds:
+  #   - echo 'Copyright (c) 2013-2015 BABAROT All Rights Reserved.'
+  #   - echo '==> Start to link dotfiles to home directory.'
+  #   - echo ''
+  #   - |
+  #     for file in $(echo .??* bin); do
+  #       if [[ ! "$file" =~ ^(\.DS_Store|\.git|\.gitmodules|\.travis\.yml|\.vscode|\.scratch)$ ]]; then
+  #         ln -sfnv "$(pwd)/$file" "$HOME/$file"
+  #       fi
+  #     done
+
+  # clean:
+  #   desc: "Remove the dot file symlinks"
+  #   cmds:
+  #   - echo 'Remove dot files in your home directory...'
+  #   - |
+  #     for file in $(echo .??* bin); do
+  #       if [[ ! "$file" =~ ^(\.DS_Store|\.git|\.gitmodules_

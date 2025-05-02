@@ -1,0 +1,22 @@
+{
+    "MAGFeatureUI/autoUpdate": true,
+    "MAGFeatureUI/autoUpdate.type": "bool",
+    "MAGFeatureUI/objectName": "",
+    "MAGFeatureUI/objectName.type": "QString",
+    "MAGFeatureUI/showUpdateWidget": false,
+    "MAGFeatureUI/showUpdateWidget.type": "bool",
+    "MAGNestUISettings/disableAndUncheckMirrorFlag": true,
+    "MAGNestUISettings/disableAndUncheckMirrorFlag.type": "bool",
+    "MAGNestUISettings/enableCustomizedTemplate": true,
+    "MAGNestUISettings/enableCustomizedTemplate.type": "bool",
+    "MAGNestUISettings/objectName": "",
+    "MAGNestUISettings/objectName.type": "QString",
+    "MAGNestUISettings/showExportConfigEditor": true,
+    "MAGNestUISettings/showExportConfigEditor.type": "bool",
+    "MAGNestUISettings/showKittingWidgets": false,
+    "MAGNestUISettings/showKittingWidgets.type": "bool",
+    "MAGNestUISettings/showSaveWidget": false,
+    "MAGNestUISettings/showSaveWidget.type": "bool",
+    "System/Units/5": 1280,
+    "System/Units/5.type": "int"
+}

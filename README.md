@@ -1,3 +1,5 @@
+[![wakatime](https://wakatime.com/badge/github/TheBranchDriftCatalyst/dotfiles-2024.svg)](https://wakatime.com/badge/github/TheBranchDriftCatalyst/dotfiles-2024)
+
 # TODO
 
 

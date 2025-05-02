@@ -33,6 +33,7 @@ source <(skaffold completion zsh)
 source <(minikube completion zsh)
 source <(docker completion zsh)
 
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # export fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
 # export PATH="$HOME/.asdf/shims:$PATH"

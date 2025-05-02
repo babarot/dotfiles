@@ -6,13 +6,14 @@ import subprocess
 from datetime import datetime
 
 from dateutil import relativedelta
-from git import Repo, GitCommandError
+from git import GitCommandError, Repo
+from rich.text import Text
+from textual import events
 
 # Textual imports
 from textual.app import App, ComposeResult
-from textual.widgets import DataTable, Header, Footer
-from textual import events
-from rich.text import Text
+from textual.widgets import DataTable, Footer, Header
+
 
 def relative_time(timestamp: float) -> str:
     """Convert a commit timestamp to a relative time string like '2 hours ago'."""
@@ -31,6 +32,7 @@ def relative_time(timestamp: float) -> str:
         return f"{diff.minutes} minute{'s' if diff.minutes > 1 else ''} ago"
     else:
         return "just now"
+
 
 def get_all_pr_info() -> dict:
     """
@@ -61,6 +63,7 @@ def get_all_pr_info() -> dict:
         logging.debug("Failed to fetch PR info: %s", e)
     return pr_map
 
+
 def get_remote_tracking(ref) -> str:
     """Return the remote tracking branch for a local branch ref, if it exists."""
     if ref.path.startswith("refs/heads/"):
@@ -68,13 +71,16 @@ def get_remote_tracking(ref) -> str:
             tracking = getattr(ref, "tracking_branch", lambda: None)()
             return tracking.name if tracking is not None else "None"
         except Exception as e:
-            logging.debug("Error fetching remote tracking for branch %s: %s", ref.path, e)
+            logging.debug(
+                "Error fetching remote tracking for branch %s: %s", ref.path, e
+            )
             return "Error"
     return "N/A"
 
+
 class BranchTableApp(App):
     """Textual app to display Git branches in an interactive table."""
-    
+
     CSS = """
     Screen {
         background: #1e1e1e;
@@ -169,7 +175,9 @@ class BranchTableApp(App):
         # Collect branches (both local and remote)
         self.branches = []
         for ref in self.repo.refs:
-            if ref.path.startswith("refs/heads/") or ref.path.startswith("refs/remotes/"):
+            if ref.path.startswith("refs/heads/") or ref.path.startswith(
+                "refs/remotes/"
+            ):
                 self.branches.append(ref)
         # Sort branches by last commit date (most recent first)
         self.branches.sort(key=lambda r: r.commit.committed_date, reverse=True)
@@ -190,7 +198,9 @@ class BranchTableApp(App):
             remote_tracking = get_remote_tracking(ref)
             last_updated = relative_time(ref.commit.committed_date)
             pr_info = self.pr_info_map.get(short_name, "None")
-            data_table.add_row(short_name, author, remote_tracking, last_updated, merged_flag, pr_info)
+            data_table.add_row(
+                short_name, author, remote_tracking, last_updated, merged_flag, pr_info
+            )
 
     def is_merged(self, branch_name: str) -> bool:
         """Check if a branch is merged into HEAD."""
@@ -199,7 +209,9 @@ class BranchTableApp(App):
             merged_branches = [b.replace("*", "").strip() for b in merged_branches]
             return branch_name in merged_branches
         except Exception as e:
-            logging.debug("Error checking merge status for branch %s: %s", branch_name, e)
+            logging.debug(
+                "Error checking merge status for branch %s: %s", branch_name, e
+            )
             return False
 
     def action_delete_branch(self) -> None:
@@ -223,29 +235,39 @@ class BranchTableApp(App):
             # self.repo.delete_head(local_ref, force=True)
             logging.debug("Deleted local branch: %s", branch_name)
         except (IndexError, GitCommandError, KeyError) as e:
-            logging.debug("Local branch deletion failed or branch does not exist: %s", e)
+            logging.debug(
+                "Local branch deletion failed or branch does not exist: %s", e
+            )
         # Delete remote branch if remote tracking exists.
         try:
             remote_tracking = None
             # Find a remote ref that ends with the branch name.
             for ref in self.repo.refs:
-                if ref.path.startswith("refs/remotes/") and ref.name.endswith(branch_name):
+                if ref.path.startswith("refs/remotes/") and ref.name.endswith(
+                    branch_name
+                ):
                     remote_tracking = ref
                     break
             if remote_tracking:
                 # remote_tracking.name is like origin/branch_name
                 remote_name, remote_branch = remote_tracking.name.split("/", 1)
+                # TODO: For the test lets mock this and assert the args shape/vals
                 subprocess.check_call(
                     ["git", "push", remote_name, "--delete", remote_branch],
                     cwd=self.repo_path,
                 )
-                logging.debug("Deleted remote branch: %s/%s", remote_name, remote_branch)
+                logging.debug(
+                    "Deleted remote branch: %s/%s", remote_name, remote_branch
+                )
         except Exception as e:
             logging.debug("Remote branch deletion failed: %s", e)
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Interactive Git Branch Table")
-    parser.add_argument("--repo-path", default=".", help="Path to the local Git repository")
+    parser.add_argument(
+        "--repo-path", default=".", help="Path to the local Git repository"
+    )
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     args = parser.parse_args()
     BranchTableApp(repo_path=args.repo_path, debug=args.debug).run()

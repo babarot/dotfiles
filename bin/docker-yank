@@ -8,7 +8,7 @@ if [[ -z "$container" ]]; then
   exit 1
 fi
 
-# 2. Inside the chosen container, list top-level directories (from /) and use fzf for selection.
+# 2. Inside the chosen container, list top-level (50 deep) directories (from /) and use fzf for selection.
 dir=$(docker exec "$container" find / -maxdepth 50 -type d 2>/dev/null | fzf --prompt="Select a directory: ")
 
 if [[ -z "$dir" ]]; then

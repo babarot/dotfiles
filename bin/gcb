@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+# gcb.sh - "Git Checkout Branch" with fzf integration for interactive branch switching
+#
+# Displays each branch in two lines:
+#   1) "branch (date by author)"
+#   2) "  commit subject"
+# Then checks out the chosen branch (local or remote).
+#
+# Enhancements:
+#  - Ensures branches are gcbed by the last commit date ("date changed").
+#  - Adjusts formatting based on terminal width.
+#  - Disables preview by default; use the -p flag to force the preview.
+
+# Parse command-line options
+preview_enabled=0
+while getopts "p" opt; do
+  case $opt in
+  p)
+    preview_enabled=1
+    ;;
+  \?)
+    echo "Usage: $0 [-p]" >&2
+    exit 1
+    ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+# Set preview window behavior based on flag
+if [ $preview_enabled -eq 1 ]; then
+  fzf_preview="right:60%:wrap"
+else
+  fzf_preview="hidden"
+fi
+
+# Ensure we are in a git repository
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+  echo "Error: not inside a Git repository." >&2
+  exit 1
+}
+
+# Ensure fzf is available
+command -v fzf >/dev/null 2>&1 || {
+  echo "Error: 'fzf' is not installed or not in PATH." >&2
+  exit 1
+}
+
+# Determine terminal width and set formatting thresholds for author and message lengths
+cols=$(tput cols)
+if [ "$cols" -lt 80 ]; then
+  max_author=10
+  max_msg=40
+else
+  max_author=15
+  max_msg=60
+fi
+
+# Determine current time and threshold for "recent" (30 days ago)
+current_time=$(date +%s)
+recent_threshold=$((30 * 24 * 60 * 60)) # 30 days in seconds
+cutoff=$((current_time - recent_threshold))
+
+# Collect all local & remote branches, ignoring HEAD refs.
+# Output fields (tab-separated): epoch, relative_date, short_date, author, subject, branch.
+git for-each-ref --sort=-committerdate \
+  --format='%(committerdate:unix)%09%(committerdate:relative)%09%(committerdate:short)%09%(authorname)%09%(contents:subject)%09%(refname:short)' \
+  refs/heads refs/remotes 2>/dev/null |
+  grep -v -E '/HEAD$|^HEAD$' |
+  awk -F $'\t' -v cutoff="$cutoff" -v max_author="$max_author" -v max_msg="$max_msg" '
+{
+  epoch     = $1
+  rel_date  = $2
+  shortdate = $3
+  author    = $4
+  msg       = $5
+  branch    = $6
+
+  # Decide which date format to display
+  if (epoch >= cutoff) {
+    date_str = rel_date
+  } else {
+    date_str = shortdate
+  }
+
+  # Truncate author and message based on terminal size thresholds
+  if (length(author) > max_author) {
+    author = substr(author, 1, max_author)"…"
+  }
+  if (length(msg) > max_msg) {
+    msg = substr(msg, 1, max_msg)"…"
+  }
+
+  # Construct the two display lines:
+  #   line1: "branch (date_str by author)"
+  #   line2: "  msg"
+  line1 = branch " (" date_str " by " author ")"
+  line2 = "  " msg
+
+  # Print two fields, separated by a TAB:
+  #   1) the hidden branch name
+  #   2) two visible lines (line1 + newline + line2)
+  # End each record with a null character so fzf --read0 sees separate items.
+  printf "%s\t%s\n%s%c", branch, line1, line2, 0
+}' |
+  fzf --read0 \
+    --prompt="Branch> " \
+    --header="Select a Git branch to switch to:" \
+    --delimiter='\t' \
+    --with-nth=2.. \
+    --preview='git diff --color=always HEAD...{1}' \
+    --preview-window="$fzf_preview" |
+  {
+    # fzf outputs the chosen multi-line item to stdout.
+    # We only need the first line to extract the hidden branch name.
+    IFS= read -r first_line
+    [[ -z "$first_line" ]] && exit 0 # user canceled
+
+    # The branch name is the first field (before the tab).
+    selected_branch="$(echo "$first_line" | cut -f1)"
+
+    # Distinguish local vs. remote by checking known remotes.
+    remote_name="${selected_branch%%/*}"
+    if git remote | grep -qx "$remote_name"; then
+      git checkout --track "$selected_branch"
+    else
+      git checkout "$selected_branch"
+    fi
+  }
+
+# # -- [Optional: Zsh completion integration] --------------------------------
+# if [[ -n "${ZSH_VERSION:-}" ]]; then
+#   _gcb() {
+#     local branches
+#     branches=$(git for-each-ref --format='%(refname:short)' refs/heads refs/remotes 2>/dev/null \
+#                | grep -v -E '/HEAD$|^HEAD$')
+#     compadd -- ${=branches}
+#   }
+#   compdef _gcb gcb
+# fi

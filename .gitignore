@@ -16,6 +16,7 @@
 **/.next/
 **/.yarn/
 
+.envrc
 
 .kube/http-cache/
 .kube/cache/
@@ -23,3 +24,13 @@
 **/.tasks/
 
 /.backup
+.tool-versions
+.scratch/
+.codegpt/
+
+# Not a fan of this, dont move this pattern off this computer lol
+**/create_local_superuser.py
+docker/
+Taskfile.yaml
+Compose
+Procfile

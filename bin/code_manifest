@@ -1,0 +1,84 @@
+#!/usr/bin/env zsh
+
+# Exclusion dictionary constant: map file or folder patterns that should be excluded.
+# Using an associative array provides a clear and extendable way to manage exclusion patterns.
+typeset -A EXCLUDE_DICT=(
+  ["node_modules"]="true"
+  [".git"]="true"
+  ["venv"]="true"
+  ["__pycache__"]="true"
+)
+
+# Function to determine if a file should be excluded based on its path.
+# It iterates over the keys in the exclusion dictionary and returns success (0) if any pattern is found.
+should_exclude() {
+  local file="$1"
+  # Iterate over keys of EXCLUDE_DICT using unquoted parameter expansion.
+  for pattern in ${(k)EXCLUDE_DICT}; do
+    # Remove quotes around $pattern in the pattern expression.
+    if [[ "$file" == *$pattern* ]]; then
+      return 0  # Indicates the file should be excluded.
+    fi
+  done
+  return 1  # File does not match any exclusion pattern.
+}
+
+
+# Function to determine the appropriate clipboard command.
+copy_to_clipboard() {
+  if command -v pbcopy &>/dev/null; then
+    pbcopy
+  elif command -v xclip &>/dev/null; then
+    xclip -selection clipboard
+  elif command -v wl-copy &>/dev/null; then
+    wl-copy
+  else
+    echo "No clipboard utility found. Please install pbcopy, xclip, or wl-copy."
+    exit 1
+  fi
+}
+
+# Check if at least one argument is provided.
+if [ $# -eq 0 ]; then
+  echo "Usage: $0 <file_or_directory1> [file_or_directory2 ...]"
+  exit 1
+fi
+
+# Initialize the output variable.
+output=""
+
+# Function to process a single file.
+process_file() {
+  local file="$1"
+  # Check against the exclusion dictionary.
+  if should_exclude "$file"; then
+    echo "Skipping excluded file: $file"
+    return
+  fi
+  if [ -f "$file" ]; then
+    # Append file content wrapped in markdown code blocks.
+    output+="\`\`\`$file\n"
+    output+="$(<"$file")\n"
+    output+="\`\`\`\n\n"
+  else
+    echo "Warning: '$file' is not a valid file."
+  fi
+}
+
+# Iterate over each provided argument.
+for item in "$@"; do
+  if [ -d "$item" ]; then
+    # If it's a directory, find all files within it.
+    while IFS= read -r -d '' file; do
+      process_file "$file"
+    done < <(find "$item" -type f -print0)
+  else
+    # If it's a file, process it directly.
+    process_file "$item"
+  fi
+done
+
+# Copy the output to the clipboard.
+echo -e "$output" | copy_to_clipboard
+
+echo "Manifest copied to clipboard."

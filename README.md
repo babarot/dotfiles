@@ -1,19 +1,9 @@
 # TODO
 
-install fzf-git
-and some of these https://www.youtube.com/watch?v=mmqDYw9C30I
 
-Need to streamline this a bit more.  Also... might just move as much as i can to NIX
-
-- change the .afx manifest structure
-  - i want a file for each functional component block
-  - (i.e., kubernetes setup, virt subsystem)
-- Streamline initial instalation and boot
--
-
-> Not all programs will work initially, all of the steps need to be completed:
->
-> - e.g., neovim plugins wont install until npm (asdf) is installed
+- install the following
+  - install fzf-git
+  - and some of these https://www.youtube.com/watch?v=mmqDYw9C30I
 
 # dotfiles
 

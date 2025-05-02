@@ -1,0 +1,21 @@
+#!/usr/bin/env zsh
+
+# 1. List running containers (showing ID and name), and let fzf pick one.
+container=$(docker ps --format '{{.ID}}: {{.Names}}' | fzf --prompt="Select a container: " | awk -F: '{print $1}')
+
+if [[ -z "$container" ]]; then
+  echo "No container selected. Exiting."
+  exit 1
+fi
+
+# 2. Inside the chosen container, list top-level (50 deep) directories (from /) and use fzf for selection.
+dir=$(docker exec "$container" find / -maxdepth 50 -type d 2>/dev/null | fzf --prompt="Select a directory: ")
+
+if [[ -z "$dir" ]]; then
+  echo "No directory selected. Exiting."
+  exit 1
+fi
+
+# 3. Copy the selected directory from the container to the current host directory.
+echo "Copying $dir from container $container to the current directory..."
+docker cp "$container:$dir" .

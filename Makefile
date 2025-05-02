@@ -1,6 +1,6 @@
 DOTPATH    := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 CANDIDATES := $(wildcard .??*) bin
-EXCLUSIONS := .DS_Store .git .gitmodules .travis.yml .vscode
+EXCLUSIONS := .DS_Store .git .gitmodules .travis.yml .vscode .scratch
 DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 
 .DEFAULT_GOAL := help
@@ -8,13 +8,14 @@ DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 all: brew install asdf afx
 
 k8: ## maybe use helmfile???
-  cask install --cask docker
+	cask install --cask docker
 	brew install minikube
 	brew install helm 
 	brew install kubectl
 	brew install kubectx	
 
 asdf: ## NOTE, neovim wont work till asdf install NPM dependency
+	# @brew install asdf
 	@asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
 	@asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
 	@asdf plugin-add python
@@ -22,6 +23,8 @@ asdf: ## NOTE, neovim wont work till asdf install NPM dependency
 	@asdf install
 
 afx: ## Install babarot/afx
+	# NOTE: afx wont be accessible until the dotfiles are added, afx install doesnt add afx to the path bah
+	# the dotfile sym linking has it there though.
 	@curl -sL https://raw.githubusercontent.com/babarot/afx/HEAD/hack/install | sh
 	@echo 'Done. Run "afx install" next.'
 
@@ -43,6 +46,9 @@ clean: ## Remove the dot file symlinks
 	@echo 'Remove dot files in your home directory...'
 	@-$(foreach val, $(DOTFILES), rm -vrf $(HOME)/$(val);)
 	# -rm -rf $(DOTPATH)
+
+fix-permissions:
+	@chmod +x ./bin/*
 
 
 help: ## Self-documented Makefile

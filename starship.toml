@@ -1,0 +1,400 @@
+# Get editor completions based on the config schema
+# https://starship.rs/config/#direnv
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Left prompt format
+# format = """\
+# $direnv\
+# $directory\
+# $git_branch\
+# $git_status\
+# $character
+# """
+
+# # # Right prompt format (appears aligned right on same line)
+right_format = """\
+$memory_usage\
+$battery\
+"""
+
+[memory_usage]
+disabled = false
+threshold = 12  # always show
+format = "[$symbol $ram]($style) "
+symbol = "🧠"
+style = "bold blue"
+
+[directory]
+disabled = false
+truncation_length = 3
+truncate_to_repo = true
+truncation_symbol = "⚓/"
+# truncation_symbol = "…/"
+
+format = "[$path]($style)[$read_only]($read_only_style) "
+style = "fg:#00FFFF bold"     # Neon cyan for directory path
+read_only = "🔒"               # Lock icon (Nerd Font) for read-only dirs&#8203;:contentReference[oaicite:6]{index=6}
+read_only_style = "fg:red bold"  # Red for the lock to indicate non-writable
+
+# # 2. Git: branch name and status
+# [git_branch]
+# disabled = false
+# format = "[$symbol$branch]($style) "  # Show branch icon + name
+# symbol = " "                    # Branch icon (NF Octicon)**&#8203;:contentReference[oaicite:7]{index=7}**
+# style = "fg:#9E00FF bold"        # Purple for branch name
+
+[direnv]
+disabled = false
+symbol = ""
+# format = "[$symbol$loaded/$allowed]($style) "
+format = "[$symbol$loaded]($style) "
+allowed_msg = "🟢 " 
+not_allowed_msg = "🚫 "
+loaded_msg = "🟢 "
+unloaded_msg = "⚠️ "
+denied_msg = "🔴 "
+
+
+[git_metrics]
+disabled = false
+
+[git_status]
+disabled = false
+# Show symbols for git status inside parentheses, e.g. "(⇡1!?✘)".
+format = "[($all_status$ahead_behind)]($style) "
+style = "fg:#FF00FF bold"        # Hot pink for git status summary
+# Use Nerd Font / Unicode symbols for each git status component (monospaced, no emoji):
+# stashed    = "$ (${count})"   # Stashed changes (symbolize with "$" for stash)
+# ahead      = "⇡"   # Commits ahead of remote
+# behind     = "⇣"   # Commits behind remote
+# diverged   = "⇕"   # Branch has diverged
+# conflicted = "≠"   # Merge conflicts (not an emoji, "≠" or "=" can indicate conflict)
+# deleted    = "✘"   # Deleted files
+# renamed    = "»"   # Renamed files
+# modified   = "!"   # Modified files
+# staged     = "+"   # Staged changes
+# untracked  = "?"   # Untracked files
+
+
+# [git_status]
+# Using a zero-width space after the emoji to help align symbols.
+conflicted = "\u200B⚔️\u200B ${count} "   
+ahead      = "\u200B⬆️\u200B ${count} "
+behind     = "\u200B⬇️\u200B ${count} "
+diverged = "🔀 ${ahead_count}/${behind_count} "
+staged     = "\u200B✔️\u200B ${count} "
+modified   = "\u200B✏️\u200B ${count} "
+deleted    = "\u200B🗑️\u200B ${count} "
+untracked  = "\u200B❓\u200B${count} "
+stashed    = "\u200B🏦\u200B (${count}) "
+# 💼
+
+[shlvl]
+disabled = false
+
+# # 7. Command duration (if last command was slow)
+[cmd_duration]
+disabled = false
+min_time = 2000             # Show if last command took > 2 seconds
+show_milliseconds = true   # Round to second precision
+format = "[⌛ $duration]($style) " 
+# ⏰
+# ^ Stopwatch icon with the duration (e.g., " 5s" for a 5-second command)
+style = "fg:#FFEF00 bold"   # Use neon yellow for visibility (duration highlight)
+# ( is FontAwesome stopwatch; make sure your Nerd Font includes this glyph)
+
+# # 8. Background jobs indicator
+[jobs]
+disabled = false
+threshold = 1
+format = "[$symbol$number]($style) "
+symbol = "✦"               # Star symbol for background jobs (shows when jobs >= threshold)
+style = "fg:#FF00FF bold"  # Pink for jobs count
+
+[character]
+success_symbol = "[🚀](bold green) "
+error_symbol   = "[💥](bold red) " 
+
+# Shell context: Username and Hostname
+[username]
+show_always = false                       # show user only when not default (e.g. root or SSH)
+style_user  = "bold cyan"                 # bright cyan for regular user
+style_root  = "bold red"                  # red if user is root
+format      = "[$user]($style)"
+
+[hostname]
+ssh_only = true                           # only show host when in SSH session
+# prefix   = "@"
+style    = "bold cyan"
+format   = "[$hostname]($style) "
+
+# Git SCM: Branch name and repository status
+[git_branch]
+format = "[$symbol$branch]($style) "
+symbol = "🌴 "                             # test tube icon for Git branch (cyberpunk flair)
+style  = "bold #ff2975"                   # hot pink for branch name
+
+# Python version and virtual env (PDM/Poetry support via pyproject detection)
+[python]
+disabled = false
+symbol   = "🐍 "
+# Show Python version, and if a virtualenv is active, show its name prefixed with an emoji
+format   = "via [$symbol${version}(\\(@ ${virtualenv}\\) )]($style) "
+style    = "bold yellow"                 # bright yellow for Python version info
+
+# Docker context (if active Docker context differs from default)
+[docker_context]
+disabled = false
+symbol   = "🐳 "
+format   = "via [$symbol$context]($style) "
+style    = "bold #00dfff"                # neon blue for Docker context name
+
+# Kubernetes context (if KUBECONFIG current context is set)
+[kubernetes]
+disabled = true
+
+symbol   = "☸️ "
+format   = "[$symbol$context(\\($namespace\\))]($style) "
+style    = "bold cyan"                   # cyan for K8s cluster (context/namespace)
+
+# AWS profile (if AWS_PROFILE or AWS credentials are set)
+[aws]
+disabled = false
+symbol   = "🌐 "
+format   = "[$symbol$profile(\\($region\\))]($style) "
+style    = "bold cyan"                   # cyan for AWS profile (and region)
+
+# Battery indicator (with synthwave-style icons and colors)
+[battery]
+disabled          = false
+full_symbol       = "🔋 "
+charging_symbol   = "🔌 "                # charging (plug) icon
+discharging_symbol= "⚡ "                # discharging (lightning) icon
+empty_symbol      = "🪫 "                # empty battery icon
+format            = "[$symbol$percentage]($style) "   # show battery icon + percent
+
+[[battery.display]]                     # 0-10%: red (critical low)
+threshold = 10
+style     = "bold red"
+
+[[battery.display]]                     # 10-30%: yellow (low)
+threshold = 30
+style     = "bold yellow"
+
+# Current time (24h clock) – always visible
+[time]
+disabled      = true
+time_format   = "%H:%M:%S"              # display time as HH:MM:SS
+# symbol        = "⏰ "
+format        = "[${symbol}${time}]($style) "
+style         = "bold bright-blue"      # bright blue for current time
+
+[git_commit]
+disabled = false
+commit_hash_length = 8
+style = "bold white"
+
+[git_state]
+disabled = false
+format = '[\($state( $progress_current of $progress_total)\)]($style) '
+
+# [prompt]
+# add_newline = false  # Keep prompt on one line
+# # Define the order of modules (segments) in the prompt:
+# format = "$username$hostname$directory$git_branch$git_status$python$docker_context$kubernetes$aws$cmd_duration$jobs$time$battery$character"
+
+# 1. Shell context: user@host and current directory
+# [username]
+# disabled = false
+# show_always = true            # Always show username (even if not root)
+# format = "[$user]($style)"    # Username (no trailing space, we'll add "@" in hostname)
+# style_user = "fg:#9E00FF bold"  # Purple for normal user (synthwave violet)
+# style_root = "fg:red bold"      # Red for root (to warn when operating as root)
+# # (Root is red as a caution; you can set it to a neon color if preferred.)
+
+# [hostname]
+# disabled = false
+# ssh_only = false              # Show hostname even on local machine
+# format = "[@$hostname]($style) "  # Prepend "@" to hostname and include a trailing space
+# style = "fg:#9E00FF bold"         # Same purple as username for a unified user@host
+
+# --- part 2 end
+
+# Directory segment (current working directory)
+# [directory]
+# truncation_length = 3
+# truncation_symbol = "…/"
+# format = "[$path]($style) "
+# style  = "bold #8c1eff"                   # neon purple for directory path
+
+# [[battery.display]]                     # 30-100%: magenta (charging/full)
+# threshold = 100
+# style     = "bold magenta"
+
+# Command duration (shown if last command >2 seconds)
+# [cmd_duration]
+# disabled  = false
+# min_time  = 10000
+# # symbol    = "⏰ "
+# format    = "[${symbol}${duration}]($style) "
+# style     = "bold yellow"               # yellow for timing info
+
+# [battery]
+# full_symbol = "🔋"
+# charging_symbol = "🔌"
+# discharging_symbol = "⚡"
+
+# [[battery.display]]
+# threshold = 30
+# style = "bold red"
+
+# [character]
+# error_symbol = "[✖](bold red) "
+
+# [cmd_duration]
+# min_time = 10_000  # Show command duration over 10,000 milliseconds (=10 sec)
+# format = " took [$duration]($style)"
+
+# [directory]
+# truncation_length = 5
+# format = "[$path]($style)[$lock_symbol]($lock_style)"
+
+# [git_branch]
+# format = " [$symbol$branch]($style) "
+# symbol = "🍣 "
+# style = "bold yellow"
+
+# [hostname]
+# ssh_only = true
+# format = "[$hostname]($style)"
+# trim_at = "-"
+# style = "bold dimmed white"
+# disabled = false
+
+# [julia]
+# format = "[$symbol$version]($style) "
+# symbol = "ஃ "
+# style = "bold green"
+
+# [memory_usage]
+# format = "$symbol[${ram}( | ${swap})]($style) "
+# threshold = 70
+# style = "bold dimmed white"
+# disabled = false
+
+# [package]
+# disabled = true
+
+# [python]
+# format = "[$symbol$version]($style) "
+# style = "bold green"
+
+# [rust]
+# format = "[$symbol$version]($style) "
+# style = "bold green"
+
+# [time]
+# time_format = "%T"
+# format = "🕙 $time($style) "
+# style = "bright-white"
+# disabled = false
+
+# [typst]
+# format = "[$symbol($version)]($style)"
+# style = "bold #239dae"
+
+# [username]
+# style_user = "bold dimmed blue"
+# show_always = false
+
+# [nodejs]
+# format = "via [🤖 $version](bold green) "
+
+# # 9. Battery indicator
+# [battery]
+# disabled = false
+# full_symbol = ""          # Full battery icon
+# charging_symbol = ""      # Charging icon
+# discharging_symbol = ""   # Battery in use icon
+# format = "[$symbol$percentage]($style) " 
+# # ^ e.g. " 100%" or " 45%" – trailing space separates from prompt char
+# style = "fg:#00FFFF bold"  # Cyan for battery status
+# [[battery.display]]        # Battery styling for low threshold:
+# threshold = 10
+# style = "fg:red bold"      # Red when below 10% (low battery warning)
+
+# # 10. Time (current local time)
+# [time]
+# disabled = false
+# use_12hr = false
+# time_format = "%H:%M"       # 24-hour format (HH:MM)
+# format = "[ $time]($style) "
+# # ^ Clock icon + time (e.g., " 23:45")
+# style = "fg:#9E00FF bold"   # Purple for time
+
+# # 11. Prompt character (≫ for prompt readiness, color indicates status)
+# [character]
+# disabled = false
+# format = "$symbol " 
+# success_symbol = "[❯](bold green)"  # Green arrow on success
+# error_symbol = "[❯](bold red)"      # Red arrow if last command failed
+# vicmd_symbol = "[❮](bold green)"   # (for vi-mode, if using zsh/fish vi mode)
+
+
+# Synthwave aesthetic Starship prompt configuration with emoji icons.
+# This prompt highlights version managers, cloud context, and git status in neon colors.
+# Requires a Nerd Font for certain icons and an emoji-compatible font. Optimized for speed and clarity.
+
+# Prompt format: Put time, battery, user@host, context, directory, git, tool versions on first line, prompt char on new line.
+# format = """$time $battery $username$hostname $kubernetes$aws$directory $git_branch$git_status $python $docker_context $cmd_duration$line_break$character"""
+
+# --- part 2 
+# Prompt character (shell indicator)
+
+# conflicted = "⚔️ "
+# ahead = "🏎️ 💨 ×${count} "
+# behind = "🐢 ×${count} "
+
+# untracked = "🛤️  ×${count} "
+# stashed = "📦 "
+# modified = "📝 ×${count} "
+# staged = "🗃️  ×${count} "
+# renamed = "📛 ×${count} "
+# deleted = "🗑️  ×${count} "
+# style = "bright-white"
+# format = "$all_status$ahead_behind"
+
+# # 3. Python environment/version (PDM/Poetry support)
+# [python]
+# disabled = false
+# pyenv_version_name = false   # Show actual Python version number (not pyenv name)&#8203;:contentReference[oaicite:8]{index=8}
+# pyenv_prefix = "pyenv "      # Prefix "pyenv " if using a pyenv-managed version
+# python_binary = "python"     # Which binary to query for version
+# scan_for_pyfiles = true      # Show Python version in any directory with Python files
+# format = "[$symbol$pyenv_prefix$version( ($virtualenv))]($style) " 
+# # ^ Shows Python icon, version, and venv name in parentheses (if in a virtualenv).
+# symbol = " "                # Python logo icon (Nerd Font Devicons)
+# style = "fg:#FF00FF bold"    # Pink for Python segment
+
+# # 4. Docker context
+# [docker_context]
+# disabled = false
+# only_with_files = true       # Show only in directories that contain Docker-related files
+# format = "[$symbol$context]($style) "
+# symbol = " "                # Docker whale icon&#8203;:contentReference[oaicite:9]{index=9}
+# style = "fg:#00FFFF bold"    # Cyan for Docker context name
+
+# # 5. Kubernetes context (K8s)
+# [kubernetes]
+# disabled = false            # Enable Kubernetes context segment
+# format = "[$symbol$context( ($namespace))]($style) "
+# symbol = "☸ "               # Kubernetes context cluster icon (wheel)
+# style = "fg:#00FFFF bold"   # Cyan for K8s context (matches Docker for "infra" contexts)
+
+# # 6. AWS context (profile and region)
+# [aws]
+# disabled = false
+# format = "[$symbol$profile( ($region))]($style) "
+# symbol = " "               # AWS icon (Nerd Font symbol)
+# style = "fg:#FF00FF bold"   # Pink for AWS profile
+# # (Profile name shown, region in parentheses if set)

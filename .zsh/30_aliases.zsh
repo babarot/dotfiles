@@ -109,8 +109,6 @@ alias kj="killjobs"
 killjobs(){
   kill $(jobs | awk '{b=substr($1,2,1); c="%"; print c b}')
 }
-alias cleanup="find /path/to/root/dir -type d -regex '.*/\(node_modules\|.DS_Store\)' -prune -exec rm -rf '{}' +"
-
 
 brew-force-update() {
   brew cleanup -s
@@ -165,10 +163,6 @@ whatsOnPort () {
 start-docker(){
   docker-machine start
   eval "$(docker-machine env)"
-}
-
-dbash() {
-  docker exec -ti "$(did $1)" bash
 }
 
 did() {
@@ -250,6 +244,8 @@ dnuke() {
   docker rmi `docker images --filter 'dangling=true' -q --no-trunc`
   docker rm $(docker ps -a -q)
   docker rmi $(docker images -q)
+  docker volume rm $(docker volume ls -q)
+  docker container rm $(docker container ls -q)
 }
 
 ####################
@@ -364,13 +360,13 @@ function fs() {
 	fi;
 }
 
-# Use Git’s colored diff when available
-hash git &>/dev/null;
-if [ $? -eq 0 ]; then
-	function diff() {
-		git diff --no-index --color-words "$@";
-	}
-fi;
+# # Use Git’s colored diff when available
+# hash git &>/dev/null;
+# if [ $? -eq 0 ]; then
+# 	function diff() {
+# 		git diff --no-index --color-words "$@";
+# 	}
+# fi;
 
 # Create a data URL from a file
 function dataurl() {
@@ -466,15 +462,15 @@ function getcertnames() {
 	fi;
 }
 
-# `s` with no arguments opens the current directory in Sublime Text, otherwise
-# opens the given location
-function s() {
-	if [ $# -eq 0 ]; then
-		subl .;
-	else
-		subl "$@";
-	fi;
-}
+# # `s` with no arguments opens the current directory in Sublime Text, otherwise
+# # opens the given location
+# function s() {
+# 	if [ $# -eq 0 ]; then
+# 		subl .;
+# 	else
+# 		subl "$@";
+# 	fi;
+# }
 
 # `v` with no arguments opens the current directory in Vim, otherwise opens the
 # given location
@@ -500,6 +496,6 @@ function o() {
 # the `.git` directory, listing directories first. The output gets piped into
 # `less` with options to preserve color and line numbers, unless the output is
 # small enough for one screen.
-function tre() {
+function tree() {
 	tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRNX;
 }

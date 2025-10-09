@@ -21,7 +21,7 @@ macos-titlebar-style = transparent
 # theme = Solarized Dark Higher Contrast
 # theme = Builtin Solarized Dark
 # theme = Solarized Dark - Patched
-theme = tokyonight_moon
+theme = TokyoNight Moon
 
 
 font-family = "Menlo"

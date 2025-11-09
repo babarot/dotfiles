@@ -265,10 +265,9 @@ require('lazy').setup({
   },
   {
     'nvim-treesitter/nvim-treesitter',
-    commit = '05df88ebaa94d30d682d076244615786d9e7c1a5',
+    build = ':TSUpdate',
     lazy = true,
     event = { 'BufReadPost', 'BufNewFile' },
-    build = [[vim.api.nvim_command('TSUpdate')]],
     dependencies = {
       -- {
       --   'yioneko/nvim-yati',
@@ -516,21 +515,17 @@ require('lazy').setup({
   {
     -- Use commit instead of tag to use lua_ls.
     'neovim/nvim-lspconfig',
-    commit = '62856b20751b748841b0f3ec5a10b1e2f6a6dbc9',
     lazy = true,
     event = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
     dependencies = {
       {
         'williamboman/mason.nvim',
-        commit = '01dfdfd36be77cb1195b60d580315bf4e2d8e62c',
         config = true,
       },
       {
         'williamboman/mason-lspconfig.nvim',
-        commit = '93e58e100f37ef4fb0f897deeed20599dae9d128',
         config = function()
           require 'mason-lspconfig'.setup {
-            automatic_installation = true,
             ensure_installed = {
               'bashls',
               'docker_compose_language_service',
@@ -545,21 +540,8 @@ require('lazy').setup({
               'terraformls',
               'tflint',
               'yamlls',
-              'zk',
             },
           }
-          require('mason-lspconfig').setup_handlers({
-            function()
-              require('lspconfig').terraformls.setup({
-                on_attach = function(client, _) -- function(client, bufnr)
-                  client.server_capabilities.document_formatting = false
-                  client.server_capabilities.document_range_formatting = false
-                end,
-                capabilities = require('cmp_nvim_lsp').default_capabilities(),
-                filetypes = { 'terraform', 'tf' },
-              })
-            end,
-          })
         end
       },
       {
@@ -676,7 +658,7 @@ require('lazy').setup({
       { 'nvim-telescope/telescope.nvim' },
     },
     config = function()
-      require('telescope').load_extension('yaml_schema')
+      pcall(require('telescope').load_extension, 'yaml_schema')
     end
   },
 
@@ -693,8 +675,8 @@ require('lazy').setup({
       { 'hrsh7th/cmp-path',                    commit = '91ff86cd9c29299a64f968ebb45846c485725f23' },
       { 'hrsh7th/cmp-cmdline',                 commit = '8fcc934a52af96120fe26358985c10c035984b53' },
       { 'hrsh7th/cmp-emoji',                   commit = '19075c36d5820253d32e2478b6aaf3734aeaafa0' },
-      { 'hrsh7th/cmp-vsnip',                   commit = '989a8a73c44e926199bfd05fa7a516d51f2d2752' },
-      { 'hrsh7th/vim-vsnip',                   commit = '8dde8c0ef10bb1afdbb301e2bd7eb1c153dd558e' },
+      { 'hrsh7th/cmp-vsnip',                   commit = '989a8a73c44e926199bfd05fa7a516d51f2d2752', lazy = false },
+      { 'hrsh7th/vim-vsnip',                   commit = '8dde8c0ef10bb1afdbb301e2bd7eb1c153dd558e', lazy = false },
       { 'lukas-reineke/cmp-under-comparator',  commit = '6857f10272c3cfe930cece2afa2406e1385bfef8' },
     },
     config = require('plugins.nvim-cmp'),
@@ -712,8 +694,6 @@ require('lazy').setup({
       'ThePrimeagen/git-worktree.nvim',
       { "nvim-telescope/telescope-fzf-native.nvim",    build = "make" },
       { "nvim-telescope/telescope-live-grep-args.nvim" }, -- live_grep_args を追加
-      { "L3MON4D3/LuaSnip" },                             -- snacks.nvim の依存関係
-      { "David-Kunz/snacks.nvim" },                       -- snacks.nvim を Lazy.nvim に追加
     },
     init = function()
       vim.keymap.set('n', '<space>f', '<Cmd>Telescope find_files<CR>')
@@ -822,9 +802,9 @@ require('lazy').setup({
       }
 
       -- 拡張をロード
-      require('telescope').load_extension('git_worktree')
-      require('telescope').load_extension('fzf')
-      require('telescope').load_extension('live_grep_args') -- 拡張をロード
+      pcall(require('telescope').load_extension, 'git_worktree')
+      pcall(require('telescope').load_extension, 'fzf')
+      pcall(require('telescope').load_extension, 'live_grep_args')
     end
   },
   {
@@ -833,7 +813,7 @@ require('lazy').setup({
     lazy         = true,
     event        = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
     dependencies = { 'nvim-telescope/telescope.nvim' },
-    config       = function() require('telescope').load_extension('undo') end,
+    config       = function() pcall(require('telescope').load_extension, 'undo') end,
   },
   {
     'LinArcX/telescope-command-palette.nvim',
@@ -841,7 +821,7 @@ require('lazy').setup({
     lazy         = true,
     event        = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
     dependencies = { 'nvim-telescope/telescope.nvim' },
-    config       = function() require('telescope').load_extension('command_palette') end,
+    config       = function() pcall(require('telescope').load_extension, 'command_palette') end,
   },
   {
     'cljoly/telescope-repo.nvim',
@@ -849,7 +829,7 @@ require('lazy').setup({
     lazy         = true,
     event        = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
     dependencies = { 'nvim-telescope/telescope.nvim' },
-    config       = function() require('telescope').load_extension('repo') end,
+    config       = function() pcall(require('telescope').load_extension, 'repo') end,
   },
   -- {
   --   'ThePrimeagen/telescope-git-worktree.nvim',
@@ -871,7 +851,7 @@ require('lazy').setup({
     lazy         = true,
     event        = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
     dependencies = { 'nvim-telescope/telescope.nvim' },
-    config       = function() require('telescope').load_extension('ghq') end,
+    config       = function() pcall(require('telescope').load_extension, 'ghq') end,
   },
   {
     'ahmedkhalf/project.nvim',
@@ -888,7 +868,7 @@ require('lazy').setup({
         detection_methods = { 'pattern', 'lsp' },
         patterns = { '.git' },
       }
-      require('telescope').load_extension('projects')
+      pcall(require('telescope').load_extension, 'projects')
     end
   },
 
@@ -919,18 +899,18 @@ require('lazy').setup({
         end, {})
     end,
   },
-  {
-    'RRethy/vim-illuminate',
-    commit = 'a2907275a6899c570d16e95b9db5fd921c167502',
-    lazy = true,
-    event = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
-    config = function()
-      require('illuminate').configure {
-        providers = { 'lsp', 'treesitter', 'regex' },
-        filetypes_denylist = { 'dirvish', 'fugitive', 'alpha' },
-      }
-    end
-  },
+  -- {
+  --   'RRethy/vim-illuminate',
+  --   commit = 'a2907275a6899c570d16e95b9db5fd921c167502',
+  --   lazy = true,
+  --   event = { 'BufReadPost', 'BufAdd', 'BufNewFile' },
+  --   config = function()
+  --     require('illuminate').configure {
+  --       providers = { 'lsp', 'treesitter', 'regex' },
+  --       filetypes_denylist = { 'dirvish', 'fugitive', 'alpha' },
+  --     }
+  --   end
+  -- },
   {
     'nvim-lualine/lualine.nvim',
     commit = 'e99d733e0213ceb8f548ae6551b04ae32e590c80',

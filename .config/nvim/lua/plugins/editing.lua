@@ -33,4 +33,23 @@ return {
       require('nvim-surround').setup({})
     end,
   },
+
+  -- Split/Join code blocks (using Tree-sitter)
+  {
+    'Wansmer/treesj',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    keys = {
+      { '<space>m', function() require('treesj').toggle() end, desc = 'Toggle Split/Join' },
+      -- { '<space>j', function() require('treesj').join() end, desc = 'Join Code Block' },
+      -- { '<space>s', function() require('treesj').split() end, desc = 'Split Code Block' },
+    },
+    opts = {
+      use_default_keymaps = false,  -- Use custom keymaps defined above
+      check_syntax_error = true,
+      max_join_length = 120,
+      cursor_behavior = 'hold',  -- Keep cursor position after split/join
+      notify = true,  -- Show notification on split/join
+      dot_repeat = true,  -- Enable dot repeat
+    },
+  },
 }

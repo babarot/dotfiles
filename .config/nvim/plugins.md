@@ -35,19 +35,22 @@
 
 - rafamadriz/friendly-snippets - スニペット集（blink.cmpの依存）
 
-### 編集機能 (3個)
+### 編集機能 (4個)
 
 - windwp/nvim-autopairs - 括弧自動閉じ
 - numToStr/Comment.nvim - コメントアウト（gcc, gc）
 - kylechui/nvim-surround - 囲み文字の操作（ys, ds, cs）
+- Wansmer/treesj - コードブロックの分割/結合（Tree-sitter使用）
 
-### UI・統合ツール (3個)
+### UI・統合ツール (5個)
 
 - folke/snacks.nvim - 統合UIツールパック（picker, dashboard, explorer, notifier等）
 - folke/which-key.nvim - キーバインディングヒント表示
 - nvim-lualine/lualine.nvim - ステータスライン（高速、美しい、LSP/Git統合）
+- romgrk/barbar.nvim - タブライン（バッファ一覧表示）
+- folke/trouble.nvim - 診断情報・LSP参照の統合表示
 
-### 視覚補助 (6個)
+### 視覚補助 (7個)
 
 - folke/todo-comments.nvim - TODO/FIXMEコメントのハイライト
 - ntpeters/vim-better-whitespace - 末尾空白ハイライトと自動削除
@@ -55,19 +58,22 @@
 - utilyre/barbecue.nvim - ウィンバーにパンくずリスト表示（LSP統合）
 - tummetott/reticle.nvim - カーソル行の自動表示/非表示
 - lukas-reineke/indent-blankline.nvim - インデントガイド表示（Treesitter統合）
+- kevinhwang91/nvim-hlslens - 検索結果カウント表示（[1/5]等）
 
-### Git統合 (1個)
+### Git統合 (2個)
 
 - lewis6991/gitsigns.nvim - Git差分表示、ハンク操作、ブレーム表示
+- ruanyl/vim-gh-line - GitHubでファイル/行を開く（:GH, :GHInteractive）
 
 ### 言語固有 (2個)
 
 - ray-x/go.nvim - Go開発ツール（goimport、タグ追加、テスト実行等）
 - babarot/markdown-preview.nvim - Markdownプレビュー（GitHub API使用）
 
-### アイコン (1個)
+### アイコン (2個)
 
 - echasnovski/mini.icons - アイコンサポート（snacks/lspsagaの依存）
+- nvim-tree/nvim-web-devicons - アイコンサポート（barbarの依存）
 
 ### ユーティリティライブラリ (3個)
 

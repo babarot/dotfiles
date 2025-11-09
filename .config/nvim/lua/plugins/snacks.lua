@@ -28,16 +28,21 @@ return {
       scope = { enabled = true },      -- Treesitter scope navigation
     },
     keys = {
+      -- Space prefix (shows which-key menu)
+      { '<Space>',         '<Nop>',                                      desc = '+Space Commands' },
+
       -- Picker: File/Buffer navigation
       { '<leader><space>', function() Snacks.picker.smart() end,        desc = 'Smart Find (Files/Git)' },
       { '<leader>ff',      function() Snacks.picker.files() end,        desc = 'Find Files' },
       { '<leader>fb',      function() Snacks.picker.buffers() end,      desc = 'Find Buffers' },
       { '<leader>fr',      function() Snacks.picker.recent() end,       desc = 'Recent Files' },
+      { '<Space>j',        function() Snacks.picker.recent() end,       desc = 'Recent Files' },
       { '<leader>fg',      function() Snacks.picker.git_files() end,    desc = 'Git Files' },
 
       -- Picker: Search/Grep
       { '<leader>/',       function() Snacks.picker.grep() end,         desc = 'Grep' },
       { '<leader>fw',      function() Snacks.picker.grep_word() end,    desc = 'Grep Word under Cursor' },
+      { 'Q',               function() Snacks.picker.grep_word() end,    desc = 'Grep Word under Cursor' },
       { '<leader>fl',      function() Snacks.picker.lines() end,        desc = 'Buffer Lines' },
 
       -- Picker: Git operations

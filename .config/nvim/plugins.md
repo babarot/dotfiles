@@ -42,13 +42,16 @@
 - kylechui/nvim-surround - 囲み文字の操作（ys, ds, cs）
 - Wansmer/treesj - コードブロックの分割/結合（Tree-sitter使用）
 
-### UI・統合ツール (5個)
+### UI・統合ツール (8個)
 
 - folke/snacks.nvim - 統合UIツールパック（picker, dashboard, explorer, notifier等）
 - folke/which-key.nvim - キーバインディングヒント表示
 - nvim-lualine/lualine.nvim - ステータスライン（高速、美しい、LSP/Git統合）
 - romgrk/barbar.nvim - タブライン（バッファ一覧表示）
 - folke/trouble.nvim - 診断情報・LSP参照の統合表示
+- greggh/claude-code.nvim - Claude Code統合（シンプル・ターミナル）
+- coder/claudecode.nvim - Claude Code統合（高度・WebSocket + MCP）
+- gelguy/wilder.nvim - コマンドライン強化（履歴フィルタリング・ファジー検索）
 
 ### 視覚補助 (7個)
 

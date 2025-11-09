@@ -21,6 +21,7 @@ return {
           'json',
           'make',
           'markdown',
+          'nginx',      -- Nginx configuration files (built-in support)
           'terraform',
           'yaml',
         },

@@ -77,7 +77,19 @@ return {
 
       -- Explorer
       { '<leader>e',       function() Snacks.explorer() end,            desc = 'File Explorer' },
-      { '<Space>k',        function() Snacks.explorer() end,            desc = 'File Explorer' },
+      { '<Space>k',        function()
+          -- Try to find git root, fallback to current directory
+          local current_dir = vim.fn.expand('%:p:h')
+          local git_root = vim.fn.systemlist('git -C ' .. vim.fn.shellescape(current_dir) .. ' rev-parse --show-toplevel')[1]
+
+          if vim.v.shell_error == 0 and git_root then
+            -- Open at git root if in a git repository
+            Snacks.explorer({ cwd = git_root })
+          else
+            -- Fallback to current directory
+            Snacks.explorer()
+          end
+        end, desc = 'File Explorer (Git Root or Current)' },
 
       -- Utilities
       { '<leader>.',       function() Snacks.scratch() end,              desc = 'Toggle Scratch Buffer' },

@@ -17,6 +17,8 @@ vim.filetype.add({
     [".*/templates/.*%.ya?ml"]   = "helm",
     ["helmfile.*%.ya?ml"]        = "helm",
     [".*/layouts/.*%.html"]      = "gohtmltmpl",
+    [".*/nginx/.*%.conf"]        = "nginx",  -- Nginx config files in nginx directories
+    ["nginx%.conf"]              = "nginx",  -- nginx.conf specifically
   },
   filename = {
     ["README$"] = function(path, bufnr)
@@ -55,6 +57,15 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo.shiftwidth = 4
     vim.bo.softtabstop = 4
     vim.bo.tabstop = 4
+  end,
+})
+
+-- Nginx: register treesitter parser
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup('ft-nginx', { clear = true }),
+  pattern = "nginx",
+  callback = function()
+    vim.treesitter.language.register("nginx", "nginx")
   end,
 })
 

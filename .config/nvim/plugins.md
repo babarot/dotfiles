@@ -2,21 +2,21 @@
 
 ### カラースキーム (14個)
 
-- folke/tokyonight.nvim - TokyoNightテーマ（moonスタイル、デフォルト）
-- daschw/leaf.nvim - Leafテーマ（vim/luaファイル用）
-- junegunn/seoul256.vim - Seoul256テーマ（Goファイル用）
-- marko-cerovac/material.nvim - Materialテーマ（shellファイル用）
-- projekt0n/github-nvim-theme - GitHubテーマ（bash/zshファイル用）
-- gbprod/nord.nvim - Nordテーマ（HCL/terraformファイル用）
-- rebelot/kanagawa.nvim - Kanagawaテーマ（JSONファイル用）
-- EdenEast/nightfox.nvim - Nightfoxテーマ
-- akinsho/horizon.nvim - Horizonテーマ
-- olivercederborg/poimandres.nvim - Poimandresテーマ
-- cocopon/iceberg.vim - Icebergテーマ
-- voidekh/kyotonight.vim - Kyotonightテーマ
-- AlessandroYorba/Despacio - Espacioテーマ
-- ellisonleao/gruvbox.nvim - Gruvboxテーマ
-- maxmx03/solarized.nvim - Solarizedテーマ
+- folke/tokyonight.nvim
+- daschw/leaf.nvim
+- junegunn/seoul256.vim
+- marko-cerovac/material.nvim
+- projekt0n/github-nvim-theme
+- gbprod/nord.nvim
+- rebelot/kanagawa.nvim
+- EdenEast/nightfox.nvim
+- akinsho/horizon.nvim
+- olivercederborg/poimandres.nvim
+- cocopon/iceberg.vim
+- voidekh/kyotonight.vim
+- AlessandroYorba/Despacio
+- ellisonleao/gruvbox.nvim
+- maxmx03/solarized.nvim
 
 ### カラースキーム切り替え (1個)
 
@@ -69,15 +69,20 @@
 - lewis6991/gitsigns.nvim - Git差分表示、ハンク操作、ブレーム表示
 - ruanyl/vim-gh-line - GitHubでファイル/行を開く（:GH, :GHInteractive）
 
-### 言語固有 (2個)
+### 言語固有 (3個)
 
 - ray-x/go.nvim - Go開発ツール（goimport、タグ追加、テスト実行等）
 - babarot/markdown-preview.nvim - Markdownプレビュー（GitHub API使用）
+- MeanderingProgrammer/render-markdown.nvim - Markdownレンダリング（見出し、コードブロック、テーブル等）
 
 ### アイコン (2個)
 
 - echasnovski/mini.icons - アイコンサポート（snacks/lspsagaの依存）
 - nvim-tree/nvim-web-devicons - アイコンサポート（barbarの依存）
+
+### ファイル操作 (1個)
+
+- babarot/rm.nvim - 安全なファイル削除（:Rm コマンド、gomi対応）
 
 ### ユーティリティライブラリ (3個)
 

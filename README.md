@@ -16,6 +16,7 @@ Setup guide is here: [setup-mac.md](./etc/docs/setup-mac.md)
   - Plugin manager: [tpm](https://github.com/tmux-plugins/tpm) (Press `prefix` + <kbd>I</kbd> to install)
 - Font: [nerd-fonts](https://github.com/ryanoasis/nerd-fonts#font-installation) (DejaVuSansMono Nerd Font Mono)
 
+<!--
 [![][afx]](https://babarot.me/afx)
 [![][neovim]](https://neovim.io/)
 [![][tmux]](https://github.com/tmux/tmux/wiki)
@@ -24,7 +25,6 @@ Setup guide is here: [setup-mac.md](./etc/docs/setup-mac.md)
 [tmux]:   https://img.shields.io/github/v/tag/tmux/tmux?color=1BB91F&display_name=release&label=tmux&logo=tmux&logoColor=&sort=semver
 [neovim]: https://img.shields.io/badge/neovim-v0.8.0-57A143.svg?style=popout&logo=neovim&logoColor=
 
-<!--
 [tmux]: https://img.shields.io/badge/tmux-3.3a-1BB91F.svg?style=popout&logo=tmux
 [afx]:  https://img.shields.io/badge/afx-latest-EF2D5E.svg?style=popout&logo=alchemy
 

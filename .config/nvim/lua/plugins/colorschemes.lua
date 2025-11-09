@@ -6,7 +6,7 @@ return {
   -- Already installed: tokyonight.nvim (in colorscheme.lua)
 
   -- For vim files
-  { 'daschw/leaf.nvim' },
+  -- { 'daschw/leaf.nvim' },
 
   -- For Go files
   { 'junegunn/seoul256.vim' },
@@ -98,7 +98,7 @@ return {
   { 'akinsho/horizon.nvim' },
   { 'olivercederborg/poimandres.nvim' },
   { 'cocopon/iceberg.vim' },
-  { 'voidekh/kyotonight.vim' },
+  -- { 'voidekh/kyotonight.vim' },
   { 'AlessandroYorba/Despacio' },
   { 'ellisonleao/gruvbox.nvim' },
   { 'maxmx03/solarized.nvim' },

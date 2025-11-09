@@ -9,8 +9,8 @@ return {
     event = { 'BufReadPost', 'BufNewFile' },
     config = function()
       require('nvim-treesitter.configs').setup({
-        -- Disable auto_install to avoid conflicts
-        auto_install = false,
+        -- Enable auto_install for missing parsers
+        auto_install = true,
         ensure_installed = {
           'bash',
           'go',

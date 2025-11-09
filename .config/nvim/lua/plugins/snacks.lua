@@ -9,6 +9,7 @@ return {
     lazy = false,
     dependencies = {
       'echasnovski/mini.icons',  -- Icon support (recommended)
+      'folke/which-key.nvim',    -- Required for toggle keymaps
     },
     opts = {
       -- Essential features

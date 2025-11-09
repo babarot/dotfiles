@@ -18,10 +18,10 @@ return {
           -- sh = 'material',
           -- bash = 'github_dark',
           -- zsh = 'github_dark',
-          hcl = 'nord',
           json = 'kanagawa',
-          yaml = 'tokyonight',
-          terraform = 'nord',
+          -- yaml = 'tokyonight',
+          -- hcl = 'nord',
+          -- terraform = 'seoul256',
         },
         exclude_special_buffers = true,
       })

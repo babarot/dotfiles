@@ -869,7 +869,7 @@ github:
   repo: fzf
   release:
     name: fzf
-    tag: v0.57.0
+    tag: v0.62.0
   command:
     link:
     - from: 'fzf'

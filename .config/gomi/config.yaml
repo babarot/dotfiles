@@ -37,6 +37,8 @@ ui:
       cursor: "#AD58B4"   # purple
       selected: "#5FB458" # green
       indent_on_select: false
+      filter_match: "#5FB458"
+      filter_prompt: "#5FB458"
     detail_view:
       border: "#F0F0F0"
       info_pane:

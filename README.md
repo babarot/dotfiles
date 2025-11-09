@@ -1,6 +1,10 @@
 # dotfiles
 
+<!--
 <img width="500" alt="" src="https://user-images.githubusercontent.com/4442708/222952851-12e3765b-44c2-49c2-93e5-07eb16502994.png">
+-->
+
+<img width="500" alt="" src="./etc/docs/ss/2025-11-09.png">
 
 Setup guide is here: [setup-mac.md](./etc/docs/setup-mac.md)
 

@@ -72,9 +72,20 @@ return function()
   lspconfig.sqlls.setup { capabilities = capabilities, on_attach = on_attach }
   lspconfig.graphql.setup { capabilities = capabilities, on_attach = on_attach }
   lspconfig.pyright.setup { capabilities = capabilities, on_attach = on_attach }
-  lspconfig.tsserver.setup { capabilities = capabilities, on_attach = on_attach }
+  -- ts_ls requires newer lspconfig, fallback to tsserver for now
+  pcall(function()
+    lspconfig.ts_ls.setup { capabilities = capabilities, on_attach = on_attach }
+  end)
   lspconfig.dartls.setup { capabilities = capabilities, on_attach = on_attach }
-  lspconfig.terraformls.setup { capabilities = capabilities, on_attach = on_attach }
+  lspconfig.terraformls.setup {
+    capabilities = capabilities,
+    on_attach = function(client, bufnr)
+      client.server_capabilities.document_formatting = false
+      client.server_capabilities.document_range_formatting = false
+      on_attach(client, bufnr)
+    end,
+    filetypes = { 'terraform', 'tf' },
+  }
   lspconfig.tflint.setup { capabilities = capabilities, on_attach = on_attach }
   lspconfig.dockerls.setup { capabilities = capabilities, on_attach = on_attach }
   lspconfig.vimls.setup { capabilities = capabilities, on_attach = on_attach }

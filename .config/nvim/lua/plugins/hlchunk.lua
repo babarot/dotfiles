@@ -11,6 +11,7 @@
 return {
   {
     'shellRaining/hlchunk.nvim',
+    enabled = false,  -- Disabled: conflicts with indent-blankline.nvim
     event = { 'BufReadPost', 'BufNewFile' },
     config = function()
       require('hlchunk').setup({

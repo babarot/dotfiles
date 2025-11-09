@@ -53,7 +53,7 @@
 - coder/claudecode.nvim - Claude Code統合（高度・WebSocket + MCP）
 - gelguy/wilder.nvim - コマンドライン強化（履歴フィルタリング・ファジー検索）
 
-### 視覚補助 (8個)
+### 視覚補助 (7個)
 
 - folke/todo-comments.nvim - TODO/FIXMEコメントのハイライト
 - ntpeters/vim-better-whitespace - 末尾空白ハイライトと自動削除
@@ -62,7 +62,7 @@
 - tummetott/reticle.nvim - カーソル行の自動表示/非表示
 - lukas-reineke/indent-blankline.nvim - インデントガイド表示（Treesitter統合）
 - kevinhwang91/nvim-hlslens - 検索結果カウント表示（[1/5]等）
-- shellRaining/hlchunk.nvim - コードブロックハイライト（カーソル位置）
+<!-- - shellRaining/hlchunk.nvim - コードブロックハイライト（無効化: indent-blanklineと競合） -->
 
 ### Git統合 (2個)
 

@@ -27,6 +27,7 @@
   st = status
   co = checkout
   ci = commit
+  wt = worktree
   br = switch
   lo = log --color=always --max-count=15 --oneline
   ll  = lla --first-parent
@@ -41,7 +42,7 @@
   branch-log = log --oneline HEAD --not main
   blog = log --oneline HEAD --not origin/main
   df = diff --no-ext-diff
-  ; dft = difft --syntax-highlight=off
+  dft = difft --syntax-highlight=off
   ; mylog = log --oneline HEAD --not main
   ; mylog = log --oneline HEAD --not main | fzf | awk '{print $1}'
 
@@ -58,7 +59,7 @@
   ; show = diff-highlight | less -RX
   ; diff = less
   ; diff = diff-so-fancy | less --tabs=4 -RFX
-  ; diff = delta --dark --plus-color="#012800" --minus-color="#340001"
+  diff = delta --dark --plus-color="#012800" --minus-color="#340001"
   diff = "ov --section-delimiter ' --- ' --section-header"
   log = "ov -F --section-delimiter '^commit' --section-header-num 3"
   show = "ov -F --header 3"

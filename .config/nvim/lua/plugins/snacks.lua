@@ -25,6 +25,7 @@ return {
       -- File/Code navigation (‼️ Essential)
       picker = {
         enabled = true,
+        focus = "list",  -- Start in Normal mode (focus on list, not input)
         sources = {
           explorer = {
             auto_close = true,  -- Auto-close explorer when opening a file
@@ -47,7 +48,12 @@ return {
       { '<leader>fg',      function() Snacks.picker.git_files() end,    desc = 'Git Files' },
 
       -- Picker: Search/Grep
-      { '<leader>/',       function() Snacks.picker.grep() end,         desc = 'Grep' },
+      { '<leader>/',       function() Snacks.picker.grep() end,         desc = 'Grep (All Files)' },
+      { '<Space>G',        function() Snacks.picker.git_grep() end,     desc = 'Git Grep (Tracked Files)' },
+      { '<Space>g',        function()
+          local word = vim.fn.expand('<cword>')
+          Snacks.picker.git_grep({ search = word })
+        end, desc = 'Git Grep Word under Cursor' },
       { '<leader>fw',      function() Snacks.picker.grep_word() end,    desc = 'Grep Word under Cursor' },
       { 'Q',               function() Snacks.picker.grep_word() end,    desc = 'Grep Word under Cursor' },
       { '<leader>fl',      function() Snacks.picker.lines() end,        desc = 'Buffer Lines' },

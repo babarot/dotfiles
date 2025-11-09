@@ -20,7 +20,7 @@ return {
         },
         on_highlights = function(hl, colors)
           hl['@keyword'] = { italic = false }
-          hl.Comment = { italic = true }
+          hl.Comment = { fg = colors.comment, italic = true }  -- Explicitly set comment color to gray
         end,
       })
 

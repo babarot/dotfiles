@@ -60,9 +60,10 @@
 
 - lewis6991/gitsigns.nvim - Git差分表示、ハンク操作、ブレーム表示
 
-### 言語固有 (1個)
+### 言語固有 (2個)
 
 - ray-x/go.nvim - Go開発ツール（goimport、タグ追加、テスト実行等）
+- babarot/markdown-preview.nvim - Markdownプレビュー（GitHub API使用）
 
 ### アイコン (1個)
 

@@ -23,8 +23,15 @@ return {
       words = { enabled = true },
 
       -- File/Code navigation (‼️ Essential)
-      picker = { enabled = true },     -- Universal picker (replaces Telescope)
-      explorer = { enabled = true },   -- File browser
+      picker = {
+        enabled = true,
+        sources = {
+          explorer = {
+            auto_close = true,  -- Auto-close explorer when opening a file
+          },
+        },
+      },
+      explorer = { enabled = true },
       scope = { enabled = true },      -- Treesitter scope navigation
     },
     keys = {
@@ -64,6 +71,7 @@ return {
 
       -- Explorer
       { '<leader>e',       function() Snacks.explorer() end,            desc = 'File Explorer' },
+      { '<Space>k',        function() Snacks.explorer() end,            desc = 'File Explorer' },
 
       -- Utilities
       { '<leader>.',       function() Snacks.scratch() end,              desc = 'Toggle Scratch Buffer' },

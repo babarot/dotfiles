@@ -18,6 +18,10 @@ if (( $+commands[kubectl] )); then
   alias k=kubectl
 fi
 
+if (( $+commands[nvim] )); then
+  alias vim=nvim
+fi
+
 # Global aliases
 alias -g L='| less'
 alias -g G='| grep'

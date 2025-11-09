@@ -24,6 +24,7 @@ vim.opt.showmode       = true
 vim.opt.hidden         = true
 vim.opt.confirm        = true
 vim.opt.mouse          = "a"
+vim.opt.clipboard      = "unnamedplus"  -- Use system clipboard
 vim.opt.errorbells     = false
 vim.opt.termguicolors  = true
 

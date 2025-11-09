@@ -44,7 +44,16 @@ keymap({ 'n', 'v' }, ';', ':', {})
 -- ----------------------------------------------------------------------------
 -- Normal mode - File operations
 -- ----------------------------------------------------------------------------
-keymap('n', '<CR>', ':<C-u>w<CR>', opts)
+-- Save with <CR>, but not in special buffers (like Lspsaga peek windows)
+keymap('n', '<CR>', function()
+  local buftype = vim.bo.buftype
+  local filetype = vim.bo.filetype
+  -- Don't save in special buffers
+  if buftype ~= '' or filetype:match('^lspsaga') then
+    return '<CR>'
+  end
+  return ':<C-u>w<CR>'
+end, { expr = true, noremap = true, silent = true })
 keymap('n', 'q', '<Nop>', opts)
 keymap('n', 'ZZ', '<Nop>', opts)
 keymap('n', 'ZQ', '<Nop>', opts)

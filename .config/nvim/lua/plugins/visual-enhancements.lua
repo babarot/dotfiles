@@ -112,7 +112,24 @@ return {
     },
   },
 
-  -- 検索結果のカウント表示と強化
+  -- Automatically highlight cursorline and cursorcolumn after delay
+  {
+    'babarot/cursor-x.nvim',
+    event = { 'BufRead' },
+    opts = {
+      interval = 3000,  -- Highlight after 3 seconds
+      always_cursorline = true,
+      filetype_exclude = {
+        'snacks_picker_list',
+        'neo-tree',
+        'yaml',
+        'dashboard',
+        'alpha',
+        'toggleterm',
+      },
+    },
+  },
+
   {
     'kevinhwang91/nvim-hlslens',
     event = { 'BufReadPost', 'BufNewFile' },

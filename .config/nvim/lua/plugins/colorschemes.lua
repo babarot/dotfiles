@@ -1,9 +1,36 @@
 -- ============================================================================
--- Additional Colorschemes for ftcolor.nvim
+-- Colorschemes
 -- ============================================================================
 
 return {
-  -- Already installed: tokyonight.nvim (in colorscheme.lua)
+  -- Default colorscheme
+  {
+    'folke/tokyonight.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require('tokyonight').setup({
+        style = 'moon', -- storm, moon (default), night, day
+        transparent = false,
+        terminal_colors = true,
+        styles = {
+          comments = { italic = true },
+          keywords = { italic = false },  -- No italic for keywords
+          functions = {},
+          variables = {},
+        },
+        on_highlights = function(hl, colors)
+          hl['@keyword'] = { italic = false }
+          hl.Comment = { fg = colors.comment, italic = true }  -- Explicitly set comment color to gray
+        end,
+      })
+
+      -- Load the colorscheme
+      vim.cmd([[colorscheme tokyonight]])
+    end,
+  },
+
+  -- Additional colorschemes for ftcolor.nvim
 
   -- For vim files
   -- { 'daschw/leaf.nvim' },

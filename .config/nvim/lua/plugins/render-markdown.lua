@@ -154,6 +154,17 @@ return {
     },
 
     config = function(_, opts)
+      -- Link to existing highlight groups for colorscheme compatibility
+      vim.api.nvim_set_hl(0, 'RenderMarkdownCode', {
+        link = 'ColorColumn',  -- Use ColorColumn background (subtle, colorscheme-aware)
+      })
+      vim.api.nvim_set_hl(0, 'RenderMarkdownCodeInline', {
+        link = 'ColorColumn',  -- Same subtle background for inline code
+      })
+      vim.api.nvim_set_hl(0, 'RenderMarkdownCodeBorder', {
+        link = 'Comment',  -- Use Comment color for border (dimmed, colorscheme-aware)
+      })
+
       require('render-markdown').setup(opts)
     end,
   },

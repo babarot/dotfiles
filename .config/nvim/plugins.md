@@ -47,7 +47,8 @@
 - folke/snacks.nvim - 統合UIツールパック（picker, dashboard, explorer, notifier等）
 - folke/which-key.nvim - キーバインディングヒント表示
 - nvim-lualine/lualine.nvim - ステータスライン（高速、美しい、LSP/Git統合）
-- romgrk/barbar.nvim - タブライン（バッファ一覧表示）
+- romgrk/barbar.nvim - タブライン（バッファ一覧表示、軽量・高速）
+<!-- - akinsho/bufferline.nvim - タブライン（LSP統合、視覚重視、スタイルカスタマイズ豊富）※disabled -->
 - folke/trouble.nvim - 診断情報・LSP参照の統合表示
 - greggh/claude-code.nvim - Claude Code統合（シンプル・ターミナル）
 - coder/claudecode.nvim - Claude Code統合（高度・WebSocket + MCP）
@@ -81,9 +82,10 @@
 - echasnovski/mini.icons - アイコンサポート（snacks/lspsagaの依存）
 - nvim-tree/nvim-web-devicons - アイコンサポート（barbarの依存）
 
-### ファイル操作 (1個)
+### ファイル操作 (2個)
 
 - babarot/rm.nvim - 安全なファイル削除（:Rm コマンド、gomi対応）
+- babarot/backup.nvim - ファイル保存時の自動バックアップ（~/.backup/vim、日付別保存）
 
 ### ユーティリティライブラリ (3個)
 

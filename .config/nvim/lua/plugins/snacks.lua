@@ -62,7 +62,7 @@ return {
       { '<Space>',         '<Nop>',                                      desc = '+Space Commands' },
 
       -- Picker: File/Buffer navigation
-      { '<leader><space>', function() Snacks.picker.smart() end,        desc = 'Smart Find (Files/Git)' },
+      { '<space><space>', function() Snacks.picker.smart() end,        desc = 'Smart Find (Files/Git)' },
       { '<leader>ff',      function() Snacks.picker.files() end,        desc = 'Find Files' },
       { '<leader>fb',      function() Snacks.picker.buffers() end,      desc = 'Find Buffers' },
       { '<leader>fr',      function() Snacks.picker.recent() end,       desc = 'Recent Files' },

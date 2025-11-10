@@ -35,14 +35,15 @@
 
 - [rafamadriz/friendly-snippets](https://github.com/rafamadriz/friendly-snippets) - Snippet collection (blink.cmp dependency)
 
-### Editing Features (4)
+### Editing Features (5)
 
 - [windwp/nvim-autopairs](https://github.com/windwp/nvim-autopairs) - Auto-close brackets
 - [numToStr/Comment.nvim](https://github.com/numToStr/Comment.nvim) - Commenting (gcc, gc)
 - [kylechui/nvim-surround](https://github.com/kylechui/nvim-surround) - Surround text operations (ys, ds, cs)
 - [Wansmer/treesj](https://github.com/Wansmer/treesj) - Split/join code blocks (Tree-sitter based)
+- [stevearc/conform.nvim](https://github.com/stevearc/conform.nvim) - Code formatter (200+ formatters, minimal diff, range format)
 
-### UI & Integration Tools (8)
+### UI & Integration Tools (6)
 
 - [folke/snacks.nvim](https://github.com/folke/snacks.nvim) - Integrated UI toolkit (picker, dashboard, explorer, notifier, gitbrowse :GH, etc.)
 - [folke/which-key.nvim](https://github.com/folke/which-key.nvim) - Keybinding hints display
@@ -50,8 +51,6 @@
 - [romgrk/barbar.nvim](https://github.com/romgrk/barbar.nvim) - Tab line (buffer list display, lightweight and fast)
 <!-- - [akinsho/bufferline.nvim](https://github.com/akinsho/bufferline.nvim) - Tab line (LSP integration, visual-focused, rich style customization) ※disabled -->
 - [folke/trouble.nvim](https://github.com/folke/trouble.nvim) - Integrated display of diagnostics and LSP references
-- [greggh/claude-code.nvim](https://github.com/greggh/claude-code.nvim) - Claude Code integration (simple, terminal-based)
-- [coder/claudecode.nvim](https://github.com/coder/claudecode.nvim) - Claude Code integration (advanced, WebSocket + MCP)
 - [gelguy/wilder.nvim](https://github.com/gelguy/wilder.nvim) - Enhanced command line (history filtering, fuzzy search)
 
 ### Visual Aids (8)

@@ -76,10 +76,4 @@ return {
     },
   },
 
-  -- Open GitHub page for current file/line
-  {
-    'ruanyl/vim-gh-line',
-    lazy = true,
-    cmd = { 'GH', 'GHInteractive' },
-  },
 }

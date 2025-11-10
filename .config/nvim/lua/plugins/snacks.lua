@@ -14,7 +14,28 @@ return {
     opts = {
       -- Essential features
       bigfile = { enabled = true },
-      dashboard = { enabled = true },
+      dashboard = {
+        enabled = true,
+        width = 60,
+        formats = {
+          key = function(item)
+            return { { "[", hl = "special" }, { item.key, hl = "key" }, { "]", hl = "special" } }
+          end,
+        },
+        sections = {
+          -- { section = "header" },
+          { title = "MRU", padding = 1 },
+          { section = "recent_files", limit = 8, padding = 1 },
+          { title = "MRU ", file = vim.fn.fnamemodify(".", ":~"), padding = 1 },
+          { section = "recent_files", cwd = true, limit = 8, padding = 1 },
+          -- { title = "Sessions", padding = 1 },
+          -- { section = "projects", padding = 1 },
+          { title = "Bookmarks", padding = 1 },
+          { section = "keys", padding = 1 },
+          -- { title = "Status", padding = 1 },
+          -- { section = 'terminal', cmd = 'git status --short --branch', height = 5, padding = 1, ttl = 5 * 60 },
+        },
+      },
       indent = { enabled = true },
       input = { enabled = true },
       notifier = { enabled = true, timeout = 3000 },
@@ -52,9 +73,9 @@ return {
       { '<leader>/',       function() Snacks.picker.grep() end,         desc = 'Grep (All Files)' },
       { '<Space>G',        function() Snacks.picker.git_grep() end,     desc = 'Git Grep (Tracked Files)' },
       { '<Space>g',        function()
-          local word = vim.fn.expand('<cword>')
-          Snacks.picker.git_grep({ search = word })
-        end, desc = 'Git Grep Word under Cursor' },
+        local word = vim.fn.expand('<cword>')
+        Snacks.picker.git_grep({ search = word })
+      end, desc = 'Git Grep Word under Cursor' },
       { '<leader>fw',      function() Snacks.picker.grep_word() end,    desc = 'Grep Word under Cursor' },
       { 'Q',               function() Snacks.picker.grep_word() end,    desc = 'Grep Word under Cursor' },
       { '<leader>fl',      function() Snacks.picker.lines() end,        desc = 'Buffer Lines' },
@@ -79,18 +100,18 @@ return {
       -- Explorer
       { '<leader>e',       function() Snacks.explorer() end,            desc = 'File Explorer' },
       { '<Space>k',        function()
-          -- Try to find git root, fallback to current directory
-          local current_dir = vim.fn.expand('%:p:h')
-          local git_root = vim.fn.systemlist('git -C ' .. vim.fn.shellescape(current_dir) .. ' rev-parse --show-toplevel')[1]
+        -- Try to find git root, fallback to current directory
+        local current_dir = vim.fn.expand('%:p:h')
+        local git_root = vim.fn.systemlist('git -C ' .. vim.fn.shellescape(current_dir) .. ' rev-parse --show-toplevel')[1]
 
-          if vim.v.shell_error == 0 and git_root then
-            -- Open at git root if in a git repository
-            Snacks.explorer({ cwd = git_root })
-          else
-            -- Fallback to current directory
-            Snacks.explorer()
-          end
-        end, desc = 'File Explorer (Git Root or Current)' },
+        if vim.v.shell_error == 0 and git_root then
+          -- Open at git root if in a git repository
+          Snacks.explorer({ cwd = git_root })
+        else
+          -- Fallback to current directory
+          Snacks.explorer()
+        end
+      end, desc = 'File Explorer (Git Root or Current)' },
 
       -- Utilities
       { '<leader>.',       function() Snacks.scratch() end,              desc = 'Toggle Scratch Buffer' },
@@ -98,8 +119,7 @@ return {
       { '<leader>n',       function() Snacks.notifier.show_history() end, desc = 'Notification History' },
       { '<leader>bd',      function() Snacks.bufdelete() end,            desc = 'Delete Buffer' },
 
-      -- Git utilities (not picker)
-      { '<leader>gB',      function() Snacks.gitbrowse() end,            desc = 'Git Browse (GitHub)' },
+      -- Utilities (not picker)
       { '<leader>cR',      function() Snacks.rename.rename_file() end,   desc = 'Rename File' },
 
       -- Terminal
@@ -133,6 +153,21 @@ return {
           Snacks.toggle.treesitter():map('<leader>uT')
           Snacks.toggle.option('background', { off = 'light', on = 'dark', name = 'Dark Background' }):map('<leader>ub')
           Snacks.toggle.inlay_hints():map('<leader>uh')
+
+          -- Create :GH command (migrated from ruanyl/vim-gh-line plugin)
+          -- Opens current file/line in Git browser (GitHub, GitLab, Bitbucket, Sourcehut)
+          -- Usage: :GH, :10,20GH, or visual mode selection + :GH
+          vim.api.nvim_create_user_command('GH', function(opts)
+            local line_start, line_end
+            if opts.range > 0 then
+              line_start = opts.line1
+              line_end = opts.line2
+            end
+            Snacks.gitbrowse({
+              line_start = line_start,
+              line_end = line_end,
+            })
+          end, { range = true, desc = 'Open file/line in Git browser' })
         end,
       })
     end,

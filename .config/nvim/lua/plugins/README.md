@@ -44,7 +44,7 @@
 
 ### UI & Integration Tools (8)
 
-- [folke/snacks.nvim](https://github.com/folke/snacks.nvim) - Integrated UI toolkit (picker, dashboard, explorer, notifier, etc.)
+- [folke/snacks.nvim](https://github.com/folke/snacks.nvim) - Integrated UI toolkit (picker, dashboard, explorer, notifier, gitbrowse :GH, etc.)
 - [folke/which-key.nvim](https://github.com/folke/which-key.nvim) - Keybinding hints display
 - [nvim-lualine/lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) - Status line (fast, beautiful, LSP/Git integration)
 - [romgrk/barbar.nvim](https://github.com/romgrk/barbar.nvim) - Tab line (buffer list display, lightweight and fast)
@@ -66,10 +66,9 @@
 - [kevinhwang91/nvim-hlslens](https://github.com/kevinhwang91/nvim-hlslens) - Display search result count ([1/5], etc.)
 <!-- - [shellRaining/hlchunk.nvim](https://github.com/shellRaining/hlchunk.nvim) - Code block highlighting (disabled: conflicts with indent-blankline) -->
 
-### Git Integration (2)
+### Git Integration (1)
 
 - [lewis6991/gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) - Git diff display, hunk operations, blame display
-- [ruanyl/vim-gh-line](https://github.com/ruanyl/vim-gh-line) - Open file/line in GitHub (:GH, :GHInteractive)
 
 ### Language-Specific (3)
 

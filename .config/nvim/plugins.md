@@ -2,93 +2,93 @@
 
 ### カラースキーム (14個)
 
-- folke/tokyonight.nvim
-- daschw/leaf.nvim
-- junegunn/seoul256.vim
-- marko-cerovac/material.nvim
-- projekt0n/github-nvim-theme
-- gbprod/nord.nvim
-- rebelot/kanagawa.nvim
-- EdenEast/nightfox.nvim
-- akinsho/horizon.nvim
-- olivercederborg/poimandres.nvim
-- cocopon/iceberg.vim
-- voidekh/kyotonight.vim
-- AlessandroYorba/Despacio
-- ellisonleao/gruvbox.nvim
-- maxmx03/solarized.nvim
+- [folke/tokyonight.nvim](https://github.com/folke/tokyonight.nvim)
+- [daschw/leaf.nvim](https://github.com/daschw/leaf.nvim)
+- [junegunn/seoul256.vim](https://github.com/junegunn/seoul256.vim)
+- [marko-cerovac/material.nvim](https://github.com/marko-cerovac/material.nvim)
+- [projekt0n/github-nvim-theme](https://github.com/projekt0n/github-nvim-theme)
+- [gbprod/nord.nvim](https://github.com/gbprod/nord.nvim)
+- [rebelot/kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim)
+- [EdenEast/nightfox.nvim](https://github.com/EdenEast/nightfox.nvim)
+- [akinsho/horizon.nvim](https://github.com/akinsho/horizon.nvim)
+- [olivercederborg/poimandres.nvim](https://github.com/olivercederborg/poimandres.nvim)
+- [cocopon/iceberg.vim](https://github.com/cocopon/iceberg.vim)
+- [voidekh/kyotonight.vim](https://github.com/voidekh/kyotonight.vim)
+- [AlessandroYorba/Despacio](https://github.com/AlessandroYorba/Despacio)
+- [ellisonleao/gruvbox.nvim](https://github.com/ellisonleao/gruvbox.nvim)
+- [maxmx03/solarized.nvim](https://github.com/maxmx03/solarized.nvim)
 
 ### カラースキーム切り替え (1個)
 
-- babarot/ftcolor.nvim - ファイルタイプごとに自動カラースキーム切り替え
+- [babarot/ftcolor.nvim](https://github.com/babarot/ftcolor.nvim) - ファイルタイプごとに自動カラースキーム切り替え
 
 ### 基盤・LSP (6個)
 
-- nvim-treesitter/nvim-treesitter - シンタックスハイライト・構文解析
-- williamboman/mason.nvim - LSPサーバー/ツールインストーラー
-- williamboman/mason-lspconfig.nvim - MasonとLSPConfigの橋渡し
-- neovim/nvim-lspconfig - LSP設定（gopls, lua_ls）
-- nvimdev/lspsaga.nvim - LSP UI強化（hover, peek, outline等）
-- saghen/blink.cmp - 補完エンジン（Rust製、高速）
+- [nvim-treesitter/nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) - シンタックスハイライト・構文解析
+- [williamboman/mason.nvim](https://github.com/williamboman/mason.nvim) - LSPサーバー/ツールインストーラー
+- [williamboman/mason-lspconfig.nvim](https://github.com/williamboman/mason-lspconfig.nvim) - MasonとLSPConfigの橋渡し
+- [neovim/nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) - LSP設定（gopls, lua_ls）
+- [nvimdev/lspsaga.nvim](https://github.com/nvimdev/lspsaga.nvim) - LSP UI強化（hover, peek, outline等）
+- [saghen/blink.cmp](https://github.com/saghen/blink.cmp) - 補完エンジン（Rust製、高速）
 
 ### 補完・スニペット (1個)
 
-- rafamadriz/friendly-snippets - スニペット集（blink.cmpの依存）
+- [rafamadriz/friendly-snippets](https://github.com/rafamadriz/friendly-snippets) - スニペット集（blink.cmpの依存）
 
 ### 編集機能 (4個)
 
-- windwp/nvim-autopairs - 括弧自動閉じ
-- numToStr/Comment.nvim - コメントアウト（gcc, gc）
-- kylechui/nvim-surround - 囲み文字の操作（ys, ds, cs）
-- Wansmer/treesj - コードブロックの分割/結合（Tree-sitter使用）
+- [windwp/nvim-autopairs](https://github.com/windwp/nvim-autopairs) - 括弧自動閉じ
+- [numToStr/Comment.nvim](https://github.com/numToStr/Comment.nvim) - コメントアウト（gcc, gc）
+- [kylechui/nvim-surround](https://github.com/kylechui/nvim-surround) - 囲み文字の操作（ys, ds, cs）
+- [Wansmer/treesj](https://github.com/Wansmer/treesj) - コードブロックの分割/結合（Tree-sitter使用）
 
 ### UI・統合ツール (8個)
 
-- folke/snacks.nvim - 統合UIツールパック（picker, dashboard, explorer, notifier等）
-- folke/which-key.nvim - キーバインディングヒント表示
-- nvim-lualine/lualine.nvim - ステータスライン（高速、美しい、LSP/Git統合）
-- romgrk/barbar.nvim - タブライン（バッファ一覧表示、軽量・高速）
-<!-- - akinsho/bufferline.nvim - タブライン（LSP統合、視覚重視、スタイルカスタマイズ豊富）※disabled -->
-- folke/trouble.nvim - 診断情報・LSP参照の統合表示
-- greggh/claude-code.nvim - Claude Code統合（シンプル・ターミナル）
-- coder/claudecode.nvim - Claude Code統合（高度・WebSocket + MCP）
-- gelguy/wilder.nvim - コマンドライン強化（履歴フィルタリング・ファジー検索）
+- [folke/snacks.nvim](https://github.com/folke/snacks.nvim) - 統合UIツールパック（picker, dashboard, explorer, notifier等）
+- [folke/which-key.nvim](https://github.com/folke/which-key.nvim) - キーバインディングヒント表示
+- [nvim-lualine/lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) - ステータスライン（高速、美しい、LSP/Git統合）
+- [romgrk/barbar.nvim](https://github.com/romgrk/barbar.nvim) - タブライン（バッファ一覧表示、軽量・高速）
+<!-- - [akinsho/bufferline.nvim](https://github.com/akinsho/bufferline.nvim) - タブライン（LSP統合、視覚重視、スタイルカスタマイズ豊富）※disabled -->
+- [folke/trouble.nvim](https://github.com/folke/trouble.nvim) - 診断情報・LSP参照の統合表示
+- [greggh/claude-code.nvim](https://github.com/greggh/claude-code.nvim) - Claude Code統合（シンプル・ターミナル）
+- [coder/claudecode.nvim](https://github.com/coder/claudecode.nvim) - Claude Code統合（高度・WebSocket + MCP）
+- [gelguy/wilder.nvim](https://github.com/gelguy/wilder.nvim) - コマンドライン強化（履歴フィルタリング・ファジー検索）
 
 ### 視覚補助 (8個)
 
-- folke/todo-comments.nvim - TODO/FIXMEコメントのハイライト
-- ntpeters/vim-better-whitespace - 末尾空白ハイライトと自動削除
-- dstein64/nvim-scrollview - スクロールバー表示
-- utilyre/barbecue.nvim - ウィンバーにパンくずリスト表示（LSP統合）
-- tummetott/reticle.nvim - カーソル行の自動表示/非表示
-- babarot/cursor-x.nvim - カーソル位置の自動ハイライト（一定時間後）
-- lukas-reineke/indent-blankline.nvim - インデントガイド表示（Treesitter統合）
-- kevinhwang91/nvim-hlslens - 検索結果カウント表示（[1/5]等）
-<!-- - shellRaining/hlchunk.nvim - コードブロックハイライト（無効化: indent-blanklineと競合） -->
+- [folke/todo-comments.nvim](https://github.com/folke/todo-comments.nvim) - TODO/FIXMEコメントのハイライト
+- [ntpeters/vim-better-whitespace](https://github.com/ntpeters/vim-better-whitespace) - 末尾空白ハイライトと自動削除
+- [dstein64/nvim-scrollview](https://github.com/dstein64/nvim-scrollview) - スクロールバー表示
+- [utilyre/barbecue.nvim](https://github.com/utilyre/barbecue.nvim) - ウィンバーにパンくずリスト表示（LSP統合）
+- [tummetott/reticle.nvim](https://github.com/tummetott/reticle.nvim) - カーソル行の自動表示/非表示
+- [babarot/cursor-x.nvim](https://github.com/babarot/cursor-x.nvim) - カーソル位置の自動ハイライト（一定時間後）
+- [lukas-reineke/indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim) - インデントガイド表示（Treesitter統合）
+- [kevinhwang91/nvim-hlslens](https://github.com/kevinhwang91/nvim-hlslens) - 検索結果カウント表示（[1/5]等）
+<!-- - [shellRaining/hlchunk.nvim](https://github.com/shellRaining/hlchunk.nvim) - コードブロックハイライト（無効化: indent-blanklineと競合） -->
 
 ### Git統合 (2個)
 
-- lewis6991/gitsigns.nvim - Git差分表示、ハンク操作、ブレーム表示
-- ruanyl/vim-gh-line - GitHubでファイル/行を開く（:GH, :GHInteractive）
+- [lewis6991/gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) - Git差分表示、ハンク操作、ブレーム表示
+- [ruanyl/vim-gh-line](https://github.com/ruanyl/vim-gh-line) - GitHubでファイル/行を開く（:GH, :GHInteractive）
 
 ### 言語固有 (3個)
 
-- ray-x/go.nvim - Go開発ツール（goimport、タグ追加、テスト実行等）
-- babarot/markdown-preview.nvim - Markdownプレビュー（GitHub API使用）
-- MeanderingProgrammer/render-markdown.nvim - Markdownレンダリング（見出し、コードブロック、テーブル等）
+- [ray-x/go.nvim](https://github.com/ray-x/go.nvim) - Go開発ツール（goimport、タグ追加、テスト実行等）
+- [babarot/markdown-preview.nvim](https://github.com/babarot/markdown-preview.nvim) - Markdownプレビュー（GitHub API使用）
+- [MeanderingProgrammer/render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) - Markdownレンダリング（見出し、コードブロック、テーブル等）
 
 ### アイコン (2個)
 
-- echasnovski/mini.icons - アイコンサポート（snacks/lspsagaの依存）
-- nvim-tree/nvim-web-devicons - アイコンサポート（barbarの依存）
+- [echasnovski/mini.icons](https://github.com/echasnovski/mini.icons) - アイコンサポート（snacks/lspsagaの依存）
+- [nvim-tree/nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) - アイコンサポート（barbarの依存）
 
 ### ファイル操作 (2個)
 
-- babarot/rm.nvim - 安全なファイル削除（:Rm コマンド、gomi対応）
-- babarot/backup.nvim - ファイル保存時の自動バックアップ（~/.backup/vim、日付別保存）
+- [babarot/rm.nvim](https://github.com/babarot/rm.nvim) - 安全なファイル削除（:Rm コマンド、gomi対応）
+- [babarot/backup.nvim](https://github.com/babarot/backup.nvim) - ファイル保存時の自動バックアップ（~/.backup/vim、日付別保存）
 
 ### ユーティリティライブラリ (3個)
 
-- nvim-lua/plenary.nvim - Lua関数ライブラリ（todo-commentsの依存）
-- SmiteshP/nvim-navic - LSPベースのナビゲーション（barbecueの依存）
-- ray-x/guihua.lua - GUI/浮動ウィンドウライブラリ（go.nvimの依存）
+- [nvim-lua/plenary.nvim](https://github.com/nvim-lua/plenary.nvim) - Lua関数ライブラリ（todo-commentsの依存）
+- [SmiteshP/nvim-navic](https://github.com/SmiteshP/nvim-navic) - LSPベースのナビゲーション（barbecueの依存）
+- [ray-x/guihua.lua](https://github.com/ray-x/guihua.lua) - GUI/浮動ウィンドウライブラリ（go.nvimの依存）

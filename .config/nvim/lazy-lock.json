@@ -39,7 +39,7 @@
   "poimandres.nvim": { "branch": "main", "commit": "a488957d803943a4201ac3b774913fcafa9e6b3a" },
   "render-markdown.nvim": { "branch": "main", "commit": "6a744f0d14fd1d0fa8e3f446ac7825ec1e351d55" },
   "reticle.nvim": { "branch": "main", "commit": "66bfa2b1c28fd71bb8ae4e871e0cd9e9c509ea86" },
-  "rm.nvim": { "branch": "main", "commit": "bc2cba563a5817053a4ad143e52916073a4aedea" },
+  "rm.nvim": { "branch": "main", "commit": "25b1260134cfe3330d6db53f1c8cb004d9e4d8c6" },
   "seoul256.vim": { "branch": "master", "commit": "d9a91d8d4e153274e1ecc0ceb05c37f0d0de84d7" },
   "snacks.nvim": { "branch": "main", "commit": "dec29f55666f8f4545835636077a86b150faf630" },
   "solarized.nvim": { "branch": "main", "commit": "c0dfe1cbfabd93b546baf5f1408f5df7e02e2050" },

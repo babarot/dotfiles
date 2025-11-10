@@ -1,9 +1,9 @@
 -- ============================================================================
--- Visual Enhancements - 視覚補助プラグイン
+-- Visual Enhancements - Visual Aid Plugins
 -- ============================================================================
 
 return {
-  -- TODO/FIXME/NOTE などのコメントをハイライト
+  -- Highlight TODO/FIXME/NOTE comments
   {
     'folke/todo-comments.nvim',
     dependencies = { 'nvim-lua/plenary.nvim' },
@@ -33,7 +33,7 @@ return {
     },
   },
 
-  -- 末尾空白のハイライトと削除
+  -- Highlight and remove trailing whitespace
   {
     'ntpeters/vim-better-whitespace',
     event = { 'BufReadPost', 'BufNewFile' },
@@ -45,7 +45,7 @@ return {
     end,
   },
 
-  -- スクロールバー表示
+  -- Display scrollbar
   {
     'dstein64/nvim-scrollview',
     event = { 'BufReadPost', 'BufNewFile' },
@@ -57,7 +57,7 @@ return {
     },
   },
 
-  -- ウィンバーにパンくずリスト（Treesitter + LSP）
+  -- Breadcrumb list in winbar (Treesitter + LSP)
   {
     'utilyre/barbecue.nvim',
     dependencies = {
@@ -93,7 +93,7 @@ return {
     end,
   },
 
-  -- カーソル行の自動表示/非表示（挿入モード時のみ表示など）
+  -- Auto show/hide cursor line (e.g., show only in insert mode)
   {
     'tummetott/reticle.nvim',
     event = { 'BufReadPost', 'BufNewFile' },

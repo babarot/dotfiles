@@ -12,7 +12,7 @@ return {
         default_colorscheme = 'tokyonight',
         redraw = true,
         mappings = {
-          -- lua = 'leaf',         -- Luaファイルはleafカラースキーム
+          -- lua = 'leaf',         -- Use leaf colorscheme for Lua files
           -- vim = 'leaf',
           -- go = 'seoul256',
           -- sh = 'material',

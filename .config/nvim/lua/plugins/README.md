@@ -35,17 +35,18 @@
 
 - [rafamadriz/friendly-snippets](https://github.com/rafamadriz/friendly-snippets) - Snippet collection (blink.cmp dependency)
 
-### Editing Features (5)
+### Editing Features (6)
 
 - [windwp/nvim-autopairs](https://github.com/windwp/nvim-autopairs) - Auto-close brackets
 - [numToStr/Comment.nvim](https://github.com/numToStr/Comment.nvim) - Commenting (gcc, gc)
 - [kylechui/nvim-surround](https://github.com/kylechui/nvim-surround) - Surround text operations (ys, ds, cs)
 - [Wansmer/treesj](https://github.com/Wansmer/treesj) - Split/join code blocks (Tree-sitter based)
+- [markonm/traces.vim](https://github.com/markonm/traces.vim) - Live preview for substitute and range commands
 - [stevearc/conform.nvim](https://github.com/stevearc/conform.nvim) - Code formatter (200+ formatters, minimal diff, range format)
 
 ### UI & Integration Tools (6)
 
-- [folke/snacks.nvim](https://github.com/folke/snacks.nvim) - Integrated UI toolkit (picker, dashboard, explorer, notifier, gitbrowse :GH, etc.)
+- [folke/snacks.nvim](https://github.com/folke/snacks.nvim) - Integrated UI toolkit (picker, dashboard, explorer, notifier, gitbrowse :GH, GitHub issues/PRs, etc.)
 - [folke/which-key.nvim](https://github.com/folke/which-key.nvim) - Keybinding hints display
 - [nvim-lualine/lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) - Status line (fast, beautiful, LSP/Git integration)
 - [romgrk/barbar.nvim](https://github.com/romgrk/barbar.nvim) - Tab line (buffer list display, lightweight and fast)
@@ -65,9 +66,10 @@
 - [kevinhwang91/nvim-hlslens](https://github.com/kevinhwang91/nvim-hlslens) - Display search result count ([1/5], etc.)
 <!-- - [shellRaining/hlchunk.nvim](https://github.com/shellRaining/hlchunk.nvim) - Code block highlighting (disabled: conflicts with indent-blankline) -->
 
-### Git Integration (1)
+### Git Integration (2)
 
 - [lewis6991/gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) - Git diff display, hunk operations, blame display
+- [sindrets/diffview.nvim](https://github.com/sindrets/diffview.nvim) - Single tabpage interface for cycling through diffs, file history, and merge conflicts
 
 ### Language-Specific (3)
 

@@ -15,13 +15,13 @@ return {
         terminal_colors = true,
         styles = {
           comments = { italic = true },
-          keywords = { italic = false },  -- No italic for keywords
+          keywords = { italic = false }, -- No italic for keywords
           functions = {},
           variables = {},
         },
         on_highlights = function(hl, colors)
           hl['@keyword'] = { italic = false }
-          hl.Comment = { fg = colors.comment, italic = true }  -- Explicitly set comment color to gray
+          hl.Comment = { fg = colors.comment, italic = true } -- Explicitly set comment color to gray
         end,
       })
 
@@ -71,6 +71,7 @@ return {
   -- For HCL/terraform files
   {
     'gbprod/nord.nvim',
+    enable = false,
     config = function()
       require('nord').setup({
         transparent = false,

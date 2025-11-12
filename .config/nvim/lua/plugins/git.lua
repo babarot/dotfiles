@@ -76,4 +76,33 @@ return {
     },
   },
 
+  -- Diffview (Git diff viewer)
+  {
+    'sindrets/diffview.nvim',
+    cmd = { 'DiffviewOpen', 'DiffviewClose', 'DiffviewToggleFiles', 'DiffviewFocusFiles', 'DiffviewFileHistory' },
+    keys = {
+      { '<leader>dv', '<cmd>DiffviewOpen<cr>', desc = 'Diffview Open' },
+      { '<leader>dc', '<cmd>DiffviewClose<cr>', desc = 'Diffview Close' },
+      { '<leader>dh', '<cmd>DiffviewFileHistory %<cr>', desc = 'Diffview File History' },
+      { '<leader>dH', '<cmd>DiffviewFileHistory<cr>', desc = 'Diffview Branch History' },
+    },
+    opts = {
+      enhanced_diff_hl = true,  -- Enhanced syntax highlighting
+      view = {
+        default = {
+          layout = 'diff2_horizontal',
+        },
+        merge_tool = {
+          layout = 'diff3_mixed',  -- 3-way diff for merge conflicts
+        },
+      },
+      file_panel = {
+        win_config = {
+          position = 'left',
+          width = 35,
+        },
+      },
+    },
+  },
+
 }

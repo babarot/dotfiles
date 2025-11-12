@@ -48,14 +48,38 @@ return {
       picker = {
         enabled = true,
         focus = "list",  -- Start in Normal mode (focus on list, not input)
+        layout = function(source)
+          local layouts = {
+            files = "vertical",      -- Top-bottom layout for files
+            git_files = "vertical",  -- Top-bottom layout for git files
+            recent = "vertical",     -- Top-bottom layout for recent files
+          }
+          return layouts[source] or "default"  -- Default: side-by-side layout
+        end,
         sources = {
           explorer = {
             auto_close = true,  -- Auto-close explorer when opening a file
           },
         },
+        win = {
+          input = {
+            keys = {
+              ["<C-n>"] = { "history_forward", mode = { "i", "n" } },
+              ["<C-p>"] = { "history_back", mode = { "i", "n" } },
+            },
+          },
+        },
       },
       explorer = { enabled = true },
       scope = { enabled = true },      -- Treesitter scope navigation
+
+      -- GitHub integration
+      gh = {
+        enabled = true,
+        win = {
+          border = "rounded",
+        },
+      },
     },
     keys = {
       -- Space prefix (shows which-key menu)
@@ -84,6 +108,10 @@ return {
       { '<leader>gb',      function() Snacks.picker.git_branches() end, desc = 'Git Branches' },
       { '<leader>gl',      function() Snacks.picker.git_log() end,      desc = 'Git Log' },
       { '<leader>gs',      function() Snacks.picker.git_status() end,   desc = 'Git Status' },
+
+      -- GitHub (snacks.nvim/gh)
+      { '<leader>gi',      function() Snacks.picker.gh_issue() end,     desc = 'GitHub: List Issues' },
+      { '<leader>gp',      function() Snacks.picker.gh_pr() end,        desc = 'GitHub: List PRs' },
 
       -- Picker: LSP
       { 'gd',              function() Snacks.picker.lsp_definitions() end,     desc = 'LSP Definitions' },

@@ -24,5 +24,7 @@ colors
 source <(afx init)
 source <(afx completion zsh)
 
+export XDG_CONFIG_HOME="$HOME/.config"
+
 # word split: `-`, `_`, `.`, `=`
 export WORDCHARS='*?[]~&;!#$%^(){}<>'

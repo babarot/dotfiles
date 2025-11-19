@@ -54,7 +54,7 @@ return {
 
         -- JSON/YAML
         json = { 'jq' },
-        yaml = { 'yamlfmt' },
+        -- yaml = { 'yamlfmt' },  -- Disabled
 
         -- Markdown
         markdown = { 'prettier' },
@@ -74,10 +74,16 @@ return {
       },
 
       -- Format on save
-      format_on_save = {
-        timeout_ms = 500,
-        lsp_format = 'fallback',
-      },
+      format_on_save = function(bufnr)
+        -- Disable format on save for YAML files
+        if vim.bo[bufnr].filetype == 'yaml' then
+          return
+        end
+        return {
+          timeout_ms = 500,
+          lsp_format = 'fallback',
+        }
+      end,
 
       -- Customize formatters
       formatters = {

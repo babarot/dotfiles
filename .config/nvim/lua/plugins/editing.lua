@@ -28,7 +28,7 @@ return {
   -- Surround
   {
     'kylechui/nvim-surround',
-    event = { 'BufReadPost', 'BufNewFile' },
+    event = 'VeryLazy',  -- Load earlier to avoid conflicts
     config = function()
       require('nvim-surround').setup({})
     end,

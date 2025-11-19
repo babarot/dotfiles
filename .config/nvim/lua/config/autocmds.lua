@@ -46,10 +46,18 @@ vim.api.nvim_create_autocmd('BufWritePre', {
 
 -- ----------------------------------------------------------------------------
 -- Auto-change directory to file's parent directory
+-- Set vim.g.auto_cd_to_buffer_dir = false to disable
 -- ----------------------------------------------------------------------------
+vim.g.auto_cd_to_buffer_dir = false -- Set to false to disable
+
 vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
   group = vim.api.nvim_create_augroup('auto-cd-to-buffer-dir', { clear = true }),
   callback = function(args)
+    -- Check if feature is enabled
+    if not vim.g.auto_cd_to_buffer_dir then
+      return
+    end
+
     local bufnr = args.buf
     local buftype = vim.bo[bufnr].buftype
     local filetype = vim.bo[bufnr].filetype

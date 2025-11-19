@@ -1,4 +1,4 @@
-![](../../etc/docs/ss/neovim.png)
+![](../../etc/ss/neovim-2025-11-20.png)
 
 ## Version
 

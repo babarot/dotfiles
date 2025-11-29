@@ -155,16 +155,23 @@ github:
     link:
     - from: distribution.py
       to: distribution
-- name: babarot/zsh-prompt-minimal
-  description: Super super super minimal prompt for zsh
+- name: babarot/za-prompt
+  description: Super fast zsh prompt
   owner: babarot
-  repo: zsh-prompt-minimal
+  repo: za-prompt
   plugin:
-    env:
-      PROMPT_PATH_STYLE: minimal
-      PROMPT_USE_VIM_MODE: true
     sources:
     - '*.zsh-theme'
+    snippet-prepare: |
+      zstyle ':prompt:za:path' style 'minimal'
+      zstyle ':prompt:za:right' template '%exitcode% %F{242}%git%%f %path%'
+      zstyle ':prompt:za:left' template '%sign% '
+      zstyle ':prompt:za:git' format '(%s)'
+      zstyle ':prompt:za:git' show-dirty true
+      zstyle ':prompt:za:git' show-untracked true
+      zstyle ':prompt:za:git' show-stash true
+      zstyle ':prompt:za:git' show-upstream true
+
 - name: icyphox/shlide
   description: a slide deck presentation tool written in pure bash
   owner: icyphox

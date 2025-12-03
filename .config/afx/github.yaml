@@ -819,7 +819,7 @@ github:
   branch: master
   release:
     name: gh
-    tag: v2.52.0
+    tag: v2.83.1
   command:
     link:
     - from: '*/bin/gh'

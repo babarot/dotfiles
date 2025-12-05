@@ -178,7 +178,15 @@ References:
 ### History (Z shell)
 
 ```
-cp ~/.zsh_history PATH
+cat ~/.zsh_history | pbcopy
+```
+
+Open https://gist.github.com/ to paste.
+
+Then,
+
+```
+pbpaste >| ~/.zsh_history
 ```
 
 ### History (directory changes)
@@ -186,13 +194,13 @@ cp ~/.zsh_history PATH
 I use [enhancd](https://github.com/babarot/enhancd) to jump a directory. A history of directory changes is `enhancd.log` file.
 
 ```
-cp ~/.enhancd/enhancd.log PATH
+cat ~/.enhancd/enhancd.log | pbcopy
 ```
+Open https://gist.github.com/ to paste.
 
-### GitHub repositories
-
+Then,
 ```
-open ~/src/github.com/babarot
+pbpaste >| ~/.enhancd/enhancd.log
 ```
 
 # 3. Configure Apps

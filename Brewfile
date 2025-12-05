@@ -41,8 +41,8 @@ brew "vhs" # faressoft/terminalizer
 cask "1password"
 cask "adobe-creative-cloud"
 cask "appcleaner"
-cast "cleanshot"
-cask "docker"
+cask "cleanshot"
+cask "docker-desktop"
 cask "font-hack-nerd-font"
 cask "font-jetbrains-mono-nerd-font"
 cask "ghostty"
@@ -83,8 +83,9 @@ mas "MenubarX", id: 1575588022
 mas "Paste", id: 967805235
 mas "Spark", id: 1176895641
 mas "Tailscale", id: 1475387142
-mas "Things 3", id: 904237743
-mas "Translate Tab", id: 458887729
+mas "Things 3", id: 904280696
+# mas "Equinox - Create Wallpaper", id: 1591510203
+# mas "Translate Tab", id: 458887729
 mas "Yoink", id: 457622435
 # mas "Name Mangler 3", id: 603637384
 # mas "Rename X", id: 1438841416

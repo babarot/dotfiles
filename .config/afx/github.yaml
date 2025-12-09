@@ -164,7 +164,8 @@ github:
     - '*.zsh-theme'
     snippet-prepare: |
       zstyle ':prompt:za:path' style 'minimal'
-      zstyle ':prompt:za:right' template '%exitcode% %F{242}%git%%f %path%'
+      # zstyle ':prompt:za:right' template '%exitcode% %F{242}%git%%f %path%'
+      zstyle ':prompt:za:right' template '%exitcode% %path%'
       zstyle ':prompt:za:left' template '%sign% '
       zstyle ':prompt:za:git' format '(%s)'
       zstyle ':prompt:za:git' show-dirty true
@@ -189,12 +190,23 @@ github:
 #   plugin:
 #     sources:
 #     - auto-fu.zsh
+- name: olets/zsh-job-queue
+  description: |
+    A zsh job queue for async task management.
+    Required by zsh-abbr.
+  owner: olets
+  repo: zsh-job-queue
+  plugin:
+    sources:
+    - zsh-job-queue.zsh
 - name: olets/zsh-abbr
   description: |
     The zsh manager for auto-expanding abbreviations,
     inspired by fish shell.
   owner: olets
   repo: zsh-abbr
+  depends-on:
+  - olets/zsh-job-queue
   plugin:
     sources:
     - zsh-abbr.zsh
@@ -1021,7 +1033,7 @@ github:
     sources:
     - jq.plugin.zsh
     snippet: |
-      bindkey '^j' jq-complete
+      # bindkey '^j' jq-complete
 - name: cosmtrek/air
   description: Live reload for Go apps
   owner: cosmtrek

@@ -1,6 +1,6 @@
 # Config generator https://ghostty.zerebos.com/
 
-# command = /opt/homebrew/bin/tmux
+command = /opt/homebrew/bin/tmux
 clipboard-read = allow
 clipboard-write = allow
 copy-on-select = false
@@ -28,3 +28,5 @@ font-family = "Menlo"
 font-family = "Hiragino Kaku Gothic ProN"
 font-size = 18
 font-feature = -dlig
+
+shell-integration-features = cursor,title,sudo

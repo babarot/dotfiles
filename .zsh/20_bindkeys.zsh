@@ -106,61 +106,90 @@ _delete-char-or-list-expand() {
 zle -N _delete-char-or-list-expand
 bindkey '^D' _delete-char-or-list-expand
 
+# do-enter() {
+#   if [[ -n $BUFFER ]]; then
+#     zle accept-line
+#     return $status
+#   fi
+#
+#   : ${ls_done:=false}
+#   : ${git_ls_done:=false}
+#
+#   if [[ $PWD != $GIT_OLDPWD ]]; then
+#     git_ls_done=false
+#   fi
+#
+#   echo
+#   if git rev-parse --is-inside-work-tree &>/dev/null; then
+#     if $git_ls_done; then
+#       if [[ -n $(git status --short) ]]; then
+#         git status
+#       fi
+#     else
+#       ${=aliases[ls]} && git_ls_done=true
+#       GIT_OLDPWD=$PWD
+#     fi
+#   else
+#     if [[ $PWD != $OLDPWD ]] && ! $ls_done; then
+#       ${=aliases[ls]} && ls_done=true
+#     fi
+#   fi
+#
+#   zle reset-prompt
+# }
+# zle -N do-enter
+# bindkey '^m' do-enter
+
+_do_enter_flag=false
+
 do-enter() {
   if [[ -n $BUFFER ]]; then
     zle accept-line
     return $status
   fi
 
-  : ${ls_done:=false}
-  : ${git_ls_done:=false}
-
-  if [[ $PWD != $GIT_OLDPWD ]]; then
-    git_ls_done=false
-  fi
-
-  echo
-  if git rev-parse --is-inside-work-tree &>/dev/null; then
-    if $git_ls_done; then
-      if [[ -n $(git status --short) ]]; then
-        git status
-      fi
-    else
-      ${=aliases[ls]} && git_ls_done=true
-      GIT_OLDPWD=$PWD
-    fi
-  else
-    if [[ $PWD != $OLDPWD ]] && ! $ls_done; then
-      ${=aliases[ls]} && ls_done=true
-    fi
-  fi
-
-  zle reset-prompt
+  # フラグを設定してaccept-lineを呼ぶ
+  _do_enter_flag=true
+  zle accept-line
 }
 zle -N do-enter
 bindkey '^m' do-enter
 
-do-enter2() {
-  if [[ -n ${BUFFER} ]]; then
-    zle accept-line
-    return ${status}
-  fi
+# precmd フックで ls/git status を実行
+_do_enter_precmd() {
+  if $_do_enter_flag; then
+    _do_enter_flag=false
 
-  if git rev-parse --is-inside-work-tree &>/dev/null; then
-    if [[ -n $(git status --short) ]]; then
-      git status
-    else
-      zle accept-line
-      return
+    : ${ls_done:=false}
+    : ${git_ls_done:=false}
+
+    if [[ $PWD != $GIT_OLDPWD ]]; then
+      git_ls_done=false
     fi
-  else
-    ls
-  fi
 
-  zle reset-prompt
+    if git rev-parse --is-inside-work-tree &>/dev/null; then
+      if $git_ls_done; then
+        if [[ -n $(git status --short) ]]; then
+          git status
+        fi
+      else
+        ${=aliases[ls]} && git_ls_done=true
+        GIT_OLDPWD=$PWD
+      fi
+    else
+      if [[ $PWD != $OLDPWD ]] && ! $ls_done; then
+        ${=aliases[ls]} && ls_done=true
+      fi
+    fi
+  fi
 }
-zle -N do-enter2
-# bindkey '^m' do-enter2
+
+# precmd フックに追加
+if (( ${+precmd_functions} )); then
+  precmd_functions+=(_do_enter_precmd)
+else
+  precmd_functions=(_do_enter_precmd)
+fi
 
 peco-select-gitadd() {
   local selected_file_to_add

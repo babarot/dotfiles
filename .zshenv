@@ -1,13 +1,17 @@
+# Prevent /etc/zprofile from messing up PATH order
+setopt no_global_rcs
+
 XDG_CONFIG_HOME=$HOME/.config
 
 typeset -gx -U path
 path=( \
-    /usr/local/bin(N-/) \
     ~/bin(N-/) \
-    ~/.zplug/bin(N-/) \
-    ~/.tmux/bin(N-/) \
+    ~/.local/bin(N-/) \
+    /usr/local/bin(N-/) \
     /usr/local/go/bin \
     /opt/homebrew/bin \
+    ~/.zplug/bin(N-/) \
+    ~/.tmux/bin(N-/) \
     "$path[@]" \
 )
 
@@ -60,8 +64,6 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 # ls command colors
 export LSCOLORS=exfxcxdxbxegedabagacad
 export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
-
-export PATH=~/bin:/opt/homebrew/bin:$PATH
 
 # declare the environment variables
 export CORRECT_IGNORE='_*'

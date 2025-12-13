@@ -1,9 +1,9 @@
 github:
-- name: babarot/slash-commands
+- name: babarot/claude-commands
   description:
   owner: babarot
-  repo: slash-commands
-  plugin:
+  repo: claude-commands
+  command:
     link:
     - from: .
       to: $HOME/.claude/commands

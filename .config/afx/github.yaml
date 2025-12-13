@@ -167,6 +167,7 @@ github:
       # zstyle ':prompt:za:right' template '%exitcode% %F{242}%git%%f %path%'
       zstyle ':prompt:za:right' template '%exitcode% %path%'
       zstyle ':prompt:za:left' template '%sign% '
+      zstyle ':prompt:za:sign' color-on-error true
       zstyle ':prompt:za:git' format '(%s)'
       zstyle ':prompt:za:git' show-dirty true
       zstyle ':prompt:za:git' show-untracked true

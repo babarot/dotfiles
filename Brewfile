@@ -20,9 +20,10 @@ brew "kustomize"
 brew "libidn2"
 brew "litecli"
 brew "lua-language-server"
-brew "luarocks"
+brew "luarocks" # package manager for Lua
 brew "mas" if OS.mac?
-brew "mysql"
+# brew "mysql"
+brew "rustup-init"
 brew "terraform"
 brew "tmux"
 brew "wget"

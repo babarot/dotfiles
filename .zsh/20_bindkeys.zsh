@@ -106,90 +106,91 @@ _delete-char-or-list-expand() {
 zle -N _delete-char-or-list-expand
 bindkey '^D' _delete-char-or-list-expand
 
+# # do-enter() {
+# #   if [[ -n $BUFFER ]]; then
+# #     zle accept-line
+# #     return $status
+# #   fi
+# #
+# #   : ${ls_done:=false}
+# #   : ${git_ls_done:=false}
+# #
+# #   if [[ $PWD != $GIT_OLDPWD ]]; then
+# #     git_ls_done=false
+# #   fi
+# #
+# #   echo
+# #   if git rev-parse --is-inside-work-tree &>/dev/null; then
+# #     if $git_ls_done; then
+# #       if [[ -n $(git status --short) ]]; then
+# #         git status
+# #       fi
+# #     else
+# #       ${=aliases[ls]} && git_ls_done=true
+# #       GIT_OLDPWD=$PWD
+# #     fi
+# #   else
+# #     if [[ $PWD != $OLDPWD ]] && ! $ls_done; then
+# #       ${=aliases[ls]} && ls_done=true
+# #     fi
+# #   fi
+# #
+# #   zle reset-prompt
+# # }
+# # zle -N do-enter
+# # bindkey '^m' do-enter
+#
+# _do_enter_flag=false
+# _do_enter_last_pwd=""
+#
 # do-enter() {
 #   if [[ -n $BUFFER ]]; then
 #     zle accept-line
 #     return $status
 #   fi
 #
-#   : ${ls_done:=false}
-#   : ${git_ls_done:=false}
-#
-#   if [[ $PWD != $GIT_OLDPWD ]]; then
-#     git_ls_done=false
-#   fi
-#
-#   echo
-#   if git rev-parse --is-inside-work-tree &>/dev/null; then
-#     if $git_ls_done; then
-#       if [[ -n $(git status --short) ]]; then
-#         git status
-#       fi
-#     else
-#       ${=aliases[ls]} && git_ls_done=true
-#       GIT_OLDPWD=$PWD
-#     fi
-#   else
-#     if [[ $PWD != $OLDPWD ]] && ! $ls_done; then
-#       ${=aliases[ls]} && ls_done=true
-#     fi
-#   fi
-#
-#   zle reset-prompt
+#   # フラグを設定してaccept-lineを呼ぶ
+#   _do_enter_flag=true
+#   zle accept-line
 # }
 # zle -N do-enter
 # bindkey '^m' do-enter
-
-_do_enter_flag=false
-
-do-enter() {
-  if [[ -n $BUFFER ]]; then
-    zle accept-line
-    return $status
-  fi
-
-  # フラグを設定してaccept-lineを呼ぶ
-  _do_enter_flag=true
-  zle accept-line
-}
-zle -N do-enter
-bindkey '^m' do-enter
-
-# precmd フックで ls/git status を実行
-_do_enter_precmd() {
-  if $_do_enter_flag; then
-    _do_enter_flag=false
-
-    : ${ls_done:=false}
-    : ${git_ls_done:=false}
-
-    if [[ $PWD != $GIT_OLDPWD ]]; then
-      git_ls_done=false
-    fi
-
-    if git rev-parse --is-inside-work-tree &>/dev/null; then
-      if $git_ls_done; then
-        if [[ -n $(git status --short) ]]; then
-          git status
-        fi
-      else
-        ${=aliases[ls]} && git_ls_done=true
-        GIT_OLDPWD=$PWD
-      fi
-    else
-      if [[ $PWD != $OLDPWD ]] && ! $ls_done; then
-        ${=aliases[ls]} && ls_done=true
-      fi
-    fi
-  fi
-}
-
-# precmd フックに追加
-if (( ${+precmd_functions} )); then
-  precmd_functions+=(_do_enter_precmd)
-else
-  precmd_functions=(_do_enter_precmd)
-fi
+#
+# # precmd フックで ls/git status を実行
+# _do_enter_precmd() {
+#   if ! $_do_enter_flag; then
+#     return
+#   fi
+#   _do_enter_flag=false
+#
+#   local is_new_dir=false
+#   if [[ $PWD != $_do_enter_last_pwd ]]; then
+#     is_new_dir=true
+#     _do_enter_last_pwd=$PWD
+#   fi
+#
+#   if git rev-parse --is-inside-work-tree &>/dev/null; then
+#     if $is_new_dir; then
+#       # 新しいディレクトリに移動した場合は ls
+#       ${=aliases[ls]:-ls}
+#     elif [[ -n $(git status --short 2>/dev/null) ]]; then
+#       # 同じディレクトリで変更がある場合は git status
+#       git status
+#     fi
+#   else
+#     if $is_new_dir; then
+#       # git リポジトリ外で新しいディレクトリに移動した場合は ls
+#       ${=aliases[ls]:-ls}
+#     fi
+#   fi
+# }
+#
+# # precmd フックに追加
+# if (( ${+precmd_functions} )); then
+#   precmd_functions+=(_do_enter_precmd)
+# else
+#   precmd_functions=(_do_enter_precmd)
+# fi
 
 peco-select-gitadd() {
   local selected_file_to_add

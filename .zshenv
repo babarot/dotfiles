@@ -10,6 +10,7 @@ path=( \
     /usr/local/bin(N-/) \
     /usr/local/go/bin \
     /opt/homebrew/bin \
+    ~/.cargo/bin(N-/) \
     ~/.zplug/bin(N-/) \
     ~/.tmux/bin(N-/) \
     "$path[@]" \
@@ -25,7 +26,6 @@ fpath=( \
     $fpath \
 )
 
-# . "$HOME/.cargo/env"
 #
 # autoload
 autoload -Uz run-help

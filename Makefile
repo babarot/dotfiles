@@ -30,6 +30,9 @@ clean: ## Remove the dot files and this repo
 	@-$(foreach val, $(DOTFILES), rm -vrf $(HOME)/$(val);)
 	-rm -rf $(DOTPATH)
 
+new-shell: ## Run ghostty with zsh
+	ghostty --command=/bin/zsh
+
 help: ## Self-documented Makefile
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 		| sort \

@@ -106,9 +106,9 @@ get_full_path() {
 # =============================================================================
 
 main() {
-  local cwd="$(tmux display-message -p '#{pane_current_path}' 2>/dev/null || echo "ERR")"
-  local style="${1:-minimal}"
-  local depth="${2:-2}"
+  local cwd="${1:-$PWD}"
+  local style="${2:-minimal}"
+  local depth="${3:-2}"
 
   case "$style" in
     "fullpath"|"full")

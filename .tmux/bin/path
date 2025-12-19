@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+# =============================================================================
+# tmux-path: Display current working directory with various styles
+# Styles: minimal, shortpath, fullpath
+# Usage: tmux-path [path] [style] [depth]
+# =============================================================================
+
+# Shorten path by abbreviating each directory to first character
+# Example: /Users/foo/bar/baz -> /U/f/b/baz
+shorten_path() {
+  local path="$1"
+  local result=""
+  local IFS='/'
+
+  # Handle home directory
+  if [[ "$path" == "$HOME"* ]]; then
+    path="~${path#$HOME}"
+  fi
+
+  # Split path into components
+  read -ra parts <<< "$path"
+
+  local last_index=$((${#parts[@]} - 1))
+    local i=0
+
+    for part in "${parts[@]}"; do
+      if [[ -z "$part" ]]; then
+        # Leading slash
+        result+="/"
+      elif [[ $i -eq $last_index ]]; then
+        # Keep last component full
+        result+="$part"
+      else
+        # Abbreviate to first character
+        if [[ "$part" == .* ]]; then
+          # Keep dot for hidden directories (e.g., .config -> .c)
+          result+="${part:0:2}/"
+        else
+          result+="${part:0:1}/"
+        fi
+      fi
+      ((i++))
+    done
+
+    echo "$result"
+  }
+
+# Get minimal path (last N components)
+# Example: /Users/foo/bar/baz with depth=2 -> bar/baz
+get_minimal_path() {
+  local path="$1"
+  local depth="${2:-2}"
+
+  # Handle home directory
+  if [[ "$path" == "$HOME"* ]]; then
+    path="~${path#$HOME}"
+  fi
+
+  # If path is just ~ or /, return as is
+  if [[ "$path" == "~" ]] || [[ "$path" == "/" ]]; then
+    echo "$path"
+    return
+  fi
+
+  # Split and get last N components
+  local IFS='/'
+  read -ra parts <<< "$path"
+
+  # Filter out empty parts (from leading slash)
+  local filtered=()
+  for part in "${parts[@]}"; do
+    [[ -n "$part" ]] && filtered+=("$part")
+  done
+
+  local total=${#filtered[@]}
+
+    if [[ $total -le $depth ]]; then
+      echo "$path"
+      return
+    fi
+
+    # Get last N components
+    local start=$((total - depth))
+    local result=""
+    for ((i = start; i < total; i++)); do
+      [[ -n "$result" ]] && result+="/"
+      result+="${filtered[$i]}"
+    done
+
+    echo "$result"
+  }
+
+# Get full path with ~ for home
+get_full_path() {
+  local path="$1"
+
+  if [[ "$path" == "$HOME"* ]]; then
+    echo "~${path#$HOME}"
+  else
+    echo "$path"
+  fi
+}
+
+# =============================================================================
+# Main
+# =============================================================================
+
+main() {
+  local cwd="$(tmux display-message -p '#{pane_current_path}' 2>/dev/null || echo "ERR")"
+  local style="${1:-minimal}"
+  local depth="${2:-2}"
+
+  case "$style" in
+    "fullpath"|"full")
+      get_full_path "$cwd"
+      ;;
+    "shortpath"|"short")
+      shorten_path "$cwd"
+      ;;
+    "minimal"|*)
+      get_minimal_path "$cwd" "$depth"
+      ;;
+  esac
+}
+
+main "$@"

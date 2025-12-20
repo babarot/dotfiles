@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+# =============================================================================
+# tmux-kube: Display current Kubernetes context and namespace
+# Strips cloud provider prefixes/regions for cleaner display
+# Usage: tmux-kube [--raw] [--context-only] [--namespace-only]
+# =============================================================================
+
+set -eo pipefail
+
+# Ensure common binary paths are available
+export PATH="/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:${PATH}"
+
+# =============================================================================
+# Context Formatting
+# =============================================================================
+
+# Strip cloud provider region suffixes and format for cleaner display
+# Examples:
+#   - GCP: gke_project_asia-northeast1-a_cluster -> project:cluster
+#   - AWS: arn:aws:eks:us-west-2:account:cluster/name -> name
+#   - Azure: aks_project_eastus_cluster -> project:cluster
+format_context() {
+  local context="$1"
+
+  case "${context}" in
+    gke_*)
+      # GCP: Remove gke_ prefix and region pattern
+      context="${context#gke_}"
+      context="$(echo "${context}" | sed -E 's/_[a-z]+-[a-z]+[0-9]+-[a-z]_/_/g; s/_[a-z]+-[a-z]+[0-9]+-[a-z]$//')"
+      context="${context/_/:}"
+      ;;
+    aks_*)
+      # Azure: Remove aks_ prefix and region pattern
+      context="${context#aks_}"
+      context="$(echo "${context}" | sed -E 's/_(east|west|central|north|south)(us|eu|asia|uk|au|in|japan|korea|canada|france|germany|brazil|uae)[0-9]*_/_/')"
+      context="${context/_/:}"
+      ;;
+    arn:aws:eks:*|eks_*)
+      # AWS: Handle ARN format or eks_ prefix
+      context="${context##*/}"
+      context="${context#eks_}"
+      context="$(echo "${context}" | sed -E 's/_[a-z]+-[a-z]+-[0-9]+_/_/g; s/_[a-z]+-[a-z]+-[0-9]+$//')"
+      context="${context/_/:}"
+      ;;
+  esac
+
+  echo "${context}"
+}
+
+# =============================================================================
+# Main
+# =============================================================================
+
+main() {
+  local raw=false
+  local context_only=false
+  local namespace_only=false
+
+  # Parse arguments
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --raw|-r)
+        raw=true
+        shift
+        ;;
+      --context-only|-c)
+        context_only=true
+        shift
+        ;;
+      --namespace-only|-n)
+        namespace_only=true
+        shift
+        ;;
+      --help|-h)
+        echo "Usage: kube [OPTIONS]"
+        echo ""
+        echo "Options:"
+        echo "  -r, --raw             Show raw context name (no formatting)"
+        echo "  -c, --context-only    Show only context name"
+        echo "  -n, --namespace-only  Show only namespace"
+        echo "  -h, --help            Show this help"
+        return 0
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
+
+  # Check if kubectl is available
+  if ! command -v kubectl &>/dev/null; then
+    echo "N/A"
+    return 0
+  fi
+
+  # Get current context
+  local context
+  if ! context="$(kubectl config current-context 2>/dev/null)"; then
+    echo "N/A"
+    return 0
+  fi
+
+  # Get namespace for the current context
+  local namespace
+  namespace="$(kubectl config view -o "jsonpath={.contexts[?(@.name==\"${context}\")].context.namespace}" 2>/dev/null)"
+  if [[ -z "${namespace}" ]]; then
+    namespace="default"
+  fi
+
+  # Format context unless raw mode
+  local display_context="${context}"
+  if [[ "${raw}" != "true" ]]; then
+    display_context="$(format_context "${context}")"
+  fi
+
+  # Output based on options
+  if [[ "${context_only}" == "true" ]]; then
+    echo "${display_context}"
+  elif [[ "${namespace_only}" == "true" ]]; then
+    echo "${namespace}"
+  else
+    echo "${display_context}/${namespace}"
+  fi
+}
+
+main "$@"

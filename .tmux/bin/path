@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # =============================================================================
 # tmux-path: Display current working directory with various styles
-# Styles: minimal, shortpath, fullpath
-# Usage: tmux-path [path] [style] [depth]
+# Styles: minimal, short, full
+# Usage: path --dir <path> --style <style> --depth <n>
 # =============================================================================
 
 # Shorten path by abbreviating each directory to first character
@@ -105,10 +105,72 @@ get_full_path() {
 # Main
 # =============================================================================
 
+show_usage() {
+  cat << EOF
+Usage: path [OPTIONS]
+
+Display the current working directory with various formatting styles.
+
+OPTIONS:
+  --dir <path>      Directory path to display (default: \$PWD)
+  --style <style>   Display style: minimal, short, full (default: minimal)
+  --depth <n>       Number of directory levels for minimal style (default: 2)
+  --help            Show this help message
+
+STYLES:
+  minimal           Display only last N directory levels (e.g., bar/baz)
+  short             Abbreviate each directory to 1 character (e.g., ~/s/g/b/dotfiles)
+  full              Display full path with ~ expansion (e.g., ~/src/github.com/babarot/dotfiles)
+
+EXAMPLES:
+  path --dir /Users/foo/bar/baz --style minimal --depth 2
+  path --style short
+  path --dir \$HOME/src --style full
+EOF
+}
+
 main() {
-  local cwd="${1:-$PWD}"
-  local style="${2:-minimal}"
-  local depth="${3:-2}"
+  local cwd="$PWD"
+  local style="minimal"
+  local depth="2"
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --dir)
+        if [[ -z "$2" || "$2" == --* ]]; then
+          echo "Error: --dir requires a value" >&2
+          exit 1
+        fi
+        cwd="$2"
+        shift 2
+        ;;
+      --style)
+        if [[ -z "$2" || "$2" == --* ]]; then
+          echo "Error: --style requires a value" >&2
+          exit 1
+        fi
+        style="$2"
+        shift 2
+        ;;
+      --depth)
+        if [[ -z "$2" || "$2" == --* ]]; then
+          echo "Error: --depth requires a value" >&2
+          exit 1
+        fi
+        depth="$2"
+        shift 2
+        ;;
+      --help|-h)
+        show_usage
+        exit 0
+        ;;
+      *)
+        echo "Error: Unknown option: $1" >&2
+        show_usage
+        exit 1
+        ;;
+    esac
+  done
 
   case "$style" in
     "fullpath"|"full")

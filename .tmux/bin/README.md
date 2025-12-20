@@ -10,14 +10,15 @@ Can be used as external plugins for [tmux-powerkit](https://github.com/fabioluci
 Display the current directory in various styles.
 
 ```bash
-path [path] [style] [depth]
+path --dir <path> --style <style> --depth <n>
 ```
 
-| Argument | Default | Description |
-|----------|---------|-------------|
-| path | `$PWD` | Path to display |
-| style | `minimal` | Display style |
-| depth | `2` | Number of directory levels to display in minimal style |
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--dir` | `$PWD` | Path to display |
+| `--style` | `minimal` | Display style (minimal, short, full) |
+| `--depth` | `2` | Number of directory levels to display in minimal style |
+| `--help` | - | Show help message |
 
 **Styles:**
 
@@ -26,6 +27,22 @@ path [path] [style] [depth]
 | `minimal` | `bar/baz` | Display only last N levels |
 | `short` | `~/s/g/b/dotfiles` | Abbreviate each directory to 1 character |
 | `full` | `~/src/github.com/babarot/dotfiles` | Full path (with `~` expansion) |
+
+**Examples:**
+
+```bash
+# Display current directory with minimal style (default)
+path
+
+# Display specific directory with full path
+path --dir ~/src/github.com/babarot/dotfiles --style full
+
+# Display last 3 levels
+path --style minimal --depth 3
+
+# Display with short style
+path --style short
+```
 
 ### kube
 
@@ -63,7 +80,7 @@ set-environment -g PATH "$HOME/.tmux/bin:$PATH"
 set -g @powerkit_plugins_left "external(|$(~/.tmux/bin/kube)|secondary|accent|0)"
 
 # Display path in status-right
-set -g @powerkit_plugins_right "external(|$(~/.tmux/bin/path #{pane_current_path} minimal 2)|secondary|accent|0)"
+set -g @powerkit_plugins_right "external(|$(~/.tmux/bin/path --dir #{pane_current_path} --style minimal --depth 2)|secondary|accent|0)"
 ```
 
 **external plugin format:**

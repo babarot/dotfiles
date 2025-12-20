@@ -1,9 +1,8 @@
 ## Currently Installed Plugins
 
-### Color Schemes (14)
+### Color Schemes (12)
 
 - [folke/tokyonight.nvim](https://github.com/folke/tokyonight.nvim)
-- [daschw/leaf.nvim](https://github.com/daschw/leaf.nvim)
 - [junegunn/seoul256.vim](https://github.com/junegunn/seoul256.vim)
 - [marko-cerovac/material.nvim](https://github.com/marko-cerovac/material.nvim)
 - [projekt0n/github-nvim-theme](https://github.com/projekt0n/github-nvim-theme)
@@ -13,7 +12,6 @@
 - [akinsho/horizon.nvim](https://github.com/akinsho/horizon.nvim)
 - [olivercederborg/poimandres.nvim](https://github.com/olivercederborg/poimandres.nvim)
 - [cocopon/iceberg.vim](https://github.com/cocopon/iceberg.vim)
-- [voidekh/kyotonight.vim](https://github.com/voidekh/kyotonight.vim)
 - [AlessandroYorba/Despacio](https://github.com/AlessandroYorba/Despacio)
 - [ellisonleao/gruvbox.nvim](https://github.com/ellisonleao/gruvbox.nvim)
 - [maxmx03/solarized.nvim](https://github.com/maxmx03/solarized.nvim)
@@ -31,9 +29,10 @@
 - [nvimdev/lspsaga.nvim](https://github.com/nvimdev/lspsaga.nvim) - LSP UI enhancement (hover, peek, outline, etc.)
 - [saghen/blink.cmp](https://github.com/saghen/blink.cmp) - Completion engine (Rust-based, fast)
 
-### Completion & Snippets (1)
+### Completion & Snippets (2)
 
 - [rafamadriz/friendly-snippets](https://github.com/rafamadriz/friendly-snippets) - Snippet collection (blink.cmp dependency)
+- [moyiz/blink-emoji.nvim](https://github.com/moyiz/blink-emoji.nvim) - Emoji completion source for blink.cmp
 
 ### Editing Features (6)
 
@@ -79,11 +78,12 @@
 
 ### Icons (2)
 
-- [echasnovski/mini.icons](https://github.com/echasnovski/mini.icons) - Icon support (snacks/lspsaga dependency)
+- [echasnovski/mini.icons](https://github.com/echasnovski/mini.icons) - Icon support (snacks/lspsaga/barbecue/oil dependency)
 - [nvim-tree/nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) - Icon support (barbar dependency)
 
-### File Operations (2)
+### File Operations (3)
 
+- [stevearc/oil.nvim](https://github.com/stevearc/oil.nvim) - File explorer as a buffer (edit filesystem like a buffer)
 - [babarot/rm.nvim](https://github.com/babarot/rm.nvim) - Safe file deletion (:Rm command, gomi support)
 - [babarot/backup.nvim](https://github.com/babarot/backup.nvim) - Automatic backup on file save (~/.backup/vim, organized by date)
 

@@ -9,6 +9,7 @@ return {
     event = 'InsertEnter',
     dependencies = {
       'rafamadriz/friendly-snippets',
+      'moyiz/blink-emoji.nvim',
     },
     opts_extend = { 'sources.default' },
     opts = {
@@ -25,7 +26,14 @@ return {
         nerd_font_variant = 'mono',
       },
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer' },
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'emoji' },
+        providers = {
+          emoji = {
+            module = 'blink-emoji',
+            name = 'Emoji',
+            score_offset = 15,
+          },
+        },
       },
       completion = {
         menu = {

@@ -89,14 +89,12 @@ main() {
 
   # Check if kubectl is available
   if ! command -v kubectl &>/dev/null; then
-    echo "N/A"
     return 0
   fi
 
   # Get current context
   local context
   if ! context="$(kubectl config current-context 2>/dev/null)"; then
-    echo "N/A"
     return 0
   fi
 

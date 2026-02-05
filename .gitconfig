@@ -6,6 +6,7 @@
   excludesfile = ~/.gitignore
   preloadindex = true
   pager = less
+	quotePath = false
 
 [color]
   ui = auto

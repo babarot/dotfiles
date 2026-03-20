@@ -33,9 +33,9 @@ eval "$(mise activate zsh)"
 
 # bun completions
 [ -s "/Users/babarot/.bun/_bun" ] && source "/Users/babarot/.bun/_bun"
-
-# bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+export PATH="$HOME/.cargo/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin:$PATH"
 
 eval "$(enter --init-shell zsh)"

@@ -1,13 +1,13 @@
 github:
-- name: babarot/zsh-auto-ls
-  description: Auto ls on directory change, git status on empty Enter
-  owner: babarot
-  repo: zsh-auto-ls
-  plugin:
-    sources:
-      - auto-ls.zsh
-  depends-on:
-  - zsh
+# - name: babarot/zsh-auto-ls
+#   description: Auto ls on directory change, git status on empty Enter
+#   owner: babarot
+#   repo: zsh-auto-ls
+#   plugin:
+#     sources:
+#       - auto-ls.zsh
+#   depends-on:
+#   - zsh
 - name: babarot/enhancd
   description: A next-generation cd command with your interactive filter
   owner: babarot

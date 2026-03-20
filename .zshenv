@@ -92,3 +92,4 @@ export FZF_DEFAULT_OPTS="--extended --ansi --multi"
 #export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 
 export GOPATH=$HOME
+. "$HOME/.cargo/env"

@@ -28,3 +28,14 @@ export XDG_CONFIG_HOME="$HOME/.config"
 
 # word split: `-`, `_`, `.`, `=`
 export WORDCHARS='*?[]~&;!#$%^(){}<>'
+
+eval "$(mise activate zsh)"
+
+# bun completions
+[ -s "/Users/babarot/.bun/_bun" ] && source "/Users/babarot/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+eval "$(enter --init-shell zsh)"

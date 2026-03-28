@@ -30,6 +30,9 @@ font-family = "Hiragino Kaku Gothic ProN"
 font-size = 18
 font-feature = -dlig
 
-shell-integration = none
+# shell-integration = none
 # shell-integration-features = title,sudo
 unfocused-split-opacity = 0.5
+
+keybind = cmd+shift+t=prompt_tab_title
+# keybind = cmd+shift+t=prompt_title

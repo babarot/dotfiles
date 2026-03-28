@@ -106,8 +106,6 @@ github:
     link:
     - from: .
       to: $HOME/.tmux/plugins/tpm
-    snippet: |
-      ~/.tmux/plugins/tpm/tpm
 - name: antonmedv/red
   description: Terminal log analysis tools
   owner: antonmedv

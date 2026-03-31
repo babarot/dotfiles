@@ -12,7 +12,7 @@ Setup guide is here: [setup-mac.md](./etc/docs/setup-mac.md)
   - Package manager: [afx](https://github.com/babarot/afx/)
 - Terminal: [Ghostty](https://ghostty.org/)
 - Editor: [Neovim](https://github.com/neovim/neovim)
-- Multiplexer: [tmux](https://github.com/tmux/tmux)
+- ~~Multiplexer: [tmux](https://github.com/tmux/tmux)~~
   - Plugin manager: [tpm](https://github.com/tmux-plugins/tpm) (Press `prefix` + <kbd>I</kbd> to install)
 - Font: [nerd-fonts](https://github.com/ryanoasis/nerd-fonts#font-installation) (DejaVuSansMono Nerd Font Mono)
 

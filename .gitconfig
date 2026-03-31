@@ -53,15 +53,15 @@
 [user]
   name = babarot
   email = b4b4r07@gmail.com
-  signingkey = D6CF1A347277485E
+	signingkey = /Users/babarot/.ssh/id_rsa.pub
 
 [pager]
   ; log  = diff-highlight | less -RX
   ; show = diff-highlight | less -RX
   ; diff = less
   ; diff = diff-so-fancy | less --tabs=4 -RFX
-  diff = delta --dark --plus-color="#012800" --minus-color="#340001"
-  diff = "ov --section-delimiter ' --- ' --section-header"
+  ; diff = delta --dark --plus-color="#012800" --minus-color="#340001"
+  ; diff = "ov --section-delimiter ' --- ' --section-header"
   log = "ov -F --section-delimiter '^commit' --section-header-num 3"
   show = "ov -F --header 3"
   branch = less -X
@@ -75,7 +75,7 @@
   # to DISABLE external diff, these options are available
   #   1. GIT_EXTERNAL_DIFF= git diff
   #   2. git diff --no-ext-diff
-  external            = difft --syntax-highlight=off
+  ; external            = difft --syntax-highlight=off
 
 [init]
   defaultBranch = main
@@ -84,7 +84,7 @@
   tool = vimdiff
 
 [commit]
-  gpgsign = false
+	gpgsign = true
   template = ~/.gitmessage
 
 [push]
@@ -99,6 +99,7 @@
 
 [gpg]
   program = gpg
+	format = ssh
 
 [url "https://"]
   insteadOf = git://

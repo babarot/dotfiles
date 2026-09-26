@@ -10,16 +10,15 @@
 # https://zsh.sourceforge.io/Doc/Release/Files.html#Files
 #
 
-# Return if zsh is called from Vim
-# if [[ -n $VIMRUNTIME ]]; then
-#     return 0
-# fi
+# Everything below is human UX: aliases, plugins, prompt, keybinds, setopts.
+# AI agents get plain zsh; what they need (PATH, env) lives in .zshenv.
+is_human || return 0
 
-autoload -Uz compinit
-compinit
-
-autoload -Uz colors
-colors
+autoload -Uz run-help
+autoload -Uz add-zsh-hook
+autoload -Uz is-at-least
+autoload -Uz compinit && compinit -u
+autoload -Uz colors && colors
 
 source <(afx init)
 source <(afx completion zsh)
@@ -29,14 +28,11 @@ export XDG_CONFIG_HOME="$HOME/.config"
 # word split: `-`, `_`, `.`, `=`
 export WORDCHARS='*?[]~&;!#$%^(){}<>'
 
+# Agents resolve versions through the shims on PATH (.zshenv);
+# activate additionally keeps PATH in sync for interactive use
 eval "$(mise activate zsh)"
 
 # bun completions
-[ -s "/Users/babarot/.bun/_bun" ] && source "/Users/babarot/.bun/_bun"
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-export PATH="$HOME/.cargo/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin:$PATH"
+[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
 
 eval "$(enter --init-shell zsh)"
-export PATH="$HOME/.local/bin:$PATH"

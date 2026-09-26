@@ -88,3 +88,15 @@ pskill() {
     --header-lines=1 \
     --height=50
 }
+
+# codex runs inside the Seatbelt sandbox and cannot read the Keychain,
+# so gh fails to fetch its token and gets 401. Pass the token via env
+# only when launching codex. Network access itself is enabled by
+# [sandbox_workspace_write] network_access = true in ~/.codex/config.toml.
+codex() {
+  if [[ -z $GH_TOKEN ]] && type gh &>/dev/null; then
+    GH_TOKEN="$(command gh auth token 2>/dev/null)" command codex "$@"
+  else
+    command codex "$@"
+  fi
+}

@@ -149,14 +149,14 @@ bindkey '^D' _delete-char-or-list-expand
 #     return $status
 #   fi
 #
-#   # フラグを設定してaccept-lineを呼ぶ
+#   # Set the flag and call accept-line
 #   _do_enter_flag=true
 #   zle accept-line
 # }
 # zle -N do-enter
 # bindkey '^m' do-enter
 #
-# # precmd フックで ls/git status を実行
+# # Run ls/git status in the precmd hook
 # _do_enter_precmd() {
 #   if ! $_do_enter_flag; then
 #     return
@@ -171,21 +171,21 @@ bindkey '^D' _delete-char-or-list-expand
 #
 #   if git rev-parse --is-inside-work-tree &>/dev/null; then
 #     if $is_new_dir; then
-#       # 新しいディレクトリに移動した場合は ls
+#       # Run ls after moving to a new directory
 #       ${=aliases[ls]:-ls}
 #     elif [[ -n $(git status --short 2>/dev/null) ]]; then
-#       # 同じディレクトリで変更がある場合は git status
+#       # Run git status if there are changes in the same directory
 #       git status
 #     fi
 #   else
 #     if $is_new_dir; then
-#       # git リポジトリ外で新しいディレクトリに移動した場合は ls
+#       # Run ls after moving to a new directory outside a git repository
 #       ${=aliases[ls]:-ls}
 #     fi
 #   fi
 # }
 #
-# # precmd フックに追加
+# # Add to precmd hooks
 # if (( ${+precmd_functions} )); then
 #   precmd_functions+=(_do_enter_precmd)
 # else

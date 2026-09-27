@@ -20,8 +20,6 @@ autoload -Uz is-at-least
 autoload -Uz compinit && compinit -u
 autoload -Uz colors && colors
 
-export XDG_CONFIG_HOME="$HOME/.config"
-
 # word split: `-`, `_`, `.`, `=`
 export WORDCHARS='*?[]~&;!#$%^(){}<>'
 

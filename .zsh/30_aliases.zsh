@@ -14,14 +14,6 @@ alias egrep='egrep --color=auto'
 # Use plain vim.
 alias suvim='vim -N -u NONE -i NONE'
 
-if (( $+commands[kubectl] )); then
-  alias k=kubectl
-fi
-
-if (( $+commands[nvim] )); then
-  alias vim=nvim
-fi
-
 # Global aliases
 alias -g L='| less'
 alias -g G='| grep'
@@ -37,7 +29,6 @@ alias -g W='| wc -l'
 
 alias -g CP='| pbcopy'
 alias -g CC='| tee /dev/tty | pbcopy'
-alias -g F='$(fzf)'
 
 awk_alias2() {
   local -a options fields words
@@ -68,35 +59,5 @@ alias -g A="| awk_alias2"
 alias galias="alias | command grep -E '^[A-Z]'"
 alias yy="fc -ln -1 | tr -d '\n' | pbcopy"
 
-gchange() {
-  if ! type gcloud &>/dev/null; then
-    echo "gcloud not found" >&2
-    return 1
-  fi
-  gcloud config configurations activate $(gcloud config configurations list | fzf-tmux --reverse --header-lines=1 | awk '{print $1}')
-}
-
-alias -g Q="| gawk 'match(\$0, /\"(.*?)\"/, a) {print a[1]}'"
-alias -g QQ="| gawk 'match(\$0, /(\".*?\")/, a) {print a[1]}'"
 alias -g ESC='| sed -r "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
 alias -g ANSI='| sed -r "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
-
-pskill() {
-  ps -ef | fzf \
-    --bind 'ctrl-r:reload(ps -ef),enter:execute(kill {2})+reload(ps -ef)' \
-    --header 'Press CTRL-R to reload' \
-    --header-lines=1 \
-    --height=50
-}
-
-# codex runs inside the Seatbelt sandbox and cannot read the Keychain,
-# so gh fails to fetch its token and gets 401. Pass the token via env
-# only when launching codex. Network access itself is enabled by
-# [sandbox_workspace_write] network_access = true in ~/.codex/config.toml.
-codex() {
-  if [[ -z $GH_TOKEN ]] && type gh &>/dev/null; then
-    GH_TOKEN="$(command gh auth token 2>/dev/null)" command codex "$@"
-  else
-    command codex "$@"
-  fi
-}

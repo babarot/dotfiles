@@ -1,3 +1,18 @@
+# History file and its size
+HISTFILE=~/.zsh_history
+HISTSIZE=1000000
+SAVEHIST=1000000
+# Do not keep root's history
+if [[ $UID == 0 ]]; then
+    unset HISTFILE
+    SAVEHIST=0
+fi
+# Ask before listing more completions than this
+LISTMAX=50
+# Do not offer corrections to internal functions and dotfiles
+CORRECT_IGNORE='_*'
+CORRECT_IGNORE_FILE='.*'
+
 #setopt ignore_eof
 #setopt xtrace
 setopt always_last_prompt

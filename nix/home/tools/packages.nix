@@ -6,14 +6,12 @@
     ast-grep
     bashInteractive
     ccusage
-    codex
     conftest
     d2
     deno
     difftastic
     exiftool
     ffmpeg
-    gawk # used by the Q/QQ global aliases in ~/.zsh/30_aliases.zsh
     ghalint
     ghq
     git-open

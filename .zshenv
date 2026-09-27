@@ -38,11 +38,9 @@ path=( \
 
 # set fpath before compinit
 typeset -gx -U fpath
+# (completions of Nix packages are added by nix-darwin's /etc/zshenv)
 fpath=( \
     ~/.zsh/Completion(N-/) \
-    ~/.zsh/functions(N-/) \
-    ~/.zsh/plugins/zsh-completions(N-/) \
-    /usr/local/share/zsh/site-functions(N-/) \
     $fpath \
 )
 
@@ -61,8 +59,6 @@ if is_human; then
 
     # Pager
     export PAGER=less
-    # Less status line
-    export LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
 else
     # Nobody can answer an editor, pager or password prompt: fail fast
     # instead of hanging
@@ -70,51 +66,10 @@ else
     export PAGER=cat GIT_PAGER=cat BAT_PAGER=cat MANPAGER=cat
     export GIT_TERMINAL_PROMPT=0
 fi
-export LESSCHARSET='utf-8'
-
-# LESS man page colors (makes Man pages more readable).
-export LESS_TERMCAP_mb=$'\E[01;31m'
-export LESS_TERMCAP_md=$'\E[01;31m'
-export LESS_TERMCAP_me=$'\E[0m'
-export LESS_TERMCAP_se=$'\E[0m'
-export LESS_TERMCAP_so=$'\E[00;44;37m'
-export LESS_TERMCAP_ue=$'\E[0m'
-export LESS_TERMCAP_us=$'\E[01;32m'
-
-# ls command colors
-export LSCOLORS=exfxcxdxbxegedabagacad
-export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
-
-# declare the environment variables
-export CORRECT_IGNORE='_*'
-export CORRECT_IGNORE_FILE='.*'
-
-#export WORDCHARS='*?[]~&;!#$%^(){}<>'
-#export WORDCHARS='*?.[]~&;!#$%^(){}<>'
-export WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
-
-# History file and its size
-export HISTFILE=~/.zsh_history
-export HISTSIZE=1000000
-export SAVEHIST=1000000
-# The size of asking history
-export LISTMAX=50
-# Do not add in root
-if [[ $UID == 0 ]]; then
-    unset HISTFILE
-    export SAVEHIST=0
-fi
-
-# fzf - command-line fuzzy finder (https://github.com/junegunn/fzf)
-export FZF_DEFAULT_OPTS="--extended --ansi --multi"
-
-# Cask
-#export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 
 # Supply-chain cooldown: skip releases younger than 7 days
 # (see also .config/uv/uv.toml)
 export PINACT_MIN_AGE=7
 
 export GOPATH=$HOME
-. "$HOME/.cargo/env"
 export BUN_INSTALL="$HOME/.bun"

@@ -19,4 +19,17 @@
     FZF_ALT_C_COMMAND = "fd --type d";
     FZF_ALT_C_OPTS = ''--preview "tree -C {} | head -100"'';
   };
+
+  my.human.globalAliases.F = "$(fzf)";
+
+  # Kill processes picked with fzf (enter kills, ctrl-r reloads)
+  my.human.init = ''
+    pskill() {
+      ps -ef | fzf \
+        --bind 'ctrl-r:reload(ps -ef),enter:execute(kill {2})+reload(ps -ef)' \
+        --header 'Press CTRL-R to reload' \
+        --header-lines=1 \
+        --height=50
+    }
+  '';
 }

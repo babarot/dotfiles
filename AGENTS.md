@@ -58,6 +58,7 @@ claude/                # Claude Code user settings, linked into ~/.claude
 | zsh plugin or source not in nixpkgs | a flake input with `flake = false` |
 | Third-party Homebrew tap | `homebrew.brews` / `homebrew.casks` with the full `owner/tap/name`; nix-darwin marks each entry `trusted: true` |
 | Per-project language or tool versions | the project's `mise.toml`, not this repo |
+| Claude Code | not from nixpkgs: it updates itself, so `nix/home/tools/claude-code.nix` runs the official installer only when `~/.local/bin/claude` is missing |
 
 Before adding a nixpkgs package, check it is the same tool: several names belong to something else (`yq` is Python's, use `yq-go`; `mmv` is not itchyny's, use `mmv-go`; `pup`, `ktop`, `kubesec`, `gist` differ too).
 

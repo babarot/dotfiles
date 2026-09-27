@@ -3,10 +3,13 @@
 # writes to settings.json itself (/config, plugins, permissions); its
 # edits show up as git diffs here.
 #
-# Claude Code itself is installed by its own installer (~/.local/bin).
+# Claude Code itself updates itself, so it comes from the official
+# installer (~/.local/bin/claude), not nixpkgs; activation only installs it
+# when missing, e.g. on a new Mac.
 {
   config,
   inputs,
+  lib,
   pkgs,
   ...
 }:
@@ -26,4 +29,15 @@ in
     ".claude/statusline.yaml".source = link "statusline.yaml";
     ".claude/CLAUDE.md".source = link "CLAUDE.md";
   };
+
+  home.activation.claudeCode = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if [[ ! -e "$HOME/.local/bin/claude" ]]; then
+      # Activation has a minimal PATH; the installer needs curl, shasum, sed
+      # and friends from macOS. With ~/.local/bin already on PATH it does not
+      # append a PATH line to the shell rc files in this repo.
+      run /usr/bin/env PATH="$HOME/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin" \
+        /bin/bash -c 'curl -fsSL https://claude.ai/install.sh | bash' \
+        || warnEcho "Claude Code: install failed; run: curl -fsSL https://claude.ai/install.sh | bash"
+    fi
+  '';
 }

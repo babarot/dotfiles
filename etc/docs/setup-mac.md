@@ -113,7 +113,7 @@ cd ~/src/github.com/babarot/dotfiles && make brew
 ```
 
 > [!NOTE]
-> Mac App Store apps are installed by `darwin-rebuild switch` too, with [mas](https://github.com/mas-cli/mas), from [app-store.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home/tools/app-store.nix). Sign in to the App Store first; an app that fails to install only prints a warning, so switch again after signing in.
+> Claude Code is installed the same way when missing, with its official installer, and then updates itself. Mac App Store apps are installed by `darwin-rebuild switch` too, with [mas](https://github.com/mas-cli/mas), from [app-store.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home/tools/app-store.nix). Sign in to the App Store first; an app that fails to install only prints a warning, so switch again after signing in.
 
 ## Nix/Zsh
 

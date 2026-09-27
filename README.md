@@ -12,8 +12,6 @@ Setup guide is here: [setup-mac.md](./etc/docs/setup-mac.md)
   - Package manager: [Nix](https://nixos.org/) ([nix-darwin](https://github.com/nix-darwin/nix-darwin) + [home-manager](https://github.com/nix-community/home-manager))
 - Terminal: [Ghostty](https://ghostty.org/)
 - Editor: [Neovim](https://github.com/neovim/neovim)
-- ~~Multiplexer: [tmux](https://github.com/tmux/tmux)~~
-  - Plugin manager: [tpm](https://github.com/tmux-plugins/tpm) (Press `prefix` + <kbd>I</kbd> to install)
 - Font: Menlo + Hiragino Kaku Gothic ProN (Ghostty); Nerd Fonts (Hack, JetBrains Mono) are installed by Nix
 
 ## Shell for humans and AI agents

@@ -106,92 +106,6 @@ _delete-char-or-list-expand() {
 zle -N _delete-char-or-list-expand
 bindkey '^D' _delete-char-or-list-expand
 
-# # do-enter() {
-# #   if [[ -n $BUFFER ]]; then
-# #     zle accept-line
-# #     return $status
-# #   fi
-# #
-# #   : ${ls_done:=false}
-# #   : ${git_ls_done:=false}
-# #
-# #   if [[ $PWD != $GIT_OLDPWD ]]; then
-# #     git_ls_done=false
-# #   fi
-# #
-# #   echo
-# #   if git rev-parse --is-inside-work-tree &>/dev/null; then
-# #     if $git_ls_done; then
-# #       if [[ -n $(git status --short) ]]; then
-# #         git status
-# #       fi
-# #     else
-# #       ${=aliases[ls]} && git_ls_done=true
-# #       GIT_OLDPWD=$PWD
-# #     fi
-# #   else
-# #     if [[ $PWD != $OLDPWD ]] && ! $ls_done; then
-# #       ${=aliases[ls]} && ls_done=true
-# #     fi
-# #   fi
-# #
-# #   zle reset-prompt
-# # }
-# # zle -N do-enter
-# # bindkey '^m' do-enter
-#
-# _do_enter_flag=false
-# _do_enter_last_pwd=""
-#
-# do-enter() {
-#   if [[ -n $BUFFER ]]; then
-#     zle accept-line
-#     return $status
-#   fi
-#
-#   # Set the flag and call accept-line
-#   _do_enter_flag=true
-#   zle accept-line
-# }
-# zle -N do-enter
-# bindkey '^m' do-enter
-#
-# # Run ls/git status in the precmd hook
-# _do_enter_precmd() {
-#   if ! $_do_enter_flag; then
-#     return
-#   fi
-#   _do_enter_flag=false
-#
-#   local is_new_dir=false
-#   if [[ $PWD != $_do_enter_last_pwd ]]; then
-#     is_new_dir=true
-#     _do_enter_last_pwd=$PWD
-#   fi
-#
-#   if git rev-parse --is-inside-work-tree &>/dev/null; then
-#     if $is_new_dir; then
-#       # Run ls after moving to a new directory
-#       ${=aliases[ls]:-ls}
-#     elif [[ -n $(git status --short 2>/dev/null) ]]; then
-#       # Run git status if there are changes in the same directory
-#       git status
-#     fi
-#   else
-#     if $is_new_dir; then
-#       # Run ls after moving to a new directory outside a git repository
-#       ${=aliases[ls]:-ls}
-#     fi
-#   fi
-# }
-#
-# # Add to precmd hooks
-# if (( ${+precmd_functions} )); then
-#   precmd_functions+=(_do_enter_precmd)
-# else
-#   precmd_functions=(_do_enter_precmd)
-# fi
-
 peco-select-gitadd() {
   local selected_file_to_add
   selected_file_to_add="$(
@@ -211,27 +125,6 @@ peco-select-gitadd() {
 }
 zle -N peco-select-gitadd
 bindkey '^g^a' peco-select-gitadd
-
-# expand global aliases by space
-# http://blog.patshead.com/2012/11/automatically-expaning-zsh-global-aliases---simplified.html
-globalias() {
-  if [[ $LBUFFER =~ ' [A-Z0-9]+$' ]]; then
-    zle _expand_alias
-    # zle expand-word
-  fi
-  zle self-insert
-}
-
-# zle -N globalias
-# bindkey " " globalias
-
-run_tmux() {
-  if [[ -z $TMUX ]]; then
-    tmux
-  fi
-}
-zle -N run_tmux
-bindkey '^T' run_tmux
 
 autoload -Uz edit-command-line
 zle -N edit-command-line

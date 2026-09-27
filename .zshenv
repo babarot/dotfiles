@@ -32,7 +32,6 @@ path=( \
     /usr/local/bin(N-/) \
     /opt/homebrew/bin \
     ~/.cargo/bin(N-/) \
-    ~/.zplug/bin(N-/) \
     ~/.tmux/bin(N-/) \
     "$path[@]" \
 )

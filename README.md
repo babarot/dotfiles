@@ -40,6 +40,7 @@ Two Macs share this flake: `pro23` (private) and `PC-M-2025-026` (work). `darwin
 flake.nix              # one darwinConfiguration per hostname
 nix/
   darwin.nix           # system settings shared by all Macs
+  macos.nix            # macOS System Settings (Dock, Finder, trackpad, Touch ID sudo)
   homebrew.nix         # vendor apps installed by Homebrew
   hosts/<hostname>.nix # per-machine packages, casks and App Store apps
   home/

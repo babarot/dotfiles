@@ -5,23 +5,16 @@ This page guides you to set up the new machine to usual state.
 
 # 1. Built-in Software / OS Preferences
 
-## Finder
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/55dabfcd-eed8-4ea9-a66a-3af3f509d773"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/7309a814-3c5f-4a88-8146-ed4f91dbac95"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/d1e70e17-b4cb-4cb5-8e9f-b422868c76e8">
-
-## System Settings
+Most of Finder and System Settings (appearance, Dock and hot corners, Finder, trackpad and mouse, menu bar, Caps Lock to Control, Touch ID for `sudo`) is declared in [nix/macos.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/macos.nix) and applied by `darwin-rebuild switch` (see [Nix/Zsh](#nixzsh)). What is left by hand:
 
 / | Guides
 ---|---
-Appearance | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/fc7aabba-ab4f-4c52-89c5-be3679b48822">
-Accessibility | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/2aa24213-e601-40e4-b82c-4f4c73c5380f"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/dfa10f37-6c88-483d-b26c-2a51bfac3031">
-Control Center | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/3dce23a7-5ed6-4352-854c-235687328676">
-Desktop & Dock | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/20bebaf4-b5c1-4635-a124-390e57ef0534"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/bacaef47-87c8-447b-a572-02efd6db5113">
+Finder sidebar | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/7309a814-3c5f-4a88-8146-ed4f91dbac95">
 Displays | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/1ff3f3a1-a052-478b-b9da-8c317a6d6030">
 Touch ID & Password | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c61af4f6-4673-48ef-afb8-2c1876e27439">
-Keyboad | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/8f3f919e-700e-4d1a-bb8a-dea3eed53822"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/747ef146-b573-4d15-94b8-353499f933aa">
-Trackpad | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/34c925a0-a438-43c4-9525-e5dedfb24127">
-Mouse | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/56f226f7-3cd0-4a13-a33a-6c835075db88">
+Keyboard (input sources) | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/8f3f919e-700e-4d1a-bb8a-dea3eed53822">
+
+Dock contents are not declared either; add apps to it by hand.
 
 # 2. Hardware
 

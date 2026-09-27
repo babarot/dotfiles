@@ -20,6 +20,7 @@ This repository is public. Never commit credentials, tokens, or internal names f
 ```
 flake.nix              # inputs and one darwinConfiguration per hostname
 nix/darwin.nix         # system settings for every Mac (allowUnfree, primaryUser)
+nix/macos.nix          # macOS System Settings for every Mac (system.defaults, keyboard, Touch ID sudo)
 nix/homebrew.nix       # vendor apps installed by Homebrew casks (install only)
 nix/hosts/<host>.nix   # per-Mac packages, casks and App Store apps
 nix/home/default.nix   # imports every file in nix/home/tools
@@ -55,6 +56,7 @@ claude/                # Claude Code user settings, linked into ~/.claude
 | PATH entries, and env not tied to a tool (EDITOR, locale) | `.zshenv`, before or outside the `is_human` branch |
 | GUI app that does not self-update and passes `codesign --verify --deep --strict` | `nix/home/tools/apps.nix` |
 | GUI app that self-updates, needs `/Applications` or system components, or fails codesign in nixpkgs | a cask in `nix/homebrew.nix` (or the host file) |
+| macOS System Settings (Dock, Finder, trackpad, ...) | `nix/macos.nix`, only values that differ from the macOS default; check the key with `defaults read` first |
 | Mac App Store app | `my.masApps` in `nix/home/tools/app-store.nix` (or the host file); IDs from `mas list` |
 | babarot's own tools | released with GoReleaser's `nix` publisher (or c-c-statusline's workflow) to babarot/nur-packages, then `inputs.babarot.packages.<system>.<name>` |
 | Third-party tool not in nixpkgs that ships a flake | a flake input pinned to a release tag (see `crit`) |

@@ -5,11 +5,7 @@ DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 
 .DEFAULT_GOAL := help
 
-all: afx brew install
-
-afx: ## Install babarot/afx
-	@curl -sL https://raw.githubusercontent.com/babarot/afx/HEAD/hack/install | sh
-	@echo 'Done. Run "afx install" next.'
+all: brew install
 
 brew: ## Install brew and run brew bundle
 	@sh ./etc/scripts/brew.sh

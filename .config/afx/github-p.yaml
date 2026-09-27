@@ -1,9 +1,0 @@
-github:
-- name: babarot/claude-commands
-  description:
-  owner: babarot
-  repo: claude-commands
-  command:
-    link:
-    - from: .
-      to: $HOME/.claude/commands

@@ -10,7 +10,6 @@
     init = ''
       abbr --quiet tf=terraform
       abbr --quiet cf=conftest
-      abbr --quiet k=kubectl
       abbr --quiet "d c"="docker compose"
     '';
   };

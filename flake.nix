@@ -21,6 +21,10 @@
       url = "github:babarot/za-prompt";
       flake = false;
     };
+    tpm = {
+      url = "github:tmux-plugins/tpm";
+      flake = false;
+    };
   };
 
   outputs =
@@ -37,6 +41,8 @@
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
+              # Move files in the way (e.g. old afx links) aside instead of failing
+              home-manager.backupFileExtension = "before-hm";
               home-manager.extraSpecialArgs = { inherit inputs; };
               home-manager.users.babarot = import ./nix/home;
             }

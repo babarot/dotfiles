@@ -20,17 +20,14 @@ autoload -Uz is-at-least
 autoload -Uz compinit && compinit -u
 autoload -Uz colors && colors
 
-source <(afx init)
-source <(afx completion zsh)
-
 export XDG_CONFIG_HOME="$HOME/.config"
 
 # word split: `-`, `_`, `.`, `=`
 export WORDCHARS='*?[]~&;!#$%^(){}<>'
 
-# Agents resolve versions through the shims on PATH (.zshenv);
-# activate additionally keeps PATH in sync for interactive use
-eval "$(mise activate zsh)"
+# Plugins, aliases and env from nix/home/tools/*.nix (my.human), plus the
+# hand-written ~/.zsh/[0-9]*.zsh
+source ~/.config/zsh/human.zsh
 
 # bun completions
 [ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"

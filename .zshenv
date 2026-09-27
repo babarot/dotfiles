@@ -18,12 +18,17 @@ is_human() {
 
 # Claude Code restores the PATH captured when it snapshots .zshrc,
 # so every PATH entry agents need must be set here, not in .zshrc.
+# Nix profiles come before Homebrew so Nix-managed tools win over
+# leftover brew duplicates.
 typeset -gx -U path
 path=( \
     ~/.local/share/mise/shims(N-/) \
     ~/.bun/bin(N-/) \
     ~/bin(N-/) \
     ~/.local/bin(N-/) \
+    /etc/profiles/per-user/$USER/bin(N-/) \
+    /run/current-system/sw/bin(N-/) \
+    /nix/var/nix/profiles/default/bin(N-/) \
     /usr/local/bin(N-/) \
     /usr/local/go/bin \
     /opt/homebrew/bin \

@@ -10,6 +10,7 @@
   my.human.plugins.enhancd = {
     src = inputs.enhancd;
     file = "init.sh";
+    order = 400;
   };
 
   my.human.env.ENHANCD_FILTER = lib.concatStringsSep " " [

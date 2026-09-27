@@ -85,3 +85,4 @@ Before adding a nixpkgs package, check it is the same tool: several names belong
 - Activation scripts run with a minimal PATH (no awk, grep); use bash builtins or store paths.
 - Binaries built by `deno compile` break if Nix strips them; package them with `dontFixup = true`.
 - Replacing an app: quit the old one before trashing it, or a copy running from the Trash keeps its profile locked.
+- `claude` must resolve to `~/.local/bin/claude`. A copy installed with `npm install -g @anthropic-ai/claude-code` into a mise-managed node gets a mise shim, which comes first on PATH and hides the official one; remove it and run `mise reshim --force`.

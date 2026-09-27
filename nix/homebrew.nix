@@ -21,7 +21,11 @@
       "google-chrome"
       "google-drive"
       "logi-options+"
+      "numi"
+      "obsidian"
       "postman"
+      "spotify"
+      "tableplus"
     ];
   };
 }

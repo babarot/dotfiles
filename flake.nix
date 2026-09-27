@@ -18,6 +18,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Tools not in nixpkgs that ship their own flake. Pinned to a release
+    # tag; bump the tag to update.
+    crit = {
+      url = "github:tomasz-tomczyk/crit/v0.20.3";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # zsh plugins not in nixpkgs, sourced as-is
     enhancd = {
       url = "github:babarot/enhancd";

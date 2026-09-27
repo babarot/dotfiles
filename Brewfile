@@ -1,9 +1,5 @@
-#
-# Brew
-#   https://formulae.brew.sh/
-#
-# CLI tools live in nix/home/tools. Only what nixpkgs lacks stays here.
-brew "crit"
+# CLI tools live in nix/home/tools. This file only lists GUI apps (casks)
+# and Mac App Store apps until they move to Nix.
 
 #
 # Cask

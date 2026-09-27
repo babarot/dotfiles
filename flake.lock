@@ -20,6 +20,27 @@
         "type": "github"
       }
     },
+    "crit": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790260193,
+        "narHash": "sha256-TonSGGVoW4FpU1Ub2TqRD55qZUXjuIreletgRGHPu0s=",
+        "owner": "tomasz-tomczyk",
+        "repo": "crit",
+        "rev": "46122ebdf31cd4891115a548dfbf1156b630d5f4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tomasz-tomczyk",
+        "ref": "v0.20.3",
+        "repo": "crit",
+        "type": "github"
+      }
+    },
     "enhancd": {
       "flake": false,
       "locked": {
@@ -96,6 +117,7 @@
     "root": {
       "inputs": {
         "babarot": "babarot",
+        "crit": "crit",
         "enhancd": "enhancd",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",

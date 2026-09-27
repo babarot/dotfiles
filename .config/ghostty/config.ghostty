@@ -34,5 +34,10 @@ font-feature = -dlig
 # shell-integration-features = title,sudo
 unfocused-split-opacity = 0.5
 
+# Needs shell integration to know the working directory
+window-inherit-working-directory = false
+tab-inherit-working-directory = true
+split-inherit-working-directory = true
+
 keybind = cmd+shift+t=prompt_tab_title
 # keybind = cmd+shift+t=prompt_title

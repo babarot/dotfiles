@@ -60,19 +60,19 @@ Check your keys in `.ssh` folder.
 
 ```console
 $ ls ~/.ssh
-id_rsa id_rsa.pub
+id_ed25519 id_ed25519.pub
 ```
 
-If you don't have them, create key pairs with the command. (all questions are compulsory but it's OK to leave it blank these)
+If you don't have them, create a key pair with the command. (it's OK to leave the passphrase blank)
 
 ```bash
-cd ~/.ssh && ssh-keygen -t rsa -C "babarot@gmail.com"
+ssh-keygen -t ed25519 -C "babarot@gmail.com"
 ```
 
 Copy a public key.
 
 ```bash
-cat ~/.ssh/id_rsa.pub | pbcopy
+cat ~/.ssh/id_ed25519.pub | pbcopy
 ```
 
 Next,
@@ -92,7 +92,7 @@ Hi babarot! You've successfully authenticated, but GitHub does not provide shell
 
 ## Dotfiles
 
-The first thing you need to do is to clone this repo into a location of your choosing. For example, if you have a `~/Developer` directory where you clone all of your git repos, that's a good choice for this one, too. This repo is setup to not rely on the location of the dotfiles, so you can place it anywhere.
+Clone this repo into `~/src/github.com/babarot/dotfiles`. Keep this exact path: the `darwin-rebuild` commands below and the links into `~/.claude` (see [claude-code.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home/tools/claude-code.nix)) point at it.
 
 ```bash
 git clone git@github.com:babarot/dotfiles.git ~/src/github.com/babarot/dotfiles
@@ -125,10 +125,16 @@ Install Nix with the [Determinate Nix installer](https://github.com/DeterminateS
 curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 ```
 
-The configuration is selected by hostname. Check it, and if this machine is new, add `nix/hosts/<hostname>.nix` and an entry in `darwinConfigurations` in `flake.nix` (copy an existing host).
+The configuration is selected by hostname: `pro23` is the private Mac and `PC-M-2025-026` the work Mac. Check it, and if this machine is new, add `nix/hosts/<hostname>.nix` and an entry in `darwinConfigurations` in `flake.nix` (copy an existing host), then `git add` the new file so Nix can see it.
 
 ```bash
 scutil --get LocalHostName
+```
+
+Build the configuration as yourself first. The `agent-skills` input is a private repo fetched over SSH with your key, which root does not have; once it is in the Nix store, the `sudo` run below finds it there.
+
+```bash
+nix build "$HOME/src/github.com/babarot/dotfiles#darwinConfigurations.$(scutil --get LocalHostName).system" --no-link
 ```
 
 Apply the configuration for the first time. `darwin-rebuild` is not installed yet, so run it through `nix run`. Quote the flake reference, since zsh treats `#` as a glob.
@@ -137,7 +143,7 @@ Apply the configuration for the first time. `darwin-rebuild` is not installed ye
 sudo /nix/var/nix/profiles/default/bin/nix run 'nix-darwin/master#darwin-rebuild' -- switch --flake ~/src/github.com/babarot/dotfiles
 ```
 
-From the next time, open a new shell and run:
+From the next time, open a new shell and run (after `nix flake update agent-skills`, build as yourself first again):
 
 ```bash
 sudo darwin-rebuild switch --flake ~/src/github.com/babarot/dotfiles
@@ -196,7 +202,9 @@ Then,
 pbpaste >| ~/.enhancd/enhancd.log
 ```
 
-# 3. Configure Apps
+# 4. Configure Apps
+
+`darwin-rebuild switch` installs these apps (see [Packages](https://github.com/babarot/dotfiles#packages)); what is left is signing in and settings. Apps listed in `nix/hosts/<hostname>.nix` are only on that Mac.
 
 ## 1Password
 
@@ -214,23 +222,9 @@ Configure the appearance.
 
 https://www.google.co.jp/ime/
 
+Not installed by `darwin-rebuild`; install it from the site.
+
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/e208b204-1f0b-4bfc-8020-23a9d6bb1761"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c8b7ae19-744d-462a-8acd-92cb72472e3d"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/f57a6418-8265-4e33-ade5-c68998ce40e1"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/f3fe14cf-6d5b-4d13-a7dc-933740ba49c3"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/86d09068-5b07-4a25-be97-ea912df2901e">
-
-## iTerm2
-
-https://iterm2.com/
-
-### Install a colorscheme
-
-https://ethanschoonover.com/solarized/
-
-### Configure
-
-Area | Guides
----|---
-General | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/2e708423-462b-499c-8be4-8483dbd41c2e"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/56ab5bd1-5118-4d47-9410-4a841344e546">
-Appearance | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/9a46b49d-c310-41ad-ab54-c3758ebae678">
-Profile | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/382a5509-755b-4252-8eca-91e5a5bc22cd"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/38cacf00-5558-4831-9c79-1e9b721f1328"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/22b335f5-b439-4a8b-bc1d-b3ad5595bc4b"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/b1e6c400-4ab9-42b5-8124-cb19b735140a">
 
 ## Obsidian
 

@@ -34,16 +34,23 @@ Everything is declared in the flake and installed by `darwin-rebuild switch`:
 
 Nothing is pinned for App Store or vendor apps; only a missing app is installed.
 
+Two Macs share this flake: `pro23` (private) and `PC-M-2025-026` (work). `darwin-rebuild` picks the configuration by `scutil --get LocalHostName`; anything outside `nix/hosts/` applies to both.
+
 ```
 flake.nix              # one darwinConfiguration per hostname
 nix/
   darwin.nix           # system settings shared by all Macs
   homebrew.nix         # vendor apps installed by Homebrew
-  hosts/<hostname>.nix # per-machine settings
+  hosts/<hostname>.nix # per-machine packages, casks and App Store apps
   home/
+    env.nix            # my.env: variables for every shell, agents included
     human.nix          # my.human: aliases, plugins and env for humans only
     mas.nix            # my.masApps: Mac App Store apps to install
+    skills.nix         # my.skills: Agent Skills shipped with tools
     tools/<tool>.nix   # one file per tool: its package and its shell settings
+claude/                # Claude Code user settings, linked into ~/.claude
+.zshenv, .zshrc, .zsh/ # hand-written zsh, linked into ~ by `make install`
+.config/               # linked to ~/.config as a whole
 ```
 
 Each file in `nix/home/tools/` is imported automatically. It installs a tool and puts its human-only settings in `my.human`, which is rendered into `~/.config/zsh/human.zsh` and sourced after the `is_human` guard. Deleting the file removes both the tool and its settings.
@@ -59,6 +66,8 @@ Each file in `nix/home/tools/` is imported automatically. It installs a tool and
 
 My own tools (e.g. [naminator](https://github.com/babarot/naminator)) are published to [babarot/nur-packages](https://github.com/babarot/nur-packages) by GoReleaser on each release.
 
+Agent Skills for Codex and other agents come from [babarot/agent-skills](https://github.com/babarot/agent-skills) (private, fetched over SSH) and are linked into `~/.agents/skills`. Claude Code gets the same skills from the plugin marketplace.
+
 ### Apply changes
 
 ```bash
@@ -73,3 +82,5 @@ New files must be tracked by git (`git add`) before Nix can see them.
 nix flake update           # everything
 nix flake update babarot   # only my own tools
 ```
+
+After `nix flake update agent-skills`, run `nix build ".#darwinConfigurations.$(scutil --get LocalHostName).system" --no-link` as yourself before `sudo darwin-rebuild`, since root has no SSH key for the private repo.

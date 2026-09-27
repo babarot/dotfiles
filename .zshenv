@@ -30,7 +30,6 @@ path=( \
     /run/current-system/sw/bin(N-/) \
     /nix/var/nix/profiles/default/bin(N-/) \
     /usr/local/bin(N-/) \
-    /usr/local/go/bin \
     /opt/homebrew/bin \
     ~/.cargo/bin(N-/) \
     ~/.zplug/bin(N-/) \

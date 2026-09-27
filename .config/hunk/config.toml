@@ -1,0 +1,16 @@
+theme = "tokyo-night"
+
+# Keep this file as written: don't offer to save view changes made in the UI on quit
+prompt_save_view_preferences = false
+
+# Reload as the diff source changes, so an open review follows an agent's edits
+watch = true
+
+# Show agent comments (from the hunk-review skill) as soon as a review opens
+agent_notes = true
+
+# Color moved lines apart from removed and added ones, where the renderer supports it
+color_moved = true
+
+# Review tracked changes only
+exclude_untracked = true

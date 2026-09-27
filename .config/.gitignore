@@ -21,3 +21,6 @@ herdr/*
 zsh/env.zsh
 zsh/human.zsh
 direnv/lib/hm-nix-direnv.sh
+
+# hunk: last-seen version, rewritten on every run
+hunk/state.json

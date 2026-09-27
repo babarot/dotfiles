@@ -1,0 +1,32 @@
+theme: tokyo-night
+lines:
+  - - model
+    - context
+    - git
+    - duration
+    - effort
+    - vim
+    - update
+  - - usage
+items:
+  context:
+    format: '{used}/{total} (maybe {compact}% left)'
+  git:
+    path-style: parent
+    # symbols:
+    #   unstaged: "*"
+    #   staged: "+"
+    #   stash: "$"
+    #   untracked: "%"
+    #   ahead: "↑"
+    #   behind: "↓"
+    link:
+      enabled: true
+      # template: "https://{host}/{owner}/{repo}/tree/{branch}"
+      # remote: origin
+
+  vim:
+    mode: auto
+  usage:
+    bar-style: block
+    time-style: relative

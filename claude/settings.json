@@ -1,0 +1,76 @@
+{
+  "cleanupPeriodDays": 99999,
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "deny": [
+      "Bash(poetry:*)",
+      "Bash(python -m pip:*)",
+      "Bash(python3 -m pip:*)",
+      "Bash(pip3:*)",
+      "Bash(pipx:*)",
+      "Bash(pip:*)"
+    ],
+    "defaultMode": "auto"
+  },
+  "model": "opus[1m]",
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/agent-recall import 2>/dev/null",
+            "async": true
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "\"$HOME/.claude/c-c-statusline\""
+  },
+  "enabledPlugins": {
+    "commit-commands@claude-code-plugins": true,
+    "commit-commands@claude-plugins-official": true,
+    "core@babarot-skills": true,
+    "frontend-design@claude-code-plugins": true,
+    "frontend-design@claude-plugins-official": true,
+    "gopls-lsp@claude-plugins-official": true,
+    "lua-lsp@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "slack@claude-plugins-official": true,
+    "work@babarot-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-code-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-code"
+      }
+    },
+    "babarot-skills": {
+      "source": {
+        "source": "github",
+        "repo": "babarot/agent-skills"
+      }
+    }
+  },
+  "language": "Japanese",
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "tui": "fullscreen",
+  "skipWorkflowUsageWarning": true,
+  "theme": "dark",
+  "editorMode": "normal",
+  "preferredNotifChannel": "ghostty",
+  "autoCompactEnabled": false,
+  "remoteControlAtStartup": false,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
+}

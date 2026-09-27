@@ -12,7 +12,6 @@
   home.packages = with pkgs; [
     appcleaner
     hidden-bar
-    iina
     qlmarkdown # Quick Look for Markdown
   ];
 }

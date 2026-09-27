@@ -5,8 +5,25 @@
   homebrew.casks = [
     "autodesk-fusion"
     "bambu-studio"
+    "discord"
+    "google-drive"
+    "logi-options+"
     "parallels"
+    "postman"
   ];
 
-  home-manager.users.babarot = { ... }: { };
+  home-manager.users.babarot =
+    { ... }:
+    {
+      my.masApps = {
+        "CleanMyDrive 2" = 523620159;
+        "Fantastical" = 975937182;
+        "LINE" = 539883307;
+        "Picview" = 6452016140;
+        "PopClip" = 445189367;
+        "Spark Desktop" = 6445813049;
+        "The Unarchiver" = 425424353;
+        "Translate Tab" = 458887729;
+      };
+    };
 }

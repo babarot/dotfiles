@@ -2,18 +2,22 @@
 { pkgs, ... }:
 {
   home.packages = with pkgs; [
+    actionlint
     ast-grep
     bashInteractive
     ccusage
     codex
     conftest
+    d2
     deno
     difftastic
     exiftool
     ffmpeg
     gawk # used by the Q/QQ global aliases in ~/.zsh/30_aliases.zsh
+    ghalint
     ghq
     git-open
+    gotools # goimports and friends
     hcl2json
     imagemagick
     jsonfmt
@@ -21,6 +25,7 @@
     mas
     mdbook
     mmv-go # itchyny/mmv; `mmv` in nixpkgs is a different tool
+    pinact
     pipx
     postgresql # for psql
     ripgrep
@@ -28,7 +33,10 @@
     supabase-cli
     tree
     turso-cli
+    uv
     vhs # records terminal GIFs; brings its own ttyd and ffmpeg
+    viddy
+    watch
     wget
   ];
 }

@@ -1,22 +1,46 @@
 # Work Mac. Put settings that only this machine needs here.
+# MDM-managed apps (Self Service, Microsoft Defender) are out of scope.
 { ... }:
 {
+  # Vendor apps only for this Mac (see nix/homebrew.nix)
+  homebrew.casks = [
+    "acreom"
+    "claude"
+    "cmux"
+    "codex-app"
+    "equinox"
+    "github-copilot-app"
+    "inkdrop"
+    "path-finder"
+    "rectangle"
+    "typora"
+    "zoom"
+  ];
+  homebrew.brews = [
+    "datadog-labs/pack/pup" # Datadog CLI; `pup` in nixpkgs is a different tool
+  ];
+
   home-manager.users.babarot =
     { pkgs, ... }:
     {
-      # TODO(work setup): apps that may be needed only on the work Mac.
-      # Uncomment what is actually used; all of these are in nixpkgs.
-      #
-      # home.packages = with pkgs; [
-      #   slack
-      #   zoom-us
-      # ];
-      #
-      # Mac App Store apps only for work go here too, e.g.:
-      # my.masApps = { "Some App" = 123456789; };
-    };
+      home.packages = with pkgs; [
+        dart
+        gcalcli
+        github-copilot-cli
+        google-cloud-sql-proxy
+        helmfile
+        kamal-proxy
+        krew
+        kustomize
+        litecli
+        mysql84
+        nerd-fonts.monaspace
+        (noto-fonts.override { variants = [ "NotoSansSymbols2" ]; })
+      ];
 
-  # TODO(work setup): vendor apps only for the work Mac, installed by
-  # Homebrew (see nix/homebrew.nix), e.g.:
-  # homebrew.casks = [ "some-vendor-app" ];
+      my.masApps = {
+        "MeetingBar" = 1532419400;
+        "Slack" = 803453959;
+      };
+    };
 }

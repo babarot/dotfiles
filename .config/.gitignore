@@ -9,6 +9,7 @@ iterm2
 
 # Tool state and credentials (wrangler keeps OAuth tokens here)
 .wrangler
+.copilot
 1Password
 homebrew
 notion

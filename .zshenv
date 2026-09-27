@@ -112,6 +112,10 @@ export FZF_DEFAULT_OPTS="--extended --ansi --multi"
 # Cask
 #export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 
+# Supply-chain cooldown: skip releases younger than 7 days
+# (see also .config/uv/uv.toml)
+export PINACT_MIN_AGE=7
+
 export GOPATH=$HOME
 . "$HOME/.cargo/env"
 export BUN_INSTALL="$HOME/.bun"

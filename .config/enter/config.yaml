@@ -18,8 +18,22 @@ modules:
     enabled: true
     style: "short"        # parent | full | short | basename
 
+  ls:
+    enabled: true
+    cmd: |
+      eza
+      --oneline
+      --group-directories-first
+      --icons=always
+      --color=always
+      .
+    when:
+      git_repo: false
+
   git:
     enabled: true
+    when:
+      git_repo: true
     indicator: true         # show "not a git repo" outside repos
     fields:                 # list fields to display (order matters, omit to hide)
       url:

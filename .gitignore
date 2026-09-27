@@ -7,3 +7,7 @@
 
 # Claude Code per-machine settings (also used as the global excludesfile)
 **/.claude/settings.local.json
+.claude/*.lock
+.claude/*local*
+docs/temp_*
+docs/plans

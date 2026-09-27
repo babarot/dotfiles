@@ -41,3 +41,6 @@ split-inherit-working-directory = true
 
 keybind = cmd+shift+t=prompt_tab_title
 # keybind = cmd+shift+t=prompt_title
+
+# gtab-managed shortcut; `?` keeps Ghostty quiet if the file is missing
+config-file = ?"../gtab/ghostty-shortcut.conf"

@@ -1,4 +1,4 @@
-# terraform is BUSL-1.1 (unfree in nixpkgs); allowed in nix/darwin.nix
+# terraform is BUSL-1.1 (unfree in nixpkgs)
 { pkgs, ... }:
 {
   home.packages = [

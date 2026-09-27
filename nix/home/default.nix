@@ -4,6 +4,7 @@
 {
   imports = [
     ./human.nix
+    ./mas.nix
   ]
   ++ map (f: ./tools + "/${f}") (builtins.attrNames (builtins.readDir ./tools));
 

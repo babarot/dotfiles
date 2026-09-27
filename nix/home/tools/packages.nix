@@ -5,6 +5,7 @@
     ast-grep
     bashInteractive
     ccusage
+    codex
     conftest
     deno
     difftastic

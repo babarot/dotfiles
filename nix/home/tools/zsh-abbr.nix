@@ -1,4 +1,4 @@
-# License is CC BY-NC-SA 4.0 (unfree in nixpkgs); allowed in nix/darwin.nix
+# License is CC BY-NC-SA 4.0 (unfree in nixpkgs)
 { pkgs, ... }:
 {
   my.human.plugins.zsh-abbr = {

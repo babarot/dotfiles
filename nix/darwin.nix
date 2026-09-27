@@ -1,19 +1,14 @@
 # System-level settings shared by all Macs
-{ inputs, lib, ... }:
+{ inputs, ... }:
 {
   # Nix itself is installed and managed by the Determinate installer
   nix.enable = false;
 
   nixpkgs.hostPlatform = "aarch64-darwin";
 
-  # Allow unfree packages one by one. Set here because home-manager uses
-  # this pkgs (useGlobalPkgs).
-  nixpkgs.config.allowUnfreePredicate =
-    pkg:
-    builtins.elem (lib.getName pkg) [
-      "terraform" # BUSL-1.1
-      "zsh-abbr" # CC BY-NC-SA 4.0
-    ];
+  # Many GUI apps and some CLI tools (terraform, zsh-abbr) are unfree.
+  # Set here because home-manager uses this pkgs (useGlobalPkgs).
+  nixpkgs.config.allowUnfree = true;
 
   system.primaryUser = "babarot";
   users.users.babarot.home = "/Users/babarot";

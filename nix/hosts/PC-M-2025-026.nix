@@ -11,7 +11,9 @@
     "github-copilot-app"
     "inkdrop"
     "path-finder"
+    "popclip" # the private Mac has the App Store versions of these two
     "rectangle"
+    "the-unarchiver"
     "typora"
     "zoom"
   ];

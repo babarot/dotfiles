@@ -20,7 +20,7 @@
         "Fantastical" = 975937182;
         "LINE" = 539883307;
         "Picview" = 6452016140;
-        "PopClip" = 445189367;
+        "PopClip" = 445189367; # the work Mac has the cask versions of these two
         "Spark Desktop" = 6445813049;
         "The Unarchiver" = 425424353;
         "Translate Tab" = 458887729;

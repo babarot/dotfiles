@@ -4,6 +4,11 @@ onboarding = false
 # Ghostty's tab shows the focused pane's own title, as it did before herdr
 window_title = "{workspace}: {terminal_title}"
 
+# Tell me when an agent finishes or needs input, through Ghostty's desktop
+# notifications (off by default). prefix+o jumps to the notified pane.
+[ui.toast]
+delivery = "terminal"
+
 # Show what Claude Code is working on (its terminal title) under each agent
 [ui.sidebar.agents.rows_by_agent]
 claude = [

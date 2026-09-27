@@ -25,8 +25,10 @@
     mas
     mdbook
     mmv-go # itchyny/mmv; `mmv` in nixpkgs is a different tool
+    nodejs # default node; project versions come from mise
     pinact
     pipx
+    pnpm # follows each project's packageManager version
     postgresql # for psql
     ripgrep
     rustup

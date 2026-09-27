@@ -49,9 +49,6 @@
         lua-language-server
         luarocks
         mysql84
-        nodejs
-        pnpm
-        yarn
         nerd-fonts.monaspace
         (noto-fonts.override { variants = [ "NotoSansSymbols2" ]; })
 

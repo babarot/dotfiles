@@ -1,0 +1,31 @@
+# Follow the system appearance: tokyo-night-storm in dark mode, tokyo-night-day in light mode.
+# A plain `theme` would override `appearance`, so set the pair instead.
+appearance = "system"
+theme_dark = "tokyo-night-storm"
+theme_light = "tokyo-night-day"
+transparent_background = true
+
+diff_view = "unified"
+relative_line_numbers = true
+cursor_line = true
+scroll_offset = 5
+
+# Reload the working-tree diff as an agent edits it (0, the default, disables it)
+diff_watch_interval_ms = 1000
+
+# Edit comments with vim modes (toggle in the app with :vim)
+comment_vim = true
+
+# Let a bare q quit, as the tuicr skill tells users to close the review pane with q
+q_quits = true
+
+# Nix manages the binary, so `tuicr update` cannot replace it
+no_update_check = true
+
+# Types the tuicr skill expects when it reads comments; untyped otherwise
+comment_types = [
+  { id = "issue", definition = "problems to fix", color = "red" },
+  { id = "suggestion", definition = "possible improvements" },
+  { id = "note", definition = "questions or remarks to answer" },
+  { id = "praise", definition = "positive feedback, no action required" },
+]

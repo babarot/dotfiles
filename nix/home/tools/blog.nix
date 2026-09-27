@@ -5,7 +5,10 @@
   ...
 }:
 {
-  home.packages = [ inputs.babarot.packages.${pkgs.stdenv.hostPlatform.system}.blog ];
+  home.packages = [
+    inputs.babarot.packages.${pkgs.stdenv.hostPlatform.system}.blog
+    pkgs.hugo
+  ];
 
   my.human.env = {
     BLOG_EDITOR = "nvim";

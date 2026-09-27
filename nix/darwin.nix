@@ -11,6 +11,7 @@
   nixpkgs.config.allowUnfreePredicate =
     pkg:
     builtins.elem (lib.getName pkg) [
+      "terraform" # BUSL-1.1
       "zsh-abbr" # CC BY-NC-SA 4.0
     ];
 

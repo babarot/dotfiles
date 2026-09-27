@@ -1,40 +1,9 @@
-tap "hashicorp/tap"
-tap "homebrew/bundle"
-
 #
 # Brew
 #   https://formulae.brew.sh/
 #
-brew "bash"
-brew "difftastic"
-brew "exiftool"
-brew "gawk"
-brew "gnu-sed"
-brew "go"
-brew "goreleaser"
-brew "grep"
-brew "hashicorp/tap/terraform-ls"
-brew "helmfile"
-brew "hugo"
-brew "kustomize"
-brew "libidn2"
-brew "litecli"
-brew "lua-language-server"
-brew "luarocks" # package manager for Lua
-brew "mas" if OS.mac?
-# brew "mysql"
-brew "rustup-init"
-brew "terraform"
-brew "tmux"
-brew "wget"
-brew "yarn"
-
-# it may take a little while
-brew "ffmpeg"
-brew "gifsicle"
-brew "ttyd"
-brew "gum"
-brew "vhs" # faressoft/terminalizer
+# CLI tools live in nix/home/tools. Only what nixpkgs lacks stays here.
+brew "crit"
 
 #
 # Cask

@@ -8,7 +8,6 @@
     # `bindkey -v` selects
     order = 6000;
     init = ''
-      abbr --quiet tf=terraform
       abbr --quiet cf=conftest
       abbr --quiet "d c"="docker compose"
     '';

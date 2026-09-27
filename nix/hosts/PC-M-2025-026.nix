@@ -6,7 +6,6 @@
   homebrew.casks = [
     "acreom"
     "claude"
-    "cmux"
     "codex-app"
     "github-copilot-app"
     "inkdrop"

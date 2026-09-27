@@ -8,7 +8,6 @@
     "claude"
     "cmux"
     "codex-app"
-    "equinox"
     "github-copilot-app"
     "inkdrop"
     "path-finder"

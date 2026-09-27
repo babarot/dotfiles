@@ -134,8 +134,7 @@ scutil --get LocalHostName
 Apply the configuration for the first time. `darwin-rebuild` is not installed yet, so run it through `nix run`. Quote the flake reference, since zsh treats `#` as a glob.
 
 ```bash
-cd ~/src/github.com/babarot/dotfiles
-sudo /nix/var/nix/profiles/default/bin/nix run 'nix-darwin/master#darwin-rebuild' -- switch --flake .
+sudo /nix/var/nix/profiles/default/bin/nix run 'nix-darwin/master#darwin-rebuild' -- switch --flake ~/src/github.com/babarot/dotfiles
 ```
 
 From the next time, open a new shell and run:
@@ -146,6 +145,17 @@ sudo darwin-rebuild switch --flake ~/src/github.com/babarot/dotfiles
 
 > [!NOTE]
 > nix-darwin moves the existing `/etc/zshrc`, `/etc/zshenv` and `/etc/bashrc` aside as `*.before-nix-darwin`. home-manager does not move existing symlinks, so remove any symlink it reports as "would be clobbered" and run it again.
+
+### Migrating a Mac that already has these apps and tools
+
+On a Mac set up by hand (or with the old afx/Brewfile setup), a few things get in the way of the first switch:
+
+- Vendor apps installed without Homebrew: `brew bundle` refuses to overwrite them. Put them under Homebrew first with `brew install --cask --adopt <cask>`; when the installed version differs, use `brew install --cask --force <cask>` (settings stay in `~/Library`). If it fails with "Operation not permitted", give the terminal the App Management permission in System Settings > Privacy & Security.
+- Symlinks left by afx (e.g. `~/.tmux/plugins/tpm`) and extensions installed with `gh extension install`: home-manager does not move them, so remove them before switching.
+- An app that moves from `/Applications` to Nix: quit the old one before moving it to the Trash. A copy still running from the Trash keeps its profile locked (Spotify showed only a black window).
+- Old Homebrew formulae: uninstall with `HOMEBREW_NO_AUTOREMOVE=1` and check `brew autoremove --dry-run` before removing dependencies. Formulae from untrusted taps do not show up in `brew leaves`, and `brew untap` fails for those taps; remove `$(brew --repository)/Library/Taps/<owner>/homebrew-<repo>` instead.
+- mise installed by Homebrew: after mise comes from Nix, run `mise reshim --force` so the shims stop pointing at the removed binary.
+- Restart Claude Code (and other agents) from a new terminal tab; they keep the PATH of the tab they were started from.
 
 References:
 

@@ -1,0 +1,12 @@
+onboarding = false
+
+[ui]
+# Ghostty's tab shows the focused pane's own title, as it did before herdr
+window_title = "{workspace}: {terminal_title}"
+
+# Show what Claude Code is working on (its terminal title) under each agent
+[ui.sidebar.agents.rows_by_agent]
+claude = [
+  ["state_icon", "agent", "state_text"],
+  ["terminal_title_stripped"],
+]

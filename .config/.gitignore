@@ -13,6 +13,9 @@ iterm2
 1Password
 homebrew
 notion
+# zsh-abbr creates its user abbreviations file at load; ours are
+# session-only and declared in Nix (nix/home/tools/zsh-abbr.nix)
+zsh-abbr
 # herdr runtime state; only config.toml is settings
 herdr/*
 !herdr/config.toml

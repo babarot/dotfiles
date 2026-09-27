@@ -7,6 +7,6 @@
   ];
 
   my.human.plugins.zsh-abbr.init = ''
-    abbr --quiet tf=terraform
+    abbr --session --quiet tf=terraform
   '';
 }

@@ -104,23 +104,42 @@ cd ~/src/github.com/babarot/dotfiles && make install
 
 The `make install` will create symbolic links from the dotfiles directory into the `$HOME` directory, allowing for all of the configuration to *act* as if it were there without being there, making it easier to maintain the dotfiles in isolation.
 
-## AFX/Zsh
+## Nix/Zsh
 
-[afx](https://github.com/babarot/afx/) is a CLI packages (tools, shell plugins, etc) manager. Almost all ZSH configurations are also related to the afx settings, so once you run `afx install` and then relaunch your shell, you can enter the CLI world in the usual state of your shell.
+CLI tools and zsh plugins are managed by [Nix](https://nixos.org/) with [nix-darwin](https://github.com/nix-darwin/nix-darwin) and [home-manager](https://github.com/nix-community/home-manager). Once the configuration is applied and the shell is relaunched, you can enter the CLI world in the usual state of your shell.
 
-```bash
-curl -sL https://raw.githubusercontent.com/babarot/afx/HEAD/hack/install | bash
-```
+Install Nix with the [Determinate Nix installer](https://github.com/DeterminateSystems/nix-installer).
 
 ```bash
-afx install
+curl -fsSL https://install.determinate.systems/nix | sh -s -- install
 ```
 
+The configuration is selected by hostname. Check it, and if this machine is new, add `nix/hosts/<hostname>.nix` and an entry in `darwinConfigurations` in `flake.nix` (copy an existing host).
+
+```bash
+scutil --get LocalHostName
+```
+
+Apply the configuration for the first time. `darwin-rebuild` is not installed yet, so run it through `nix run`. Quote the flake reference, since zsh treats `#` as a glob.
+
+```bash
+cd ~/src/github.com/babarot/dotfiles
+sudo /nix/var/nix/profiles/default/bin/nix run 'nix-darwin/master#darwin-rebuild' -- switch --flake .
+```
+
+From the next time, open a new shell and run:
+
+```bash
+sudo darwin-rebuild switch --flake ~/src/github.com/babarot/dotfiles
+```
+
+> [!NOTE]
+> nix-darwin moves the existing `/etc/zshrc`, `/etc/zshenv` and `/etc/bashrc` aside as `*.before-nix-darwin`. home-manager does not move existing symlinks, so remove any symlink it reports as "would be clobbered" and run it again.
 
 References:
 
-- My plugins list: [.config/afx](https://github.com/babarot/dotfiles/tree/HEAD/.config/afx)
-- Guide & Usage: https://babarot.me/afx
+- My tools list: [nix/home/tools](https://github.com/babarot/dotfiles/tree/HEAD/nix/home/tools)
+- How the shell switches between humans and AI agents: [README](https://github.com/babarot/dotfiles#shell-for-humans-and-ai-agents)
 
 ## Homebrew
 
@@ -159,7 +178,7 @@ References:
 
 ## Tmux
 
-[tmux](https://github.com/tmux/tmux) will be installed via Brew. After installed, run `tmux` and press `prefix` + <kbd>I</kbd> on tmux to install plugins.
+[tmux](https://github.com/tmux/tmux) will be installed via Brew, and [tpm](https://github.com/tmux-plugins/tpm) is placed at `~/.tmux/plugins/tpm` by Nix. Run `tmux` and press `prefix` + <kbd>I</kbd> on tmux to install plugins.
 
 ## Go
 

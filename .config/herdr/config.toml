@@ -9,9 +9,11 @@ window_title = "{workspace}: {terminal_title}"
 [ui.toast]
 delivery = "terminal"
 
-# Show what Claude Code is working on (its terminal title) under each agent
+# Show what Claude Code is working on (its terminal title) under each agent.
+# A pane named with a leading "★" (prefix+shift+p) marks an agent in use,
+# so it stands out among agents left idle for a while.
 [ui.sidebar.agents.rows_by_agent]
 claude = [
-  ["state_icon", "agent", "state_text"],
+  ["state_icon", "agent", "state_text", { token = "pane", rules = [{ starts_with = "★", fg = "#e5c07b", bold = true }] }],
   ["terminal_title_stripped"],
 ]

@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "babarot": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790472541,
+        "narHash": "sha256-czsyhdtlW6bQ9+x6uQDojEgtUjekBi2A4HZFz6fPgow=",
+        "owner": "babarot",
+        "repo": "nur-packages",
+        "rev": "69d8d872b8d7747159fa483be38cfc98c83e68c1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "babarot",
+        "repo": "nur-packages",
+        "type": "github"
+      }
+    },
     "enhancd": {
       "flake": false,
       "locked": {
@@ -75,6 +95,7 @@
     },
     "root": {
       "inputs": {
+        "babarot": "babarot",
         "enhancd": "enhancd",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",

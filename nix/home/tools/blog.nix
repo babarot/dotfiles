@@ -1,7 +1,12 @@
-# The binary itself is still installed outside Nix until it is published
-# to the personal NUR repo
-{ config, ... }:
 {
+  config,
+  inputs,
+  pkgs,
+  ...
+}:
+{
+  home.packages = [ inputs.babarot.packages.${pkgs.stdenv.hostPlatform.system}.blog ];
+
   my.human.env = {
     BLOG_EDITOR = "nvim";
     BLOG_POST_DIR = "content/post";

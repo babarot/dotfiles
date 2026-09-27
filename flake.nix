@@ -12,6 +12,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # babarot's own tools, published by GoReleaser on each release
+    babarot = {
+      url = "github:babarot/nur-packages";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # zsh plugins not in nixpkgs, sourced as-is
     enhancd = {
       url = "github:babarot/enhancd";

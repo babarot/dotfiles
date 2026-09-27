@@ -23,6 +23,7 @@ nix/darwin.nix         # system settings for every Mac (allowUnfree, primaryUser
 nix/homebrew.nix       # vendor apps installed by Homebrew casks (install only)
 nix/hosts/<host>.nix   # per-Mac packages, casks and App Store apps
 nix/home/default.nix   # imports every file in nix/home/tools
+nix/home/env.nix       # my.env: variables for every shell, rendered to ~/.config/zsh/env.zsh
 nix/home/human.nix     # my.human: human-only zsh UX, rendered to ~/.config/zsh/human.zsh
 nix/home/mas.nix       # my.masApps: Mac App Store apps installed with mas
 nix/home/tools/*.nix   # one file per tool: its package and its shell settings
@@ -50,7 +51,8 @@ claude/                # Claude Code user settings, linked into ~/.claude
 | CLI tool with aliases, env or a zsh hook | its own `nix/home/tools/<tool>.nix`, settings under `my.human` |
 | Tool or app for one Mac only | `nix/hosts/<host>.nix` |
 | zsh plugin | `my.human.plugins.<name>` with `src`, `file`, `order` (hand-written `~/.zsh` loads at 5000, zsh-abbr at 6000) |
-| Environment agents also need (PATH, EDITOR, ...) | `.zshenv`, before or outside the `is_human` branch |
+| Variable agents also need (GOPATH, ...) | `my.env` in the tool's `nix/home/tools/<tool>.nix`; rendered to `~/.config/zsh/env.zsh`, which `.zshenv` sources |
+| PATH entries, and env not tied to a tool (EDITOR, locale) | `.zshenv`, before or outside the `is_human` branch |
 | GUI app that does not self-update and passes `codesign --verify --deep --strict` | `nix/home/tools/apps.nix` |
 | GUI app that self-updates, needs `/Applications` or system components, or fails codesign in nixpkgs | a cask in `nix/homebrew.nix` (or the host file) |
 | Mac App Store app | `my.masApps` in `nix/home/tools/app-store.nix` (or the host file); IDs from `mas list` |

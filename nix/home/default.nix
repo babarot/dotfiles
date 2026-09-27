@@ -3,6 +3,7 @@
 { ... }:
 {
   imports = [
+    ./env.nix
     ./human.nix
     ./mas.nix
   ]

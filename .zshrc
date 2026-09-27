@@ -26,6 +26,3 @@ export WORDCHARS='*?[]~&;!#$%^(){}<>'
 # Plugins, aliases and env from nix/home/tools/*.nix (my.human), plus the
 # hand-written ~/.zsh/[0-9]*.zsh
 source ~/.config/zsh/human.zsh
-
-# bun completions
-[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"

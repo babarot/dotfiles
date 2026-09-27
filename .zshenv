@@ -23,7 +23,6 @@ is_human() {
 typeset -gx -U path
 path=( \
     ~/.local/share/mise/shims(N-/) \
-    ~/.bun/bin(N-/) \
     ~/bin(N-/) \
     ~/.local/bin(N-/) \
     /etc/profiles/per-user/$USER/bin(N-/) \
@@ -31,8 +30,6 @@ path=( \
     /nix/var/nix/profiles/default/bin(N-/) \
     /usr/local/bin(N-/) \
     /opt/homebrew/bin \
-    ~/.cargo/bin(N-/) \
-    ~/.tmux/bin(N-/) \
     "$path[@]" \
 )
 
@@ -43,6 +40,10 @@ fpath=( \
     ~/.zsh/Completion(N-/) \
     $fpath \
 )
+
+# Tool variables from nix/home/tools/*.nix (my.env); missing until the
+# first darwin-rebuild switch
+[[ -r ~/.config/zsh/env.zsh ]] && source ~/.config/zsh/env.zsh
 
 # LANGUAGE must be set by en_US
 export LANGUAGE="en_US.UTF-8"
@@ -66,10 +67,3 @@ else
     export PAGER=cat GIT_PAGER=cat BAT_PAGER=cat MANPAGER=cat
     export GIT_TERMINAL_PROMPT=0
 fi
-
-# Supply-chain cooldown: skip releases younger than 7 days
-# (see also .config/uv/uv.toml)
-export PINACT_MIN_AGE=7
-
-export GOPATH=$HOME
-export BUN_INSTALL="$HOME/.bun"

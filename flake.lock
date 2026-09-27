@@ -1,0 +1,104 @@
+{
+  "nodes": {
+    "enhancd": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1737684369,
+        "narHash": "sha256-pKQbwiqE0KdmRDbHQcW18WfxyJSsKfymWt/TboY2iic=",
+        "owner": "babarot",
+        "repo": "enhancd",
+        "rev": "5afb4eb6ba36c15821de6e39c0a7bb9d6b0ba415",
+        "type": "github"
+      },
+      "original": {
+        "owner": "babarot",
+        "repo": "enhancd",
+        "type": "github"
+      }
+    },
+    "home-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790365885,
+        "narHash": "sha256-iQ0ebhiVo64NktTnwft9hNxlFu4j5cvljVxyJaEVIP4=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "7b4c5ec4bedaf1e062bbc1bcaeddbc6bd242aa1b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "nix-darwin": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786845137,
+        "narHash": "sha256-oQFip+v0luP8NIxJzmiW4Wu8bILsbFWom5l0zonl8hQ=",
+        "owner": "nix-darwin",
+        "repo": "nix-darwin",
+        "rev": "4cff07de74b50e64bdd68cd4e722ab5b6b35ee48",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-darwin",
+        "ref": "master",
+        "repo": "nix-darwin",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1790448801,
+        "narHash": "sha256-nAq6wML4elZMHNi/29VVZSEnptPMSo9JwhacZnLVPZU=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f9bce96a417afbb9c64725f8727e42efafeafc21",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "enhancd": "enhancd",
+        "home-manager": "home-manager",
+        "nix-darwin": "nix-darwin",
+        "nixpkgs": "nixpkgs",
+        "za-prompt": "za-prompt"
+      }
+    },
+    "za-prompt": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1765646056,
+        "narHash": "sha256-6wDe1mwFGBE5Trr8ZseWSW0uDRm2mxC2evEntfakb8k=",
+        "owner": "babarot",
+        "repo": "za-prompt",
+        "rev": "67def409b2d99133efd8ee90bf85fe54effaa942",
+        "type": "github"
+      },
+      "original": {
+        "owner": "babarot",
+        "repo": "za-prompt",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

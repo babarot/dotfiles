@@ -49,6 +49,7 @@
           specialArgs = { inherit inputs; };
           modules = [
             ./nix/darwin.nix
+            ./nix/homebrew.nix
             host
             home-manager.darwinModules.home-manager
             {

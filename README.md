@@ -14,7 +14,7 @@ Setup guide is here: [setup-mac.md](./etc/docs/setup-mac.md)
 - Editor: [Neovim](https://github.com/neovim/neovim)
 - ~~Multiplexer: [tmux](https://github.com/tmux/tmux)~~
   - Plugin manager: [tpm](https://github.com/tmux-plugins/tpm) (Press `prefix` + <kbd>I</kbd> to install)
-- Font: [nerd-fonts](https://github.com/ryanoasis/nerd-fonts#font-installation) (DejaVuSansMono Nerd Font Mono)
+- Font: Menlo + Hiragino Kaku Gothic ProN (Ghostty); Nerd Fonts (Hack, JetBrains Mono) are installed by Nix
 
 ## Shell for humans and AI agents
 
@@ -28,15 +28,23 @@ Export `AI_AGENT=1` to force the agent side.
 
 ## Packages
 
-CLI tools and zsh plugins are managed by Nix. GUI apps are still in the [Brewfile](./Brewfile).
+Everything is declared in the flake and installed by `darwin-rebuild switch`:
+
+- CLI tools, zsh plugins, fonts and most GUI apps: Nix
+- Mac App Store apps: `mas`, from the list in [app-store.nix](./nix/home/tools/app-store.nix)
+- Vendor apps that update themselves or install system components (1Password, Chrome, Docker, ...): Homebrew casks in [homebrew.nix](./nix/homebrew.nix), used only to install them
+
+Nothing is pinned for App Store or vendor apps; only a missing app is installed.
 
 ```
 flake.nix              # one darwinConfiguration per hostname
 nix/
   darwin.nix           # system settings shared by all Macs
+  homebrew.nix         # vendor apps installed by Homebrew
   hosts/<hostname>.nix # per-machine settings
   home/
     human.nix          # my.human: aliases, plugins and env for humans only
+    mas.nix            # my.masApps: Mac App Store apps to install
     tools/<tool>.nix   # one file per tool: its package and its shell settings
 ```
 

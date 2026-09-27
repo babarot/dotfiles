@@ -7,10 +7,8 @@ DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 
 all: brew install
 
-brew: ## Install brew and run brew bundle
+brew: ## Install Homebrew (darwin-rebuild installs the apps)
 	@sh ./etc/scripts/brew.sh
-	@brew bundle
-	@echo 'Done. For saving your brew packages added newly, run "brew bundle dump".'
 
 list: ## Show dot files in this repo
 	@$(foreach val, $(DOTFILES), /bin/ls -dF $(val);)

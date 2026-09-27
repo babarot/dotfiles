@@ -104,6 +104,17 @@ cd ~/src/github.com/babarot/dotfiles && make install
 
 The `make install` will create symbolic links from the dotfiles directory into the `$HOME` directory, allowing for all of the configuration to *act* as if it were there without being there, making it easier to maintain the dotfiles in isolation.
 
+## Homebrew
+
+Install Homebrew before applying the Nix configuration. It is only used to install vendor apps that update themselves or install system components (1Password, Google Chrome, Docker, ...), listed in [nix/homebrew.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/homebrew.nix). `darwin-rebuild switch` installs the missing ones and never upgrades or removes anything.
+
+```bash
+cd ~/src/github.com/babarot/dotfiles && make brew
+```
+
+> [!NOTE]
+> Mac App Store apps are installed by `darwin-rebuild switch` too, with [mas](https://github.com/mas-cli/mas), from [app-store.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home/tools/app-store.nix). Sign in to the App Store first; an app that fails to install only prints a warning, so switch again after signing in.
+
 ## Nix/Zsh
 
 CLI tools and zsh plugins are managed by [Nix](https://nixos.org/) with [nix-darwin](https://github.com/nix-darwin/nix-darwin) and [home-manager](https://github.com/nix-community/home-manager). Once the configuration is applied and the shell is relaunched, you can enter the CLI world in the usual state of your shell.
@@ -141,56 +152,9 @@ References:
 - My tools list: [nix/home/tools](https://github.com/babarot/dotfiles/tree/HEAD/nix/home/tools)
 - How the shell switches between humans and AI agents: [README](https://github.com/babarot/dotfiles#shell-for-humans-and-ai-agents)
 
-## Homebrew
-
-Almost all apps except for CLI tools (commands/plugins, etc...) are managed by Homebrew (package manager for macOS).
-
-Install `brew` command.
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-```
-
-Install apps based on this list: [Brewfile](https://github.com/babarot/dotfiles/tree/HEAD/Brewfile).
-
-```bash
-brew bundle
-```
-
-References:
-
-- https://brew.sh/
-- https://formulae.brew.sh/
-
-> [!TIP]
-> Some apps are managed via [mas-cli/mas](https://github.com/mas-cli/mas) (Mac App Store command line interface). Sometimes, the installation by `brew bundle` is failed by various reasons. The most mainly reason for the installation failing is the app is already installed by the organization of Mac owner or the app listed on Mac App Store has been already deleted. In such a case, it is recommended that you install them individually through `mas` command manually as follows.
->
-> <img width="600" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/9e2ff51c-4927-4c6f-965b-a2cf011eb462">
->
-> (List installed apps via `mas`)
-> ```
-> mas list
-> ```
-> (Install an app via `mas`)
-> ```bash
-> mas install <appid>
-> ```
-
 ## Tmux
 
-[tmux](https://github.com/tmux/tmux) will be installed via Brew, and [tpm](https://github.com/tmux-plugins/tpm) is placed at `~/.tmux/plugins/tpm` by Nix. Run `tmux` and press `prefix` + <kbd>I</kbd> on tmux to install plugins.
-
-## Go
-
-> [!NOTE]
-> This step may become done by `brew` (Brewfile). If so, no longer needed to run this step.
-
-1. Go to https://go.dev/dl/
-2. Install via the installer
-
-References:
-
-- https://www.sambaiz.net/article/261/
+[tmux](https://github.com/tmux/tmux) is not installed at the moment; `.tmux.conf` and [tpm](https://github.com/tmux-plugins/tpm) (placed at `~/.tmux/plugins/tpm` by Nix) are kept for reference. To use it again, add `pkgs.tmux` to `nix/home/tools/tmux.nix`, run `tmux` and press `prefix` + <kbd>I</kbd> to install plugins.
 
 ## Some migrations
 

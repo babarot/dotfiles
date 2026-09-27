@@ -23,18 +23,44 @@
     { pkgs, ... }:
     {
       home.packages = with pkgs; [
+        ctop
         dart
+        delta
+        diff-so-fancy
         gcalcli
         github-copilot-cli
+        golangci-lint
         google-cloud-sql-proxy
+        goreleaser
         helmfile
+        hub
+        kail
         kamal-proxy
         krew
+        kubectl-view-secret
+        kubectx
+        kubetail
+        kubeval
         kustomize
+        lazygit
         litecli
+        lua-language-server
+        luarocks
         mysql84
+        nodejs
+        pnpm
+        yarn
         nerd-fonts.monaspace
         (noto-fonts.override { variants = [ "NotoSansSymbols2" ]; })
+
+        # kubectx/kubens as kubectl plugins (`kubectl ctx`, `kubectl ns`),
+        # and GNU sed only as gsed so BSD sed stays `sed`
+        (runCommand "work-aliases" { } ''
+          mkdir -p $out/bin
+          ln -s ${kubectx}/bin/kubectx $out/bin/kubectl-ctx
+          ln -s ${kubectx}/bin/kubens $out/bin/kubectl-ns
+          ln -s ${gnused}/bin/sed $out/bin/gsed
+        '')
       ];
 
       my.masApps = {

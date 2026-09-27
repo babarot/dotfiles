@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if ! type sd &>/dev/null; then
+  echo "sd: command not found" >&2
+  exit 1
+fi
+
+case "${#}" in
+  0)
+    echo "too few arguments" >&2
+    exit 1
+    ;;
+  1)
+    # same as git grep
+    git grep "${1}"
+    ;;
+  2)
+    git grep -l "${1}" | xargs -I% sd "${1}" "${2}" %
+    ;;
+  *)
+    input="${1}"
+    output="${2}"
+    shift 2
+    git grep -l "${input}" "${@}" | xargs -I% sd "${input}" "${output}" %
+    ;;
+esac
+

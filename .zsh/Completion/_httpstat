@@ -1,3 +1,0 @@
-#compdef httpstat
-
-_curl "$@"

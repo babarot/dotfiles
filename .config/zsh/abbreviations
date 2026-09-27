@@ -1,4 +1,0 @@
-abbr "d c"="docker compose"
-abbr k="kubectl"
-abbr cf="conftest"
-abbr tf="terraform"

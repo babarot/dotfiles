@@ -31,5 +31,3 @@ source ~/.config/zsh/human.zsh
 
 # bun completions
 [ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
-
-eval "$(enter --init-shell zsh)"

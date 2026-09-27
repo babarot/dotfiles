@@ -40,6 +40,7 @@ claude/                # Claude Code user settings, linked into ~/.claude
   `sudo darwin-rebuild switch --flake ~/src/github.com/babarot/dotfiles` (always the absolute path).
 - Quote flake references in zsh (`'nixpkgs#foo'`); `#` is a glob with extended_glob.
 - Update inputs with `nix flake update` (all) or `nix flake update babarot` (own tools).
+- After `nix flake update agent-skills`, run `nix build` as yourself before `sudo darwin-rebuild`: the input is a private repo fetched with your SSH key, which root does not have.
 
 ## Where things go
 
@@ -59,6 +60,7 @@ claude/                # Claude Code user settings, linked into ~/.claude
 | Third-party Homebrew tap | `homebrew.brews` / `homebrew.casks` with the full `owner/tap/name`; nix-darwin marks each entry `trusted: true` |
 | Per-project language or tool versions | the project's `mise.toml`, not this repo |
 | Claude Code | not from nixpkgs: it updates itself, so `nix/home/tools/claude-code.nix` runs the official installer only when `~/.local/bin/claude` is missing |
+| Agent Skills for Codex and other agents | babarot/agent-skills (private, fetched over SSH) linked into `~/.agents/skills` by `nix/home/tools/agent-skills.nix`; `my.agentSkills.scopes` picks the plugins (`work` only on the work Mac). Claude Code uses the plugin marketplace instead |
 
 Before adding a nixpkgs package, check it is the same tool: several names belong to something else (`yq` is Python's, use `yq-go`; `mmv` is not itchyny's, use `mmv-go`; `pup`, `ktop`, `kubesec`, `gist` differ too).
 

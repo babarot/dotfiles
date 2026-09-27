@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "agent-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1790514707,
+        "narHash": "sha256-yfH/W6zPZpAtK9c8Orx2fMp0qT9FYvDeORRHmvMz3MU=",
+        "ref": "refs/heads/main",
+        "rev": "0c9587b3a2081979854090f9a9d4b5d7b81a0f29",
+        "revCount": 137,
+        "type": "git",
+        "url": "ssh://git@github.com/babarot/agent-skills"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/babarot/agent-skills"
+      }
+    },
     "babarot": {
       "inputs": {
         "nixpkgs": [
@@ -116,6 +132,7 @@
     },
     "root": {
       "inputs": {
+        "agent-skills": "agent-skills",
         "babarot": "babarot",
         "crit": "crit",
         "enhancd": "enhancd",

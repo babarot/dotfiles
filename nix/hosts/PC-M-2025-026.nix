@@ -24,6 +24,11 @@
   home-manager.users.babarot =
     { pkgs, ... }:
     {
+      my.agentSkills.scopes = [
+        "core"
+        "work"
+      ];
+
       home.packages = with pkgs; [
         ctop
         dart

@@ -18,6 +18,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # babarot's Agent Skills, linked into ~/.agents/skills
+    agent-skills = {
+      url = "git+ssh://git@github.com/babarot/agent-skills";
+      flake = false;
+    };
+
     # Tools not in nixpkgs that ship their own flake. Pinned to a release
     # tag; bump the tag to update.
     crit = {

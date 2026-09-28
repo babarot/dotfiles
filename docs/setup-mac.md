@@ -95,11 +95,7 @@ The first `darwin-rebuild switch` (see [Nix/Zsh](#nixzsh)) links the dotfiles (`
 
 ## Homebrew
 
-Install Homebrew before applying the Nix configuration. It is only used to install vendor apps that update themselves or install system components (1Password, Google Chrome, Docker, ...), listed in [nix/homebrew.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/homebrew.nix). `darwin-rebuild switch` installs the missing ones and never upgrades or removes anything.
-
-```bash
-cd ~/src/github.com/babarot/dotfiles && make brew
-```
+Homebrew is only used to install vendor apps that update themselves or install system components (1Password, Google Chrome, Docker, ...), listed in [nix/homebrew.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/homebrew.nix). There is nothing to install by hand: `darwin-rebuild switch` (see [Nix/Zsh](#nixzsh)) installs Homebrew itself with [nix-homebrew](https://github.com/zhaofengli/nix-homebrew), then installs the missing apps and never upgrades or removes anything.
 
 > [!NOTE]
 > Claude Code is installed the same way when missing, with its official installer, and then updates itself. Mac App Store apps are installed by `darwin-rebuild switch` too, with [mas](https://github.com/mas-cli/mas), from [app-store.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home/tools/app-store.nix). Sign in to the App Store first; an app that fails to install only prints a warning, so switch again after signing in.
@@ -145,6 +141,7 @@ sudo darwin-rebuild switch --flake ~/src/github.com/babarot/dotfiles
 
 On a Mac set up by hand (or with the old afx/Brewfile setup), a few things get in the way of the first switch:
 
+- Homebrew installed with the official script: nix-homebrew takes it over on the first switch (`autoMigrate`). It replaces the Homebrew repository in `/opt/homebrew` and keeps the installed formulae, casks and taps.
 - Vendor apps installed without Homebrew: `brew bundle` refuses to overwrite them. Put them under Homebrew first with `brew install --cask --adopt <cask>`; when the installed version differs, use `brew install --cask --force <cask>` (settings stay in `~/Library`). If it fails with "Operation not permitted", give the terminal the App Management permission in System Settings > Privacy & Security.
 - Symlinks left by afx (e.g. `~/.tmux/plugins/tpm`) and extensions installed with `gh extension install`: home-manager does not move them, so remove them before switching.
 - An app that moves from `/Applications` to Nix: quit the old one before moving it to the Trash. A copy still running from the Trash keeps its profile locked (Spotify showed only a black window).

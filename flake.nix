@@ -11,6 +11,8 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Installs Homebrew itself; pins the brew version it ships
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
     # babarot's own tools, published by GoReleaser on each release
     babarot = {
@@ -47,7 +49,7 @@
   };
 
   outputs =
-    inputs@{ nix-darwin, home-manager, ... }:
+    inputs@{ nix-darwin, home-manager, nix-homebrew, ... }:
     let
       mkHost =
         host:
@@ -56,6 +58,7 @@
           modules = [
             ./nix/darwin.nix
             ./nix/macos.nix
+            nix-homebrew.darwinModules.nix-homebrew
             ./nix/homebrew.nix
             host
             home-manager.darwinModules.home-manager

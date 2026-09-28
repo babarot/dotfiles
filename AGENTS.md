@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Instructions for AI coding agents (Claude Code, Codex, ...) working in this repository. Claude Code reads this file because there is no CLAUDE.md here. See README.md for the overview and etc/docs/setup-mac.md for setting up a Mac.
+Instructions for AI coding agents (Claude Code, Codex, ...) working in this repository. Claude Code reads this file because there is no CLAUDE.md here. See README.md for the overview and docs/setup-mac.md for setting up a Mac.
 
 ## What this repo is
 
@@ -24,14 +24,17 @@ nix/macos.nix          # macOS System Settings for every Mac (system.defaults, k
 nix/homebrew.nix       # vendor apps installed by Homebrew casks (install only)
 nix/hosts/<host>.nix   # per-Mac packages, casks and App Store apps
 nix/home/default.nix   # imports every file in nix/home/tools
-nix/home/dotfiles.nix  # links the hand-written dotfiles (.zshrc, .gitconfig, bin, .config, ...) into ~
+nix/home/dotfiles.nix  # links the files in home/ (.zshrc, .gitconfig, bin, ...) and .config into ~
 nix/home/env.nix       # my.env: variables for every shell, rendered to ~/.config/zsh/env.zsh
 nix/home/human.nix     # my.human: human-only zsh UX, rendered to ~/.config/zsh/human.zsh
 nix/home/mas.nix       # my.masApps: Mac App Store apps installed with mas
 nix/home/tools/*.nix   # one file per tool: its package and its shell settings
-claude/                # Claude Code user settings, linked into ~/.claude
-.zshenv, .zshrc, .zsh/ # hand-written zsh, linked into ~ by nix/home/dotfiles.nix
+home/                  # files linked into ~ under the same names (nix/home/dotfiles.nix)
+  .zshenv, .zshrc, .zsh/ # hand-written zsh
+  .gitconfig, bin/, ...
+  .claude/             # Claude Code user settings, linked into ~/.claude
 .config/               # linked to ~/.config as a whole (by activation, see dotfiles.nix)
+docs/                  # setup guide (setup-mac.md) and images
 ```
 
 ## Applying and checking changes
@@ -49,7 +52,7 @@ claude/                # Claude Code user settings, linked into ~/.claude
 
 | What | Where |
 |---|---|
-| New hand-written dotfile at the top of the repo | add it to `nix/home/dotfiles.nix` (a tool's own dotfile goes in its `nix/home/tools/<tool>.nix`, like `.tmux.conf`) |
+| New hand-written dotfile | put it in `home/` under its name in ~ and list it in `nix/home/dotfiles.nix` (a tool's own dotfile is linked from its `nix/home/tools/<tool>.nix`, like `.tmux.conf`) |
 | CLI tool with no shell settings | `nix/home/tools/packages.nix` (alphabetical) |
 | CLI tool with aliases, env or a zsh hook | its own `nix/home/tools/<tool>.nix`, settings under `my.human` |
 | Tool or app for one Mac only | `nix/hosts/<host>.nix` |
@@ -86,7 +89,7 @@ Before adding a nixpkgs package, check it is the same tool: several names belong
 - Commit messages: an imperative summary line, then a short body explaining why. No Claude session links or attribution trailers.
 - One file per tool; keep lists alphabetical; say in a comment why anything unusual is there.
 - `~/.config` links into this repo, so tools write their state here; ignore it in `.config/.gitignore` (never commit tokens, e.g. wrangler's).
-- `claude/settings.json` is edited by Claude Code itself (`/config`); those edits show up as git diffs and are expected.
+- `home/.claude/settings.json` is edited by Claude Code itself (`/config`); those edits show up as git diffs and are expected.
 
 ## Gotchas
 

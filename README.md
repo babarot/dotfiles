@@ -4,9 +4,9 @@
 <img width="500" alt="" src="https://user-images.githubusercontent.com/4442708/222952851-12e3765b-44c2-49c2-93e5-07eb16502994.png">
 -->
 
-<img width="500" alt="" src="./etc/ss/2025-11-09.png">
+<img width="500" alt="" src="./docs/images/2025-11-09.png">
 
-Setup guide is here: [setup-mac.md](./etc/docs/setup-mac.md)
+Setup guide is here: [setup-mac.md](./docs/setup-mac.md)
 
 - Shell: zsh
   - Package manager: [Nix](https://nixos.org/) ([nix-darwin](https://github.com/nix-darwin/nix-darwin) + [home-manager](https://github.com/nix-community/home-manager))
@@ -44,15 +44,18 @@ nix/
   homebrew.nix         # vendor apps installed by Homebrew
   hosts/<hostname>.nix # per-machine packages, casks and App Store apps
   home/
-    dotfiles.nix       # links the hand-written dotfiles below into ~
+    dotfiles.nix       # links the files in home/ into ~
     env.nix            # my.env: variables for every shell, agents included
     human.nix          # my.human: aliases, plugins and env for humans only
     mas.nix            # my.masApps: Mac App Store apps to install
     skills.nix         # my.skills: Agent Skills shipped with tools
     tools/<tool>.nix   # one file per tool: its package and its shell settings
-claude/                # Claude Code user settings, linked into ~/.claude
-.zshenv, .zshrc, .zsh/ # hand-written zsh, linked into ~ by nix/home/dotfiles.nix
+home/                  # files linked into ~ under the same names (nix/home/dotfiles.nix)
+  .zshenv, .zshrc, .zsh/ # hand-written zsh
+  .gitconfig, bin/, ...
+  .claude/             # Claude Code user settings, linked into ~/.claude
 .config/               # linked to ~/.config as a whole (by activation, see dotfiles.nix)
+docs/                  # setup guide (setup-mac.md) and images
 ```
 
 Each file in `nix/home/tools/` is imported automatically. It installs a tool and puts its human-only settings in `my.human`, which is rendered into `~/.config/zsh/human.zsh` and sourced after the `is_human` guard. Deleting the file removes both the tool and its settings.

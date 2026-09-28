@@ -3,7 +3,7 @@
 # in nixpkgs, so Nix is a poor fit. Nothing is updated, upgraded or
 # removed here; apps not listed are left alone.
 #
-# Homebrew itself must be installed first (see etc/docs/setup-mac.md).
+# Homebrew itself must be installed first (see docs/setup-mac.md).
 # Mac App Store apps are in nix/home/tools/app-store.nix; host-only apps
 # are in nix/hosts/<hostname>.nix.
 { ... }:

@@ -1,5 +1,5 @@
 # Claude Code user settings, shared by every Mac. Linked straight to the
-# files in claude/ of this repo, not the Nix store, because Claude Code
+# files in home/.claude/ of this repo, not the Nix store, because Claude Code
 # writes to settings.json itself (/config, plugins, permissions); its
 # edits show up as git diffs here.
 #
@@ -14,7 +14,7 @@
   ...
 }:
 let
-  dir = "${config.home.homeDirectory}/src/github.com/babarot/dotfiles/claude";
+  dir = "${config.home.homeDirectory}/src/github.com/babarot/dotfiles/home/.claude";
   link = file: config.lib.file.mkOutOfStoreSymlink "${dir}/${file}";
   babarot = inputs.babarot.packages.${pkgs.stdenv.hostPlatform.system};
 in

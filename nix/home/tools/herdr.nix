@@ -10,7 +10,7 @@
   # after its server restarts (e.g. a reboot). The hook scripts come from
   # herdr itself, so reinstalling on every switch keeps them at its version.
   # It is idempotent and only adds a SessionStart hook to
-  # ~/.claude/settings.json (this repo's claude/settings.json) and
+  # ~/.claude/settings.json (this repo's home/.claude/settings.json) and
   # ~/.codex/hooks.json, plus `[features] hooks = true` in
   # ~/.codex/config.toml. The hooks do nothing outside herdr.
   home.activation.herdrIntegrations = lib.hm.dag.entryAfter [ "writeBoundary" ] ''

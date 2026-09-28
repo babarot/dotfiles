@@ -1,7 +1,7 @@
 # macOS System Settings shared by all Macs. Only choices are declared;
 # anything left at the macOS default is not listed. Dock contents, Finder
 # sidebar, display scaling, fingerprints and input sources stay manual
-# (see etc/docs/setup-mac.md).
+# (see docs/setup-mac.md).
 { ... }:
 {
   system.defaults = {

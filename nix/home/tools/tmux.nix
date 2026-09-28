@@ -3,7 +3,7 @@
 { config, inputs, ... }:
 let
   repo = "${config.home.homeDirectory}/src/github.com/babarot/dotfiles";
-  link = name: config.lib.file.mkOutOfStoreSymlink "${repo}/${name}";
+  link = name: config.lib.file.mkOutOfStoreSymlink "${repo}/home/${name}";
 in
 {
   home.file = {

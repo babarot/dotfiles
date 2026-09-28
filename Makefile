@@ -5,7 +5,7 @@
 all: brew
 
 brew: ## Install Homebrew (darwin-rebuild installs the apps)
-	@sh ./etc/scripts/brew.sh
+	@command -v brew >/dev/null || /bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 new-shell: ## Run ghostty with zsh
 	ghostty --command=/bin/zsh

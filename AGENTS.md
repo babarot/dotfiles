@@ -66,6 +66,7 @@ claude/                # Claude Code user settings, linked into ~/.claude
 | Third-party Homebrew tap | `homebrew.brews` / `homebrew.casks` with the full `owner/tap/name`; nix-darwin marks each entry `trusted: true` |
 | Per-project language or tool versions | the project's `mise.toml`, not this repo |
 | Claude Code | not from nixpkgs: it updates itself, so `nix/home/tools/claude-code.nix` runs the official installer only when `~/.local/bin/claude` is missing |
+| Neovim LSP servers and treesitter parsers | `nix/home/tools/neovim.nix` (servers in `home.packages`, languages in its `languages` list); not mason or `:TSInstall` |
 | Agent Skill that ships with a tool | `my.skills.<name> = <dir with SKILL.md>` next to the package (`nix/home/skills.nix` links it into `~/.claude/skills` and `~/.agents/skills`) |
 | Agent Skills for Codex and other agents | babarot/agent-skills (private, fetched over SSH) linked into `~/.agents/skills` by `nix/home/tools/agent-skills.nix`; `my.agentSkills.scopes` picks the plugins (`work` only on the work Mac). Claude Code uses the plugin marketplace instead |
 

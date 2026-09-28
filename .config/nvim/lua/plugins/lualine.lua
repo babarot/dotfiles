@@ -62,7 +62,7 @@ return {
         lualine_y = {},
         lualine_z = {},
       },
-      extensions = { 'lazy', 'mason' },
+      extensions = { 'lazy' },
     },
   },
 }

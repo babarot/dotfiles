@@ -7,7 +7,6 @@ return {
     'nvimdev/lspsaga.nvim',
     event = 'LspAttach',
     dependencies = {
-      'nvim-treesitter/nvim-treesitter',
       'echasnovski/mini.icons',
       'folke/which-key.nvim',
     },

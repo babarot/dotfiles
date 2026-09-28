@@ -127,3 +127,15 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
     end
   end,
 })
+
+-- ----------------------------------------------------------------------------
+-- Treesitter highlighting (built into Neovim 0.12; nvim-treesitter is gone)
+-- ----------------------------------------------------------------------------
+-- Parsers and queries come from Nix (nix/home/tools/neovim.nix) into
+-- ~/.local/share/nvim/site; start wherever a parser exists for the filetype.
+vim.api.nvim_create_autocmd('FileType', {
+  group = vim.api.nvim_create_augroup('treesitter-start', { clear = true }),
+  callback = function(args)
+    pcall(vim.treesitter.start, args.buf)
+  end,
+})

@@ -37,7 +37,6 @@ return {
   -- Split/Join code blocks (using Tree-sitter)
   {
     'Wansmer/treesj',
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
     enable = false,
     keys = {
       { '<space>m', function() require('treesj').toggle() end, desc = 'Toggle Split/Join' },

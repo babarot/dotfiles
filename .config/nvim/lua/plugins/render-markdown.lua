@@ -20,7 +20,6 @@ return {
     'MeanderingProgrammer/render-markdown.nvim',
     ft = 'markdown',  -- Load only for markdown files
     dependencies = {
-      'nvim-treesitter/nvim-treesitter',
       'echasnovski/mini.icons',  -- Icon support
     },
     opts = {

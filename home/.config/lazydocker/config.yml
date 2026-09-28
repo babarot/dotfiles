@@ -1,0 +1,12 @@
+# Only values that differ from the defaults:
+# https://github.com/jesseduffield/lazydocker/blob/master/docs/Config.md
+# Keybindings are not configurable in lazydocker.
+gui:
+  # Give the focused side panel more height, so long service lists fit
+  expandFocusedSidePanel: true
+  # Come back to lazydocker right after `E` (exec shell) or `m` (logs) exits,
+  # without the "press enter to return" prompt
+  returnImmediately: true
+logs:
+  # The default shows every line of the last hour, which is slow on chatty services
+  tail: "500"

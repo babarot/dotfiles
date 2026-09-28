@@ -35,6 +35,7 @@ home/                  # files linked into ~ under the same names (nix/home/dotf
   .claude/             # Claude Code user settings, linked into ~/.claude
   .config/             # linked to ~/.config as a whole (by activation, see dotfiles.nix)
 docs/                  # setup guide (setup-mac.md) and images
+.claude/skills/        # repo skills for this repo (e.g. nvim-plugin-audit); not linked into ~
 ```
 
 ## Applying and checking changes

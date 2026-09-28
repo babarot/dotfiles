@@ -61,7 +61,23 @@ return {
   {
     'Bekaboo/dropbar.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
-    opts = {},
+    opts = {
+      sources = {
+        path = {
+          -- Paths from the git root: the default is the window's cwd, which
+          -- the auto-cd autocmd (lua/config/autocmds.lua) sets to the file's
+          -- own directory, leaving only the file name
+          relative_to = function(buf, win)
+            local root = vim.fs.root(buf, '.git')
+            if root then
+              return root
+            end
+            local ok, cwd = pcall(vim.fn.getcwd, win)
+            return ok and cwd or vim.fn.getcwd()
+          end,
+        },
+      },
+    },
   },
 
   -- Automatically highlight cursorline and cursorcolumn after delay

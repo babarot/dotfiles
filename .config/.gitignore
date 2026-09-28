@@ -16,6 +16,13 @@ notion
 # zsh-abbr creates its user abbreviations file at load; ours are
 # session-only and declared in Nix (nix/home/tools/zsh-abbr.nix)
 zsh-abbr
+# Zed writes databases here (prompts/, ...); track only the settings
+zed/*
+!zed/settings.json
+!zed/keymap.json
+!zed/tasks.json
+!zed/snippets/
+!zed/themes/
 # herdr runtime state; only config.toml is settings
 herdr/*
 !herdr/config.toml

@@ -13,9 +13,6 @@ scroll_offset = 5
 # Reload the working-tree diff as an agent edits it (0, the default, disables it)
 diff_watch_interval_ms = 1000
 
-# Edit comments with vim modes (toggle in the app with :vim)
-comment_vim = true
-
 # Let a bare q quit, as the tuicr skill tells users to close the review pane with q
 q_quits = true
 

@@ -1,8 +1,8 @@
 {
+  "cleanupPeriodDays": 99999,
   "env": {
     "CLAUDE_CODE_AUTO_CONNECT_IDE": "true"
   },
-  "cleanupPeriodDays": 99999,
   "attribution": {
     "commit": "",
     "pr": "",
@@ -20,7 +20,6 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "opus[1m]",
   "hooks": {
     "SessionEnd": [
       {

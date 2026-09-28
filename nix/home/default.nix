@@ -7,6 +7,7 @@
     ./env.nix
     ./human.nix
     ./skills.nix
+    ./herdr-plugins.nix
     ./mas.nix
   ]
   ++ map (f: ./tools + "/${f}") (builtins.attrNames (builtins.readDir ./tools));

@@ -3,6 +3,7 @@
 { ... }:
 {
   imports = [
+    ./dotfiles.nix
     ./env.nix
     ./human.nix
     ./skills.nix

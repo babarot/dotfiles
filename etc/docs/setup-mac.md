@@ -85,17 +85,13 @@ Hi babarot! You've successfully authenticated, but GitHub does not provide shell
 
 ## Dotfiles
 
-Clone this repo into `~/src/github.com/babarot/dotfiles`. Keep this exact path: the `darwin-rebuild` commands below and the links into `~/.claude` (see [claude-code.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home/tools/claude-code.nix)) point at it.
+Clone this repo into `~/src/github.com/babarot/dotfiles`. Keep this exact path: the links into `$HOME` and the `darwin-rebuild` commands below point at it.
 
 ```bash
 git clone git@github.com:babarot/dotfiles.git ~/src/github.com/babarot/dotfiles
 ```
 
-```bash
-cd ~/src/github.com/babarot/dotfiles && make install
-```
-
-The `make install` will create symbolic links from the dotfiles directory into the `$HOME` directory, allowing for all of the configuration to *act* as if it were there without being there, making it easier to maintain the dotfiles in isolation.
+The first `darwin-rebuild switch` (see [Nix/Zsh](#nixzsh)) links the dotfiles (`.zshrc`, `.gitconfig`, `.config`, `bin`, ...) into `$HOME`, as listed in [nix/home/dotfiles.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home/dotfiles.nix). The links point at the repo, so edits apply without a switch. Until then, the shell is plain macOS zsh.
 
 ## Homebrew
 

@@ -1,28 +1,11 @@
-DOTPATH    := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
-CANDIDATES := $(wildcard .??*) bin
-EXCLUSIONS := .DS_Store .git .gitmodules .travis.yml .github .claude
-DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
+# Links into ~ are made by home-manager (nix/home/dotfiles.nix)
 
 .DEFAULT_GOAL := help
 
-all: brew install
+all: brew
 
 brew: ## Install Homebrew (darwin-rebuild installs the apps)
 	@sh ./etc/scripts/brew.sh
-
-list: ## Show dot files in this repo
-	@$(foreach val, $(DOTFILES), /bin/ls -dF $(val);)
-
-install: ## Create symlink to home directory
-	@echo 'Copyright (c) 2013-2015 BABAROT All Rights Reserved.'
-	@echo '==> Start to link dotfiles to home directory.'
-	@echo ''
-	@$(foreach val, $(DOTFILES), ln -sfnv $(abspath $(val)) $(HOME)/$(val);)
-
-clean: ## Remove the dot files and this repo
-	@echo 'Remove dot files in your home directory...'
-	@-$(foreach val, $(DOTFILES), rm -vrf $(HOME)/$(val);)
-	-rm -rf $(DOTPATH)
 
 new-shell: ## Run ghostty with zsh
 	ghostty --command=/bin/zsh

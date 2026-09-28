@@ -44,14 +44,15 @@ nix/
   homebrew.nix         # vendor apps installed by Homebrew
   hosts/<hostname>.nix # per-machine packages, casks and App Store apps
   home/
+    dotfiles.nix       # links the hand-written dotfiles below into ~
     env.nix            # my.env: variables for every shell, agents included
     human.nix          # my.human: aliases, plugins and env for humans only
     mas.nix            # my.masApps: Mac App Store apps to install
     skills.nix         # my.skills: Agent Skills shipped with tools
     tools/<tool>.nix   # one file per tool: its package and its shell settings
 claude/                # Claude Code user settings, linked into ~/.claude
-.zshenv, .zshrc, .zsh/ # hand-written zsh, linked into ~ by `make install`
-.config/               # linked to ~/.config as a whole
+.zshenv, .zshrc, .zsh/ # hand-written zsh, linked into ~ by nix/home/dotfiles.nix
+.config/               # linked to ~/.config as a whole (by activation, see dotfiles.nix)
 ```
 
 Each file in `nix/home/tools/` is imported automatically. It installs a tool and puts its human-only settings in `my.human`, which is rendered into `~/.config/zsh/human.zsh` and sourced after the `is_human` guard. Deleting the file removes both the tool and its settings.

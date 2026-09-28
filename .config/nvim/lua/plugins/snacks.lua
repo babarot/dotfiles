@@ -22,18 +22,10 @@ return {
             return { { "[", hl = "special" }, { item.key, hl = "key" }, { "]", hl = "special" } }
           end,
         },
+        -- Only this directory's recent files: Neovim is opened inside a
+        -- project to read it; everything else is one picker away
         sections = {
-          -- { section = "header" },
-          { title = "MRU",            padding = 1 },
-          { section = "recent_files", limit = 8,                            padding = 1 },
-          { title = "MRU ",           file = vim.fn.fnamemodify(".", ":~"), padding = 1 },
-          { section = "recent_files", cwd = true,                           limit = 8,  padding = 1 },
-          -- { title = "Sessions", padding = 1 },
-          -- { section = "projects", padding = 1 },
-          { title = "Bookmarks",      padding = 1 },
-          { section = "keys",         padding = 1 },
-          -- { title = "Status", padding = 1 },
-          -- { section = 'terminal', cmd = 'git status --short --branch', height = 5, padding = 1, ttl = 5 * 60 },
+          { section = "recent_files", cwd = true, limit = 5, padding = 1 },
         },
       },
       indent = { enabled = true },

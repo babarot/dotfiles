@@ -19,3 +19,8 @@ claude = [
   ["state_icon", "agent", "state_text", { token = "pane", rules = [{ starts_with = "*", fg = "#e5c07b", bold = true }, { starts_with = "!", fg = "#e5c07b", bold = true }] }],
   ["terminal_title_stripped"],
 ]
+
+# Same prefix as tmux had; pressing it twice sends a literal ctrl+s
+# (Claude Code's prompt stash, saving a hunk or tuicr comment).
+[keys]
+prefix = "ctrl+s"

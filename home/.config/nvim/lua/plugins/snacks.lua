@@ -25,6 +25,9 @@ return {
         -- Only this directory's recent files: Neovim is opened inside a
         -- project to read it; everything else is one picker away
         sections = {
+          -- Always one item: with no recent files here, snacks fails to lay
+          -- out an empty dashboard (math.max of nothing)
+          { title = vim.fn.fnamemodify(vim.fn.getcwd(), ":~"), padding = 1 },
           { section = "recent_files", cwd = true, limit = 5, padding = 1 },
         },
       },

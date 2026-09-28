@@ -3,8 +3,8 @@ onboarding = false
 [ui]
 # Ghostty's tab shows the focused pane's own title, as it did before herdr
 window_title = "{workspace}: {terminal_title}"
-# Agent states as colored dots (the default; "symbols" uses shapes instead)
-status_indicators = "dots"
+# Agent states as shapes, not colored dots (the default), so they differ without color
+status_indicators = "symbols"
 
 # Tell me when an agent finishes or needs input with a popup inside herdr
 # (off by default). prefix+o jumps to the notified pane.

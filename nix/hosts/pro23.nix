@@ -16,7 +16,16 @@
     { pkgs, ... }:
     {
       home.packages = [ pkgs.agent-browser ];
-      my.skills.agent-browser = "${pkgs.agent-browser}/skills/agent-browser";
+
+      # The shipped skill tells agents to prefer agent-browser over any other
+      # browser tool; claude-in-chrome stays the default, so rewrite its
+      # description to trigger only when agent-browser is asked for by name.
+      my.skills.agent-browser = pkgs.runCommand "agent-browser-skill" { } ''
+        mkdir $out
+        sed '/^description:/c\
+        description: Browser automation CLI for AI agents. Use only when the user explicitly asks for agent-browser; otherwise use the default browser tools.' \
+          ${pkgs.agent-browser}/skills/agent-browser/SKILL.md > $out/SKILL.md
+      '';
 
       my.masApps = {
         "CleanMyDrive 2" = 523620159;

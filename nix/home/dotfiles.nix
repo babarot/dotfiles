@@ -25,15 +25,15 @@ in
   # ~/.config links to the repo as a whole, so tools keep writing their
   # config here. It cannot be a home.file entry: home-manager writes files
   # inside it (zsh/env.zsh, zsh/human.zsh, ...), which then land in the
-  # repo, ignored by .config/.gitignore. Linked before home-manager checks
+  # repo, ignored by home/.config/.gitignore. Linked before home-manager checks
   # its targets, so those files go through the link.
   home.activation.dotfilesConfigLink = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
-    if [[ -L ~/.config && "$(/usr/bin/readlink ~/.config)" == "${repo}/.config" ]]; then
+    if [[ -L ~/.config && "$(/usr/bin/readlink ~/.config)" == "${repo}/home/.config" ]]; then
       :
     elif [[ ! -e ~/.config && ! -L ~/.config ]]; then
-      run /bin/ln -s "${repo}/.config" ~/.config
+      run /bin/ln -s "${repo}/home/.config" ~/.config
     else
-      errorEcho "~/.config exists and is not a link to ${repo}/.config; move it aside and switch again"
+      errorEcho "~/.config exists and is not a link to ${repo}/home/.config; move it aside and switch again"
       exit 1
     fi
   '';

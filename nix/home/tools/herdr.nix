@@ -1,5 +1,5 @@
 # herdr: terminal multiplexer for coding agents, used inside Ghostty.
-# Its settings live in .config/herdr/config.toml.
+# Its settings live in home/.config/herdr/config.toml.
 { lib, pkgs, ... }:
 {
   home.packages = [ pkgs.herdr ];

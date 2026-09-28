@@ -24,7 +24,7 @@ nix/macos.nix          # macOS System Settings for every Mac (system.defaults, k
 nix/homebrew.nix       # vendor apps installed by Homebrew casks (install only)
 nix/hosts/<host>.nix   # per-Mac packages, casks and App Store apps
 nix/home/default.nix   # imports every file in nix/home/tools
-nix/home/dotfiles.nix  # links the files in home/ (.zshrc, .gitconfig, bin, ...) and .config into ~
+nix/home/dotfiles.nix  # links the files in home/ (.zshrc, .gitconfig, bin, .config, ...) into ~
 nix/home/env.nix       # my.env: variables for every shell, rendered to ~/.config/zsh/env.zsh
 nix/home/human.nix     # my.human: human-only zsh UX, rendered to ~/.config/zsh/human.zsh
 nix/home/mas.nix       # my.masApps: Mac App Store apps installed with mas
@@ -33,7 +33,7 @@ home/                  # files linked into ~ under the same names (nix/home/dotf
   .zshenv, .zshrc, .zsh/ # hand-written zsh
   .gitconfig, bin/, ...
   .claude/             # Claude Code user settings, linked into ~/.claude
-.config/               # linked to ~/.config as a whole (by activation, see dotfiles.nix)
+  .config/             # linked to ~/.config as a whole (by activation, see dotfiles.nix)
 docs/                  # setup guide (setup-mac.md) and images
 ```
 
@@ -88,7 +88,7 @@ Before adding a nixpkgs package, check it is the same tool: several names belong
 - English for comments, commit messages and docs; this repo is public.
 - Commit messages: an imperative summary line, then a short body explaining why. No Claude session links or attribution trailers.
 - One file per tool; keep lists alphabetical; say in a comment why anything unusual is there.
-- `~/.config` links into this repo, so tools write their state here; ignore it in `.config/.gitignore` (never commit tokens, e.g. wrangler's).
+- `~/.config` links into this repo, so tools write their state here; ignore it in `home/.config/.gitignore` (never commit tokens, e.g. wrangler's).
 - `home/.claude/settings.json` is edited by Claude Code itself (`/config`); those edits show up as git diffs and are expected.
 
 ## Gotchas

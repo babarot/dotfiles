@@ -1,5 +1,5 @@
 # tuicr: TUI for reviewing agent changes and passing the comments back.
-# Its settings live in .config/tuicr/config.toml.
+# Its settings live in home/.config/tuicr/config.toml.
 { pkgs, ... }:
 {
   home.packages = [ pkgs.tuicr ];

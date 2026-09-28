@@ -54,7 +54,7 @@ home/                  # files linked into ~ under the same names (nix/home/dotf
   .zshenv, .zshrc, .zsh/ # hand-written zsh
   .gitconfig, bin/, ...
   .claude/             # Claude Code user settings, linked into ~/.claude
-.config/               # linked to ~/.config as a whole (by activation, see dotfiles.nix)
+  .config/             # linked to ~/.config as a whole (by activation, see dotfiles.nix)
 docs/                  # setup guide (setup-mac.md) and images
 ```
 

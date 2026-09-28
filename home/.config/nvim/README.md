@@ -1,4 +1,4 @@
-![](../../docs/images/neovim-2025-11-20.png)
+![](../../../docs/images/neovim-2025-11-20.png)
 
 ## Version
 

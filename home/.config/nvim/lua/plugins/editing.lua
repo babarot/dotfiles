@@ -14,17 +14,6 @@ return {
     end,
   },
 
-  -- Comment
-  {
-    'numToStr/Comment.nvim',
-    event = { 'BufReadPost', 'BufNewFile' },
-    config = function()
-      require('Comment').setup()
-      -- Visual mode: K for comment toggle
-      vim.keymap.set('v', 'K', 'gc', { silent = true, remap = true })
-    end,
-  },
-
   -- Surround
   {
     'kylechui/nvim-surround',
@@ -53,9 +42,4 @@ return {
     },
   },
 
-  -- Live preview for substitute and range commands
-  {
-    'markonm/traces.vim',
-    event = 'CmdlineEnter',
-  },
 }

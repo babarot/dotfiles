@@ -110,3 +110,12 @@ keymap('n', 'ss', function()
     return ':<C-u>wincmd w<CR>'
   end
 end, { expr = true, noremap = true, silent = true })
+
+-- Comment toggle in Visual mode with K (Neovim's built-in gc)
+vim.keymap.set('v', 'K', 'gc', { silent = true, remap = true, desc = 'Toggle comment' })
+
+-- Undo tree (Neovim's built-in undotree plugin; toggles its window)
+vim.keymap.set('n', '<Space>u', function()
+  vim.cmd.packadd('nvim.undotree')
+  require('undotree').open()
+end, { desc = 'Toggle Undo Tree' })

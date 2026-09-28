@@ -33,13 +33,11 @@ LSP servers and treesitter parsers (with their queries) come from Nix, in `nix/h
 - [rafamadriz/friendly-snippets](https://github.com/rafamadriz/friendly-snippets) - Snippet collection (blink.cmp dependency)
 - [moyiz/blink-emoji.nvim](https://github.com/moyiz/blink-emoji.nvim) - Emoji completion source for blink.cmp
 
-### Editing Features (6)
+### Editing Features (4)
 
 - [windwp/nvim-autopairs](https://github.com/windwp/nvim-autopairs) - Auto-close brackets
-- [numToStr/Comment.nvim](https://github.com/numToStr/Comment.nvim) - Commenting (gcc, gc)
 - [kylechui/nvim-surround](https://github.com/kylechui/nvim-surround) - Surround text operations (ys, ds, cs)
 - [Wansmer/treesj](https://github.com/Wansmer/treesj) - Split/join code blocks (Tree-sitter based)
-- [markonm/traces.vim](https://github.com/markonm/traces.vim) - Live preview for substitute and range commands
 - [stevearc/conform.nvim](https://github.com/stevearc/conform.nvim) - Code formatter (200+ formatters, minimal diff, range format)
 
 ### UI & Integration Tools (6)
@@ -48,11 +46,10 @@ LSP servers and treesitter parsers (with their queries) come from Nix, in `nix/h
 - [folke/which-key.nvim](https://github.com/folke/which-key.nvim) - Keybinding hints display
 - [nvim-lualine/lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) - Status line (fast, beautiful, LSP/Git integration)
 - [romgrk/barbar.nvim](https://github.com/romgrk/barbar.nvim) - Tab line (buffer list display, lightweight and fast)
-<!-- - [akinsho/bufferline.nvim](https://github.com/akinsho/bufferline.nvim) - Tab line (LSP integration, visual-focused, rich style customization) ※disabled -->
 - [folke/trouble.nvim](https://github.com/folke/trouble.nvim) - Integrated display of diagnostics and LSP references
 - [coder/claudecode.nvim](https://github.com/coder/claudecode.nvim) - Claude Code IDE integration (Claude Code in a herdr pane connects with /ide; its edits open as diffs)
 
-### Visual Aids (8)
+### Visual Aids (6)
 
 - [folke/todo-comments.nvim](https://github.com/folke/todo-comments.nvim) - Highlight TODO/FIXME comments
 - [ntpeters/vim-better-whitespace](https://github.com/ntpeters/vim-better-whitespace) - Highlight and auto-remove trailing whitespace
@@ -60,9 +57,6 @@ LSP servers and treesitter parsers (with their queries) come from Nix, in `nix/h
 - [utilyre/barbecue.nvim](https://github.com/utilyre/barbecue.nvim) - Breadcrumb list in winbar (LSP integration)
 - [tummetott/reticle.nvim](https://github.com/tummetott/reticle.nvim) - Auto show/hide cursor line
 - [babarot/cursor-x.nvim](https://github.com/babarot/cursor-x.nvim) - Auto-highlight cursor position (after delay)
-- [lukas-reineke/indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim) - Display indent guides (Treesitter integration)
-- [kevinhwang91/nvim-hlslens](https://github.com/kevinhwang91/nvim-hlslens) - Display search result count ([1/5], etc.)
-<!-- - [shellRaining/hlchunk.nvim](https://github.com/shellRaining/hlchunk.nvim) - Code block highlighting (disabled: conflicts with indent-blankline) -->
 
 ### Git Integration (2)
 
@@ -91,3 +85,12 @@ LSP servers and treesitter parsers (with their queries) come from Nix, in `nix/h
 - [nvim-lua/plenary.nvim](https://github.com/nvim-lua/plenary.nvim) - Lua function library (todo-comments dependency)
 - [SmiteshP/nvim-navic](https://github.com/SmiteshP/nvim-navic) - LSP-based navigation (barbecue dependency)
 - [ray-x/guihua.lua](https://github.com/ray-x/guihua.lua) - GUI/floating window library (go.nvim dependency)
+
+### Replaced by Neovim itself
+
+- Comment.nvim → `gc` / `gcc` (Visual `K` still toggles comments)
+- atone.nvim → `:Undotree` (`<Space>u`)
+- nvim-hlslens → the search count Neovim shows (`[3/12]`)
+- traces.vim → `inccommand` (default `nosplit`)
+- wilder.nvim → built-in cmdline autocompletion (`wildtrigger()` in `lua/config/options.lua`)
+- indent-blankline.nvim → snacks.nvim's indent

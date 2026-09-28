@@ -57,59 +57,11 @@ return {
     },
   },
 
-  -- Breadcrumb list in winbar (Treesitter + LSP)
+  -- Breadcrumbs in winbar (LSP + Treesitter); replaces the archived barbecue.nvim
   {
-    'utilyre/barbecue.nvim',
-    dependencies = {
-      'SmiteshP/nvim-navic',
-      'echasnovski/mini.icons',
-    },
+    'Bekaboo/dropbar.nvim',
     event = { 'BufReadPost', 'BufNewFile' },
-    opts = {
-      theme = 'tokyonight',
-      create_autocmd = false,  -- Manual update for performance
-      show_modified = true,
-      symbols = {
-        separator = '',
-      },
-      exclude_filetypes = { 'dashboard', 'alpha', 'neo-tree', 'toggleterm' },
-    },
-    config = function(_, opts)
-      require('barbecue').setup(opts)
-
-      -- Update barbecue on certain events for better performance
-      vim.api.nvim_create_autocmd({
-        'WinResized',
-        'BufWinEnter',
-        'CursorHold',
-        'InsertLeave',
-        'BufModifiedSet',
-      }, {
-        group = vim.api.nvim_create_augroup('barbecue.updater', {}),
-        callback = function()
-          require('barbecue.ui').update()
-        end,
-      })
-    end,
-  },
-
-  -- Auto show/hide cursor line (e.g., show only in insert mode)
-  {
-    'tummetott/reticle.nvim',
-    event = { 'BufReadPost', 'BufNewFile' },
-    opts = {
-      on_startup = {
-        cursorline = true,
-        cursorcolumn = false,
-      },
-      disable_in_insert = false,
-      always = {
-        cursorline = { 'TelescopePrompt', 'dashboard' },
-      },
-      never = {
-        cursorline = {},
-      },
-    },
+    opts = {},
   },
 
   -- Automatically highlight cursorline and cursorcolumn after delay

@@ -61,14 +61,9 @@ return {
       { 'Kt', '<cmd>Lspsaga peek_type_definition<CR>',     desc = 'Peek Type' },
       { 'Ki', '<cmd>Lspsaga incoming_calls<CR>',           desc = 'Incoming Calls' },
       { 'Kc', '<cmd>Lspsaga outgoing_calls<CR>',           desc = 'Outgoing Calls' },
-      { 'Ks', function() require('snacks').picker.lsp_symbols() end, desc = 'Document Symbols' },
 
       -- Alternative: Keep some old bindings for backward compatibility
       { 'gp',         '<cmd>Lspsaga peek_definition<CR>',     desc = 'Peek Definition' },
-
-      -- Diagnostics navigation
-      { '[d',         '<cmd>Lspsaga diagnostic_jump_prev<CR>',  desc = 'Prev Diagnostic' },
-      { ']d',         '<cmd>Lspsaga diagnostic_jump_next<CR>',  desc = 'Next Diagnostic' },
     },
   },
 }

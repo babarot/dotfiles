@@ -5,7 +5,7 @@
 -- nvim-lspconfig is only the source of per-server defaults (its lsp/*.lua);
 -- its old require('lspconfig').xxx.setup() framework is deprecated.
 -- Keymaps are Neovim's defaults (K, grn, gra, grr, gri, grt, gO, [d, ]d),
--- plus the Lspsaga ones in lspsaga.lua.
+-- plus the Lspsaga ones in lspsaga.lua (peek, call hierarchy, outline).
 
 return {
   {
@@ -29,18 +29,16 @@ return {
 
       vim.lsp.enable({ 'gopls', 'lua_ls' })
 
-      -- Breadcrumbs for barbecue.nvim
-      vim.api.nvim_create_autocmd('LspAttach', {
-        group = vim.api.nvim_create_augroup('lsp-navic', { clear = true }),
-        callback = function(args)
-          local client = vim.lsp.get_client_by_id(args.data.client_id)
-          if client and client:supports_method('textDocument/documentSymbol') then
-            local ok, navic = pcall(require, 'nvim-navic')
-            if ok then
-              navic.attach(client, args.buf)
+      -- [d / ]d are Neovim's defaults; show the diagnostic jumped to in a
+      -- float, as Lspsaga's diagnostic_jump_* did
+      vim.diagnostic.config({
+        jump = {
+          on_jump = function(diagnostic, bufnr)
+            if diagnostic then
+              vim.diagnostic.open_float({ bufnr = bufnr, scope = 'cursor', focus = false })
             end
-          end
-        end,
+          end,
+        },
       })
     end,
   },

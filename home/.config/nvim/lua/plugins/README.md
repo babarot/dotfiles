@@ -49,13 +49,12 @@ LSP servers and treesitter parsers (with their queries) come from Nix, in `nix/h
 - [folke/trouble.nvim](https://github.com/folke/trouble.nvim) - Integrated display of diagnostics and LSP references
 - [coder/claudecode.nvim](https://github.com/coder/claudecode.nvim) - Claude Code IDE integration (Claude Code in a herdr pane connects with /ide; its edits open as diffs)
 
-### Visual Aids (6)
+### Visual Aids (5)
 
 - [folke/todo-comments.nvim](https://github.com/folke/todo-comments.nvim) - Highlight TODO/FIXME comments
 - [ntpeters/vim-better-whitespace](https://github.com/ntpeters/vim-better-whitespace) - Highlight and auto-remove trailing whitespace
 - [dstein64/nvim-scrollview](https://github.com/dstein64/nvim-scrollview) - Display scrollbar
-- [utilyre/barbecue.nvim](https://github.com/utilyre/barbecue.nvim) - Breadcrumb list in winbar (LSP integration)
-- [tummetott/reticle.nvim](https://github.com/tummetott/reticle.nvim) - Auto show/hide cursor line
+- [Bekaboo/dropbar.nvim](https://github.com/Bekaboo/dropbar.nvim) - Breadcrumbs in winbar (LSP/Treesitter; replaces the archived barbecue.nvim)
 - [babarot/cursor-x.nvim](https://github.com/babarot/cursor-x.nvim) - Auto-highlight cursor position (after delay)
 
 ### Git Integration (1)
@@ -69,7 +68,7 @@ LSP servers and treesitter parsers (with their queries) come from Nix, in `nix/h
 
 ### Icons (2)
 
-- [echasnovski/mini.icons](https://github.com/echasnovski/mini.icons) - Icon support (snacks/lspsaga/barbecue/oil dependency)
+- [echasnovski/mini.icons](https://github.com/echasnovski/mini.icons) - Icon support (snacks/lspsaga/oil dependency)
 - [nvim-tree/nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) - Icon support (barbar dependency)
 
 ### File Operations (3)
@@ -78,10 +77,9 @@ LSP servers and treesitter parsers (with their queries) come from Nix, in `nix/h
 - [babarot/rm.nvim](https://github.com/babarot/rm.nvim) - Safe file deletion (:Rm command, gomi support)
 - [babarot/backup.nvim](https://github.com/babarot/backup.nvim) - Automatic backup on file save (~/.backup/vim, organized by date)
 
-### Utility Libraries (3)
+### Utility Libraries (2)
 
 - [nvim-lua/plenary.nvim](https://github.com/nvim-lua/plenary.nvim) - Lua function library (todo-comments dependency)
-- [SmiteshP/nvim-navic](https://github.com/SmiteshP/nvim-navic) - LSP-based navigation (barbecue dependency)
 - [ray-x/guihua.lua](https://github.com/ray-x/guihua.lua) - GUI/floating window library (go.nvim dependency)
 
 ### Replaced by Neovim itself
@@ -92,3 +90,5 @@ LSP servers and treesitter parsers (with their queries) come from Nix, in `nix/h
 - traces.vim → `inccommand` (default `nosplit`)
 - wilder.nvim → built-in cmdline autocompletion (`wildtrigger()` in `lua/config/options.lua`)
 - indent-blankline.nvim → snacks.nvim's indent
+- reticle.nvim → `cursorline` in `lua/config/options.lua` and the cursorline autocmds in `lua/config/autocmds.lua`
+- Lspsaga's `[d` / `]d` → Neovim's defaults, with a float on jump (`vim.diagnostic.config` in `lua/plugins/lsp.lua`)

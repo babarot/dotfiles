@@ -42,7 +42,7 @@ LSP servers and treesitter parsers (with their queries) come from Nix, in `nix/h
 - [markonm/traces.vim](https://github.com/markonm/traces.vim) - Live preview for substitute and range commands
 - [stevearc/conform.nvim](https://github.com/stevearc/conform.nvim) - Code formatter (200+ formatters, minimal diff, range format)
 
-### UI & Integration Tools (7)
+### UI & Integration Tools (6)
 
 - [folke/snacks.nvim](https://github.com/folke/snacks.nvim) - Integrated UI toolkit (picker, dashboard, explorer, notifier, gitbrowse :GH, GitHub issues/PRs, etc.)
 - [folke/which-key.nvim](https://github.com/folke/which-key.nvim) - Keybinding hints display
@@ -50,7 +50,6 @@ LSP servers and treesitter parsers (with their queries) come from Nix, in `nix/h
 - [romgrk/barbar.nvim](https://github.com/romgrk/barbar.nvim) - Tab line (buffer list display, lightweight and fast)
 <!-- - [akinsho/bufferline.nvim](https://github.com/akinsho/bufferline.nvim) - Tab line (LSP integration, visual-focused, rich style customization) ※disabled -->
 - [folke/trouble.nvim](https://github.com/folke/trouble.nvim) - Integrated display of diagnostics and LSP references
-- [gelguy/wilder.nvim](https://github.com/gelguy/wilder.nvim) - Enhanced command line (history filtering, fuzzy search)
 - [coder/claudecode.nvim](https://github.com/coder/claudecode.nvim) - Claude Code IDE integration (Claude Code in a herdr pane connects with /ide; its edits open as diffs)
 
 ### Visual Aids (8)

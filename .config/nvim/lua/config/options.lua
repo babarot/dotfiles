@@ -78,3 +78,23 @@ if vim.fn.has('persistent_undo') == 1 then
   vim.opt.undofile = true
   vim.opt.undodir = vim.fn.stdpath('state') .. '/undo'
 end
+
+-- Command-line completion (built in since 0.12; replaces wilder.nvim)
+-- Suggestions pop up as you type after :, / and ?; <Tab>/<S-Tab> or
+-- <C-n>/<C-p> move through them. See :help cmdline-autocompletion
+vim.opt.wildmode       = 'noselect:lastused,full'
+vim.opt.wildoptions    = 'pum,fuzzy'
+vim.api.nvim_create_autocmd('CmdlineChanged', {
+  group = vim.api.nvim_create_augroup('cmdline-autocompletion', { clear = true }),
+  pattern = { ':', '/', '?' },
+  callback = function()
+    vim.fn.wildtrigger()
+  end,
+})
+-- Keep <Up>/<Down> for history (`:xxx<Up>` recalls commands starting with xxx)
+vim.keymap.set('c', '<Up>', function()
+  return vim.fn.wildmenumode() == 1 and '<C-e><Up>' or '<Up>'
+end, { expr = true })
+vim.keymap.set('c', '<Down>', function()
+  return vim.fn.wildmenumode() == 1 and '<C-e><Down>' or '<Down>'
+end, { expr = true })

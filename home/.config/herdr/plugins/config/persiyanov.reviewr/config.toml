@@ -3,3 +3,5 @@ default_scope = "uncommitted"
 navigator_position = "bottom"
 toggle_placement = "overlay"
 toggle_direction = "down"
+# The worktree layout plugin (nix/home/tools/herdr-worktree-layout.nix) opens it
+auto_open = false

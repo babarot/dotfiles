@@ -64,9 +64,8 @@ return {
     opts = {
       sources = {
         path = {
-          -- Paths from the git root: the default is the window's cwd, which
-          -- the auto-cd autocmd (lua/config/autocmds.lua) sets to the file's
-          -- own directory, leaving only the file name
+          -- Paths from the git root, even when Neovim was started in a
+          -- subdirectory (the default is the window's cwd)
           relative_to = function(buf, win)
             local root = vim.fs.root(buf, '.git')
             if root then

@@ -24,6 +24,7 @@
       "obsidian"
       "spotify"
       "tableplus"
+      "zed" # on trial: editor that runs Claude Code and Codex over ACP
     ];
     # nix-darwin marks every entry `trusted: true` in the Brewfile, so
     # third-party taps are trusted per entry (Homebrew refuses to load

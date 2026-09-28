@@ -58,15 +58,13 @@ LSP servers and treesitter parsers (with their queries) come from Nix, in `nix/h
 - [tummetott/reticle.nvim](https://github.com/tummetott/reticle.nvim) - Auto show/hide cursor line
 - [babarot/cursor-x.nvim](https://github.com/babarot/cursor-x.nvim) - Auto-highlight cursor position (after delay)
 
-### Git Integration (2)
+### Git Integration (1)
 
 - [lewis6991/gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) - Git diff display, hunk operations, blame display
-- [sindrets/diffview.nvim](https://github.com/sindrets/diffview.nvim) - Single tabpage interface for cycling through diffs, file history, and merge conflicts
 
-### Language-Specific (3)
+### Language-Specific (2)
 
 - [ray-x/go.nvim](https://github.com/ray-x/go.nvim) - Go development tools (goimport, add tags, run tests, etc.)
-- [babarot/markdown-preview.nvim](https://github.com/babarot/markdown-preview.nvim) - Markdown preview (using GitHub API)
 - [MeanderingProgrammer/render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) - Markdown rendering (headings, code blocks, tables, etc.)
 
 ### Icons (2)

@@ -10,7 +10,10 @@ return {
       'neovim/nvim-lspconfig',
     },
     ft = { 'go', 'gomod' },
-    build = ':lua require("go.install").update_all_sync()',
+    -- No build step: update_all_sync `go install`s every tool go.nvim knows
+    -- into ~/bin (GOPATH=$HOME) on each plugin install or update, shadowing
+    -- the Nix ones (gopls, gotools, golangci-lint). A missing tool is still
+    -- installed on first use.
     config = function()
       require('go').setup({
         -- Disable icons (use text instead)

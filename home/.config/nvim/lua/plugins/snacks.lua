@@ -22,14 +22,30 @@ return {
             return { { "[", hl = "special" }, { item.key, hl = "key" }, { "]", hl = "special" } }
           end,
         },
-        -- Only this directory's recent files: Neovim is opened inside a
-        -- project to read it; everything else is one picker away
-        sections = {
-          -- Always one item: with no recent files here, snacks fails to lay
-          -- out an empty dashboard (math.max of nothing)
-          { title = vim.fn.fnamemodify(vim.fn.getcwd(), ":~"), padding = 1 },
-          { section = "recent_files", cwd = true, limit = 5, padding = 1 },
-        },
+        -- Neovim's own intro logo and version, then only this directory's
+        -- recent files: Neovim is opened inside a project to read it;
+        -- everything else is one picker away. The logo also keeps the
+        -- dashboard from being empty, which snacks fails to lay out.
+        sections = function()
+          -- Colored like :intro, Special up to the first ╲, String after
+          local function logo(before, after)
+            return { text = { { before, hl = "Special" }, { after, hl = "String" } }, align = "center" }
+          end
+          local v = vim.version()
+          local sections = {
+            logo("│ ", "╲ ││"),
+            logo("││", "╲╲││"),
+            logo("││ ", "╲ │"),
+            { text = { { ("NVIM v%d.%d.%d"):format(v.major, v.minor, v.patch), hl = "String" } }, align = "center", padding = { 1, 1 } },
+          }
+          local files = Snacks.dashboard.sections.recent_files({ cwd = true, limit = 5 })()
+          if #files > 0 then
+            table.insert(sections, { title = vim.fn.fnamemodify(vim.fn.getcwd(), ":~"), padding = 1 })
+            files.padding = 1
+            table.insert(sections, files)
+          end
+          return sections
+        end,
       },
       indent = { enabled = true },
       input = { enabled = true },

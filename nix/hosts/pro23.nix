@@ -15,19 +15,8 @@
   home-manager.users.babarot =
     { pkgs, ... }:
     {
-      # On trial: agent harness tools and the skills they ship. Move each
-      # to its own nix/home/tools/<tool>.nix once it stays.
-      home.packages = with pkgs; [
-        agent-browser
-        hunk
-        tuicr
-      ];
-      my.skills = {
-        agent-browser = "${pkgs.agent-browser}/skills/agent-browser";
-        hunk-review = "${pkgs.hunk}/share/skills/hunk/hunk-review";
-        # Not in the package; taken from the same release's source
-        tuicr = "${pkgs.tuicr.src}/skills/tuicr";
-      };
+      home.packages = [ pkgs.agent-browser ];
+      my.skills.agent-browser = "${pkgs.agent-browser}/skills/agent-browser";
 
       my.masApps = {
         "CleanMyDrive 2" = 523620159;

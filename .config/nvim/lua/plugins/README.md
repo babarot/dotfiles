@@ -23,7 +23,6 @@
 ### Foundation & LSP (3)
 
 - [neovim/nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) - Per-server defaults (lsp/*.lua) for Neovim's vim.lsp.config / vim.lsp.enable (gopls, lua_ls)
-
 - [nvimdev/lspsaga.nvim](https://github.com/nvimdev/lspsaga.nvim) - LSP UI enhancement (hover, peek, outline, etc.)
 - [saghen/blink.cmp](https://github.com/saghen/blink.cmp) - Completion engine (Rust-based, fast)
 

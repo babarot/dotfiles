@@ -1,4 +1,7 @@
 {
+  "env": {
+    "CLAUDE_CODE_AUTO_CONNECT_IDE": "true"
+  },
   "cleanupPeriodDays": 99999,
   "attribution": {
     "commit": "",

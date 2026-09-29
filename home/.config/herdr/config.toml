@@ -29,9 +29,12 @@ claude = [
   # The latest tool call, reported by nix/home/tools/herdr-activity.sh. The
   # tool name starts with an invisible mark of its kind that picks the colour:
   # edit, shell, read, agent, web, task/skill, mcp (tokyo-night colours).
+  # While the agent is idle, herdr-activity-idle.sh puts U+FEFF in front, and
+  # the first rule (first match wins) dims it instead.
   [
     { token = "$activity_time", dim = true },
     { token = "$activity_tool", fg = "#565f89", rules = [
+      { contains = "﻿", dim = true },
       { contains = "\u2060", fg = "#e0af68" },
       { contains = "\u2061", fg = "#9ece6a" },
       { contains = "\u2062", fg = "#7aa2f7" },

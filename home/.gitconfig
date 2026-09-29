@@ -43,21 +43,26 @@
   branch-log = log --oneline HEAD --not main
   blog = log --oneline HEAD --not origin/main
   ; From a worktree, bring this branch into main without a PR: rebase onto
-  ; main, fast-forward main in the main worktree (git will not move a branch
-  ; checked out elsewhere), and push it. Shell aliases get this worktree's
-  ; GIT_DIR, which would win over -C, so drop it first
-  land = "!f() { \
+  ; main and fast-forward main in the main worktree (git will not move a
+  ; branch checked out elsewhere). Shell aliases get this worktree's GIT_DIR,
+  ; which would win over -C, so drop it first
+  ff-main = "!f() { \
     unset GIT_DIR GIT_WORK_TREE; \
     m=$(git symbolic-ref -q --short refs/remotes/origin/HEAD); m=${m#origin/}; m=${m:-main}; \
     b=$(git branch --show-current); \
     root=$(git worktree list --porcelain | sed -n '1s/^worktree //p'); \
-    [ -n \"$b\" ] && [ \"$b\" != \"$m\" ] || { echo \"land: not on a branch other than $m\" >&2; return 1; }; \
-    [ \"$(git -C \"$root\" branch --show-current)\" = \"$m\" ] || { echo \"land: $root is not on $m\" >&2; return 1; }; \
+    [ -n \"$b\" ] && [ \"$b\" != \"$m\" ] || { echo \"ff-main: not on a branch other than $m\" >&2; return 1; }; \
+    [ \"$(git -C \"$root\" branch --show-current)\" = \"$m\" ] || { echo \"ff-main: $root is not on $m\" >&2; return 1; }; \
     git -C \"$root\" pull -q --ff-only origin \"$m\" && \
     git rebase \"$m\" && \
     git -C \"$root\" merge -q --ff-only \"$b\" && \
-    git -C \"$root\" push -q origin \"$m\" && \
     git -C \"$root\" log --oneline -1; \
+  }; f"
+  ; ff-main, then push main
+  land = "!f() { \
+    unset GIT_DIR GIT_WORK_TREE; \
+    root=$(git worktree list --porcelain | sed -n '1s/^worktree //p'); \
+    git ff-main && git -C \"$root\" push -q origin HEAD; \
   }; f"
   df = diff --no-ext-diff
   dft = difft --syntax-highlight=off

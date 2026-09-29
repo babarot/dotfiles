@@ -31,6 +31,7 @@ herdr/plugins/config/persiyanov.reviewr/*
 zsh/env.zsh
 zsh/human.zsh
 direnv/lib/hm-nix-direnv.sh
+mise/config.toml
 
 # hunk: last-seen version, rewritten on every run
 hunk/state.json

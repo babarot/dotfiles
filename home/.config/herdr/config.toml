@@ -44,6 +44,14 @@ claude = [
   ],
 ]
 
+# A space renamed to what it is for (prefix+shift+w) reads "xx · babarot/step1": the branch token follows every checkout, so the
+# name stays put while a worktree goes through several branches.
+[ui.sidebar.spaces]
+rows = [
+  ["state_icon", "workspace", "branch"],
+  ["git_status"],
+]
+
 # Same prefix as tmux had; pressing it twice sends a literal ctrl+s
 # (Claude Code's prompt stash, saving a hunk or tuicr comment).
 [keys]

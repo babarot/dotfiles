@@ -1,5 +1,5 @@
 theme = "tokyo-night"
-default_scope = "uncommitted"
+default_scope = "branch"
 navigator_position = "bottom"
 toggle_placement = "overlay"
 toggle_direction = "down"

@@ -1,0 +1,8 @@
+# gitleaks findings reviewed and accepted (see `gitleaks git`).
+# GPG key ID in [user] signingkey: public, not a secret.
+490f82060124691d4ee558d40ebae9486713c301:.gitconfig:generic-api-key:47
+04017dd6ece889d24d29552a3f90234a63a8137f:.gitconfig:generic-api-key:50
+8821b1d6c852d34faa77cd2bb12e209a6d1fd0e5:.gitconfig:generic-api-key:49
+# GitHub token for history's gist sync, committed in 2017; revoked (API returns 401),
+# and the secret gist it synced to was deleted on 2026-09-29.
+584785bb7dbc0fae246a7a9dc2a026ecbdab843d:.config/history/config.toml:generic-api-key:12

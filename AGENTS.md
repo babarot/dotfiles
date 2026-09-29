@@ -18,10 +18,11 @@ This repository is public. Never commit credentials, tokens, or internal names f
 ## Layout
 
 ```
-flake.nix              # inputs and one darwinConfiguration per hostname
+flake.nix              # inputs, one darwinConfiguration per hostname, and the formatter
 nix/darwin.nix         # system settings for every Mac (allowUnfree, primaryUser)
 nix/macos.nix          # macOS System Settings for every Mac (system.defaults, keyboard, Touch ID sudo)
 nix/homebrew.nix       # vendor apps installed by Homebrew casks (install only)
+nix/treefmt.nix        # formatters and linters behind `nix fmt`
 nix/hosts/<host>.nix   # per-Mac packages, casks and App Store apps
 nix/home/default.nix   # imports every file in nix/home/tools
 nix/home/dotfiles.nix  # links the files in home/ (.zshrc, .gitconfig, bin, .config, ...) into ~
@@ -44,6 +45,7 @@ docs/                  # setup guide (setup-mac.md) and images
 - Check without sudo, for both Macs, before asking the user to apply:
   `nix build .#darwinConfigurations.pro23.system --no-link` and the same for `PC-M-2025-026`.
 - Nix only sees files tracked by git: `git add` (or `git add -N`) new files first.
+- Run `nix fmt` before committing: nixfmt, deadnix, statix and shfmt, configured in `nix/treefmt.nix`. `nix flake check` fails on unformatted files.
 - Applying needs sudo, so the user runs it:
   `sudo darwin-rebuild switch --flake ~/src/github.com/babarot/dotfiles` (always the absolute path).
 - Quote flake references in zsh (`'nixpkgs#foo'`); `#` is a glob with extended_glob.

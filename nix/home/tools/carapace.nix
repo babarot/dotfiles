@@ -21,13 +21,15 @@ let
     "node"
     "terraform"
   ];
-  completions = pkgs.runCommand "carapace-zsh-completions" { nativeBuildInputs = [ pkgs.carapace ]; } ''
-    export HOME=$TMPDIR
-    mkdir -p $out/share/zsh/site-functions
-    for cmd in ${toString commands}; do
-      carapace "$cmd" zsh > "$out/share/zsh/site-functions/_carapace_$cmd"
-    done
-  '';
+  completions =
+    pkgs.runCommand "carapace-zsh-completions" { nativeBuildInputs = [ pkgs.carapace ]; }
+      ''
+        export HOME=$TMPDIR
+        mkdir -p $out/share/zsh/site-functions
+        for cmd in ${toString commands}; do
+          carapace "$cmd" zsh > "$out/share/zsh/site-functions/_carapace_$cmd"
+        done
+      '';
 in
 {
   home.packages = [

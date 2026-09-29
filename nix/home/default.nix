@@ -12,7 +12,9 @@
     ./mas.nix
   ]
   ++ map (f: ./tools + "/${f}") (
-    builtins.filter (f: builtins.match ".*\\.nix" f != null) (builtins.attrNames (builtins.readDir ./tools))
+    builtins.filter (f: builtins.match ".*\\.nix" f != null) (
+      builtins.attrNames (builtins.readDir ./tools)
+    )
   );
 
   home.stateVersion = "26.05";

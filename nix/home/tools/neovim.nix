@@ -47,11 +47,12 @@ let
   ts = pkgs.vimPlugins.nvim-treesitter;
   treesitter = pkgs.symlinkJoin {
     name = "nvim-treesitter-site";
-    paths = lib.concatMap (lang: [
-      ts.grammarPlugins.${lang} # parser/<lang>.so
-      ts.queries.${lang} # queries/<lang>/*.scm
-    ]) languages
-    ++ map (lang: ts.queries.${lang}) sharedQueries;
+    paths =
+      lib.concatMap (lang: [
+        ts.grammarPlugins.${lang} # parser/<lang>.so
+        ts.queries.${lang} # queries/<lang>/*.scm
+      ]) languages
+      ++ map (lang: ts.queries.${lang}) sharedQueries;
   };
 in
 {

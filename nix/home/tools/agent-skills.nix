@@ -15,9 +15,9 @@ let
     let
       dir = "${inputs.agent-skills}/plugins/${scope}/skills";
     in
-    lib.mapAttrs' (
-      name: _: lib.nameValuePair ".agents/skills/${name}" { source = "${dir}/${name}"; }
-    ) (lib.filterAttrs (_: type: type == "directory") (builtins.readDir dir));
+    lib.mapAttrs' (name: _: lib.nameValuePair ".agents/skills/${name}" { source = "${dir}/${name}"; }) (
+      lib.filterAttrs (_: type: type == "directory") (builtins.readDir dir)
+    );
 in
 {
   options.my.agentSkills.scopes = lib.mkOption {

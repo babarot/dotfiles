@@ -1,0 +1,51 @@
+# Builds both Macs' configurations and checks formatting, so a change
+# for one Mac is known to evaluate and build before anyone switches.
+# agent-skills is a private input CI cannot fetch; an empty stub stands
+# in for it (ci/agent-skills-stub).
+name: nix
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md', 'docs/**']
+  pull_request:
+    paths-ignore: ['**.md', 'docs/**']
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: DeterminateSystems/determinate-nix-action@8d87e8d5e5b8a8309d4281094560f127d9a265f1 # v3.22.5
+      - run: nix flake check --override-input agent-skills path:./ci/agent-skills-stub
+
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 90
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        host: [pro23, PC-M-2025-026]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: DeterminateSystems/determinate-nix-action@8d87e8d5e5b8a8309d4281094560f127d9a265f1 # v3.22.5
+      - run: >-
+          nix build .#darwinConfigurations.${{ matrix.host }}.system
+          --no-link --print-build-logs
+          --override-input agent-skills path:./ci/agent-skills-stub

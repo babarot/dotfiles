@@ -12,6 +12,24 @@
 [[ ${HERDR_ENV:-} == 1 && -n ${HERDR_PANE_ID:-} ]] || exit 0
 
 input=$(cat)
+
+# herdr hides the built-in branch token on worktree spaces grouped under
+# their repo (herdrdev/herdr#2952), so a space renamed after its feature
+# loses its branch. Report the checkout's branch as $branch instead; any tool
+# call may have switched it, and reporting the same value again is harmless.
+if [[ -n ${HERDR_WORKSPACE_ID:-} ]]; then
+  checkout=$(herdr workspace get "$HERDR_WORKSPACE_ID" 2>/dev/null |
+    jq -r '.result.workspace.worktree | select(.is_linked_worktree) | .checkout_path' 2>/dev/null) || checkout=""
+  if [[ -n $checkout ]]; then
+    branch=$(git -C "$checkout" branch --show-current 2>/dev/null) || branch=""
+    if [[ -n $branch ]]; then
+      branch_args=(--token "branch=$branch")
+    else
+      branch_args=(--clear-token branch)
+    fi
+    herdr workspace report-metadata "$HERDR_WORKSPACE_ID" --source herdr-branch "${branch_args[@]}" >/dev/null 2>&1 || true
+  fi
+fi
 # tool<TAB>kind<TAB>label
 parsed=$(jq -r '
   def base: split("/") | last;

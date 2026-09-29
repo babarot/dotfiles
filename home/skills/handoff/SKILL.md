@@ -1,6 +1,7 @@
 ---
 name: handoff
-description: Write a copy-pasteable prompt that hands this session over to another agent, with a summary and this session's ID so the next agent can read the full transcript when it needs detail. Use when the user runs /handoff or asks to hand off, pass on or continue this session in another agent ("引き継ぎ", "引き継いで").
+description: Write a copy-pasteable prompt that hands this session over to another agent, with a summary and this session's ID so the next agent can read the full transcript when it needs detail.
+disable-model-invocation: true
 ---
 
 # handoff

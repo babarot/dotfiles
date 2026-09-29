@@ -11,6 +11,10 @@ Setup guide is here: [setup-mac.md](./docs/setup-mac.md)
 - Shell: zsh
   - Package manager: [Nix](https://nixos.org/) ([nix-darwin](https://github.com/nix-darwin/nix-darwin) + [home-manager](https://github.com/nix-community/home-manager))
 - Terminal: [Ghostty](https://ghostty.org/)
+  - Multiplexer: [Herdr](https://herdr.dev/), where Claude Code and Codex run, one workspace per git worktree ([config](./home/.config/herdr/config.toml))
+    - Plugins lay out each new worktree (Claude Code, a reviewr diff pane and a shell) and send diff review comments back to the agent (reviewr, hunk)
+    - A Claude Code hook shows each session's latest tool call in the sidebar ([herdr-activity](./nix/home/tools/herdr-activity.sh))
+    - Built from nixpkgs with small patches, one per change ([herdr.nix](./nix/home/tools/herdr.nix)); e.g. a renamed worktree workspace shows its name, branch and worktree directory
 - Editor: [Neovim](https://github.com/neovim/neovim)
 - Font: Menlo + Hiragino Kaku Gothic ProN (Ghostty); Nerd Fonts (Hack, JetBrains Mono) are installed by Nix
 

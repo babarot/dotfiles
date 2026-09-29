@@ -2,13 +2,19 @@
 # Its settings live in home/.config/herdr/config.toml.
 { lib, pkgs, ... }:
 let
-  # herdr-worktree-token.patch: a worktree space renamed after its feature
-  # keeps its branch and ahead/behind in the sidebar (herdr hides them on
-  # every grouped worktree, herdrdev/herdr#2952), and the `worktree` space
-  # token shows its checkout's directory name, which other sessions go by.
-  # Patching loses the binary cache: each herdr bump builds locally (~9 min).
+  # Small patches on nixpkgs' herdr, one per change, made against its release
+  # tag and applied in order. Patching loses the binary cache, so a herdr or
+  # nixpkgs bump builds herdr locally (~9 min).
   herdr = pkgs.herdr.overrideAttrs (old: {
-    patches = (old.patches or [ ]) ++ [ ./herdr-worktree-token.patch ];
+    patches = (old.patches or [ ]) ++ [
+      # A worktree space renamed after its feature keeps its branch and
+      # ahead/behind in the sidebar; herdr hides them on every grouped
+      # worktree (herdrdev/herdr#2952)
+      ./herdr/renamed-worktree-branch.patch
+      # A `worktree` space token: the checkout's directory name, which other
+      # sessions go by
+      ./herdr/worktree-token.patch
+    ];
   });
 in
 {

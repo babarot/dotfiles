@@ -1,0 +1,15 @@
+diff --git a/src/client/shell/sidebar.rs b/src/client/shell/sidebar.rs
+index 161aecd..89a1377 100644
+--- a/src/client/shell/sidebar.rs
++++ b/src/client/shell/sidebar.rs
+@@ -631,7 +631,9 @@ pub(in crate::client::shell) fn workspace_rows(
+             state_text: status_text(status),
+             ahead_behind: workspace.git_ahead_behind,
+             tokens: &token_values,
+-            suppress_git_details: indented,
++            // A renamed worktree child keeps its branch and ahead/behind; an
++            // unrenamed one already shows its branch as its name.
++            suppress_git_details: indented && !workspace.custom_label,
+         },
+     )
+ }

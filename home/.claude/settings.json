@@ -66,17 +66,6 @@
           }
         ]
       }
-    ],
-    "PostToolUse": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/herdr-activity",
-            "async": true
-          }
-        ]
-      }
     ]
   },
   "statusLine": {

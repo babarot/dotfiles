@@ -39,7 +39,7 @@ Nothing is pinned for App Store or vendor apps; only a missing app is installed.
 
 Two Macs share this flake: `pro23` (private) and `PC-M-2025-026` (work). `darwin-rebuild` picks the configuration by `scutil --get LocalHostName`; anything outside `nix/hosts/` applies to both.
 
-```
+```ini
 flake.nix              # one darwinConfiguration per hostname
 nix/
   darwin.nix           # system settings shared by all Macs

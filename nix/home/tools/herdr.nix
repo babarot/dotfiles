@@ -5,6 +5,12 @@ let
   # Small patches on nixpkgs' herdr, one per change, made against its release
   # tag and applied in order. Patching loses the binary cache, so a herdr or
   # nixpkgs bump builds herdr locally (~9 min).
+  #
+  # Each patch also updates herdr's tests. nixpkgs leaves them off
+  # (doCheck = false) because they change between releases and depend on the
+  # host; to run the ones the patches touch, add these below and nix build:
+  #   doCheck = true;
+  #   checkFlags = [ "client::shell::tests" "ui::sidebar" ];
   herdr = pkgs.herdr.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ [
       # A worktree space renamed after its feature keeps its branch and

@@ -1,5 +1,5 @@
 diff --git a/src/client/shell/sidebar.rs b/src/client/shell/sidebar.rs
-index 89a1377..e4b0277 100644
+index 89a1377e..e4b02773 100644
 --- a/src/client/shell/sidebar.rs
 +++ b/src/client/shell/sidebar.rs
 @@ -630,6 +630,10 @@ pub(in crate::client::shell) fn workspace_rows(
@@ -13,8 +13,99 @@ index 89a1377..e4b0277 100644
              tokens: &token_values,
              // A renamed worktree child keeps its branch and ahead/behind; an
              // unrenamed one already shows its branch as its name.
+diff --git a/src/client/shell/tests/agents_worktrees_notifications.rs b/src/client/shell/tests/agents_worktrees_notifications.rs
+index 5b8b1224..8d27b801 100644
+--- a/src/client/shell/tests/agents_worktrees_notifications.rs
++++ b/src/client/shell/tests/agents_worktrees_notifications.rs
+@@ -98,6 +98,7 @@ fn grouped_worktrees_render_parent_branch_and_indented_child() {
+         key: "repo".into(),
+         label: "repo".into(),
+         is_linked_worktree: false,
++        checkout_name: None,
+     });
+     snapshot.workspaces.push(ClientShellWorkspace {
+         workspace_id: "ws_2".into(),
+@@ -113,6 +114,7 @@ fn grouped_worktrees_render_parent_branch_and_indented_child() {
+             key: "repo".into(),
+             label: "repo".into(),
+             is_linked_worktree: true,
++            checkout_name: None,
+         }),
+         focused: false,
+         agent_status: AgentStatus::Idle,
+@@ -264,6 +266,7 @@ fn workspace_drag_moves_parent_worktree_as_one_block_and_rejects_child() {
+         key: "repo".into(),
+         label: "repo".into(),
+         is_linked_worktree: false,
++        checkout_name: None,
+     });
+     let mut child = projected.workspaces[0].clone();
+     child.workspace_id = "ws_child".into();
+@@ -274,6 +277,7 @@ fn workspace_drag_moves_parent_worktree_as_one_block_and_rejects_child() {
+         key: "repo".into(),
+         label: "repo".into(),
+         is_linked_worktree: true,
++        checkout_name: None,
+     });
+     let mut other = projected.workspaces[0].clone();
+     other.workspace_id = "ws_other".into();
+@@ -1215,6 +1219,7 @@ fn worktree_remove_escalates_recoverable_failure_to_force_confirmation() {
+             key: "repo-key".into(),
+             label: "repo".into(),
+             is_linked_worktree: true,
++            checkout_name: None,
+         });
+         let mut state = ClientShellState::new(ClientShellConfig::from_config(&Config::default()));
+         state.set_snapshot(Box::new(snapshot));
+diff --git a/src/client/shell/tests/endpoints.rs b/src/client/shell/tests/endpoints.rs
+index 846806f1..685a62ef 100644
+--- a/src/client/shell/tests/endpoints.rs
++++ b/src/client/shell/tests/endpoints.rs
+@@ -424,6 +424,7 @@ fn saved_machine_preserves_endpoint_scoped_worktree_collapses() {
+             key: "repo".into(),
+             label: "repo".into(),
+             is_linked_worktree: false,
++            checkout_name: None,
+         });
+         let mut child = snapshot.workspaces[0].clone();
+         child.workspace_id = child_id.into();
+@@ -436,6 +437,7 @@ fn saved_machine_preserves_endpoint_scoped_worktree_collapses() {
+             key: "repo".into(),
+             label: "repo".into(),
+             is_linked_worktree: true,
++            checkout_name: None,
+         });
+         snapshot.workspaces.push(child);
+     }
+@@ -687,12 +689,14 @@ fn expanded_machine_sidebar_applies_space_row_gap_within_each_machine() {
+         key: "repo".into(),
+         label: "repo".into(),
+         is_linked_worktree: false,
++        checkout_name: None,
+     });
+     add_second_workspace(&mut remote);
+     remote.workspaces[1].worktree = Some(ClientShellWorktree {
+         key: "repo".into(),
+         label: "repo".into(),
+         is_linked_worktree: true,
++        checkout_name: None,
+     });
+     let mut third = remote.workspaces[1].clone();
+     third.workspace_id = "ws_3".into();
+diff --git a/src/client/shell/tests/workspace_navigation.rs b/src/client/shell/tests/workspace_navigation.rs
+index 7ea02066..7acf0e95 100644
+--- a/src/client/shell/tests/workspace_navigation.rs
++++ b/src/client/shell/tests/workspace_navigation.rs
+@@ -21,6 +21,7 @@ fn grouped_workspaces() -> ClientShellSnapshot {
+             key: "repo".into(),
+             label: "repo".into(),
+             is_linked_worktree: linked,
++            checkout_name: None,
+         });
+     }
+     projected
 diff --git a/src/config/sidebar.rs b/src/config/sidebar.rs
-index 9a4cb5e..3768a1c 100644
+index 9a4cb5e0..3768a1cb 100644
 --- a/src/config/sidebar.rs
 +++ b/src/config/sidebar.rs
 @@ -130,6 +130,7 @@ pub enum SpaceSidebarToken {
@@ -42,7 +133,7 @@ index 9a4cb5e..3768a1c 100644
          )
          .map_err(serde::de::Error::custom)?;
 diff --git a/src/protocol/wire.rs b/src/protocol/wire.rs
-index aba166d..037b87a 100644
+index aba166d6..037b87a9 100644
 --- a/src/protocol/wire.rs
 +++ b/src/protocol/wire.rs
 @@ -1045,6 +1045,9 @@ pub struct ClientShellWorktree {
@@ -56,7 +147,7 @@ index aba166d..037b87a 100644
  
  #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 diff --git a/src/server/client_shell.rs b/src/server/client_shell.rs
-index 3747069..9b0bf97 100644
+index 37470693..9b0bf97c 100644
 --- a/src/server/client_shell.rs
 +++ b/src/server/client_shell.rs
 @@ -68,6 +68,14 @@ pub(super) fn snapshot(
@@ -75,7 +166,7 @@ index 3747069..9b0bf97 100644
                          is_linked_worktree: worktree.is_linked_worktree,
                      }),
 diff --git a/src/ui/sidebar/tokens.rs b/src/ui/sidebar/tokens.rs
-index c1e38aa..2dbf275 100644
+index c1e38aa9..682ace01 100644
 --- a/src/ui/sidebar/tokens.rs
 +++ b/src/ui/sidebar/tokens.rs
 @@ -126,6 +126,7 @@ pub(crate) struct SpaceTokenContext<'a> {
@@ -96,3 +187,35 @@ index c1e38aa..2dbf275 100644
                          SpaceSidebarToken::Custom(name) => context
                              .tokens
                              .get(name)
+@@ -326,6 +330,7 @@ rows = [[{ token = "$load", rules = [{ lt = 50, dim = true }] }]]
+             let spaces = space_rows(
+                 &config.spaces,
+                 SpaceTokenContext {
++                    worktree: None,
+                     workspace: "repo",
+                     branch: None,
+                     state_text: "working",
+@@ -375,6 +380,7 @@ rows = [[{ token = "$load", rules = [{ lt = 50, hide = true }] }], ["workspace"]
+             let rows = space_rows(
+                 &config.spaces,
+                 SpaceTokenContext {
++                    worktree: None,
+                     workspace: "repo",
+                     branch: None,
+                     state_text: "working",
+@@ -544,6 +550,7 @@ rows = [[{ token = "$load", rules = [{ lt = 50, hide = true }] }], ["workspace"]
+             space_rows(
+                 &config,
+                 SpaceTokenContext {
++                    worktree: None,
+                     workspace: "feature",
+                     branch: Some("worktree/feature"),
+                     state_text: "idle",
+@@ -571,6 +578,7 @@ rows = [[{ token = "$load", rules = [{ lt = 50, hide = true }] }], ["workspace"]
+             space_rows(
+                 &config,
+                 SpaceTokenContext {
++                    worktree: None,
+                     workspace: "repo",
+                     branch: None,
+                     state_text: "idle",

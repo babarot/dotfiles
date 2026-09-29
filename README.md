@@ -52,12 +52,13 @@ nix/
     env.nix            # my.env: variables for every shell, agents included
     human.nix          # my.human: aliases, plugins and env for humans only
     mas.nix            # my.masApps: Mac App Store apps to install
-    skills.nix         # my.skills: Agent Skills shipped with tools
+    skills.nix         # my.skills: Agent Skills shipped with tools or on trial in home/skills
     tools/<tool>.nix   # one file per tool: its package and its shell settings
 home/                  # files linked into ~ under the same names (nix/home/dotfiles.nix)
   .zshenv, .zshrc, .zsh/ # hand-written zsh
   .gitconfig, bin/, ...
   .claude/             # Claude Code user settings, linked into ~/.claude
+  skills/              # my own Agent Skills on trial (see below)
   .config/             # linked to ~/.config as a whole (by activation, see dotfiles.nix)
 docs/                  # setup guide (setup-mac.md) and images
 ```
@@ -76,6 +77,8 @@ Each file in `nix/home/tools/` is imported automatically. It installs a tool and
 My own tools (e.g. [naminator](https://github.com/babarot/naminator)) are published to [babarot/nur-packages](https://github.com/babarot/nur-packages) by GoReleaser on each release.
 
 Agent Skills for Codex and other agents come from [babarot/agent-skills](https://github.com/babarot/agent-skills) (private, fetched over SSH) and are linked into `~/.agents/skills`. Claude Code gets the same skills from the plugin marketplace.
+
+`home/skills/` is a proving ground for new skills of my own. Each directory there is linked into both `~/.claude/skills` and `~/.agents/skills`, pointing at this repo, so a skill can be tried without releasing babarot/agent-skills. Once a skill settles, it moves to babarot/agent-skills.
 
 ### Apply changes
 

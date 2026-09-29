@@ -33,6 +33,7 @@ home/                  # files linked into ~ under the same names (nix/home/dotf
   .zshenv, .zshrc, .zsh/ # hand-written zsh
   .gitconfig, bin/, ...
   .claude/             # Claude Code user settings, linked into ~/.claude
+  skills/              # my own Agent Skills on trial, linked into ~/.claude/skills and ~/.agents/skills
   .config/             # linked to ~/.config as a whole (by activation, see dotfiles.nix)
 docs/                  # setup guide (setup-mac.md) and images
 .claude/skills/        # repo skills for this repo (e.g. nvim-plugin-audit); not linked into ~
@@ -72,6 +73,7 @@ docs/                  # setup guide (setup-mac.md) and images
 | Claude Code | not from nixpkgs: it updates itself, so `nix/home/tools/claude-code.nix` runs the official installer only when `~/.local/bin/claude` is missing |
 | Neovim LSP servers and treesitter parsers | `nix/home/tools/neovim.nix` (servers in `home.packages`, languages in its `languages` list); not mason or `:TSInstall` |
 | Agent Skill that ships with a tool | `my.skills.<name> = <dir with SKILL.md>` next to the package (`nix/home/skills.nix` links it into `~/.claude/skills` and `~/.agents/skills`) |
+| My own Agent Skill on trial | `home/skills/<name>/SKILL.md` (`nix/home/skills.nix` links each directory into `~/.claude/skills` and `~/.agents/skills`). A proving ground, not the main home: it skips the release flow of babarot/agent-skills, so edits apply at once. Keep it public-safe (nothing from work); once a skill settles, move it to babarot/agent-skills and delete it here |
 | Agent Skills for Codex and other agents | babarot/agent-skills (private, fetched over SSH) linked into `~/.agents/skills` by `nix/home/tools/agent-skills.nix`; `my.agentSkills.scopes` picks the plugins (`work` only on the work Mac). Claude Code uses the plugin marketplace instead |
 
 Before adding a nixpkgs package, check it is the same tool: several names belong to something else (`yq` is Python's, use `yq-go`; `mmv` is not itchyny's, use `mmv-go`; `pup`, `ktop`, `kubesec`, `gist` differ too).

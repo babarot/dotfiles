@@ -15,7 +15,8 @@ tab_bar_right = [
 tab_bar_right_separator = " · "
 
 # Tell me when an agent finishes or needs input with a popup inside herdr
-# (off by default). prefix+o jumps to the notified pane.
+# (off by default). prefix+a jumps to the notified pane (herdr's default
+# prefix+o is taken by pane cycling below).
 [ui.toast]
 delivery = "herdr"
 
@@ -64,6 +65,10 @@ rows = [
 # (Claude Code's prompt stash, saving a hunk or tuicr comment).
 [keys]
 prefix = "ctrl+s"
+# prefix+o goes to the other pane, or the next one in order with three or
+# more, as it did in tmux
+cycle_pane_next = "prefix+o"
+open_notification_target = "prefix+a"
 
 # Review plugins from nix/home/tools/herdr-reviewr.nix and herdr-hunk-diff.nix.
 # The hunk keys are the ones its setup-keys action would add.

@@ -1,0 +1,18 @@
+#!/bin/sh
+# Stops a commit that leaks a secret or skips `nix fmt`. ~/.gitconfig
+# turns it on for this repo (home/.config/git/dotfiles-repo.gitconfig);
+# the relative hooksPath makes every worktree run its own copy.
+set -eu
+
+if ! nix --no-warn-dirty run --inputs-from . nixpkgs#gitleaks -- git --staged --redact --no-banner --log-level warn .; then
+  echo "pre-commit: gitleaks found a secret in the staged changes; remove it before committing" >&2
+  exit 1
+fi
+
+files=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -n "$files" ] || exit 0
+# shellcheck disable=SC2086 # one path per word; paths here have no spaces
+if ! nix --no-warn-dirty fmt -- --fail-on-change --on-unmatched debug --quiet $files; then
+  echo "pre-commit: nix fmt reformatted staged files; review and stage them, then commit again" >&2
+  exit 1
+fi

@@ -1,0 +1,4 @@
+# Included by ~/.gitconfig only inside the dotfiles repo and its worktrees.
+# Relative, so each worktree runs its own copy of the hooks.
+[core]
+  hooksPath = .githooks

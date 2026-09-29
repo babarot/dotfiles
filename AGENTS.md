@@ -37,6 +37,7 @@ home/                  # files linked into ~ under the same names (nix/home/dotf
   skills/              # my own Agent Skills on trial, linked into ~/.claude/skills and ~/.agents/skills
   .config/             # linked to ~/.config as a whole (by activation, see dotfiles.nix)
 docs/                  # setup guide (setup-mac.md) and images
+.githooks/             # git hooks for this repo (pre-commit: gitleaks, nix fmt)
 .claude/skills/        # repo skills for this repo (e.g. nvim-plugin-audit); not linked into ~
 ```
 
@@ -46,6 +47,7 @@ docs/                  # setup guide (setup-mac.md) and images
   `nix build .#darwinConfigurations.pro23.system --no-link` and the same for `PC-M-2025-026`.
 - Nix only sees files tracked by git: `git add` (or `git add -N`) new files first.
 - Run `nix fmt` before committing: nixfmt, deadnix, statix and shfmt, configured in `nix/treefmt.nix`. `nix flake check` fails on unformatted files.
+- `.githooks/pre-commit` (turned on for this repo and its worktrees by an `includeIf` in `home/.gitconfig`) runs gitleaks on the staged changes and checks `nix fmt`. When it stops a commit, remove the secret or stage the reformatted files; never bypass it with `--no-verify`. A reviewed false positive goes in `.gitleaksignore`.
 - Applying needs sudo, so the user runs it:
   `sudo darwin-rebuild switch --flake ~/src/github.com/babarot/dotfiles` (always the absolute path).
 - Quote flake references in zsh (`'nixpkgs#foo'`); `#` is a glob with extended_glob.

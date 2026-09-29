@@ -91,7 +91,7 @@ Clone this repo into `~/src/github.com/babarot/dotfiles`. Keep this exact path: 
 git clone git@github.com:babarot/dotfiles.git ~/src/github.com/babarot/dotfiles
 ```
 
-The first `darwin-rebuild switch` (see [Nix/Zsh](#nixzsh)) links the dotfiles (`.zshrc`, `.gitconfig`, `.config`, `bin`, ...) into `$HOME`, as listed in [nix/home/dotfiles.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home/dotfiles.nix). The links point at the repo, so edits apply without a switch. Until then, the shell is plain macOS zsh.
+The first `darwin-rebuild switch` (see [Nix/Zsh](#nixzsh)) links the dotfiles (`.zshrc`, `.gitconfig`, `.config`, `bin`, ...) into `$HOME`, as listed in [nix/home/dotfiles.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home/dotfiles.nix). The links point at the repo, so edits apply without a switch. Until then, the shell is plain macOS zsh. The linked `.gitconfig` also turns on this repo's pre-commit hook (`.githooks`), which stops commits that leak a secret or skip `nix fmt`.
 
 ## Homebrew
 

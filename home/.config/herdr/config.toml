@@ -5,6 +5,14 @@ onboarding = false
 window_title = "{workspace}: {terminal_title}"
 # Agent states as shapes, not colored dots (the default), so they differ without color
 status_indicators = "symbols"
+# Right end of the tab bar: ZOOM while a pane is zoomed, the focused pane's
+# git branch (one worktree goes through several PR branches), and the time
+tab_bar_right = [
+  { type = "zoom" },
+  { type = "command", command = 'git -C "${HERDR_ACTIVE_PANE_CWD:-.}" branch --show-current 2>/dev/null', interval_seconds = 2, timeout_seconds = 1 },
+  { type = "datetime", format = "%H:%M" },
+]
+tab_bar_right_separator = " · "
 
 # Tell me when an agent finishes or needs input with a popup inside herdr
 # (off by default). prefix+o jumps to the notified pane.

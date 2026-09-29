@@ -44,14 +44,15 @@ claude = [
   ],
 ]
 
-# A space renamed to what it is for (prefix+shift+w) reads "xx · babarot/step1",
-# the branch following every checkout while the name stays put. herdr hides
-# `branch` on worktree spaces grouped under their repo, so those show $branch,
-# reported by nix/home/tools/herdr-activity.sh on each Claude tool call.
+# A worktree space renamed to what it is for (prefix+shift+w) reads its name,
+# then its branch, which follows every checkout, then its worktree dir, which
+# other sessions go by. `worktree` and the branch on renamed worktree spaces
+# come from nix/home/tools/herdr-worktree-token.patch.
 [ui.sidebar.spaces]
 rows = [
-  ["state_icon", "workspace", "branch", "$branch"],
-  ["git_status"],
+  ["state_icon", "workspace"],
+  ["branch", "git_status"],
+  [{ token = "worktree", dim = true }],
 ]
 
 # Same prefix as tmux had; pressing it twice sends a literal ctrl+s

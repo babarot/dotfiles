@@ -1,10 +1,20 @@
 # herdr: terminal multiplexer for coding agents, used inside Ghostty.
 # Its settings live in home/.config/herdr/config.toml.
 { lib, pkgs, ... }:
+let
+  # herdr-worktree-token.patch: a worktree space renamed after its feature
+  # keeps its branch and ahead/behind in the sidebar (herdr hides them on
+  # every grouped worktree, herdrdev/herdr#2952), and the `worktree` space
+  # token shows its checkout's directory name, which other sessions go by.
+  # Patching loses the binary cache: each herdr bump builds locally (~9 min).
+  herdr = pkgs.herdr.overrideAttrs (old: {
+    patches = (old.patches or [ ]) ++ [ ./herdr-worktree-token.patch ];
+  });
+in
 {
-  home.packages = [ pkgs.herdr ];
+  home.packages = [ herdr ];
 
-  my.skills.herdr = "${pkgs.herdr}/share/skills/herdr/herdr";
+  my.skills.herdr = "${herdr}/share/skills/herdr/herdr";
 
   # The integrations let herdr resume Claude Code and Codex conversations
   # after its server restarts (e.g. a reboot). The hook scripts come from
@@ -15,7 +25,7 @@
   # ~/.codex/config.toml. The hooks do nothing outside herdr.
   home.activation.herdrIntegrations = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     for agent in claude codex; do
-      run ${pkgs.herdr}/bin/herdr integration install "$agent" >/dev/null \
+      run ${herdr}/bin/herdr integration install "$agent" >/dev/null \
         || warnEcho "herdr: installing the $agent integration failed"
     done
   '';

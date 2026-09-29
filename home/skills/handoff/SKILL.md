@@ -31,4 +31,14 @@ Leave out secrets and tokens even if they appeared in the session.
 
 ## 3. Output
 
-Put the whole prompt in one fenced code block (use four backticks if it contains a code block) so it can be copied as is. Nothing else is needed besides a one-line note before it.
+Put the whole prompt in one fenced code block (use four backticks if it contains a code block) so it can be copied as is.
+
+Also copy the same prompt to the clipboard with `pbcopy`, through a quoted heredoc so nothing in it is expanded:
+
+```bash
+pbcopy <<'HANDOFF'
+<the prompt>
+HANDOFF
+```
+
+Before the code block, add one line saying whether it is on the clipboard (if `pbcopy` failed, e.g. in a sandbox, say so). Nothing else is needed.

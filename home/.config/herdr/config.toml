@@ -26,6 +26,22 @@ delivery = "herdr"
 claude = [
   ["state_icon", "agent", "state_text", { token = "pane", rules = [{ starts_with = "*", fg = "#e5c07b", bold = true }, { starts_with = "!", fg = "#e5c07b", bold = true }] }],
   ["terminal_title_stripped"],
+  # The latest tool call, reported by nix/home/tools/herdr-activity.sh. The
+  # tool name starts with an invisible mark of its kind that picks the colour:
+  # edit, shell, read, agent, web, task/skill, mcp (tokyo-night colours).
+  [
+    { token = "$activity_time", dim = true },
+    { token = "$activity_tool", fg = "#565f89", rules = [
+      { contains = "\u2060", fg = "#e0af68" },
+      { contains = "\u2061", fg = "#9ece6a" },
+      { contains = "\u2062", fg = "#7aa2f7" },
+      { contains = "\u2063", fg = "#bb9af7" },
+      { contains = "\u2064", fg = "#7dcfff" },
+      { contains = "\u200B", fg = "#ff9e64" },
+      { contains = "\u200C", fg = "#f7768e" },
+    ] },
+    "$activity_label",
+  ],
 ]
 
 # Same prefix as tmux had; pressing it twice sends a literal ctrl+s

@@ -16,6 +16,7 @@
     ghq
     git-open
     gotools # goimports and friends
+    gum
     hcl2json
     imagemagick
     jsonfmt

@@ -1,0 +1,284 @@
+diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
+index 901c5a28..b7f1118b 100644
+--- a/src/client/shell/state.rs
++++ b/src/client/shell/state.rs
+@@ -424,6 +424,9 @@ pub(super) struct ClientSettingsOverlay {
+ pub(super) struct ClientWorktreeCreateOverlay {
+     pub(super) source_workspace_id: String,
+     pub(super) repo_name: String,
++    // Workspace name only; the branch and checkout keep their own value
++    pub(super) label: TextEditor,
++    pub(super) label_focused: bool,
+     pub(super) branch: TextEditor,
+     pub(super) checkout_path: String,
+     pub(super) error: Option<String>,
+diff --git a/src/client/shell/tests/agents_worktrees_notifications.rs b/src/client/shell/tests/agents_worktrees_notifications.rs
+index 5b8b1224..9d1035ca 100644
+--- a/src/client/shell/tests/agents_worktrees_notifications.rs
++++ b/src/client/shell/tests/agents_worktrees_notifications.rs
+@@ -1033,6 +1033,7 @@ fn worktree_create_previews_the_endpoint_owned_checkout_path() {
+     assert!(text.contains("create and open"));
+     assert!(frame.cursor.as_ref().is_some_and(|cursor| cursor.visible));
+ 
++    assert!(state.handle_input_bytes(b"\t").actions.is_empty());
+     assert!(state
+         .handle_input_bytes(b"feature/client-shell")
+         .actions
+@@ -1053,10 +1054,49 @@ fn worktree_create_previews_the_endpoint_owned_checkout_path() {
+             if params.workspace_id.as_deref() == Some("ws_1")
+                 && params.branch.as_deref() == Some("feature/client-shell")
+                 && params.path.is_none()
++                && params.label.is_none()
+                 && !params.focus
+     ));
+ }
+ 
++#[test]
++fn worktree_create_name_labels_the_workspace_and_keeps_the_generated_branch() {
++    let mut state = ClientShellState::new(ClientShellConfig::from_config(&Config::default()));
++    state.set_snapshot(Box::new(snapshot()));
++    state.set_pane_surface(surface());
++    let mut prepare = ClientShellInput::default();
++    state.record_binding(
++        crate::input::KeybindMatch::Action(crate::input::KeybindAction::NewWorktree),
++        &mut prepare,
++    );
++    let [ClientShellAction::Endpoint { request, .. }] = &prepare.actions[..] else {
++        panic!("new worktree should prepare through worktree.list");
++    };
++    state.handle_endpoint_result("boot-1", &request.id, Ok(worktree_list_result(None)));
++    let Some(ClientShellOverlay::WorktreeCreate(create)) = &state.overlay else {
++        panic!("new worktree modal");
++    };
++    let generated = create.branch.as_str().to_owned();
++    let checkout_path = create.checkout_path.clone();
++
++    assert!(state.handle_input_bytes(b"  login fix ").actions.is_empty());
++    assert!(matches!(
++        &state.overlay,
++        Some(ClientShellOverlay::WorktreeCreate(create))
++            if create.branch.as_str() == generated && create.checkout_path == checkout_path
++    ));
++    let submit = state.handle_input_bytes(b"\r");
++    let [ClientShellAction::Endpoint { request, .. }] = &submit.actions[..] else {
++        panic!("worktree create should use endpoint API");
++    };
++    assert!(matches!(
++        &request.method,
++        crate::api::schema::Method::WorktreeCreate(params)
++            if params.branch.as_deref() == Some(generated.as_str())
++                && params.label.as_deref() == Some("login fix")
++    ));
++}
++
+ #[test]
+ fn unavailable_worktree_create_does_not_wedge_the_overlay() {
+     let mut state = ClientShellState::new(ClientShellConfig::from_config(&Config::default()));
+@@ -1072,6 +1112,7 @@ fn unavailable_worktree_create_does_not_wedge_the_overlay() {
+     };
+     state.handle_endpoint_result("boot-1", &request.id, Ok(worktree_list_result(None)));
+     state.set_endpoint_methods(Some(vec!["worktree.list".into()]));
++    state.handle_input_bytes(b"\t");
+     state.handle_input_bytes(b"feature/unavailable");
+ 
+     let submit = state.handle_input_bytes(b"\r");
+diff --git a/src/client/shell/tests/graphics.rs b/src/client/shell/tests/graphics.rs
+index c5fa1f4a..4140788a 100644
+--- a/src/client/shell/tests/graphics.rs
++++ b/src/client/shell/tests/graphics.rs
+@@ -235,6 +235,8 @@ fn every_dialog_and_menu_occludes_its_panel_not_the_whole_screen() {
+         ClientShellOverlay::WorktreeCreate(ClientWorktreeCreateOverlay {
+             source_workspace_id: "ws_1".into(),
+             repo_name: "repo".into(),
++            label: "name".into(),
++            label_focused: true,
+             branch: "branch".into(),
+             checkout_path: "path".into(),
+             error: None,
+diff --git a/src/client/shell/tests/popup_focus_projection.rs b/src/client/shell/tests/popup_focus_projection.rs
+index 25d3b334..0ef9e4da 100644
+--- a/src/client/shell/tests/popup_focus_projection.rs
++++ b/src/client/shell/tests/popup_focus_projection.rs
+@@ -48,6 +48,8 @@ fn modal_paste_target_requires_a_focused_editable_client_field() {
+         ClientWorktreeCreateOverlay {
+             source_workspace_id: "ws_1".into(),
+             repo_name: "repo".into(),
++            label: TextEditor::default(),
++            label_focused: true,
+             branch: TextEditor::default(),
+             checkout_path: String::new(),
+             error: None,
+diff --git a/src/client/shell/tests/text_editing.rs b/src/client/shell/tests/text_editing.rs
+index b63ce9f6..b2fecd8c 100644
+--- a/src/client/shell/tests/text_editing.rs
++++ b/src/client/shell/tests/text_editing.rs
+@@ -26,6 +26,8 @@ fn shell(field: usize) -> ClientShellState {
+                 Ok(worktree_list_result(None)),
+                 &mut ClientShellInput::default(),
+             );
++            // The dialog opens on the name field; these cases edit the branch
++            state.handle_input_bytes(b"\t");
+         }
+         6 => {
+             state.open_navigator_overlay();
+diff --git a/src/client/shell/worktree_overlays.rs b/src/client/shell/worktree_overlays.rs
+index 318c4019..c32308af 100644
+--- a/src/client/shell/worktree_overlays.rs
++++ b/src/client/shell/worktree_overlays.rs
+@@ -5,7 +5,7 @@ pub(super) fn render_worktree_create_overlay(
+     create: &ClientWorktreeCreateOverlay,
+     p: &Palette,
+ ) -> Option<OverlayRender> {
+-    let popup = popup(b.area, 68, 12)?;
++    let popup = popup(b.area, 68, 15)?;
+     let inner = panel(b, popup, p.accent, p.panel_bg)?;
+     put_text(
+         b,
+@@ -18,26 +18,35 @@ pub(super) fn render_worktree_create_overlay(
+             .bg(p.panel_bg)
+             .add_modifier(Modifier::BOLD),
+     );
++    let mut cursor = None;
++    for (y, title, editor, focused) in [
++        (inner.y + 2, " name (optional, tab to switch)", &create.label, create.label_focused),
++        (inner.y + 5, " branch", &create.branch, !create.label_focused),
++    ] {
++        put_text(
++            b,
++            inner.x,
++            y,
++            inner.width,
++            title,
++            Style::default().fg(p.overlay0).bg(p.panel_bg),
++        );
++        let input = Rect::new(inner.x, y + 1, inner.width, 1);
++        b.set_style(input, Style::default().fg(p.text).bg(p.surface0));
++        let field_cursor = text_editor::render(
++            b,
++            Rect::new(input.x + 1, input.y, input.width.saturating_sub(1), 1),
++            editor,
++            Style::default().fg(p.text).bg(p.surface0),
++        );
++        if focused {
++            cursor = field_cursor;
++        }
++    }
+     put_text(
+         b,
+         inner.x,
+-        inner.y + 2,
+-        inner.width,
+-        " branch",
+-        Style::default().fg(p.overlay0).bg(p.panel_bg),
+-    );
+-    let input = Rect::new(inner.x, inner.y + 3, inner.width, 1);
+-    b.set_style(input, Style::default().fg(p.text).bg(p.surface0));
+-    let cursor = text_editor::render(
+-        b,
+-        Rect::new(input.x + 1, input.y, input.width.saturating_sub(1), 1),
+-        &create.branch,
+-        Style::default().fg(p.text).bg(p.surface0),
+-    );
+-    put_text(
+-        b,
+-        inner.x,
+-        inner.y + 5,
++        inner.y + 8,
+         inner.width,
+         " checkout",
+         Style::default().fg(p.overlay0).bg(p.panel_bg),
+@@ -45,7 +54,7 @@ pub(super) fn render_worktree_create_overlay(
+     put_text(
+         b,
+         inner.x,
+-        inner.y + 6,
++        inner.y + 9,
+         inner.width,
+         &format!(" {}", create.checkout_path),
+         Style::default().fg(p.subtext0).bg(p.panel_bg),
+@@ -54,7 +63,7 @@ pub(super) fn render_worktree_create_overlay(
+         put_text(
+             b,
+             inner.x,
+-            inner.y + 8,
++            inner.y + 11,
+             inner.width,
+             " creating…",
+             Style::default().fg(p.accent).bg(p.panel_bg),
+@@ -63,13 +72,13 @@ pub(super) fn render_worktree_create_overlay(
+         put_text(
+             b,
+             inner.x,
+-            inner.y + 8,
++            inner.y + 11,
+             inner.width,
+             &format!(" {error}"),
+             Style::default().fg(p.red).bg(p.panel_bg),
+         );
+     }
+-    let buttons = row(inner, &[20, 12], 2, 9);
++    let buttons = row(inner, &[20, 12], 2, 12);
+     let [primary, cancel] = buttons.as_slice() else {
+         return None;
+     };
+diff --git a/src/client/shell/worktrees.rs b/src/client/shell/worktrees.rs
+index 56c554c8..5bc2cefd 100644
+--- a/src/client/shell/worktrees.rs
++++ b/src/client/shell/worktrees.rs
+@@ -24,7 +24,9 @@ impl ClientShellState {
+     pub(super) fn insert_worktree_overlay_text(&mut self, text: &str) -> bool {
+         match self.overlay.as_mut() {
+             Some(ClientShellOverlay::WorktreeCreate(create)) if !create.creating => {
+-                if create.branch.insert(text) {
++                if create.label_focused {
++                    create.label.insert(text);
++                } else if create.branch.insert(text) {
+                     self.sync_worktree_create_path();
+                 }
+                 true
+@@ -60,7 +62,17 @@ impl ClientShellState {
+                 if !creating {
+                     if let Some(ClientShellOverlay::WorktreeCreate(create)) = self.overlay.as_mut()
+                     {
+-                        if let Some(content_changed) = create.branch.handle_key(key) {
++                        if matches!(code, KeyCode::Tab | KeyCode::BackTab) {
++                            create.label_focused = !create.label_focused;
++                            outcome.repaint = true;
++                            return true;
++                        }
++                        if create.label_focused {
++                            if create.label.handle_key(key).is_some() {
++                                outcome.repaint = true;
++                                return true;
++                            }
++                        } else if let Some(content_changed) = create.branch.handle_key(key) {
+                             if content_changed {
+                                 self.sync_worktree_create_path();
+                             }
+@@ -257,6 +269,8 @@ impl ClientShellState {
+             return;
+         }
+         create.branch.trim_and_accept();
++        create.label.trim_and_accept();
++        let label = Some(create.label.as_str().to_owned()).filter(|label| !label.is_empty());
+         create.checkout_path =
+             checkout_path_preview(&worktree_directory, &create.repo_name, &branch);
+         create.creating = true;
+@@ -269,7 +283,7 @@ impl ClientShellState {
+                 branch: Some(branch),
+                 base: Some("HEAD".to_owned()),
+                 path: None,
+-                label: None,
++                label,
+                 focus: false,
+                 trust_repository: false,
+             }),
+@@ -392,6 +406,8 @@ impl ClientShellState {
+                     ClientWorktreeCreateOverlay {
+                         source_workspace_id: workspace_id,
+                         repo_name: source.repo_name,
++                        label: TextEditor::new("", false),
++                        label_focused: true,
+                         branch: TextEditor::new(&branch, true),
+                         checkout_path,
+                         error: None,

@@ -14,6 +14,10 @@ let
       # A `worktree` space token: the checkout's directory name, which other
       # sessions go by
       ./herdr/worktree-token.patch
+      # A name field in the new worktree dialog: it names the space and
+      # leaves the generated branch and checkout alone, like renaming the
+      # space afterwards does
+      ./herdr/worktree-label.patch
     ];
   });
 in

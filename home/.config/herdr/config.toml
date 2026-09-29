@@ -47,10 +47,11 @@ claude = [
   ],
 ]
 
-# A worktree space renamed to what it is for (prefix+shift+w) reads its name,
-# then its branch, which follows every checkout, then its worktree dir, which
-# other sessions go by. `worktree` and the branch on renamed worktree spaces
-# come from the patches in nix/home/tools/herdr.
+# A worktree space named for what it is for (the name field of the new
+# worktree dialog, or prefix+shift+w later) reads its name, then its branch,
+# which follows every checkout, then its worktree dir, which other sessions go
+# by. `worktree`, the name field and the branch on named worktree spaces come
+# from the patches in nix/home/tools/herdr.
 [ui.sidebar.spaces]
 rows = [
   ["state_icon", "workspace"],

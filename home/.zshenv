@@ -33,13 +33,9 @@ path=( \
     "$path[@]" \
 )
 
-# set fpath before compinit
-typeset -gx -U fpath
-# (completions of Nix packages are added by nix-darwin's /etc/zshenv)
-fpath=( \
-    ~/.zsh/Completion(N-/) \
-    $fpath \
-)
+# fpath needs nothing here: completions of Nix packages (including the
+# carapace ones from nix/home/tools/carapace.nix) are added by nix-darwin's
+# /etc/zshenv
 
 # Tool variables from nix/home/tools/*.nix (my.env); missing until the
 # first darwin-rebuild switch

@@ -63,7 +63,7 @@ git format-patch --no-numbered --zero-commit --no-signature -o "$dir" v<version>
 
 Follow a new release (for herdr, when a nixpkgs bump moves its version and the build log names a patch that failed to apply):
 
-1. `git fetch upstream --tags`, then `git rebase v<new>`. If a commit conflicts, resolve it; if upstream took the change, drop the commit.
+1. `git fetch upstream --tags`, then `git rebase --onto v<new> v<version>`, which moves only the commits after `v<version>`. herdr tags each release on a release branch, so an older tag is not an ancestor of a newer one and a plain `git rebase v<new>` would try to replay that branch's other commits too. If a commit conflicts, resolve it; if upstream took the change, drop the commit.
 2. Check, push and export as above, with `v<new>`.
 3. For gh-news, set `version` in gh.nix to the new release and both hashes to `lib.fakeHash`, then build: each failure prints the right hash to put back. herdr follows nixpkgs and needs nothing more.
 

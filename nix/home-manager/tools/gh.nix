@@ -31,6 +31,7 @@ in
   # Install extensions by linking their binaries where gh looks for them,
   # instead of programs.gh, which would make gh's config.yml read-only.
   xdg.dataFile = {
+    "gh/extensions/gh-dash/gh-dash".source = "${pkgs.gh-dash}/bin/gh-dash";
     "gh/extensions/gh-infra/gh-infra".source = "${babarot.gh-infra}/bin/gh-infra";
     "gh/extensions/gh-md/gh-md".source = "${pkgs.gh-markdown-preview}/bin/gh-markdown-preview";
     "gh/extensions/gh-news/gh-news".source = "${gh-news}/bin/gh-news";

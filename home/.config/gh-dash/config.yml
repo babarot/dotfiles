@@ -1,0 +1,73 @@
+# gh-dash: https://gh-dash.dev/configuration/
+# gh-news stays on screen to catch new notifications; this is for working
+# on PRs and issues, so it opens on the PRs view.
+
+prSections:
+  # A search, not the notification inbox, so a PR drops out once merged
+  # or closed (what gh-news needs hide-resolved-review-requests.patch for)
+  - title: Needs My Review
+    filters: is:open review-requested:@me -is:draft -author:app/renovate
+  # Look, v to approve, m to merge; both ask before acting
+  - title: Renovate
+    filters: is:open author:app/renovate review-requested:@me
+  - title: My PRs
+    filters: is:open author:@me
+  - title: Involved
+    filters: >-
+      is:open involves:@me -author:@me
+      updated:>={{ nowModify "-2w" }}
+  - title: Recently Merged
+    filters: >-
+      is:merged author:@me
+      merged:>={{ nowModify "-1w" }}
+    layout:
+      ci:
+        hidden: true
+
+issuesSections:
+  - title: Assigned
+    filters: is:open assignee:@me
+  - title: Created
+    filters: is:open author:@me
+  - title: Involved
+    filters: >-
+      is:open involves:@me -author:@me
+      updated:>={{ nowModify "-2w" }}
+
+notificationsSections:
+  - title: Participating
+    filters: reason:participating
+  - title: Review Requested
+    filters: reason:review-requested
+  - title: Mentioned
+    filters: reason:mention reason:team-mention
+
+defaults:
+  view: prs
+  prsLimit: 30
+  issuesLimit: 30
+  refetchIntervalMinutes: 5
+  preview:
+    open: true
+    width: 0.5
+
+# Same layout as ghq's root, so C (checkout) finds any cloned repo
+repoPaths:
+  :owner/:repo: ~/src/github.com/:owner/:repo
+
+pager:
+  diff: delta
+
+# Unread only, as in gh-news with show_read = false
+includeReadNotifications: false
+
+keybindings:
+  # g is firstLine, so lazygit goes on ctrl+g
+  universal:
+    - key: ctrl+g
+      name: lazygit
+      command: cd {{.RepoPath}} && lazygit
+  prs:
+    - key: O
+      name: open in nvim
+      command: cd {{.RepoPath}} && gh pr checkout {{.PrNumber}} && nvim .

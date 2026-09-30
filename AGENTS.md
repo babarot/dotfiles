@@ -19,6 +19,8 @@ This repository is public. Never commit credentials, tokens, or internal names f
 
 The directory tree, with what each file is for, is in [docs/structure.md](docs/structure.md#layout). Read it before adding or moving files.
 
+Do not add a directory at the repository root without a strong reason; put new files under `nix/`, `home/` or `docs/`. The README describes the root directories, so each new one means editing it too.
+
 ## Applying and checking changes
 
 - Check without sudo, for both Macs, before asking the user to apply:

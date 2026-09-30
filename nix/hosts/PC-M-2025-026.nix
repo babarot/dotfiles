@@ -21,8 +21,13 @@
   ];
 
   home-manager.users.babarot =
-    { pkgs, ... }:
+    { config, pkgs, ... }:
     {
+      # gh-dash reads ~/.config/gh-dash/config.yml, then this file on top:
+      # issuesSections with work projects, kept out of this public repo
+      # (gitignored). gh-dash fails to start if the file is missing
+      my.env.GH_DASH_CONFIG = "${config.home.homeDirectory}/.config/gh-dash/work.yml";
+
       my.agentSkills.scopes = [
         "core"
         "work"

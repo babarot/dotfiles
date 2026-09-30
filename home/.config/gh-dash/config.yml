@@ -27,6 +27,8 @@ prSections:
       ci:
         hidden: true
 
+# The work Mac replaces these with its own list in work.yml; keep the two
+# in step
 issuesSections:
   # Every open issue I filed, most recently updated first
   - title: My Issues

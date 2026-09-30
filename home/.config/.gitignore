@@ -35,3 +35,7 @@ mise/config.toml
 
 # hunk: last-seen version, rewritten on every run
 hunk/state.json
+
+# gh-dash settings for the work Mac only, which name work projects
+# (GH_DASH_CONFIG in nix/hosts/PC-M-2025-026.nix)
+gh-dash/work.yml

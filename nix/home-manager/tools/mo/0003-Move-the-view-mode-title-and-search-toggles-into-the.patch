@@ -1,0 +1,301 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 19:05:49 +0900
+Subject: [PATCH] Move the view mode, title and search toggles into the sidebar
+
+They act on the file list, so they now sit at the top of the sidebar
+instead of the header, colored like the sidebar rather than the header.
+---
+ internal/frontend/src/App.tsx                 | 10 ++--
+ .../frontend/src/components/SearchToggle.tsx  |  2 +-
+ .../frontend/src/components/Sidebar.test.tsx  | 47 ++++++++++++++++++-
+ internal/frontend/src/components/Sidebar.tsx  | 15 +++++-
+ .../frontend/src/components/TitleToggle.tsx   |  2 +-
+ .../src/components/ViewModeToggle.tsx         |  2 +-
+ 6 files changed, 67 insertions(+), 11 deletions(-)
+
+diff --git a/internal/frontend/src/App.tsx b/internal/frontend/src/App.tsx
+index 730dcc0..e58d999 100644
+--- a/internal/frontend/src/App.tsx
++++ b/internal/frontend/src/App.tsx
+@@ -4,9 +4,7 @@ import { MarkdownViewer } from "./components/MarkdownViewer";
+ import { SettingsDialog } from "./components/SettingsDialog";
+ import { loadSettings, saveSettings, applyTheme, type Settings } from "./lib/settings";
+ import { GroupDropdown } from "./components/GroupDropdown";
+-import { ViewModeToggle, type ViewMode } from "./components/ViewModeToggle";
+-import { SearchToggle } from "./components/SearchToggle";
+-import { TitleToggle } from "./components/TitleToggle";
++import type { ViewMode } from "./components/ViewModeToggle";
+ import { RestartButton } from "./components/RestartButton";
+ import { DropOverlay } from "./components/DropOverlay";
+ import { ZoomModal } from "./components/ZoomModal";
+@@ -418,9 +416,6 @@ export function App() {
+           activeGroup={activeGroup}
+           onGroupChange={handleGroupChange}
+         />
+-        <ViewModeToggle viewMode={currentViewMode} onToggle={handleViewModeToggle} />
+-        <TitleToggle showTitle={currentShowTitle} onToggle={handleTitleToggle} />
+-        <SearchToggle isOpen={searchQuery != null} onToggle={handleSearchToggle} />
+         <div className="ml-auto flex items-center gap-2">
+           <button
+             type="button"
+@@ -459,8 +454,11 @@ export function App() {
+             onFilesReorder={handleFilesReorder}
+             viewMode={currentViewMode}
+             showTitle={currentShowTitle}
++            onViewModeToggle={handleViewModeToggle}
++            onTitleToggle={handleTitleToggle}
+             searchQuery={searchQuery}
+             onSearchQueryChange={setSearchQuery}
++            onSearchToggle={handleSearchToggle}
+             searchResults={searchResults}
+             searchLoading={searchLoading}
+             onSearchResultSelect={handleSearchResultSelect}
+diff --git a/internal/frontend/src/components/SearchToggle.tsx b/internal/frontend/src/components/SearchToggle.tsx
+index 3ebb8af..7e61c6d 100644
+--- a/internal/frontend/src/components/SearchToggle.tsx
++++ b/internal/frontend/src/components/SearchToggle.tsx
+@@ -8,7 +8,7 @@ export function SearchToggle({ isOpen, onToggle }: SearchToggleProps) {
+     <button
+       type="button"
+       className={`flex items-center justify-center bg-transparent border border-gh-border rounded-md p-1.5 cursor-pointer transition-colors duration-150 hover:bg-gh-bg-hover ${
+-        isOpen ? "text-gh-header-text bg-gh-bg-hover" : "text-gh-header-text"
++        isOpen ? "text-gh-text bg-gh-bg-hover" : "text-gh-text-secondary"
+       }`}
+       onClick={onToggle}
+       aria-label="Search"
+diff --git a/internal/frontend/src/components/Sidebar.test.tsx b/internal/frontend/src/components/Sidebar.test.tsx
+index 2077a9c..4e6dd41 100644
+--- a/internal/frontend/src/components/Sidebar.test.tsx
++++ b/internal/frontend/src/components/Sidebar.test.tsx
+@@ -59,6 +59,9 @@ describe("Sidebar", () => {
+         showTitle={false}
+         searchQuery={null}
+         onSearchQueryChange={() => {}}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+       />,
+     );
+     expect(screen.getByText("README.md")).toBeInTheDocument();
+@@ -78,6 +81,9 @@ describe("Sidebar", () => {
+         showTitle={false}
+         searchQuery={null}
+         onSearchQueryChange={() => {}}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+       />,
+     );
+     expect(screen.getByText("api.md")).toBeInTheDocument();
+@@ -96,6 +102,9 @@ describe("Sidebar", () => {
+         showTitle={false}
+         searchQuery={null}
+         onSearchQueryChange={() => {}}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+       />,
+     );
+     const activeButton = screen.getByText("README.md").closest("button")!;
+@@ -119,6 +128,9 @@ describe("Sidebar", () => {
+         showTitle={false}
+         searchQuery={null}
+         onSearchQueryChange={() => {}}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+       />,
+     );
+ 
+@@ -138,6 +150,9 @@ describe("Sidebar", () => {
+         showTitle={false}
+         searchQuery={null}
+         onSearchQueryChange={() => {}}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+       />,
+     );
+     expect(screen.getByTitle("/README.md")).toBeInTheDocument();
+@@ -157,9 +172,12 @@ describe("Sidebar", () => {
+         showTitle={false}
+         searchQuery={null}
+         onSearchQueryChange={() => {}}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+       />,
+     );
+-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
++    expect(screen.queryByText("README.md")).not.toBeInTheDocument();
+   });
+ 
+   it("shows search input when searchQuery is non-null", () => {
+@@ -174,6 +192,9 @@ describe("Sidebar", () => {
+         showTitle={false}
+         searchQuery=""
+         onSearchQueryChange={() => {}}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+       />,
+     );
+     expect(screen.getByPlaceholderText("Search files...")).toBeInTheDocument();
+@@ -191,6 +212,9 @@ describe("Sidebar", () => {
+         showTitle={false}
+         searchQuery={null}
+         onSearchQueryChange={() => {}}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+       />,
+     );
+     expect(screen.queryByPlaceholderText("Search files...")).not.toBeInTheDocument();
+@@ -208,6 +232,9 @@ describe("Sidebar", () => {
+         showTitle={false}
+         searchQuery="read"
+         onSearchQueryChange={() => {}}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+       />,
+     );
+     expect(screen.getByText("README.md")).toBeInTheDocument();
+@@ -228,6 +255,9 @@ describe("Sidebar", () => {
+         showTitle={false}
+         searchQuery=""
+         onSearchQueryChange={onSearchQueryChange}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+       />,
+     );
+     const input = screen.getByPlaceholderText("Search files...");
+@@ -248,6 +278,9 @@ describe("Sidebar", () => {
+         showTitle={true}
+         searchQuery={null}
+         onSearchQueryChange={() => {}}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+       />,
+     );
+     expect(screen.getByText("Getting Started")).toBeInTheDocument();
+@@ -267,6 +300,9 @@ describe("Sidebar", () => {
+         showTitle={false}
+         searchQuery={null}
+         onSearchQueryChange={() => {}}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+       />,
+     );
+     expect(screen.getByText("README.md")).toBeInTheDocument();
+@@ -285,6 +321,9 @@ describe("Sidebar", () => {
+         showTitle={false}
+         searchQuery="getting"
+         onSearchQueryChange={() => {}}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+       />,
+     );
+     expect(screen.getByText("README.md")).toBeInTheDocument();
+@@ -303,6 +342,9 @@ describe("Sidebar", () => {
+         showTitle={false}
+         searchQuery="cache"
+         onSearchQueryChange={() => {}}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+         searchResults={searchResults}
+       />,
+     );
+@@ -324,6 +366,9 @@ describe("Sidebar", () => {
+         showTitle={false}
+         searchQuery="cache"
+         onSearchQueryChange={() => {}}
++        onViewModeToggle={() => {}}
++        onTitleToggle={() => {}}
++        onSearchToggle={() => {}}
+         searchResults={searchResults}
+       />,
+     );
+diff --git a/internal/frontend/src/components/Sidebar.tsx b/internal/frontend/src/components/Sidebar.tsx
+index dd7d4f7..fa26ff7 100644
+--- a/internal/frontend/src/components/Sidebar.tsx
++++ b/internal/frontend/src/components/Sidebar.tsx
+@@ -18,7 +18,9 @@ import type { FileEntry, Group, SearchResult } from "../hooks/useApi";
+ import { removeFile, moveFile } from "../hooks/useApi";
+ import { buildFileUrl } from "../utils/groups";
+ import { escapeRegExp } from "../utils/regex";
+-import type { ViewMode } from "./ViewModeToggle";
++import { ViewModeToggle, type ViewMode } from "./ViewModeToggle";
++import { TitleToggle } from "./TitleToggle";
++import { SearchToggle } from "./SearchToggle";
+ import { TreeView } from "./TreeView";
+ import { FileContextMenu } from "./FileContextMenu";
+ import { FileIcon } from "./FileIcon";
+@@ -143,8 +145,11 @@ interface SidebarProps {
+   onFilesReorder: (groupName: string, fileIds: string[]) => void;
+   viewMode: ViewMode;
+   showTitle: boolean;
++  onViewModeToggle: () => void;
++  onTitleToggle: () => void;
+   searchQuery: string | null;
+   onSearchQueryChange: (query: string | null) => void;
++  onSearchToggle: () => void;
+   searchResults?: SearchResult[];
+   searchLoading?: boolean;
+   onSearchResultSelect?: (fileId: string, heading?: string) => void;
+@@ -158,8 +163,11 @@ export function Sidebar({
+   onFilesReorder,
+   viewMode,
+   showTitle,
++  onViewModeToggle,
++  onTitleToggle,
+   searchQuery,
+   onSearchQueryChange,
++  onSearchToggle,
+   searchResults = [],
+   searchLoading = false,
+   onSearchResultSelect,
+@@ -322,6 +330,11 @@ export function Sidebar({
+       className="relative bg-gh-bg-sidebar border-r border-gh-border flex flex-col overflow-y-auto overscroll-contain shrink-0"
+       style={{ width }}
+     >
++      <div className="flex items-center gap-1 px-2 pt-2 pb-1 shrink-0">
++        <ViewModeToggle viewMode={viewMode} onToggle={onViewModeToggle} />
++        <TitleToggle showTitle={showTitle} onToggle={onTitleToggle} />
++        <SearchToggle isOpen={searchQuery != null} onToggle={onSearchToggle} />
++      </div>
+       {searchOpen && (
+         <div className="px-2 pt-2 pb-1">
+           <input
+diff --git a/internal/frontend/src/components/TitleToggle.tsx b/internal/frontend/src/components/TitleToggle.tsx
+index b63d026..5f87068 100644
+--- a/internal/frontend/src/components/TitleToggle.tsx
++++ b/internal/frontend/src/components/TitleToggle.tsx
+@@ -8,7 +8,7 @@ export function TitleToggle({ showTitle, onToggle }: TitleToggleProps) {
+     <button
+       type="button"
+       className={`flex items-center justify-center bg-transparent border border-gh-border rounded-md p-1.5 cursor-pointer transition-colors duration-150 hover:bg-gh-bg-hover ${
+-        showTitle ? "text-gh-header-text bg-gh-bg-hover" : "text-gh-header-text"
++        showTitle ? "text-gh-text bg-gh-bg-hover" : "text-gh-text-secondary"
+       }`}
+       onClick={onToggle}
+       aria-pressed={showTitle}
+diff --git a/internal/frontend/src/components/ViewModeToggle.tsx b/internal/frontend/src/components/ViewModeToggle.tsx
+index 531a146..cc468bb 100644
+--- a/internal/frontend/src/components/ViewModeToggle.tsx
++++ b/internal/frontend/src/components/ViewModeToggle.tsx
+@@ -9,7 +9,7 @@ export function ViewModeToggle({ viewMode, onToggle }: ViewModeToggleProps) {
+   return (
+     <button
+       type="button"
+-      className="flex items-center justify-center bg-transparent border border-gh-border rounded-md p-1.5 text-gh-header-text cursor-pointer transition-colors duration-150 hover:bg-gh-bg-hover"
++      className="flex items-center justify-center bg-transparent border border-gh-border rounded-md p-1.5 text-gh-text-secondary cursor-pointer transition-colors duration-150 hover:bg-gh-bg-hover"
+       onClick={onToggle}
+       aria-label="Tree view"
+       aria-pressed={viewMode === "tree"}

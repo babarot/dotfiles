@@ -22,14 +22,15 @@ nix build ".#darwinConfigurations.$(scutil --get LocalHostName).system" --no-lin
 
 ## Patch a package from a fork branch
 
-Two packages carry local patches, each applied from a directory in name order:
+Three packages carry local patches, each applied from a directory in name order:
 
 | Package | Built from | Patches | Fork |
 |---|---|---|---|
 | herdr | nixpkgs' package, overridden in [herdr.nix](../../nix/home-manager/tools/herdr.nix) | [tools/herdr/](../../nix/home-manager/tools/herdr/) | [babarot/herdr](https://github.com/babarot/herdr), `upstream` herdrdev/herdr |
 | gh-news | its release tag, in [gh.nix](../../nix/home-manager/tools/gh.nix) | [tools/gh-news/](../../nix/home-manager/tools/gh-news/) | [babarot/gh-news](https://github.com/babarot/gh-news), `upstream` chmouel/gh-news |
+| mo | its release tag, in [mo.nix](../../nix/home-manager/tools/mo.nix) | [tools/mo/](../../nix/home-manager/tools/mo/) | [babarot/mo](https://github.com/babarot/mo), `upstream` k1LoW/mo |
 
-The patch files are not edited by hand. Each one is a commit on the fork's `patches` branch, exported with `git format-patch`, so git does the rebasing onto a new release and every file carries its commit message. Each fork is cloned at `~/src/github.com/babarot/<name>`, with `origin` the fork. The examples below run there, with `<name>` the package and `<version>` the release the branch sits on: for herdr the version nixpkgs builds (`nix eval --raw .#darwinConfigurations.pro23.pkgs.herdr.version` in dotfiles), for gh-news the `version` in gh.nix.
+The patch files are not edited by hand. Each one is a commit on the fork's `patches` branch, exported with `git format-patch`, so git does the rebasing onto a new release and every file carries its commit message. Each fork is cloned at `~/src/github.com/babarot/<name>`, with `origin` the fork. The examples below run there, with `<name>` the package and `<version>` the release the branch sits on: for herdr the version nixpkgs builds (`nix eval --raw .#darwinConfigurations.pro23.pkgs.herdr.version` in dotfiles), for gh-news and mo the `version` in gh.nix and mo.nix.
 
 Change a patch or add one:
 
@@ -49,6 +50,15 @@ nix shell 'nixpkgs#cargo' 'nixpkgs#rustc' 'nixpkgs#clippy' 'nixpkgs#rustfmt' \
 git push --force-with-lease origin patches
 ```
 
+mo's frontend is checked with the pnpm its package.json names (the Go tests run in the Nix build):
+
+```bash
+cd internal/frontend
+nix shell 'nixpkgs#pnpm_10' -c sh -c 'pnpm install --frozen-lockfile && pnpm run fmt:check && pnpm exec tsc --noEmit && pnpm run lint && pnpm test'
+```
+
+A patch that changes the frontend dependencies commits the lockfile that `pnpm install` rewrites.
+
 herdr's whole test suite depends on the host, so run the tests the patches touch by building it with the `doCheck` lines in the comment at the top of herdr.nix, after exporting.
 
 Then export the patches over the old ones and `git add` them. The Nix file picks up whatever the directory holds, so it needs no change:
@@ -65,7 +75,7 @@ Follow a new release (for herdr, when a nixpkgs bump moves its version and the b
 
 1. `git fetch upstream --tags`, then `git rebase --onto v<new> v<version>`, which moves only the commits after `v<version>`. herdr tags each release on a release branch, so an older tag is not an ancestor of a newer one and a plain `git rebase v<new>` would try to replay that branch's other commits too. If a commit conflicts, resolve it; if upstream took the change, drop the commit.
 2. Check, push and export as above, with `v<new>`.
-3. For gh-news, set `version` in gh.nix to the new release and both hashes to `lib.fakeHash`, then build: each failure prints the right hash to put back. herdr follows nixpkgs and needs nothing more.
+3. For gh-news and mo, set `version` to the new release and every hash to `lib.fakeHash` (two in gh.nix, three in mo.nix), then build: each failure prints the right hash to put back. herdr follows nixpkgs and needs nothing more.
 
 ## Bump a flake input pinned to a tag
 

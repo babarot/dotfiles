@@ -1,0 +1,161 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 19:06:17 +0900
+Subject: [PATCH] Add a setting to overlay the sidebar on the content
+
+With it on, the sidebar floats over the content instead of pushing it
+aside, closes on a file select or a click outside, and does not open by
+itself when a group has several files.
+---
+ internal/frontend/src/App.tsx                 | 54 ++++++++++++-------
+ .../src/components/SettingsDialog.tsx         |  6 +++
+ internal/frontend/src/components/Sidebar.tsx  |  4 +-
+ internal/frontend/src/lib/settings.ts         |  2 +
+ 4 files changed, 46 insertions(+), 20 deletions(-)
+
+diff --git a/internal/frontend/src/App.tsx b/internal/frontend/src/App.tsx
+index e58d999..3a67a23 100644
+--- a/internal/frontend/src/App.tsx
++++ b/internal/frontend/src/App.tsx
+@@ -120,7 +120,9 @@ export function App() {
+ 
+     // Active file selection and sidebar auto open/close
+     const group = groups.find((g) => g.name === activeGroup);
+-    setSidebarOpen(group != null && group.files.length >= 2);
++    if (!settings.sidebarOverlay) {
++      setSidebarOpen(group != null && group.files.length >= 2);
++    }
+ 
+     if (groups.length === 0) {
+       setActiveFileId(null);
+@@ -329,6 +331,14 @@ export function App() {
+     window.history.pushState(null, "", groupToPath(name));
+   };
+ 
++  const handleFileSelect = useCallback(
++    (fileId: string) => {
++      setActiveFileId(fileId);
++      if (settings.sidebarOverlay) setSidebarOpen(false);
++    },
++    [settings.sidebarOverlay],
++  );
++
+   const handleFileOpened = useCallback((fileId: string) => {
+     setActiveFileId(fileId);
+     setPendingSearchHeading(null);
+@@ -444,25 +454,31 @@ export function App() {
+           </button>
+         </div>
+       </header>
+-      <div className="flex flex-1 overflow-hidden">
++      <div className="flex flex-1 overflow-hidden relative">
+         {sidebarOpen && (
+-          <Sidebar
+-            groups={groups}
+-            activeGroup={activeGroup}
+-            activeFileId={activeFileId}
+-            onFileSelect={setActiveFileId}
+-            onFilesReorder={handleFilesReorder}
+-            viewMode={currentViewMode}
+-            showTitle={currentShowTitle}
+-            onViewModeToggle={handleViewModeToggle}
+-            onTitleToggle={handleTitleToggle}
+-            searchQuery={searchQuery}
+-            onSearchQueryChange={setSearchQuery}
+-            onSearchToggle={handleSearchToggle}
+-            searchResults={searchResults}
+-            searchLoading={searchLoading}
+-            onSearchResultSelect={handleSearchResultSelect}
+-          />
++          <>
++            {settings.sidebarOverlay && (
++              <div className="absolute inset-0 z-20" onClick={() => setSidebarOpen(false)} />
++            )}
++            <Sidebar
++              groups={groups}
++              activeGroup={activeGroup}
++              activeFileId={activeFileId}
++              onFileSelect={handleFileSelect}
++              onFilesReorder={handleFilesReorder}
++              viewMode={currentViewMode}
++              showTitle={currentShowTitle}
++              onViewModeToggle={handleViewModeToggle}
++              onTitleToggle={handleTitleToggle}
++              searchQuery={searchQuery}
++              onSearchQueryChange={setSearchQuery}
++              onSearchToggle={handleSearchToggle}
++              searchResults={searchResults}
++              searchLoading={searchLoading}
++              onSearchResultSelect={handleSearchResultSelect}
++              overlay={settings.sidebarOverlay}
++            />
++          </>
+         )}
+         <main className="flex-1 flex flex-col overflow-hidden">
+           <div
+diff --git a/internal/frontend/src/components/SettingsDialog.tsx b/internal/frontend/src/components/SettingsDialog.tsx
+index 6ba6c8d..69abccc 100644
+--- a/internal/frontend/src/components/SettingsDialog.tsx
++++ b/internal/frontend/src/components/SettingsDialog.tsx
+@@ -84,6 +84,12 @@ export function SettingsDialog({ settings, onChange, onClose }: SettingsDialogPr
+             checked={settings.wide}
+             onChange={(v) => update({ wide: v })}
+           />
++          <Toggle
++            label="Sidebar overlay"
++            description="Sidebar overlays content and closes on file select"
++            checked={settings.sidebarOverlay}
++            onChange={(v) => update({ sidebarOverlay: v })}
++          />
+         </Section>
+       </div>
+     </div>
+diff --git a/internal/frontend/src/components/Sidebar.tsx b/internal/frontend/src/components/Sidebar.tsx
+index fa26ff7..54a0709 100644
+--- a/internal/frontend/src/components/Sidebar.tsx
++++ b/internal/frontend/src/components/Sidebar.tsx
+@@ -153,6 +153,7 @@ interface SidebarProps {
+   searchResults?: SearchResult[];
+   searchLoading?: boolean;
+   onSearchResultSelect?: (fileId: string, heading?: string) => void;
++  overlay?: boolean;
+ }
+ 
+ export function Sidebar({
+@@ -171,6 +172,7 @@ export function Sidebar({
+   searchResults = [],
+   searchLoading = false,
+   onSearchResultSelect,
++  overlay = false,
+ }: SidebarProps) {
+   const allFiles = useMemo(() => {
+     const currentGroup = groups.find((g) => g.name === activeGroup);
+@@ -327,7 +329,7 @@ export function Sidebar({
+ 
+   return (
+     <aside
+-      className="relative bg-gh-bg-sidebar border-r border-gh-border flex flex-col overflow-y-auto overscroll-contain shrink-0"
++      className={`bg-gh-bg-sidebar border-r border-gh-border flex flex-col overflow-y-auto overscroll-contain ${overlay ? "absolute inset-y-0 left-0 z-30 shadow-xl" : "relative shrink-0"}`}
+       style={{ width }}
+     >
+       <div className="flex items-center gap-1 px-2 pt-2 pb-1 shrink-0">
+diff --git a/internal/frontend/src/lib/settings.ts b/internal/frontend/src/lib/settings.ts
+index e4118a9..e6303c6 100644
+--- a/internal/frontend/src/lib/settings.ts
++++ b/internal/frontend/src/lib/settings.ts
+@@ -2,6 +2,7 @@ export interface Settings {
+   theme: "auto" | "dark" | "light";
+   fontSize: "small" | "medium" | "large" | "xlarge";
+   wide: boolean;
++  sidebarOverlay: boolean;
+ }
+ 
+ const STORAGE_KEY = "mo-settings";
+@@ -10,6 +11,7 @@ const defaults: Settings = {
+   theme: "auto",
+   fontSize: "medium",
+   wide: false,
++  sidebarOverlay: false,
+ };
+ 
+ export function loadSettings(): Settings {

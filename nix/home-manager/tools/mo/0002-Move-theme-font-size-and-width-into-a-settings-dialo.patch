@@ -1,0 +1,460 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 19:05:09 +0900
+Subject: [PATCH] Move theme, font size and width into a settings dialog
+
+The header had a toggle for each. A settings dialog behind one gear
+button holds them instead, stored together under mo-settings, and makes
+room for more settings. The old per-key values are migrated on first
+load. The theme gains an Auto choice that follows the OS color scheme,
+also when it changes while mo is open.
+---
+ internal/frontend/src/App.test.tsx            |  63 +++++---
+ internal/frontend/src/App.tsx                 |  89 +++++------
+ .../src/components/SettingsDialog.tsx         | 138 ++++++++++++++++++
+ internal/frontend/src/lib/settings.ts         |  65 +++++++++
+ 4 files changed, 295 insertions(+), 60 deletions(-)
+ create mode 100644 internal/frontend/src/components/SettingsDialog.tsx
+ create mode 100644 internal/frontend/src/lib/settings.ts
+
+diff --git a/internal/frontend/src/App.test.tsx b/internal/frontend/src/App.test.tsx
+index 8154360..25d674d 100644
+--- a/internal/frontend/src/App.test.tsx
++++ b/internal/frontend/src/App.test.tsx
+@@ -1,29 +1,58 @@
+ import { describe, it, expect, beforeEach, afterEach } from "vitest";
+-import {
+-  FONT_SIZE_STORAGE_KEY,
+-  formatTitle,
+-  getInitialFontSize,
+-  getInitialTocOpenMap,
+-  isTocOpenForFile,
+-  TOC_OPEN_STORAGE_KEY,
+-} from "./App";
++import { formatTitle, getInitialTocOpenMap, isTocOpenForFile, TOC_OPEN_STORAGE_KEY } from "./App";
++import { loadSettings } from "./lib/settings";
+ 
+-describe("getInitialFontSize", () => {
++describe("loadSettings", () => {
+   beforeEach(() => localStorage.clear());
+   afterEach(() => localStorage.clear());
+ 
+-  it("returns medium when localStorage is empty", () => {
+-    expect(getInitialFontSize()).toBe("medium");
++  it("returns defaults when localStorage is empty", () => {
++    const s = loadSettings();
++    expect(s.theme).toBe("auto");
++    expect(s.fontSize).toBe("medium");
++    expect(s.wide).toBe(false);
+   });
+ 
+-  it("returns stored size", () => {
+-    localStorage.setItem(FONT_SIZE_STORAGE_KEY, "xlarge");
+-    expect(getInitialFontSize()).toBe("xlarge");
++  it("returns stored settings", () => {
++    localStorage.setItem(
++      "mo-settings",
++      JSON.stringify({ theme: "dark", fontSize: "xlarge", wide: true }),
++    );
++    const s = loadSettings();
++    expect(s.theme).toBe("dark");
++    expect(s.fontSize).toBe("xlarge");
++    expect(s.wide).toBe(true);
+   });
+ 
+-  it("returns medium for invalid value", () => {
+-    localStorage.setItem(FONT_SIZE_STORAGE_KEY, "huge");
+-    expect(getInitialFontSize()).toBe("medium");
++  it("merges defaults for missing keys", () => {
++    localStorage.setItem("mo-settings", JSON.stringify({ theme: "light" }));
++    const s = loadSettings();
++    expect(s.theme).toBe("light");
++    expect(s.fontSize).toBe("medium");
++  });
++
++  it("migrates from legacy mo-theme key", () => {
++    localStorage.setItem("mo-theme", "dark");
++    const s = loadSettings();
++    expect(s.theme).toBe("dark");
++  });
++
++  it("migrates from legacy mo-font-size key", () => {
++    localStorage.setItem("mo-font-size", "large");
++    const s = loadSettings();
++    expect(s.fontSize).toBe("large");
++  });
++
++  it("migrates from legacy mo-layout-width key", () => {
++    localStorage.setItem("mo-layout-width", "wide");
++    const s = loadSettings();
++    expect(s.wide).toBe(true);
++  });
++
++  it("returns defaults for corrupted JSON", () => {
++    localStorage.setItem("mo-settings", "not-json");
++    const s = loadSettings();
++    expect(s.fontSize).toBe("medium");
+   });
+ });
+ 
+diff --git a/internal/frontend/src/App.tsx b/internal/frontend/src/App.tsx
+index 2343a77..730dcc0 100644
+--- a/internal/frontend/src/App.tsx
++++ b/internal/frontend/src/App.tsx
+@@ -1,9 +1,8 @@
+ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+ import { Sidebar } from "./components/Sidebar";
+ import { MarkdownViewer } from "./components/MarkdownViewer";
+-import { ThemeToggle } from "./components/ThemeToggle";
+-import { FontSizeToggle, type FontSize } from "./components/FontSizeToggle";
+-import { WidthToggle } from "./components/WidthToggle";
++import { SettingsDialog } from "./components/SettingsDialog";
++import { loadSettings, saveSettings, applyTheme, type Settings } from "./lib/settings";
+ import { GroupDropdown } from "./components/GroupDropdown";
+ import { ViewModeToggle, type ViewMode } from "./components/ViewModeToggle";
+ import { SearchToggle } from "./components/SearchToggle";
+@@ -24,23 +23,9 @@ import { allFileIds, parseGroupFromPath, parseFileIdFromSearch, groupToPath } fr
+ import { isMarkdownFile } from "./utils/filetype";
+ 
+ const VIEWMODE_STORAGE_KEY = "mo-sidebar-viewmode";
+-const WIDTH_STORAGE_KEY = "mo-layout-width";
+ const SHOW_TITLE_STORAGE_KEY = "mo-sidebar-show-title";
+-export const FONT_SIZE_STORAGE_KEY = "mo-font-size";
+ export const TOC_OPEN_STORAGE_KEY = "mo-toc-open";
+ 
+-export function getInitialFontSize(): FontSize {
+-  try {
+-    const stored = localStorage.getItem(FONT_SIZE_STORAGE_KEY);
+-    if (stored === "small" || stored === "medium" || stored === "large" || stored === "xlarge") {
+-      return stored;
+-    }
+-  } catch {
+-    /* ignore */
+-  }
+-  return "medium";
+-}
+-
+ export function getInitialTocOpenMap(): Record<string, boolean> {
+   try {
+     const stored = localStorage.getItem(TOC_OPEN_STORAGE_KEY);
+@@ -105,14 +90,8 @@ export function App() {
+     }
+     return {};
+   });
+-  const [isWide, setIsWide] = useState(() => {
+-    try {
+-      return localStorage.getItem(WIDTH_STORAGE_KEY) === "wide";
+-    } catch {
+-      return false;
+-    }
+-  });
+-  const [fontSize, setFontSize] = useState<FontSize>(getInitialFontSize);
++  const [settings, setSettings] = useState<Settings>(loadSettings);
++  const [settingsOpen, setSettingsOpen] = useState(false);
+   const knownFileIds = useRef<Set<string>>(new Set());
+   const [initialFileId, setInitialFileId] = useState<string | null>(() => {
+     const fromUrl = parseFileIdFromSearch(window.location.search);
+@@ -316,20 +295,15 @@ export function App() {
+   }, [tocOpenMap]);
+ 
+   useEffect(() => {
+-    try {
+-      localStorage.setItem(WIDTH_STORAGE_KEY, isWide ? "wide" : "narrow");
+-    } catch {
+-      /* ignore */
++    saveSettings(settings);
++    applyTheme(settings.theme);
++    if (settings.theme === "auto") {
++      const mql = window.matchMedia("(prefers-color-scheme: dark)");
++      const handler = () => applyTheme("auto");
++      mql.addEventListener("change", handler);
++      return () => mql.removeEventListener("change", handler);
+     }
+-  }, [isWide]);
+-
+-  useEffect(() => {
+-    try {
+-      localStorage.setItem(FONT_SIZE_STORAGE_KEY, fontSize);
+-    } catch {
+-      /* ignore */
+-    }
+-  }, [fontSize]);
++  }, [settings]);
+ 
+   const handleViewModeToggle = useCallback(() => {
+     setViewModes((prev) => {
+@@ -448,9 +422,31 @@ export function App() {
+         <TitleToggle showTitle={currentShowTitle} onToggle={handleTitleToggle} />
+         <SearchToggle isOpen={searchQuery != null} onToggle={handleSearchToggle} />
+         <div className="ml-auto flex items-center gap-2">
+-          <FontSizeToggle fontSize={fontSize} onChange={setFontSize} />
+-          <WidthToggle isWide={isWide} onToggle={() => setIsWide((v) => !v)} />
+-          <ThemeToggle />
++          <button
++            type="button"
++            className="flex items-center justify-center bg-transparent border border-gh-border rounded-md p-1.5 cursor-pointer text-gh-header-text transition-colors duration-150 hover:bg-gh-bg-hover"
++            onClick={() => setSettingsOpen(true)}
++            title="Settings"
++          >
++            <svg
++              className="size-5"
++              fill="none"
++              stroke="currentColor"
++              strokeWidth={1.5}
++              viewBox="0 0 24 24"
++            >
++              <path
++                strokeLinecap="round"
++                strokeLinejoin="round"
++                d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"
++              />
++              <path
++                strokeLinecap="round"
++                strokeLinejoin="round"
++                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
++              />
++            </svg>
++          </button>
+         </div>
+       </header>
+       <div className="flex flex-1 overflow-hidden">
+@@ -488,8 +484,8 @@ export function App() {
+                 onTocToggle={() => setTocOpen(!tocOpen)}
+                 onRemoveFile={handleRemoveFile}
+                 uploaded={activeFile?.uploaded}
+-                isWide={isWide}
+-                fontSize={fontSize}
++                isWide={settings.wide}
++                fontSize={settings.fontSize}
+                 onZoom={handleZoom}
+                 scrollToHeading={pendingSearchHeading}
+                 onScrolledToHeading={() => setPendingSearchHeading(null)}
+@@ -513,6 +509,13 @@ export function App() {
+       <RestartButton />
+       {isDragging && <DropOverlay />}
+       {zoomContent && <ZoomModal content={zoomContent} onClose={handleZoomClose} />}
++      {settingsOpen && (
++        <SettingsDialog
++          settings={settings}
++          onChange={setSettings}
++          onClose={() => setSettingsOpen(false)}
++        />
++      )}
+     </div>
+   );
+ }
+diff --git a/internal/frontend/src/components/SettingsDialog.tsx b/internal/frontend/src/components/SettingsDialog.tsx
+new file mode 100644
+index 0000000..6ba6c8d
+--- /dev/null
++++ b/internal/frontend/src/components/SettingsDialog.tsx
+@@ -0,0 +1,138 @@
++import type { Settings } from "../lib/settings";
++
++interface SettingsDialogProps {
++  settings: Settings;
++  onChange: (settings: Settings) => void;
++  onClose: () => void;
++}
++
++export function SettingsDialog({ settings, onChange, onClose }: SettingsDialogProps) {
++  const update = (patch: Partial<Settings>) => onChange({ ...settings, ...patch });
++
++  return (
++    <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={onClose}>
++      <div className="absolute inset-0 bg-black/50" />
++      <div
++        className="relative z-10 w-full max-w-md max-h-[85vh] overflow-y-auto rounded-lg border border-gh-border bg-gh-bg p-6 shadow-xl"
++        onClick={(e) => e.stopPropagation()}
++      >
++        {/* Header */}
++        <div className="flex items-center justify-between mb-6">
++          <h2 className="text-lg font-semibold text-gh-text">Settings</h2>
++          <button
++            className="text-gh-text-secondary hover:text-gh-text cursor-pointer"
++            onClick={onClose}
++          >
++            <svg
++              className="size-5"
++              fill="none"
++              stroke="currentColor"
++              strokeWidth={1.5}
++              viewBox="0 0 24 24"
++            >
++              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
++            </svg>
++          </button>
++        </div>
++
++        {/* Appearance */}
++        <Section title="Appearance">
++          {/* Theme */}
++          <div className="mb-4">
++            <label className="block text-sm font-medium text-gh-text mb-2">Theme</label>
++            <div className="flex gap-1">
++              {(["auto", "dark", "light"] as const).map((t) => (
++                <button
++                  key={t}
++                  className={`flex-1 px-3 py-1.5 text-sm rounded-md border cursor-pointer transition-colors ${
++                    settings.theme === t
++                      ? "bg-gh-bg-active border-gh-text-secondary text-gh-text"
++                      : "bg-gh-bg-secondary border-gh-border text-gh-text-secondary hover:bg-gh-bg-hover"
++                  }`}
++                  onClick={() => update({ theme: t })}
++                >
++                  {t === "auto" ? "Auto" : t === "dark" ? "Dark" : "Light"}
++                </button>
++              ))}
++            </div>
++          </div>
++
++          {/* Font size */}
++          <div className="mb-4">
++            <label className="block text-sm font-medium text-gh-text mb-2">Font size</label>
++            <div className="flex gap-1">
++              {(["small", "medium", "large", "xlarge"] as const).map((s) => (
++                <button
++                  key={s}
++                  className={`flex-1 px-3 py-1.5 text-sm rounded-md border cursor-pointer transition-colors ${
++                    settings.fontSize === s
++                      ? "bg-gh-bg-active border-gh-text-secondary text-gh-text"
++                      : "bg-gh-bg-secondary border-gh-border text-gh-text-secondary hover:bg-gh-bg-hover"
++                  }`}
++                  onClick={() => update({ fontSize: s })}
++                >
++                  {s === "xlarge" ? "XL" : s.charAt(0).toUpperCase() + s.slice(1)}
++                </button>
++              ))}
++            </div>
++          </div>
++
++          {/* Wide layout */}
++          <Toggle
++            label="Wide layout"
++            description="Remove max-width constraint on content"
++            checked={settings.wide}
++            onChange={(v) => update({ wide: v })}
++          />
++        </Section>
++      </div>
++    </div>
++  );
++}
++
++function Section({ title, children }: { title: string; children: React.ReactNode }) {
++  return (
++    <div className="mb-6 last:mb-0">
++      <h3 className="text-xs font-semibold uppercase tracking-wider text-gh-text-secondary mb-3">
++        {title}
++      </h3>
++      {children}
++    </div>
++  );
++}
++
++function Toggle({
++  label,
++  description,
++  checked,
++  onChange,
++}: {
++  label: string;
++  description: string;
++  checked: boolean;
++  onChange: (value: boolean) => void;
++}) {
++  return (
++    <div className="flex items-center justify-between py-2">
++      <div>
++        <div className="text-sm text-gh-text">{label}</div>
++        <div className="text-xs text-gh-text-secondary">{description}</div>
++      </div>
++      <button
++        type="button"
++        role="switch"
++        aria-checked={checked}
++        className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
++          checked ? "bg-blue-500" : "bg-gh-bg-active"
++        }`}
++        onClick={() => onChange(!checked)}
++      >
++        <span
++          className={`pointer-events-none inline-block size-4 rounded-full bg-white shadow-sm transition-transform ${
++            checked ? "translate-x-4" : "translate-x-0"
++          }`}
++        />
++      </button>
++    </div>
++  );
++}
+diff --git a/internal/frontend/src/lib/settings.ts b/internal/frontend/src/lib/settings.ts
+new file mode 100644
+index 0000000..e4118a9
+--- /dev/null
++++ b/internal/frontend/src/lib/settings.ts
+@@ -0,0 +1,65 @@
++export interface Settings {
++  theme: "auto" | "dark" | "light";
++  fontSize: "small" | "medium" | "large" | "xlarge";
++  wide: boolean;
++}
++
++const STORAGE_KEY = "mo-settings";
++
++const defaults: Settings = {
++  theme: "auto",
++  fontSize: "medium",
++  wide: false,
++};
++
++export function loadSettings(): Settings {
++  try {
++    const raw = localStorage.getItem(STORAGE_KEY);
++    if (raw) {
++      const parsed = JSON.parse(raw);
++      return { ...defaults, ...parsed };
++    }
++  } catch {
++    // corrupted JSON
++  }
++
++  // Migrate from legacy per-key storage
++  const migrated = { ...defaults };
++  const legacyTheme = localStorage.getItem("mo-theme");
++  if (legacyTheme === "dark" || legacyTheme === "light") {
++    migrated.theme = legacyTheme;
++  }
++  const legacyFontSize = localStorage.getItem("mo-font-size");
++  if (
++    legacyFontSize === "small" ||
++    legacyFontSize === "medium" ||
++    legacyFontSize === "large" ||
++    legacyFontSize === "xlarge"
++  ) {
++    migrated.fontSize = legacyFontSize;
++  }
++  const legacyWidth = localStorage.getItem("mo-layout-width");
++  if (legacyWidth === "wide") {
++    migrated.wide = true;
++  }
++  return migrated;
++}
++
++export function saveSettings(settings: Settings): void {
++  try {
++    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
++  } catch {
++    // storage full or unavailable
++  }
++}
++
++export function getEffectiveTheme(theme: Settings["theme"]): "dark" | "light" {
++  if (theme === "auto") {
++    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
++  }
++  return theme;
++}
++
++export function applyTheme(theme: Settings["theme"]): void {
++  document.documentElement.setAttribute("data-theme", getEffectiveTheme(theme));
++}

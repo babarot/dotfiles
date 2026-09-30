@@ -1,0 +1,148 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 19:06:35 +0900
+Subject: [PATCH] Add a setting to float the table of contents
+
+With it on, the ToC opens as a panel over the top right of the content
+instead of a column beside it, and closes on a click outside.
+---
+ internal/frontend/src/App.tsx                 | 15 +++++++-
+ .../src/components/SettingsDialog.tsx         |  6 +++
+ internal/frontend/src/components/TocPanel.tsx | 38 ++++++++++++++++++-
+ internal/frontend/src/lib/settings.ts         |  2 +
+ 4 files changed, 58 insertions(+), 3 deletions(-)
+
+diff --git a/internal/frontend/src/App.tsx b/internal/frontend/src/App.tsx
+index 3a67a23..4305928 100644
+--- a/internal/frontend/src/App.tsx
++++ b/internal/frontend/src/App.tsx
+@@ -480,7 +480,7 @@ export function App() {
+             />
+           </>
+         )}
+-        <main className="flex-1 flex flex-col overflow-hidden">
++        <main className="flex-1 flex flex-col overflow-hidden relative">
+           <div
+             ref={setScrollContainer}
+             className="flex-1 overflow-y-auto overscroll-contain p-8 bg-gh-bg"
+@@ -511,8 +511,19 @@ export function App() {
+               </div>
+             )}
+           </div>
++          {tocOpen && settings.tocFloating && (
++            <>
++              <div className="absolute inset-0 z-20" onClick={() => setTocOpen(false)} />
++              <TocPanel
++                headings={headings}
++                activeHeadingId={activeHeadingId}
++                onHeadingClick={handleHeadingClick}
++                floating
++              />
++            </>
++          )}
+         </main>
+-        {tocOpen && (
++        {tocOpen && !settings.tocFloating && (
+           <TocPanel
+             headings={headings}
+             activeHeadingId={activeHeadingId}
+diff --git a/internal/frontend/src/components/SettingsDialog.tsx b/internal/frontend/src/components/SettingsDialog.tsx
+index 69abccc..1aaafc6 100644
+--- a/internal/frontend/src/components/SettingsDialog.tsx
++++ b/internal/frontend/src/components/SettingsDialog.tsx
+@@ -90,6 +90,12 @@ export function SettingsDialog({ settings, onChange, onClose }: SettingsDialogPr
+             checked={settings.sidebarOverlay}
+             onChange={(v) => update({ sidebarOverlay: v })}
+           />
++          <Toggle
++            label="Floating ToC"
++            description="Table of contents floats over content instead of docked"
++            checked={settings.tocFloating}
++            onChange={(v) => update({ tocFloating: v })}
++          />
+         </Section>
+       </div>
+     </div>
+diff --git a/internal/frontend/src/components/TocPanel.tsx b/internal/frontend/src/components/TocPanel.tsx
+index 31f5f8e..28da062 100644
+--- a/internal/frontend/src/components/TocPanel.tsx
++++ b/internal/frontend/src/components/TocPanel.tsx
+@@ -10,6 +10,7 @@ interface TocPanelProps {
+   headings: TocHeading[];
+   activeHeadingId: string | null;
+   onHeadingClick: (id: string) => void;
++  floating?: boolean;
+ }
+ 
+ const MIN_WIDTH = 180;
+@@ -35,7 +36,12 @@ const INDENT: Record<number, string> = {
+   6: "pl-18",
+ };
+ 
+-export function TocPanel({ headings, activeHeadingId, onHeadingClick }: TocPanelProps) {
++export function TocPanel({
++  headings,
++  activeHeadingId,
++  onHeadingClick,
++  floating = false,
++}: TocPanelProps) {
+   const [width, setWidth] = useState(getInitialWidth);
+   const dragging = useRef(false);
+ 
+@@ -70,6 +76,36 @@ export function TocPanel({ headings, activeHeadingId, onHeadingClick }: TocPanel
+     localStorage.setItem(STORAGE_KEY, String(width));
+   }, [width]);
+ 
++  if (floating) {
++    return (
++      <aside
++        className="absolute top-4 right-4 z-30 max-h-[80vh] bg-gh-bg border border-gh-border rounded-xl shadow-xl flex flex-col overflow-y-auto overscroll-contain"
++        style={{ width }}
++      >
++        <nav className="flex flex-col py-2">
++          {headings.length === 0 ? (
++            <div className="px-3 py-2 text-gh-text-secondary text-sm">No headings</div>
++          ) : (
++            headings.map((h) => (
++              <button
++                key={h.id}
++                className={`flex items-center w-full ${INDENT[h.level] ?? "pl-3"} pr-3 py-1.5 border-none cursor-pointer text-left text-sm transition-colors duration-150 ${
++                  h.id === activeHeadingId
++                    ? "bg-gh-bg-active text-gh-text font-semibold"
++                    : "bg-transparent text-gh-text-secondary hover:bg-gh-bg-hover"
++                }`}
++                onClick={() => onHeadingClick(h.id)}
++                title={h.text}
++              >
++                <span className="overflow-hidden text-ellipsis whitespace-nowrap">{h.text}</span>
++              </button>
++            ))
++          )}
++        </nav>
++      </aside>
++    );
++  }
++
+   return (
+     <aside
+       className="relative shrink-0 bg-gh-bg-sidebar border-l border-gh-border flex flex-col overflow-y-auto overscroll-contain"
+diff --git a/internal/frontend/src/lib/settings.ts b/internal/frontend/src/lib/settings.ts
+index e6303c6..305d131 100644
+--- a/internal/frontend/src/lib/settings.ts
++++ b/internal/frontend/src/lib/settings.ts
+@@ -3,6 +3,7 @@ export interface Settings {
+   fontSize: "small" | "medium" | "large" | "xlarge";
+   wide: boolean;
+   sidebarOverlay: boolean;
++  tocFloating: boolean;
+ }
+ 
+ const STORAGE_KEY = "mo-settings";
+@@ -12,6 +13,7 @@ const defaults: Settings = {
+   fontSize: "medium",
+   wide: false,
+   sidebarOverlay: false,
++  tocFloating: false,
+ };
+ 
+ export function loadSettings(): Settings {

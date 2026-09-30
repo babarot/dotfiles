@@ -1,0 +1,75 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 19:06:52 +0900
+Subject: [PATCH] Add a setting to jump to headings without smooth scrolling
+
+Clicking a heading in the ToC animates the scroll, which is slow in a
+long document. With the setting off it jumps there at once.
+---
+ internal/frontend/src/App.tsx                      | 14 +++++++++-----
+ .../frontend/src/components/SettingsDialog.tsx     |  6 ++++++
+ internal/frontend/src/lib/settings.ts              |  2 ++
+ 3 files changed, 17 insertions(+), 5 deletions(-)
+
+diff --git a/internal/frontend/src/App.tsx b/internal/frontend/src/App.tsx
+index 4305928..764c59d 100644
+--- a/internal/frontend/src/App.tsx
++++ b/internal/frontend/src/App.tsx
+@@ -380,11 +380,15 @@ export function App() {
+     activeFileId,
+   );
+ 
+-  const handleHeadingClick = useCallback((id: string) => {
+-    const el = document.getElementById(id);
+-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+-    el?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+-  }, []);
++  const handleHeadingClick = useCallback(
++    (id: string) => {
++      const el = document.getElementById(id);
++      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
++      const behavior = settings.smoothScroll && !reduced ? "smooth" : "auto";
++      el?.scrollIntoView({ behavior, block: "start" });
++    },
++    [settings.smoothScroll],
++  );
+ 
+   const handleZoom = useCallback((content: ZoomContent) => {
+     setZoomContent(content);
+diff --git a/internal/frontend/src/components/SettingsDialog.tsx b/internal/frontend/src/components/SettingsDialog.tsx
+index 1aaafc6..8b28c27 100644
+--- a/internal/frontend/src/components/SettingsDialog.tsx
++++ b/internal/frontend/src/components/SettingsDialog.tsx
+@@ -96,6 +96,12 @@ export function SettingsDialog({ settings, onChange, onClose }: SettingsDialogPr
+             checked={settings.tocFloating}
+             onChange={(v) => update({ tocFloating: v })}
+           />
++          <Toggle
++            label="Smooth scroll"
++            description="Animate scroll when navigating to headings"
++            checked={settings.smoothScroll}
++            onChange={(v) => update({ smoothScroll: v })}
++          />
+         </Section>
+       </div>
+     </div>
+diff --git a/internal/frontend/src/lib/settings.ts b/internal/frontend/src/lib/settings.ts
+index 305d131..f35e873 100644
+--- a/internal/frontend/src/lib/settings.ts
++++ b/internal/frontend/src/lib/settings.ts
+@@ -4,6 +4,7 @@ export interface Settings {
+   wide: boolean;
+   sidebarOverlay: boolean;
+   tocFloating: boolean;
++  smoothScroll: boolean;
+ }
+ 
+ const STORAGE_KEY = "mo-settings";
+@@ -14,6 +15,7 @@ const defaults: Settings = {
+   wide: false,
+   sidebarOverlay: false,
+   tocFloating: false,
++  smoothScroll: true,
+ };
+ 
+ export function loadSettings(): Settings {

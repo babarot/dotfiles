@@ -1,0 +1,106 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 19:07:26 +0900
+Subject: [PATCH] Color code blocks for the light theme too
+
+Code blocks were always highlighted with github-dark, a dark box on a
+light page. Shiki now renders both github-light and github-dark and CSS
+picks one by the page theme. The copy button follows the theme too.
+---
+ .../src/components/MarkdownViewer.tsx         | 22 ++++++++++---------
+ internal/frontend/src/styles/app.css          | 17 ++++++++++++++
+ 2 files changed, 29 insertions(+), 10 deletions(-)
+
+diff --git a/internal/frontend/src/components/MarkdownViewer.tsx b/internal/frontend/src/components/MarkdownViewer.tsx
+index ccb5190..28d13b1 100644
+--- a/internal/frontend/src/components/MarkdownViewer.tsx
++++ b/internal/frontend/src/components/MarkdownViewer.tsx
+@@ -388,7 +388,7 @@ function ZoomButton({
+ 
+ const darkButtonStyle = "border-[#484f58] hover:border-[#8b949e] text-[#8b949e] bg-[#2d333b]";
+ const themedButtonStyle =
+-  "border-gh-border hover:border-gh-text-secondary text-gh-text-secondary bg-gh-bg-secondary";
++  "border-gh-border/50 hover:border-gh-border text-gh-text-secondary bg-gh-bg-secondary";
+ 
+ function CodeBlockCopyButton({ code, themed = false }: { code: string; themed?: boolean }) {
+   const [copied, setCopied] = useState(false);
+@@ -429,21 +429,23 @@ function CodeBlockCopyButton({ code, themed = false }: { code: string; themed?:
+   );
+ }
+ 
++const shikiDualThemes = { light: "github-light" as const, dark: "github-dark" as const };
++
+ function CodeBlock({ language, code }: { language: string; code: string }) {
+   const [html, setHtml] = useState("");
+ 
+   useEffect(() => {
+     let cancelled = false;
+-    codeToHtml(code, { lang: language, theme: "github-dark" })
++    const stripPreBg = (h: string) => h.replace(/(<pre[^>]*?) style="[^"]*"/, "$1");
++    codeToHtml(code, { lang: language, themes: shikiDualThemes, defaultColor: false })
+       .then((result) => {
+-        if (!cancelled) setHtml(result);
++        if (!cancelled) setHtml(stripPreBg(result));
+       })
+       .catch(() => {
+-        // Fallback: if language not supported, try plaintext
+         if (!cancelled) {
+-          codeToHtml(code, { lang: "text", theme: "github-dark" })
++          codeToHtml(code, { lang: "text", themes: shikiDualThemes, defaultColor: false })
+             .then((result) => {
+-              if (!cancelled) setHtml(result);
++              if (!cancelled) setHtml(stripPreBg(result));
+             })
+             .catch(() => {});
+         }
+@@ -455,18 +457,18 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
+ 
+   if (html) {
+     return (
+-      <div className="relative group">
++      <div className="relative group my-2">
+         <div dangerouslySetInnerHTML={{ __html: html }} />
+-        <CodeBlockCopyButton code={code} />
++        <CodeBlockCopyButton code={code} themed />
+       </div>
+     );
+   }
+   return (
+-    <div className="relative group">
++    <div className="relative group my-2">
+       <pre>
+         <code>{code}</code>
+       </pre>
+-      <CodeBlockCopyButton code={code} />
++      <CodeBlockCopyButton code={code} themed />
+     </div>
+   );
+ }
+diff --git a/internal/frontend/src/styles/app.css b/internal/frontend/src/styles/app.css
+index 620f04a..07a84d9 100644
+--- a/internal/frontend/src/styles/app.css
++++ b/internal/frontend/src/styles/app.css
+@@ -58,6 +58,23 @@ body,
+   line-height: 1.5;
+ }
+ 
++/* Shiki dual-theme: resolve token colors from CSS variables */
++[data-theme="light"] .shiki span {
++  color: var(--shiki-light);
++  background-color: var(--shiki-light-bg);
++  font-style: var(--shiki-light-font-style);
++  font-weight: var(--shiki-light-font-weight);
++  text-decoration: var(--shiki-light-text-decoration);
++}
++
++[data-theme="dark"] .shiki span {
++  color: var(--shiki-dark);
++  background-color: var(--shiki-dark-bg);
++  font-style: var(--shiki-dark-font-style);
++  font-weight: var(--shiki-dark-font-weight);
++  text-decoration: var(--shiki-dark-text-decoration);
++}
++
+ /* Undo Tailwind preflight's display:block on img inside markdown
+    so that inline badge images render on one line like GitHub */
+ .markdown-body img {

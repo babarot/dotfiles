@@ -1,0 +1,2086 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 19:09:09 +0900
+Subject: [PATCH] Edit Markdown files in place with a CodeMirror editor
+
+An edit button next to the ToC and raw toggles swaps the rendered view
+for a CodeMirror editor that fills the content area. Saving writes the
+file on disk, or replaces the content of an uploaded file, through a new
+PUT on the file's content endpoint. The editor saves on Cmd/Ctrl+S, when
+it closes and when another file is selected, and after a second of
+inactivity when auto save is on.
+
+Switching between the view and the editor keeps the place: the nearest
+heading above the cursor or the top of the viewport is found on the
+other side, falling back to the scroll ratio.
+
+The settings dialog gains an Editor section: a color scheme, applied to
+the editor's syntax highlighting, line wrapping and auto save.
+---
+ internal/frontend/package.json                |   8 +
+ internal/frontend/pnpm-lock.yaml              | 552 ++++++++++++++++++
+ internal/frontend/src/App.test.tsx            |   2 +
+ internal/frontend/src/App.tsx                 |  10 +-
+ .../frontend/src/components/EditToggle.tsx    |  52 ++
+ internal/frontend/src/components/Editor.tsx   | 191 ++++++
+ .../src/components/MarkdownViewer.tsx         | 226 ++++++-
+ .../frontend/src/components/RestartButton.tsx |   4 +-
+ .../src/components/SettingsDialog.tsx         |  66 +++
+ internal/frontend/src/hooks/useApi.ts         |  12 +
+ internal/frontend/src/lib/editorThemes.ts     | 462 +++++++++++++++
+ internal/frontend/src/lib/settings.ts         |   6 +
+ internal/frontend/src/styles/app.css          |   6 +
+ internal/server/server.go                     |  80 +++
+ 14 files changed, 1665 insertions(+), 12 deletions(-)
+ create mode 100644 internal/frontend/src/components/EditToggle.tsx
+ create mode 100644 internal/frontend/src/components/Editor.tsx
+ create mode 100644 internal/frontend/src/lib/editorThemes.ts
+
+diff --git a/internal/frontend/package.json b/internal/frontend/package.json
+index 1b0ac2f..26aeae0 100644
+--- a/internal/frontend/package.json
++++ b/internal/frontend/package.json
+@@ -24,10 +24,18 @@
+     ]
+   },
+   "dependencies": {
++    "@codemirror/lang-markdown": "^6.5.0",
++    "@codemirror/language": "^6.12.3",
++    "@codemirror/language-data": "^6.5.2",
++    "@codemirror/state": "^6.6.0",
++    "@codemirror/theme-one-dark": "^6.1.3",
++    "@codemirror/view": "^6.41.0",
+     "@dnd-kit/core": "^6.3.1",
+     "@dnd-kit/sortable": "^10.0.0",
+     "@dnd-kit/utilities": "^3.2.2",
++    "@lezer/highlight": "^1.2.3",
+     "@shikijs/rehype": "^4.0.2",
++    "codemirror": "^6.0.2",
+     "github-markdown-css": "^5.8.1",
+     "katex": "^0.16.45",
+     "mermaid": "^11.14.0",
+diff --git a/internal/frontend/pnpm-lock.yaml b/internal/frontend/pnpm-lock.yaml
+index c8dfc00..6520708 100644
+--- a/internal/frontend/pnpm-lock.yaml
++++ b/internal/frontend/pnpm-lock.yaml
+@@ -8,6 +8,24 @@ importers:
+ 
+   .:
+     dependencies:
++      '@codemirror/lang-markdown':
++        specifier: ^6.5.0
++        version: 6.5.2
++      '@codemirror/language':
++        specifier: ^6.12.3
++        version: 6.12.4
++      '@codemirror/language-data':
++        specifier: ^6.5.2
++        version: 6.5.2
++      '@codemirror/state':
++        specifier: ^6.6.0
++        version: 6.7.6
++      '@codemirror/theme-one-dark':
++        specifier: ^6.1.3
++        version: 6.1.3
++      '@codemirror/view':
++        specifier: ^6.41.0
++        version: 6.43.13
+       '@dnd-kit/core':
+         specifier: ^6.3.1
+         version: 6.3.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+@@ -17,9 +35,15 @@ importers:
+       '@dnd-kit/utilities':
+         specifier: ^3.2.2
+         version: 3.2.2(react@19.2.5)
++      '@lezer/highlight':
++        specifier: ^1.2.3
++        version: 1.2.5
+       '@shikijs/rehype':
+         specifier: ^4.0.2
+         version: 4.0.2
++      codemirror:
++        specifier: ^6.0.2
++        version: 6.0.2
+       github-markdown-css:
+         specifier: ^5.8.1
+         version: 5.9.0
+@@ -192,6 +216,99 @@ packages:
+   '@chevrotain/utils@12.0.0':
+     resolution: {integrity: sha512-lB59uJoaGIfOOL9knQqQRfhl9g7x8/wqFkp13zTdkRu1huG9kg6IJs1O8hqj9rs6h7orGxHJUKb+mX3rPbWGhA==}
+ 
++  '@codemirror/autocomplete@6.20.3':
++    resolution: {integrity: sha512-tlosUqb+3BbxCxZdu4tKeRghPFC+QM7q4X5YhKV2eCmPG+1r2F3f4AaSz5sCrFqUtX4Jh20VFTKecl16MgiV9g==}
++
++  '@codemirror/commands@6.11.1':
++    resolution: {integrity: sha512-O/4hG3SC1YwcmQ0d2UVNDs+AsaNWd1iHVxbTeEBuqH+6bExAiPK3iS/BvpY6rZGURALv4ZD3sIgcCmRvw3ehBg==}
++
++  '@codemirror/lang-angular@0.1.4':
++    resolution: {integrity: sha512-oap+gsltb/fzdlTQWD6BFF4bSLKcDnlxDsLdePiJpCVNKWXSTAbiiQeYI3UmES+BLAdkmIC1WjyztC1pi/bX4g==}
++
++  '@codemirror/lang-cpp@6.0.3':
++    resolution: {integrity: sha512-URM26M3vunFFn9/sm6rzqrBzDgfWuDixp85uTY49wKudToc2jTHUrKIGGKs+QWND+YLofNNZpxcNGRynFJfvgA==}
++
++  '@codemirror/lang-css@6.3.1':
++    resolution: {integrity: sha512-kr5fwBGiGtmz6l0LSJIbno9QrifNMUusivHbnA1H6Dmqy4HZFte3UAICix1VuKo0lMPKQr2rqB+0BkKi/S3Ejg==}
++
++  '@codemirror/lang-go@6.0.1':
++    resolution: {integrity: sha512-7fNvbyNylvqCphW9HD6WFnRpcDjr+KXX/FgqXy5H5ZS0eC5edDljukm/yNgYkwTsgp2busdod50AOTIy6Jikfg==}
++
++  '@codemirror/lang-html@6.4.12':
++    resolution: {integrity: sha512-pw2ReWKUqSkbvh76RAT4NYxiogRu+PWkR2ukAwO9uOgrm8uipkzjtKKtNpyeAQwHOqxEeSvAXZ6vr3AfyB9y/w==}
++
++  '@codemirror/lang-java@6.0.2':
++    resolution: {integrity: sha512-m5Nt1mQ/cznJY7tMfQTJchmrjdjQ71IDs+55d1GAa8DGaB8JXWsVCkVT284C3RTASaY43YknrK2X3hPO/J3MOQ==}
++
++  '@codemirror/lang-javascript@6.2.5':
++    resolution: {integrity: sha512-zD4e5mS+50htS7F+TYjBPsiIFGanfVqg4HyUz6WNFikgOPf2BgKlx+TQedI1w6n/IqRBVBbBWmGFdLB/7uxO4A==}
++
++  '@codemirror/lang-jinja@6.0.1':
++    resolution: {integrity: sha512-P5kyHLObzjtbGj16h+hyvZTxJhSjBEeSx4wMjbnAf3b0uwTy2+F0zGjMZL4PQOm/mh2eGZ5xUDVZXgwP783Nsw==}
++
++  '@codemirror/lang-json@6.0.2':
++    resolution: {integrity: sha512-x2OtO+AvwEHrEwR0FyyPtfDUiloG3rnVTSZV1W8UteaLL8/MajQd8DpvUb2YVzC+/T18aSDv0H9mu+xw0EStoQ==}
++
++  '@codemirror/lang-less@6.0.2':
++    resolution: {integrity: sha512-EYdQTG22V+KUUk8Qq582g7FMnCZeEHsyuOJisHRft/mQ+ZSZ2w51NupvDUHiqtsOy7It5cHLPGfHQLpMh9bqpQ==}
++
++  '@codemirror/lang-liquid@6.3.3':
++    resolution: {integrity: sha512-U9EnyzWuAx1TX3MZSKDXydKH734n1Aogk/ijKdW+jdIwmbf9zSPQYOIKggC/b2PTRjQb7ddvMktmxnfTLuv/SQ==}
++
++  '@codemirror/lang-markdown@6.5.2':
++    resolution: {integrity: sha512-AwBOdkWYuA//WcM0xO5PfHPUcmz/O2i5o0Nsg1U69SII/loCJlFI1Romd9xp2HYb1kYJRGZotyqRghuHH5n8Kw==}
++
++  '@codemirror/lang-php@6.0.2':
++    resolution: {integrity: sha512-ZKy2v1n8Fc8oEXj0Th0PUMXzQJ0AIR6TaZU+PbDHExFwdu+guzOA4jmCHS1Nz4vbFezwD7LyBdDnddSJeScMCA==}
++
++  '@codemirror/lang-python@6.2.1':
++    resolution: {integrity: sha512-IRjC8RUBhn9mGR9ywecNhB51yePWCGgvHfY1lWN/Mrp3cKuHr0isDKia+9HnvhiWNnMpbGhWrkhuWOc09exRyw==}
++
++  '@codemirror/lang-rust@6.0.2':
++    resolution: {integrity: sha512-EZaGjCUegtiU7kSMvOfEZpaCReowEf3yNidYu7+vfuGTm9ow4mthAparY5hisJqOHmJowVH3Upu+eJlUji6qqA==}
++
++  '@codemirror/lang-sass@6.0.2':
++    resolution: {integrity: sha512-l/bdzIABvnTo1nzdY6U+kPAC51czYQcOErfzQ9zSm9D8GmNPD0WTW8st/CJwBTPLO8jlrbyvlSEcN20dc4iL0Q==}
++
++  '@codemirror/lang-sql@6.10.0':
++    resolution: {integrity: sha512-6ayPkEd/yRw0XKBx5uAiToSgGECo/GY2NoJIHXIIQh1EVwLuKoU8BP/qK0qH5NLXAbtJRLuT73hx7P9X34iO4w==}
++
++  '@codemirror/lang-vue@0.1.3':
++    resolution: {integrity: sha512-QSKdtYTDRhEHCfo5zOShzxCmqKJvgGrZwDQSdbvCRJ5pRLWBS7pD/8e/tH44aVQT6FKm0t6RVNoSUWHOI5vNug==}
++
++  '@codemirror/lang-wast@6.0.2':
++    resolution: {integrity: sha512-Imi2KTpVGm7TKuUkqyJ5NRmeFWF7aMpNiwHnLQe0x9kmrxElndyH0K6H/gXtWwY6UshMRAhpENsgfpSwsgmC6Q==}
++
++  '@codemirror/lang-xml@6.1.0':
++    resolution: {integrity: sha512-3z0blhicHLfwi2UgkZYRPioSgVTo9PV5GP5ducFH6FaHy0IAJRg+ixj5gTR1gnT/glAIC8xv4w2VL1LoZfs+Jg==}
++
++  '@codemirror/lang-yaml@6.1.3':
++    resolution: {integrity: sha512-AZ8DJBuXGVHybpBQhmZtgew5//4hv3tdkXnr3vDmOUMJRuB6vn/uuwtmTOTlqEaQFg3hQSVeA90NmvIQyUV6FQ==}
++
++  '@codemirror/language-data@6.5.2':
++    resolution: {integrity: sha512-CPkWBKrNS8stYbEU5kwBwTf3JB1kghlbh4FSAwzGW2TEscdeHHH4FGysREW86Mqnj3Qn09s0/6Ea/TutmoTobg==}
++
++  '@codemirror/language@6.12.4':
++    resolution: {integrity: sha512-1q4PaT+o6PbgpkJt4Q8Fv5XJxTy4FUZ4MWETtyiDw3J0Pyr9E2vqcKL+k9wcvjNTIsauxvE7OfmWj3FRPHQ76A==}
++
++  '@codemirror/legacy-modes@6.5.4':
++    resolution: {integrity: sha512-/cZr6qZyl08iYNLGsJ862CXXNI51LryRFRE40ejgoIjXZz0C1rGkD3/Ek5jM/8w1ceRjqtt4qx/KLMh4zBTgew==}
++
++  '@codemirror/lint@6.9.7':
++    resolution: {integrity: sha512-28/+iWLYxKxsvGYhSYL7zaCZqLz5+FFFDq9tVsvGv9kv8RY4fFAchJ5WX9M3YrrRlTIsECjsXPqeNgnSmNP2dg==}
++
++  '@codemirror/search@6.7.2':
++    resolution: {integrity: sha512-gUYkYhT2+n/+VGZ+8EzE5WFkYZUZYm1VOKDudIsNqh42uRVQJ0a6Yss9sdKT3MeOYfuL1N6AZA57oza0Oyr0LA==}
++
++  '@codemirror/state@6.7.6':
++    resolution: {integrity: sha512-kAz+AncRtKuIknedxT1bq4XwXv4UowhbkHU1myPrtVb/jZtImWuV5BXzv5vK6i3kYACsdiZiQKFQQ5Mq7elW8w==}
++
++  '@codemirror/theme-one-dark@6.1.3':
++    resolution: {integrity: sha512-NzBdIvEJmx6fjeremiGp3t/okrLPYT0d9orIc7AFun8oZcRk58aejkqhv6spnz4MLAevrKNPMQYXEWMg4s+sKA==}
++
++  '@codemirror/view@6.43.13':
++    resolution: {integrity: sha512-sihaFrUzAsYBQsL9J2t69y8nfMQGwcYmggAZsk+kjPbjYZMyuf2hU8tUNTZ+P+isb6XRr8JE22TZlJxBoVdH1A==}
++
+   '@csstools/color-helpers@6.0.2':
+     resolution: {integrity: sha512-LMGQLS9EuADloEFkcTBR3BwV/CGHV7zyDxVRtVDTwdI2Ca4it0CCVTT9wCkxSgokjE5Ho41hEPgb8OEUwoXr6Q==}
+     engines: {node: '>=20.19.0'}
+@@ -290,6 +407,60 @@ packages:
+   '@jridgewell/trace-mapping@0.3.31':
+     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+ 
++  '@lezer/common@1.5.3':
++    resolution: {integrity: sha512-H0iErY4e43LpXbYDyBci5W4v/RwTgGV3YzYOlJPiGZ8RY8w51kVE+xLn1tg3Z6UmSfyETvtsUK3r7YsgDQEI7Q==}
++
++  '@lezer/cpp@1.1.6':
++    resolution: {integrity: sha512-vh9gWWJOXFVY8HBHK3Twzq8MgwG2iN4GSyzBP9sCGTe37P15x2R14VaBQk0VA0ezTRN1KHYBBsHhvpGZ2Xy/pA==}
++
++  '@lezer/css@1.3.8':
++    resolution: {integrity: sha512-EJn1zcL9qoDptief6ipWKZKLiOpXkxSe0+t8CH9oiMVcZlq7NBWrjCqnc/41EIjeo/ITj1gFFiATdTkaJDL+Og==}
++
++  '@lezer/go@1.0.1':
++    resolution: {integrity: sha512-xToRsYxwsgJNHTgNdStpcvmbVuKxTapV0dM0wey1geMMRc9aggoVyKgzYp41D2/vVOx+Ii4hmE206kvxIXBVXQ==}
++
++  '@lezer/highlight@1.2.5':
++    resolution: {integrity: sha512-O1GMVKgtf5YspFaRzpmqkVgMtIk2HG9uMAbH6wdAIdNh3TVzCsch/+cRi+6l2//UGDKe6NB9BW3cvuR5ezMQ0w==}
++
++  '@lezer/html@1.3.13':
++    resolution: {integrity: sha512-oI7n6NJml729m7pjm9lvLvmXbdoMoi2f+1pwSDJkl9d68zGr7a9Btz8NdHTGQZtW2DA25ybeuv/SyDb9D5tseg==}
++
++  '@lezer/java@1.1.4':
++    resolution: {integrity: sha512-gQylJ2xHV2xXsVqtnAcJrcROvLZJaQiC0tR//+q0k961BxqvyYttusPkJ8d9T1fPDJKHJW2etUH8XbIn9jhVUg==}
++
++  '@lezer/javascript@1.5.5':
++    resolution: {integrity: sha512-sWg4yX1J6XW67AaAynVt0iwF0M5c+np36TEu+P2ifAJ8haRYvHnWDV28r1jdwnJehWCwXECutAUy56K4RBZIyg==}
++
++  '@lezer/json@1.0.3':
++    resolution: {integrity: sha512-BP9KzdF9Y35PDpv04r0VeSTKDeox5vVr3efE7eBbx3r4s3oNLfunchejZhjArmeieBH+nVOpgIiBJpEAv8ilqQ==}
++
++  '@lezer/lr@1.4.10':
++    resolution: {integrity: sha512-rnCpTIBafOx4mRp43xOxDJbFipJm/c0cia/V5TiGlhmMa+wsSdoGmUN3w5Bqrks/09Q/D4tNAmWaT8p6NRi77A==}
++
++  '@lezer/markdown@1.7.2':
++    resolution: {integrity: sha512-iTkYvoVcKt3WkeL7qUDyXHONZEwLio4wj8KTNi2dnjQEXBZKMV63BpQrPqfsM+OkvuRbiSTAcycYAsQzLhRNoQ==}
++
++  '@lezer/php@1.0.6':
++    resolution: {integrity: sha512-QJ2xNXPmsm/Z3IpThq8fnJrEIVpxhsIoj6GZBW0JYEd/l9zxpJZW216X4fzqQY4vgpdGIumypvI4uQjd4tnYtw==}
++
++  '@lezer/python@1.1.19':
++    resolution: {integrity: sha512-MhQIURHRytsNzP/YXnqpYKW6la6voAH3kyplTOOiCdjyFY6cWWGFVmYVdHIPrElqSDf4iCDktQCockB9FxuhzQ==}
++
++  '@lezer/rust@1.0.3':
++    resolution: {integrity: sha512-XxErOjZzQ7yJt1agUT4fu9qQvESZ3acgoxpPaPTPOiUx+duCjaVAtZGFIgphkHxlN05djdVAIOy/wItShMEjqQ==}
++
++  '@lezer/sass@1.1.0':
++    resolution: {integrity: sha512-3mMGdCTUZ/84ArHOuXWQr37pnf7f+Nw9ycPUeKX+wu19b7pSMcZGLbaXwvD2APMBDOGxPmpK/O6S1v1EvLoqgQ==}
++
++  '@lezer/xml@1.0.6':
++    resolution: {integrity: sha512-CdDwirL0OEaStFue/66ZmFSeppuL6Dwjlk8qk153mSQwiSH/Dlri4GNymrNWnUmPl2Um7QfV1FO9KFUyX3Twww==}
++
++  '@lezer/yaml@1.0.4':
++    resolution: {integrity: sha512-2lrrHqxalACEbxIbsjhqGpSW8kWpUKuY6RHgnSAFZa6qK62wvnPxA8hGOwOoDbwHcOFs5M4o27mjGu+P7TvBmw==}
++
++  '@marijn/find-cluster-break@1.0.4':
++    resolution: {integrity: sha512-Wy0V7+SGUjnF9/TkiM1hKVDPj7jKXduPNboMVtHTA8dySMURWqfg/JZ9E2Sq8JgSJmkl7k7Qe9FLeMSrSraWmQ==}
++
+   '@mermaid-js/parser@1.1.0':
+     resolution: {integrity: sha512-gxK9ZX2+Fex5zu8LhRQoMeMPEHbc73UKZ0FQ54YrQtUxE1VVhMwzeNtKRPAu5aXks4FasbMe4xB4bWrmq6Jlxw==}
+ 
+@@ -1178,6 +1349,9 @@ packages:
+     resolution: {integrity: sha512-csJvb+6kEiQaqo1woTdSAuOWdN0WTLIydkKrBnS+V5gZz0oqBrp4kQ35519QgK6TpBThiG3V1vNSHlIkv4AglQ==}
+     engines: {node: '>=22.0.0'}
+ 
++  codemirror@6.0.2:
++    resolution: {integrity: sha512-VhydHotNW5w1UGK0Qj96BwSk/Zqbp9WbnyK2W/eVMv4QyF41INRGpjUhFJY7/uDNuudSc33a/PKr4iDqRduvHw==}
++
+   comma-separated-tokens@2.0.3:
+     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
+ 
+@@ -1204,6 +1378,9 @@ packages:
+   cose-base@2.2.0:
+     resolution: {integrity: sha512-AzlgcsCbUMymkADOJtQm3wO9S3ltPfYOFD5033keQn9NJzIbtnZj+UdBJe7DYml/8TdbtHJW3j58SOnKhWY/5g==}
+ 
++  crelt@1.0.7:
++    resolution: {integrity: sha512-aK6BbWfhf4U/wCcLHKPJl/xa6VkVstRaPywWtMKGwuOLc/wZTyQYuoxgvZnNsBvv7Kg3YTBQYYBCggcviQczuA==}
++
+   css-tree@3.2.1:
+     resolution: {integrity: sha512-X7sjQzceUhu1u7Y/ylrRZFU2FS6LRiFVp6rKLPg23y3x3c3DOKAwuXGDp+PAGjh6CSnCjYeAul8pcT8bAl+lSA==}
+     engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
+@@ -2144,6 +2321,9 @@ packages:
+     resolution: {integrity: sha512-laJTa3Jb+VQpaC6DseHhF7dXVqHTfJPCRDaEbid/drOhgitgYku/letMUqOXFoWV0zIIUbjpdH2t+tYj4bQMRQ==}
+     engines: {node: '>=8'}
+ 
++  style-mod@4.1.4:
++    resolution: {integrity: sha512-XXWIQt633/EpAFx8aZDOTjBzrCaGmhvEQlQo6MVPfa2OzO2cWo+4hV9h+6UkHYlXGfy+ODXKUdP7Pthmcu5ATw==}
++
+   style-to-js@1.1.21:
+     resolution: {integrity: sha512-RjQetxJrrUJLQPHbLku6U/ocGtzyjbJMP9lCNK7Ag0CNh690nSH8woqWH9u16nMjYBAok+i7JO1NP2pOy8IsPQ==}
+ 
+@@ -2367,6 +2547,9 @@ packages:
+   vscode-uri@3.1.0:
+     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
+ 
++  w3c-keyname@2.2.8:
++    resolution: {integrity: sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==}
++
+   w3c-xmlserializer@5.0.0:
+     resolution: {integrity: sha512-o8qghlI8NZHU1lLPrpi2+Uq7abh4GGPpYANlalzWxyWteJOCsr/P+oPBA49TOLu5FTZO4d3F9MnWJfiMo4BkmA==}
+     engines: {node: '>=18'}
+@@ -2474,6 +2657,264 @@ snapshots:
+ 
+   '@chevrotain/utils@12.0.0': {}
+ 
++  '@codemirror/autocomplete@6.20.3':
++    dependencies:
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@codemirror/view': 6.43.13
++      '@lezer/common': 1.5.3
++
++  '@codemirror/commands@6.11.1':
++    dependencies:
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@codemirror/view': 6.43.13
++      '@lezer/common': 1.5.3
++
++  '@codemirror/lang-angular@0.1.4':
++    dependencies:
++      '@codemirror/lang-html': 6.4.12
++      '@codemirror/lang-javascript': 6.2.5
++      '@codemirror/language': 6.12.4
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@codemirror/lang-cpp@6.0.3':
++    dependencies:
++      '@codemirror/language': 6.12.4
++      '@lezer/cpp': 1.1.6
++
++  '@codemirror/lang-css@6.3.1':
++    dependencies:
++      '@codemirror/autocomplete': 6.20.3
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@lezer/common': 1.5.3
++      '@lezer/css': 1.3.8
++
++  '@codemirror/lang-go@6.0.1':
++    dependencies:
++      '@codemirror/autocomplete': 6.20.3
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@lezer/common': 1.5.3
++      '@lezer/go': 1.0.1
++
++  '@codemirror/lang-html@6.4.12':
++    dependencies:
++      '@codemirror/autocomplete': 6.20.3
++      '@codemirror/lang-css': 6.3.1
++      '@codemirror/lang-javascript': 6.2.5
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@codemirror/view': 6.43.13
++      '@lezer/common': 1.5.3
++      '@lezer/css': 1.3.8
++      '@lezer/html': 1.3.13
++
++  '@codemirror/lang-java@6.0.2':
++    dependencies:
++      '@codemirror/language': 6.12.4
++      '@lezer/java': 1.1.4
++
++  '@codemirror/lang-javascript@6.2.5':
++    dependencies:
++      '@codemirror/autocomplete': 6.20.3
++      '@codemirror/language': 6.12.4
++      '@codemirror/lint': 6.9.7
++      '@codemirror/state': 6.7.6
++      '@codemirror/view': 6.43.13
++      '@lezer/common': 1.5.3
++      '@lezer/javascript': 1.5.5
++
++  '@codemirror/lang-jinja@6.0.1':
++    dependencies:
++      '@codemirror/autocomplete': 6.20.3
++      '@codemirror/lang-html': 6.4.12
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@codemirror/view': 6.43.13
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@codemirror/lang-json@6.0.2':
++    dependencies:
++      '@codemirror/language': 6.12.4
++      '@lezer/json': 1.0.3
++
++  '@codemirror/lang-less@6.0.2':
++    dependencies:
++      '@codemirror/lang-css': 6.3.1
++      '@codemirror/language': 6.12.4
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@codemirror/lang-liquid@6.3.3':
++    dependencies:
++      '@codemirror/autocomplete': 6.20.3
++      '@codemirror/lang-html': 6.4.12
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@codemirror/view': 6.43.13
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@codemirror/lang-markdown@6.5.2':
++    dependencies:
++      '@codemirror/autocomplete': 6.20.3
++      '@codemirror/lang-html': 6.4.12
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@codemirror/view': 6.43.13
++      '@lezer/common': 1.5.3
++      '@lezer/markdown': 1.7.2
++
++  '@codemirror/lang-php@6.0.2':
++    dependencies:
++      '@codemirror/lang-html': 6.4.12
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@lezer/common': 1.5.3
++      '@lezer/php': 1.0.6
++
++  '@codemirror/lang-python@6.2.1':
++    dependencies:
++      '@codemirror/autocomplete': 6.20.3
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@lezer/common': 1.5.3
++      '@lezer/python': 1.1.19
++
++  '@codemirror/lang-rust@6.0.2':
++    dependencies:
++      '@codemirror/language': 6.12.4
++      '@lezer/rust': 1.0.3
++
++  '@codemirror/lang-sass@6.0.2':
++    dependencies:
++      '@codemirror/lang-css': 6.3.1
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@lezer/common': 1.5.3
++      '@lezer/sass': 1.1.0
++
++  '@codemirror/lang-sql@6.10.0':
++    dependencies:
++      '@codemirror/autocomplete': 6.20.3
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@codemirror/lang-vue@0.1.3':
++    dependencies:
++      '@codemirror/lang-html': 6.4.12
++      '@codemirror/lang-javascript': 6.2.5
++      '@codemirror/language': 6.12.4
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@codemirror/lang-wast@6.0.2':
++    dependencies:
++      '@codemirror/language': 6.12.4
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@codemirror/lang-xml@6.1.0':
++    dependencies:
++      '@codemirror/autocomplete': 6.20.3
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@codemirror/view': 6.43.13
++      '@lezer/common': 1.5.3
++      '@lezer/xml': 1.0.6
++
++  '@codemirror/lang-yaml@6.1.3':
++    dependencies:
++      '@codemirror/autocomplete': 6.20.3
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++      '@lezer/yaml': 1.0.4
++
++  '@codemirror/language-data@6.5.2':
++    dependencies:
++      '@codemirror/lang-angular': 0.1.4
++      '@codemirror/lang-cpp': 6.0.3
++      '@codemirror/lang-css': 6.3.1
++      '@codemirror/lang-go': 6.0.1
++      '@codemirror/lang-html': 6.4.12
++      '@codemirror/lang-java': 6.0.2
++      '@codemirror/lang-javascript': 6.2.5
++      '@codemirror/lang-jinja': 6.0.1
++      '@codemirror/lang-json': 6.0.2
++      '@codemirror/lang-less': 6.0.2
++      '@codemirror/lang-liquid': 6.3.3
++      '@codemirror/lang-markdown': 6.5.2
++      '@codemirror/lang-php': 6.0.2
++      '@codemirror/lang-python': 6.2.1
++      '@codemirror/lang-rust': 6.0.2
++      '@codemirror/lang-sass': 6.0.2
++      '@codemirror/lang-sql': 6.10.0
++      '@codemirror/lang-vue': 0.1.3
++      '@codemirror/lang-wast': 6.0.2
++      '@codemirror/lang-xml': 6.1.0
++      '@codemirror/lang-yaml': 6.1.3
++      '@codemirror/language': 6.12.4
++      '@codemirror/legacy-modes': 6.5.4
++
++  '@codemirror/language@6.12.4':
++    dependencies:
++      '@codemirror/state': 6.7.6
++      '@codemirror/view': 6.43.13
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++      style-mod: 4.1.4
++
++  '@codemirror/legacy-modes@6.5.4':
++    dependencies:
++      '@codemirror/language': 6.12.4
++
++  '@codemirror/lint@6.9.7':
++    dependencies:
++      '@codemirror/state': 6.7.6
++      '@codemirror/view': 6.43.13
++      crelt: 1.0.7
++
++  '@codemirror/search@6.7.2':
++    dependencies:
++      '@codemirror/state': 6.7.6
++      '@codemirror/view': 6.43.13
++      crelt: 1.0.7
++
++  '@codemirror/state@6.7.6':
++    dependencies:
++      '@marijn/find-cluster-break': 1.0.4
++
++  '@codemirror/theme-one-dark@6.1.3':
++    dependencies:
++      '@codemirror/language': 6.12.4
++      '@codemirror/state': 6.7.6
++      '@codemirror/view': 6.43.13
++      '@lezer/highlight': 1.2.5
++
++  '@codemirror/view@6.43.13':
++    dependencies:
++      '@codemirror/state': 6.7.6
++      crelt: 1.0.7
++      style-mod: 4.1.4
++      w3c-keyname: 2.2.8
++
+   '@csstools/color-helpers@6.0.2': {}
+ 
+   '@csstools/css-calc@3.2.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)':
+@@ -2568,6 +3009,101 @@ snapshots:
+       '@jridgewell/resolve-uri': 3.1.2
+       '@jridgewell/sourcemap-codec': 1.5.5
+ 
++  '@lezer/common@1.5.3': {}
++
++  '@lezer/cpp@1.1.6':
++    dependencies:
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@lezer/css@1.3.8':
++    dependencies:
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@lezer/go@1.0.1':
++    dependencies:
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@lezer/highlight@1.2.5':
++    dependencies:
++      '@lezer/common': 1.5.3
++
++  '@lezer/html@1.3.13':
++    dependencies:
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@lezer/java@1.1.4':
++    dependencies:
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@lezer/javascript@1.5.5':
++    dependencies:
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@lezer/json@1.0.3':
++    dependencies:
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@lezer/lr@1.4.10':
++    dependencies:
++      '@lezer/common': 1.5.3
++
++  '@lezer/markdown@1.7.2':
++    dependencies:
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++
++  '@lezer/php@1.0.6':
++    dependencies:
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@lezer/python@1.1.19':
++    dependencies:
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@lezer/rust@1.0.3':
++    dependencies:
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@lezer/sass@1.1.0':
++    dependencies:
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@lezer/xml@1.0.6':
++    dependencies:
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@lezer/yaml@1.0.4':
++    dependencies:
++      '@lezer/common': 1.5.3
++      '@lezer/highlight': 1.2.5
++      '@lezer/lr': 1.4.10
++
++  '@marijn/find-cluster-break@1.0.4': {}
++
+   '@mermaid-js/parser@1.1.0':
+     dependencies:
+       langium: 4.2.2
+@@ -3270,6 +3806,16 @@ snapshots:
+       '@chevrotain/types': 12.0.0
+       '@chevrotain/utils': 12.0.0
+ 
++  codemirror@6.0.2:
++    dependencies:
++      '@codemirror/autocomplete': 6.20.3
++      '@codemirror/commands': 6.11.1
++      '@codemirror/language': 6.12.4
++      '@codemirror/lint': 6.9.7
++      '@codemirror/search': 6.7.2
++      '@codemirror/state': 6.7.6
++      '@codemirror/view': 6.43.13
++
+   comma-separated-tokens@2.0.3: {}
+ 
+   commander@7.2.0: {}
+@@ -3290,6 +3836,8 @@ snapshots:
+     dependencies:
+       layout-base: 2.0.1
+ 
++  crelt@1.0.7: {}
++
+   css-tree@3.2.1:
+     dependencies:
+       mdn-data: 2.27.1
+@@ -4683,6 +5231,8 @@ snapshots:
+     dependencies:
+       min-indent: 1.0.1
+ 
++  style-mod@4.1.4: {}
++
+   style-to-js@1.1.21:
+     dependencies:
+       style-to-object: 1.0.14
+@@ -4860,6 +5410,8 @@ snapshots:
+ 
+   vscode-uri@3.1.0: {}
+ 
++  w3c-keyname@2.2.8: {}
++
+   w3c-xmlserializer@5.0.0:
+     dependencies:
+       xml-name-validator: 5.0.0
+diff --git a/internal/frontend/src/App.test.tsx b/internal/frontend/src/App.test.tsx
+index 25d674d..975c36a 100644
+--- a/internal/frontend/src/App.test.tsx
++++ b/internal/frontend/src/App.test.tsx
+@@ -11,6 +11,8 @@ describe("loadSettings", () => {
+     expect(s.theme).toBe("auto");
+     expect(s.fontSize).toBe("medium");
+     expect(s.wide).toBe(false);
++    expect(s.editorLineWrapping).toBe(true);
++    expect(s.editorAutoSave).toBe(false);
+   });
+ 
+   it("returns stored settings", () => {
+diff --git a/internal/frontend/src/App.tsx b/internal/frontend/src/App.tsx
+index 764c59d..4e5cfed 100644
+--- a/internal/frontend/src/App.tsx
++++ b/internal/frontend/src/App.tsx
+@@ -90,6 +90,7 @@ export function App() {
+   });
+   const [settings, setSettings] = useState<Settings>(loadSettings);
+   const [settingsOpen, setSettingsOpen] = useState(false);
++  const [isEditing, setIsEditing] = useState(false);
+   const knownFileIds = useRef<Set<string>>(new Set());
+   const [initialFileId, setInitialFileId] = useState<string | null>(() => {
+     const fromUrl = parseFileIdFromSearch(window.location.search);
+@@ -487,7 +488,7 @@ export function App() {
+         <main className="flex-1 flex flex-col overflow-hidden relative">
+           <div
+             ref={setScrollContainer}
+-            className="flex-1 overflow-y-auto overscroll-contain p-8 bg-gh-bg"
++            className={`flex-1 bg-gh-bg ${isEditing ? "overflow-hidden flex flex-col" : "overflow-y-auto overscroll-contain p-8"}`}
+           >
+             {activeFileId != null ? (
+               <MarkdownViewer
+@@ -504,10 +505,15 @@ export function App() {
+                 uploaded={activeFile?.uploaded}
+                 isWide={settings.wide}
+                 fontSize={settings.fontSize}
++                editorLineWrapping={settings.editorLineWrapping}
++                editorAutoSave={settings.editorAutoSave}
++                editorColorScheme={settings.editorColorScheme}
++                onEditStateChange={setIsEditing}
+                 onZoom={handleZoom}
+                 scrollToHeading={pendingSearchHeading}
+                 onScrolledToHeading={() => setPendingSearchHeading(null)}
+                 searchQuery={searchQuery}
++                scrollContainer={scrollContainer}
+               />
+             ) : (
+               <div className="flex items-center justify-center h-50 text-gh-text-secondary text-sm">
+@@ -535,7 +541,7 @@ export function App() {
+           />
+         )}
+       </div>
+-      <RestartButton />
++      <RestartButton isEditing={isEditing} />
+       {isDragging && <DropOverlay />}
+       {zoomContent && <ZoomModal content={zoomContent} onClose={handleZoomClose} />}
+       {settingsOpen && (
+diff --git a/internal/frontend/src/components/EditToggle.tsx b/internal/frontend/src/components/EditToggle.tsx
+new file mode 100644
+index 0000000..82dae77
+--- /dev/null
++++ b/internal/frontend/src/components/EditToggle.tsx
+@@ -0,0 +1,52 @@
++interface EditToggleProps {
++  isEditing: boolean;
++  onToggle: () => void;
++}
++
++export function EditToggle({ isEditing, onToggle }: EditToggleProps) {
++  return (
++    <button
++      type="button"
++      className="flex items-center justify-center bg-transparent border border-gh-border rounded-md p-1.5 text-gh-text-secondary cursor-pointer transition-colors duration-150 hover:bg-gh-bg-hover"
++      onClick={onToggle}
++      aria-label="Edit mode"
++      aria-pressed={isEditing}
++      title={isEditing ? "Exit editor" : "Edit"}
++    >
++      {isEditing ? (
++        <svg
++          className="size-5"
++          fill="none"
++          stroke="currentColor"
++          strokeWidth={1.5}
++          viewBox="0 0 24 24"
++        >
++          <path
++            strokeLinecap="round"
++            strokeLinejoin="round"
++            d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
++          />
++          <path
++            strokeLinecap="round"
++            strokeLinejoin="round"
++            d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
++          />
++        </svg>
++      ) : (
++        <svg
++          className="size-5"
++          fill="none"
++          stroke="currentColor"
++          strokeWidth={1.5}
++          viewBox="0 0 24 24"
++        >
++          <path
++            strokeLinecap="round"
++            strokeLinejoin="round"
++            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
++          />
++        </svg>
++      )}
++    </button>
++  );
++}
+diff --git a/internal/frontend/src/components/Editor.tsx b/internal/frontend/src/components/Editor.tsx
+new file mode 100644
+index 0000000..a4f707d
+--- /dev/null
++++ b/internal/frontend/src/components/Editor.tsx
+@@ -0,0 +1,191 @@
++import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from "react";
++import { EditorView, keymap } from "@codemirror/view";
++import { Compartment, Prec } from "@codemirror/state";
++import { basicSetup } from "codemirror";
++import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
++import { languages } from "@codemirror/language-data";
++import { saveFileContent } from "../hooks/useApi";
++import { getEditorTheme } from "../lib/editorThemes";
++
++interface EditorProps {
++  content: string;
++  activeGroup: string;
++  fileId: string;
++  lineWrapping?: boolean;
++  autoSave?: boolean;
++  initialLine?: number;
++  colorScheme?: string;
++}
++
++export interface EditorHandle {
++  getCursorLine(): number;
++  flushSave(): Promise<void>;
++  flushSaveTo(group: string, fileId: string): Promise<void>;
++}
++
++function getCurrentMode(): "dark" | "light" {
++  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
++}
++
++export const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
++  {
++    content,
++    activeGroup,
++    fileId,
++    lineWrapping = true,
++    autoSave = false,
++    initialLine,
++    colorScheme = "default",
++  },
++  ref,
++) {
++  const containerRef = useRef<HTMLDivElement>(null);
++  const viewRef = useRef<EditorView | null>(null);
++  const themeRef = useRef(new Compartment());
++  const wrapRef = useRef(new Compartment());
++  const savingRef = useRef(false);
++  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
++
++  const activeGroupRef = useRef(activeGroup);
++  activeGroupRef.current = activeGroup;
++  const fileIdRef = useRef(fileId);
++  fileIdRef.current = fileId;
++  const autoSaveRef = useRef(autoSave);
++  autoSaveRef.current = autoSave;
++  const colorSchemeRef = useRef(colorScheme);
++  colorSchemeRef.current = colorScheme;
++
++  // Snapshot the editor buffer synchronously, then save asynchronously, so
++  // callers can fire this right before the component unmounts (e.g. when
++  // the active file changes mid-edit) and the PUT still reaches the right
++  // target. Mirrors autoSave's silent-failure behaviour; surfacing errors
++  // is a separate task once there is a toast/banner story.
++  const saveBuffer = useCallback(async (group: string, id: string) => {
++    const view = viewRef.current;
++    if (!view) return;
++    if (savingRef.current) return;
++    const value = view.state.doc.toString();
++    savingRef.current = true;
++    try {
++      await saveFileContent(group, id, value);
++    } catch {
++      /* swallow */
++    } finally {
++      savingRef.current = false;
++    }
++  }, []);
++
++  useImperativeHandle(
++    ref,
++    () => ({
++      getCursorLine() {
++        const view = viewRef.current;
++        if (!view) return 0;
++        return view.state.doc.lineAt(view.state.selection.main.head).number - 1;
++      },
++      flushSave() {
++        clearTimeout(autoSaveTimerRef.current);
++        return saveBuffer(activeGroupRef.current, fileIdRef.current);
++      },
++      flushSaveTo(group: string, id: string) {
++        clearTimeout(autoSaveTimerRef.current);
++        return saveBuffer(group, id);
++      },
++    }),
++    [saveBuffer],
++  );
++
++  useEffect(() => {
++    if (!containerRef.current) return;
++
++    const themeCompartment = themeRef.current;
++    const wrapCompartment = wrapRef.current;
++    const initialTheme = getEditorTheme(colorSchemeRef.current, getCurrentMode());
++
++    const saveKeymap = Prec.high(
++      keymap.of([
++        {
++          key: "Mod-s",
++          preventDefault: true,
++          run: () => {
++            void saveBuffer(activeGroupRef.current, fileIdRef.current);
++            return true;
++          },
++        },
++      ]),
++    );
++
++    const view = new EditorView({
++      doc: content,
++      extensions: [
++        saveKeymap,
++        basicSetup,
++        markdown({ base: markdownLanguage, codeLanguages: languages }),
++        wrapCompartment.of(lineWrapping ? EditorView.lineWrapping : []),
++        themeCompartment.of(initialTheme),
++        EditorView.updateListener.of((update) => {
++          if (!update.docChanged) return;
++          if (!autoSaveRef.current) return;
++          clearTimeout(autoSaveTimerRef.current);
++          autoSaveTimerRef.current = setTimeout(() => {
++            void saveBuffer(activeGroupRef.current, fileIdRef.current);
++          }, 1000);
++        }),
++        EditorView.theme({
++          "&": { height: "100%" },
++          ".cm-scroller": { overflow: "auto" },
++          ".cm-content": { paddingRight: "3.5rem" },
++          "&.cm-focused": { outline: "none" },
++        }),
++      ],
++      parent: containerRef.current,
++    });
++
++    viewRef.current = view;
++
++    if (initialLine != null && initialLine > 0) {
++      const lineNum = Math.min(initialLine + 1, view.state.doc.lines);
++      const line = view.state.doc.line(lineNum);
++      view.dispatch({
++        selection: { anchor: line.from },
++        effects: EditorView.scrollIntoView(line.from, { y: "start" }),
++      });
++    }
++
++    view.focus();
++
++    const observer = new MutationObserver(() => {
++      const newTheme = getEditorTheme(colorSchemeRef.current, getCurrentMode());
++      view.dispatch({ effects: themeCompartment.reconfigure(newTheme) });
++    });
++    observer.observe(document.documentElement, {
++      attributes: true,
++      attributeFilter: ["data-theme"],
++    });
++
++    return () => {
++      clearTimeout(autoSaveTimerRef.current);
++      observer.disconnect();
++      view.destroy();
++      viewRef.current = null;
++    };
++    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-once; refs keep latest props
++  }, []);
++
++  useEffect(() => {
++    const view = viewRef.current;
++    if (!view) return;
++    const newTheme = getEditorTheme(colorScheme, getCurrentMode());
++    view.dispatch({ effects: themeRef.current.reconfigure(newTheme) });
++  }, [colorScheme]);
++
++  useEffect(() => {
++    const view = viewRef.current;
++    if (!view) return;
++    view.dispatch({
++      effects: wrapRef.current.reconfigure(lineWrapping ? EditorView.lineWrapping : []),
++    });
++  }, [lineWrapping]);
++
++  return <div ref={containerRef} className="mo-editor h-full overflow-hidden" />;
++});
+diff --git a/internal/frontend/src/components/MarkdownViewer.tsx b/internal/frontend/src/components/MarkdownViewer.tsx
+index 28d13b1..903a8f8 100644
+--- a/internal/frontend/src/components/MarkdownViewer.tsx
++++ b/internal/frontend/src/components/MarkdownViewer.tsx
+@@ -13,6 +13,8 @@ import mermaid from "mermaid";
+ import { fetchFileContent, openRelativeFile } from "../hooks/useApi";
+ import { escapeRegExp } from "../utils/regex";
+ import { RawToggle } from "./RawToggle";
++import { EditToggle } from "./EditToggle";
++import { Editor, type EditorHandle } from "./Editor";
+ import { TocToggle } from "./TocToggle";
+ import { CopyButton } from "./CopyButton";
+ import { CloseFileButton } from "./CloseFileButton";
+@@ -79,6 +81,11 @@ interface MarkdownViewerProps {
+   scrollToHeading?: string | null;
+   onScrolledToHeading?: () => void;
+   searchQuery?: string | null;
++  editorLineWrapping?: boolean;
++  editorAutoSave?: boolean;
++  editorColorScheme?: string;
++  scrollContainer?: HTMLElement | null;
++  onEditStateChange?: (editing: boolean) => void;
+ }
+ 
+ interface SearchHitMarker {
+@@ -86,6 +93,77 @@ interface SearchHitMarker {
+   height: number;
+ }
+ 
++/** Anchor for syncing scroll position between view and edit modes. */
++interface ScrollAnchor {
++  text: string;
++  occurrence: number;
++  line: number;
++}
++
++/** Strip inline Markdown formatting to get plain text for heading comparison. */
++function stripInlineMarkdown(text: string): string {
++  return text
++    .replace(/\*\*(.+?)\*\*/g, "$1") // bold
++    .replace(/__(.+?)__/g, "$1")
++    .replace(/\*(.+?)\*/g, "$1") // italic
++    .replace(/_(.+?)_/g, "$1")
++    .replace(/~~(.+?)~~/g, "$1") // strikethrough
++    .replace(/`(.+?)`/g, "$1") // inline code
++    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1") // links
++    .replace(/\s+#+\s*$/, "") // trailing hashes
++    .trim();
++}
++
++/** Find a heading anchor in the source by text and occurrence index. */
++function findHeadingLine(
++  content: string,
++  headingText: string,
++  occurrenceIndex: number,
++): number | undefined {
++  const lines = content.split("\n");
++  let seen = 0;
++  for (let i = 0; i < lines.length; i++) {
++    const m = lines[i].match(/^#{1,6}\s+(.*)/);
++    if (m && stripInlineMarkdown(m[1]) === headingText) {
++      if (seen === occurrenceIndex) return i;
++      seen++;
++    }
++  }
++  return undefined;
++}
++
++/** Build a ScrollAnchor from a source line by searching upward for the nearest heading. */
++function anchorFromSourceLine(content: string, cursorLine: number): ScrollAnchor | null {
++  const lines = content.split("\n");
++  for (let i = Math.min(cursorLine, lines.length - 1); i >= 0; i--) {
++    const m = lines[i].match(/^#{1,6}\s+(.*)/);
++    if (m) {
++      const text = stripInlineMarkdown(m[1]);
++      // Count occurrence of this heading text up to line i
++      let occurrence = 0;
++      for (let j = 0; j < i; j++) {
++        const m2 = lines[j].match(/^#{1,6}\s+(.*)/);
++        if (m2 && stripInlineMarkdown(m2[1]) === text) occurrence++;
++      }
++      return { text, occurrence, line: i };
++    }
++  }
++  return null;
++}
++
++/** Find the DOM heading element matching a ScrollAnchor. */
++function findDomHeading(container: HTMLElement, anchor: ScrollAnchor): Element | null {
++  const headingEls = container.querySelectorAll("h1, h2, h3, h4, h5, h6");
++  let seen = 0;
++  for (const el of headingEls) {
++    if ((el.textContent ?? "").trim() === anchor.text) {
++      if (seen === anchor.occurrence) return el;
++      seen++;
++    }
++  }
++  return null;
++}
++
+ const SEARCH_HIT_COLUMN_OFFSET = -24;
+ 
+ function collectSearchHitMarkers(root: HTMLElement, query: string): SearchHitMarker[] {
+@@ -542,20 +620,58 @@ export function MarkdownViewer({
+   scrollToHeading,
+   onScrolledToHeading,
+   searchQuery,
++  editorLineWrapping = true,
++  editorAutoSave = false,
++  editorColorScheme = "default",
++  scrollContainer,
++  onEditStateChange,
+ }: MarkdownViewerProps) {
+   const [content, setContent] = useState("");
+   const [loading, setLoading] = useState(true);
+   const [isRawView, setIsRawView] = useState(false);
++  const [isEditView, setIsEditView] = useState(false);
++  useEffect(() => {
++    onEditStateChange?.(isEditView);
++  }, [isEditView, onEditStateChange]);
++  const [editAnchor, setEditAnchor] = useState<ScrollAnchor | null>(null);
++  const editorRef = useRef<EditorHandle>(null);
++  const editTargetRef = useRef<{ group: string; fileId: string } | null>(null);
+   const [searchHitMarkers, setSearchHitMarkers] = useState<SearchHitMarker[]>([]);
+   const articleRef = useRef<HTMLElement>(null);
+   const [prevFetchKey, setPrevFetchKey] = useState({ fileId, revision });
+ 
+-  if (fileId !== prevFetchKey.fileId || revision !== prevFetchKey.revision) {
++  // Detect file switches that happen while the editor is open. Saving has to
++  // run from an effect (not the render-phase prevFetchKey block below) so it
++  // does not get duplicated under StrictMode's double-invocation. The next
++  // effect updates editTargetRef AFTER this one fires so we read the OLD
++  // target here before it gets overwritten.
++  useEffect(() => {
++    const target = editTargetRef.current;
++    if (target && target.fileId !== fileId) {
++      void editorRef.current?.flushSaveTo(target.group, target.fileId);
++      setIsEditView(false);
++    }
++  }, [fileId]);
++
++  useEffect(() => {
++    editTargetRef.current = isEditView ? { group: activeGroup, fileId } : null;
++  }, [isEditView, activeGroup, fileId]);
++
++  if (fileId !== prevFetchKey.fileId) {
+     setPrevFetchKey({ fileId, revision });
+     setLoading(true);
++  } else if (revision !== prevFetchKey.revision && !isEditView) {
++    setPrevFetchKey({ fileId, revision });
++    setLoading(true);
++  } else if (revision !== prevFetchKey.revision) {
++    // In edit mode, just update the key without triggering loading
++    setPrevFetchKey({ fileId, revision });
+   }
+ 
+   useEffect(() => {
++    // Skip re-fetching while in edit mode — the editor owns the content.
++    // When exiting edit mode, isEditView flips to false and triggers a re-fetch.
++    if (isEditView) return;
+     let cancelled = false;
+     fetchFileContent(activeGroup, fileId)
+       .then((data) => {
+@@ -573,7 +689,7 @@ export function MarkdownViewer({
+     return () => {
+       cancelled = true;
+     };
+-  }, [activeGroup, fileId, revision]);
++  }, [activeGroup, fileId, revision, isEditView]);
+ 
+   const handleLinkClick = useCallback(
+     async (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+@@ -769,6 +885,16 @@ export function MarkdownViewer({
+     }
+   }, [loading, renderedContent, scrollToHeading, onScrolledToHeading]);
+ 
++  // Scroll to heading when returning from edit mode
++  useLayoutEffect(() => {
++    if (loading || isEditView || !editAnchor || !articleRef.current) return;
++    const target = findDomHeading(articleRef.current, editAnchor);
++    if (target) {
++      target.scrollIntoView({ behavior: "auto", block: "start" });
++    }
++    setEditAnchor(null);
++  }, [loading, isEditView, editAnchor, renderedContent]);
++
+   useLayoutEffect(() => {
+     if (loading || !articleRef.current || !isMarkdown || isRawView || !searchQuery?.trim()) {
+       setSearchHitMarkers([]);
+@@ -795,6 +921,65 @@ export function MarkdownViewer({
+     };
+   }, [loading, renderedContent, isMarkdown, isRawView, searchQuery]);
+ 
++  /** Build anchor from editor cursor line (Edit → View). */
++  const anchorFromEditor = useCallback((): ScrollAnchor | null => {
++    const cursorLine = editorRef.current?.getCursorLine();
++    if (cursorLine == null) return null;
++    return anchorFromSourceLine(content, cursorLine);
++  }, [content]);
++
++  /** Build anchor from current viewport position (View → Edit). */
++  const anchorFromView = useCallback((): ScrollAnchor | null => {
++    if (!articleRef.current) return null;
++    const headingEls = articleRef.current.querySelectorAll("h1, h2, h3, h4, h5, h6");
++    let nearest: Element | null = null;
++    for (const el of headingEls) {
++      if (el.getBoundingClientRect().top <= window.innerHeight / 3) {
++        nearest = el;
++      }
++    }
++    if (!nearest) return null;
++    const text = (nearest.textContent ?? "").trim();
++    let occurrence = 0;
++    for (const el of headingEls) {
++      if (el === nearest) break;
++      if ((el.textContent ?? "").trim() === text) occurrence++;
++    }
++    const line = findHeadingLine(content, text, occurrence);
++    if (line == null) return null;
++    return { text, occurrence, line };
++  }, [content]);
++
++  /** Estimate source line from scroll ratio (fallback when no heading available). */
++  const estimateLineFromScroll = useCallback((): number | undefined => {
++    if (!scrollContainer || scrollContainer.scrollHeight <= scrollContainer.clientHeight)
++      return undefined;
++    const ratio =
++      scrollContainer.scrollTop / (scrollContainer.scrollHeight - scrollContainer.clientHeight);
++    return Math.floor(ratio * content.split("\n").length);
++  }, [content, scrollContainer]);
++
++  const handleToggleEdit = useCallback(async () => {
++    if (isEditView) {
++      // Edit → View. flushSave first so unsaved typing is not lost when the
++      // editor unmounts. Failures match autoSave's silent-failure UX.
++      await editorRef.current?.flushSave();
++      setEditAnchor(anchorFromEditor());
++      setIsEditView(false);
++      return;
++    }
++    // View → Edit
++    setIsRawView(false);
++    const anchor = anchorFromView();
++    setEditAnchor(anchor ?? { text: "", occurrence: 0, line: estimateLineFromScroll() ?? 0 });
++    setIsEditView(true);
++  }, [isEditView, anchorFromEditor, anchorFromView, estimateLineFromScroll]);
++
++  const handleToggleRaw = useCallback(() => {
++    if (isEditView) setIsEditView(false);
++    setIsRawView((v) => !v);
++  }, [isEditView]);
++
+   if (loading) {
+     return (
+       <div className="flex items-center justify-center h-50 text-gh-text-secondary text-sm">
+@@ -803,6 +988,36 @@ export function MarkdownViewer({
+     );
+   }
+ 
++  const toolbarButtons = (
++    <div className="shrink-0 flex flex-col gap-2 -mr-4 -mt-4 sticky -top-4">
++      {isMarkdown && <EditToggle isEditing={isEditView} onToggle={handleToggleEdit} />}
++      {isMarkdown && <TocToggle isTocOpen={isTocOpen} onToggle={onTocToggle} />}
++      {isMarkdown && <RawToggle isRaw={isRawView} onToggle={handleToggleRaw} />}
++      <CopyButton content={content} />
++      <CloseFileButton onClose={onRemoveFile} uploaded={uploaded} />
++    </div>
++  );
++
++  if (isEditView) {
++    return (
++      <div className="relative h-full">
++        <Editor
++          ref={editorRef}
++          content={content}
++          activeGroup={activeGroup}
++          fileId={fileId}
++          lineWrapping={editorLineWrapping}
++          autoSave={editorAutoSave}
++          colorScheme={editorColorScheme}
++          initialLine={editAnchor?.line}
++        />
++        <div className="absolute top-4 right-4 z-10">
++          <EditToggle isEditing={isEditView} onToggle={handleToggleEdit} />
++        </div>
++      </div>
++    );
++  }
++
+   return (
+     <div className="flex items-start gap-2">
+       <article
+@@ -824,12 +1039,7 @@ export function MarkdownViewer({
+         </div>
+         {renderedContent}
+       </article>
+-      <div className="shrink-0 flex flex-col gap-2 -mr-4 -mt-4 sticky -top-4">
+-        {isMarkdown && <TocToggle isTocOpen={isTocOpen} onToggle={onTocToggle} />}
+-        {isMarkdown && <RawToggle isRaw={isRawView} onToggle={() => setIsRawView((v) => !v)} />}
+-        <CopyButton content={content} />
+-        <CloseFileButton onClose={onRemoveFile} uploaded={uploaded} />
+-      </div>
++      {toolbarButtons}
+     </div>
+   );
+ }
+diff --git a/internal/frontend/src/components/RestartButton.tsx b/internal/frontend/src/components/RestartButton.tsx
+index 7efaf0b..e81844d 100644
+--- a/internal/frontend/src/components/RestartButton.tsx
++++ b/internal/frontend/src/components/RestartButton.tsx
+@@ -3,7 +3,7 @@ import { restartServer, fetchVersion, type VersionInfo } from "../hooks/useApi";
+ 
+ type Status = "idle" | "restarting";
+ 
+-export function RestartButton() {
++export function RestartButton({ isEditing = false }: { isEditing?: boolean }) {
+   const [status, setStatus] = useState<Status>("idle");
+   const [version, setVersion] = useState<VersionInfo | null>(null);
+ 
+@@ -44,7 +44,7 @@ export function RestartButton() {
+   return (
+     <>
+       <button
+-        className="fixed bottom-4 right-4 flex items-center justify-center bg-transparent border border-gh-border rounded-md p-1.5 text-gh-text-secondary cursor-pointer transition-colors duration-150 hover:bg-gh-bg-hover disabled:opacity-50 disabled:cursor-not-allowed"
++        className={`fixed right-4 flex items-center justify-center bg-transparent border border-gh-border rounded-md p-1.5 text-gh-text-secondary cursor-pointer transition-colors duration-150 hover:bg-gh-bg-hover disabled:opacity-50 disabled:cursor-not-allowed ${isEditing ? "bottom-10" : "bottom-4"}`}
+         onClick={handleClick}
+         disabled={status === "restarting"}
+         title={title}
+diff --git a/internal/frontend/src/components/SettingsDialog.tsx b/internal/frontend/src/components/SettingsDialog.tsx
+index 8b28c27..8956876 100644
+--- a/internal/frontend/src/components/SettingsDialog.tsx
++++ b/internal/frontend/src/components/SettingsDialog.tsx
+@@ -1,4 +1,6 @@
+ import type { Settings } from "../lib/settings";
++import { getEffectiveTheme } from "../lib/settings";
++import { EDITOR_COLOR_SCHEMES } from "../lib/editorThemes";
+ 
+ interface SettingsDialogProps {
+   settings: Settings;
+@@ -103,6 +105,70 @@ export function SettingsDialog({ settings, onChange, onClose }: SettingsDialogPr
+             onChange={(v) => update({ smoothScroll: v })}
+           />
+         </Section>
++
++        {/* Editor */}
++        <Section title="Editor">
++          {/* Color Scheme */}
++          <div className="mb-4">
++            <label className="block text-sm font-medium text-gh-text mb-2">Color scheme</label>
++            <div className="grid grid-cols-4 gap-2">
++              {EDITOR_COLOR_SCHEMES.map((scheme) => {
++                const mode = getEffectiveTheme(settings.theme);
++                const colors = scheme[mode];
++                const isActive = settings.editorColorScheme === scheme.name;
++                return (
++                  <button
++                    key={scheme.name}
++                    className={`rounded-md border p-2 cursor-pointer transition-all ${
++                      isActive
++                        ? "border-blue-500 ring-1 ring-blue-500"
++                        : "border-gh-border hover:border-gh-text-secondary"
++                    }`}
++                    onClick={() => update({ editorColorScheme: scheme.name })}
++                  >
++                    <div
++                      className="rounded h-7 mb-1 flex items-center gap-0.5 px-1.5 overflow-hidden"
++                      style={{ background: colors.bg }}
++                    >
++                      <div
++                        className="w-1.5 h-1.5 rounded-full"
++                        style={{ background: colors.cursor }}
++                      />
++                      <div
++                        className="w-1.5 h-1.5 rounded-full"
++                        style={{ background: colors.text }}
++                      />
++                      <div
++                        className="w-1.5 h-1.5 rounded-full"
++                        style={{ background: colors.gutterText }}
++                      />
++                      <div
++                        className="flex-1 h-0.5 rounded ml-0.5"
++                        style={{ background: colors.activeLineBg }}
++                      />
++                    </div>
++                    <div className="text-[11px] text-center truncate text-gh-text-secondary">
++                      {scheme.label}
++                    </div>
++                  </button>
++                );
++              })}
++            </div>
++          </div>
++
++          <Toggle
++            label="Line wrapping"
++            description="Wrap long lines at the editor edge"
++            checked={settings.editorLineWrapping}
++            onChange={(v) => update({ editorLineWrapping: v })}
++          />
++          <Toggle
++            label="Auto save"
++            description="Automatically save after 1 second of inactivity"
++            checked={settings.editorAutoSave}
++            onChange={(v) => update({ editorAutoSave: v })}
++          />
++        </Section>
+       </div>
+     </div>
+   );
+diff --git a/internal/frontend/src/hooks/useApi.ts b/internal/frontend/src/hooks/useApi.ts
+index 0561c3c..6bf2232 100644
+--- a/internal/frontend/src/hooks/useApi.ts
++++ b/internal/frontend/src/hooks/useApi.ts
+@@ -126,6 +126,18 @@ export async function uploadFile(name: string, content: string, group: string):
+   }
+ }
+ 
++export async function saveFileContent(group: string, id: string, content: string): Promise<void> {
++  const res = await fetch(`${groupPath(group)}/files/${id}/content`, {
++    method: "PUT",
++    headers: { "Content-Type": "application/json" },
++    body: JSON.stringify({ content }),
++  });
++  if (!res.ok) {
++    const text = await res.text();
++    throw new Error(text.trim() || "Failed to save file");
++  }
++}
++
+ export async function restartServer(): Promise<void> {
+   const res = await fetch("/_/api/restart", { method: "POST" });
+   if (!res.ok) throw new Error("Failed to restart server");
+diff --git a/internal/frontend/src/lib/editorThemes.ts b/internal/frontend/src/lib/editorThemes.ts
+new file mode 100644
+index 0000000..1eb65ec
+--- /dev/null
++++ b/internal/frontend/src/lib/editorThemes.ts
+@@ -0,0 +1,462 @@
++import { EditorView } from "@codemirror/view";
++import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
++import { tags } from "@lezer/highlight";
++import type { Extension } from "@codemirror/state";
++
++export interface EditorColorScheme {
++  name: string;
++  label: string;
++  dark: EditorThemeColors;
++  light: EditorThemeColors;
++}
++
++interface EditorThemeColors {
++  // Editor chrome
++  bg: string;
++  text: string;
++  gutterBg: string;
++  gutterText: string;
++  gutterBorder: string;
++  activeLineBg: string;
++  activeGutterBg: string;
++  cursor: string;
++  selection: string;
++  // Syntax highlighting
++  heading: string;
++  emphasis: string;
++  strong: string;
++  link: string;
++  url: string;
++  code: string;
++  quote: string;
++  meta: string;
++  list: string;
++}
++
++export const EDITOR_COLOR_SCHEMES: EditorColorScheme[] = [
++  {
++    name: "default",
++    label: "Default",
++    dark: {
++      bg: "#282c34",
++      text: "#abb2bf",
++      gutterBg: "#282c34",
++      gutterText: "#636d83",
++      gutterBorder: "#3e4452",
++      activeLineBg: "#2c313c",
++      activeGutterBg: "#2c313c",
++      cursor: "#528bff",
++      selection: "rgba(62, 68, 82, 0.6)",
++      heading: "#e06c75",
++      emphasis: "#c678dd",
++      strong: "#e5c07b",
++      link: "#61afef",
++      url: "#56b6c2",
++      code: "#98c379",
++      quote: "#5c6370",
++      meta: "#636d83",
++      list: "#d19a66",
++    },
++    light: {
++      bg: "#ffffff",
++      text: "#1f2328",
++      gutterBg: "#f6f8fa",
++      gutterText: "#636c76",
++      gutterBorder: "#d0d7de",
++      activeLineBg: "#f6f8fa",
++      activeGutterBg: "#e1e4e8",
++      cursor: "#1f2328",
++      selection: "rgba(9, 105, 218, 0.2)",
++      heading: "#d73a49",
++      emphasis: "#6f42c1",
++      strong: "#e36209",
++      link: "#0969da",
++      url: "#0550ae",
++      code: "#032f62",
++      quote: "#6a737d",
++      meta: "#8b949e",
++      list: "#e36209",
++    },
++  },
++  {
++    name: "tokyo-night",
++    label: "Tokyo Night",
++    dark: {
++      bg: "#1a1b26",
++      text: "#a9b1d6",
++      gutterBg: "#1a1b26",
++      gutterText: "#3b3d57",
++      gutterBorder: "#2f3348",
++      activeLineBg: "#24283b",
++      activeGutterBg: "#24283b",
++      cursor: "#c0caf5",
++      selection: "rgba(42, 55, 100, 0.5)",
++      heading: "#bb9af7",
++      emphasis: "#c0caf5",
++      strong: "#e0af68",
++      link: "#7aa2f7",
++      url: "#73daca",
++      code: "#9ece6a",
++      quote: "#565f89",
++      meta: "#444b6a",
++      list: "#ff9e64",
++    },
++    light: {
++      bg: "#d5d6db",
++      text: "#343b58",
++      gutterBg: "#cbccd1",
++      gutterText: "#6e7191",
++      gutterBorder: "#b4b5ba",
++      activeLineBg: "#cbccd1",
++      activeGutterBg: "#c0c1c6",
++      cursor: "#343b58",
++      selection: "rgba(52, 84, 138, 0.2)",
++      heading: "#8c4351",
++      emphasis: "#7c3aed",
++      strong: "#8f5e15",
++      link: "#34548a",
++      url: "#166775",
++      code: "#485e30",
++      quote: "#6e7191",
++      meta: "#9699a3",
++      list: "#965027",
++    },
++  },
++  {
++    name: "nord",
++    label: "Nord",
++    dark: {
++      bg: "#2e3440",
++      text: "#d8dee9",
++      gutterBg: "#2e3440",
++      gutterText: "#4c566a",
++      gutterBorder: "#3b4252",
++      activeLineBg: "#3b4252",
++      activeGutterBg: "#3b4252",
++      cursor: "#d8dee9",
++      selection: "rgba(67, 76, 94, 0.6)",
++      heading: "#81a1c1",
++      emphasis: "#b48ead",
++      strong: "#ebcb8b",
++      link: "#88c0d0",
++      url: "#8fbcbb",
++      code: "#a3be8c",
++      quote: "#616e88",
++      meta: "#4c566a",
++      list: "#d08770",
++    },
++    light: {
++      bg: "#eceff4",
++      text: "#2e3440",
++      gutterBg: "#e5e9f0",
++      gutterText: "#4c566a",
++      gutterBorder: "#d8dee9",
++      activeLineBg: "#e5e9f0",
++      activeGutterBg: "#d8dee9",
++      cursor: "#2e3440",
++      selection: "rgba(94, 129, 172, 0.2)",
++      heading: "#5e81ac",
++      emphasis: "#b48ead",
++      strong: "#d08770",
++      link: "#5e81ac",
++      url: "#4c6e96",
++      code: "#a3be8c",
++      quote: "#7b88a1",
++      meta: "#9199a8",
++      list: "#d08770",
++    },
++  },
++  {
++    name: "solarized",
++    label: "Solarized",
++    dark: {
++      bg: "#002b36",
++      text: "#839496",
++      gutterBg: "#002b36",
++      gutterText: "#586e75",
++      gutterBorder: "#073642",
++      activeLineBg: "#073642",
++      activeGutterBg: "#073642",
++      cursor: "#839496",
++      selection: "rgba(7, 54, 66, 0.8)",
++      heading: "#b58900",
++      emphasis: "#d33682",
++      strong: "#cb4b16",
++      link: "#268bd2",
++      url: "#2aa198",
++      code: "#859900",
++      quote: "#586e75",
++      meta: "#657b83",
++      list: "#cb4b16",
++    },
++    light: {
++      bg: "#fdf6e3",
++      text: "#657b83",
++      gutterBg: "#eee8d5",
++      gutterText: "#93a1a1",
++      gutterBorder: "#d3cbb7",
++      activeLineBg: "#eee8d5",
++      activeGutterBg: "#e6e0ce",
++      cursor: "#657b83",
++      selection: "rgba(238, 232, 213, 0.8)",
++      heading: "#b58900",
++      emphasis: "#d33682",
++      strong: "#cb4b16",
++      link: "#268bd2",
++      url: "#2aa198",
++      code: "#859900",
++      quote: "#93a1a1",
++      meta: "#93a1a1",
++      list: "#cb4b16",
++    },
++  },
++  {
++    name: "dracula",
++    label: "Dracula",
++    dark: {
++      bg: "#282a36",
++      text: "#f8f8f2",
++      gutterBg: "#282a36",
++      gutterText: "#6272a4",
++      gutterBorder: "#44475a",
++      activeLineBg: "#44475a",
++      activeGutterBg: "#44475a",
++      cursor: "#f8f8f2",
++      selection: "rgba(68, 71, 90, 0.6)",
++      heading: "#ff79c6",
++      emphasis: "#f1fa8c",
++      strong: "#ffb86c",
++      link: "#8be9fd",
++      url: "#50fa7b",
++      code: "#50fa7b",
++      quote: "#6272a4",
++      meta: "#6272a4",
++      list: "#bd93f9",
++    },
++    light: {
++      bg: "#f8f8f2",
++      text: "#282a36",
++      gutterBg: "#f0f0e8",
++      gutterText: "#6272a4",
++      gutterBorder: "#d0d0c8",
++      activeLineBg: "#f0f0e8",
++      activeGutterBg: "#e8e8e0",
++      cursor: "#282a36",
++      selection: "rgba(124, 58, 237, 0.15)",
++      heading: "#d6336c",
++      emphasis: "#7c3aed",
++      strong: "#e36209",
++      link: "#0969da",
++      url: "#2e8b57",
++      code: "#2e8b57",
++      quote: "#6272a4",
++      meta: "#9ea4b8",
++      list: "#7c3aed",
++    },
++  },
++  {
++    name: "catppuccin",
++    label: "Catppuccin",
++    dark: {
++      bg: "#1e1e2e",
++      text: "#cdd6f4",
++      gutterBg: "#1e1e2e",
++      gutterText: "#6c7086",
++      gutterBorder: "#313244",
++      activeLineBg: "#313244",
++      activeGutterBg: "#313244",
++      cursor: "#f5e0dc",
++      selection: "rgba(88, 91, 112, 0.4)",
++      heading: "#f38ba8",
++      emphasis: "#cba6f7",
++      strong: "#fab387",
++      link: "#89b4fa",
++      url: "#94e2d5",
++      code: "#a6e3a1",
++      quote: "#6c7086",
++      meta: "#585b70",
++      list: "#f9e2af",
++    },
++    light: {
++      bg: "#eff1f5",
++      text: "#4c4f69",
++      gutterBg: "#e6e9ef",
++      gutterText: "#9ca0b0",
++      gutterBorder: "#ccd0da",
++      activeLineBg: "#e6e9ef",
++      activeGutterBg: "#dce0e8",
++      cursor: "#4c4f69",
++      selection: "rgba(30, 102, 245, 0.15)",
++      heading: "#d20f39",
++      emphasis: "#8839ef",
++      strong: "#fe640b",
++      link: "#1e66f5",
++      url: "#179299",
++      code: "#40a02b",
++      quote: "#9ca0b0",
++      meta: "#acb0be",
++      list: "#df8e1d",
++    },
++  },
++  {
++    name: "rose-pine",
++    label: "Ros\u00e9 Pine",
++    dark: {
++      bg: "#191724",
++      text: "#e0def4",
++      gutterBg: "#191724",
++      gutterText: "#6e6a86",
++      gutterBorder: "#26233a",
++      activeLineBg: "#26233a",
++      activeGutterBg: "#26233a",
++      cursor: "#e0def4",
++      selection: "rgba(46, 40, 68, 0.7)",
++      heading: "#ebbcba",
++      emphasis: "#c4a7e7",
++      strong: "#f6c177",
++      link: "#9ccfd8",
++      url: "#31748f",
++      code: "#31748f",
++      quote: "#6e6a86",
++      meta: "#555169",
++      list: "#eb6f92",
++    },
++    light: {
++      bg: "#faf4ed",
++      text: "#575279",
++      gutterBg: "#f2e9e1",
++      gutterText: "#9893a5",
++      gutterBorder: "#dfdad6",
++      activeLineBg: "#f2e9e1",
++      activeGutterBg: "#ebe5dd",
++      cursor: "#575279",
++      selection: "rgba(144, 122, 169, 0.15)",
++      heading: "#d7827e",
++      emphasis: "#907aa9",
++      strong: "#ea9d34",
++      link: "#286983",
++      url: "#56949f",
++      code: "#56949f",
++      quote: "#9893a5",
++      meta: "#b4afba",
++      list: "#b4637a",
++    },
++  },
++  {
++    name: "gruvbox",
++    label: "Gruvbox",
++    dark: {
++      bg: "#282828",
++      text: "#ebdbb2",
++      gutterBg: "#282828",
++      gutterText: "#665c54",
++      gutterBorder: "#3c3836",
++      activeLineBg: "#3c3836",
++      activeGutterBg: "#3c3836",
++      cursor: "#ebdbb2",
++      selection: "rgba(80, 73, 69, 0.6)",
++      heading: "#fb4934",
++      emphasis: "#d3869b",
++      strong: "#fabd2f",
++      link: "#83a598",
++      url: "#8ec07c",
++      code: "#b8bb26",
++      quote: "#665c54",
++      meta: "#7c6f64",
++      list: "#fe8019",
++    },
++    light: {
++      bg: "#fbf1c7",
++      text: "#3c3836",
++      gutterBg: "#f2e5bc",
++      gutterText: "#928374",
++      gutterBorder: "#d5c4a1",
++      activeLineBg: "#f2e5bc",
++      activeGutterBg: "#ebdbb2",
++      cursor: "#3c3836",
++      selection: "rgba(69, 133, 136, 0.15)",
++      heading: "#9d0006",
++      emphasis: "#8f3f71",
++      strong: "#b57614",
++      link: "#458588",
++      url: "#689d6a",
++      code: "#79740e",
++      quote: "#928374",
++      meta: "#a89984",
++      list: "#af3a03",
++    },
++  },
++];
++
++function buildTheme(colors: EditorThemeColors): Extension[] {
++  const theme = EditorView.theme({
++    "&": {
++      backgroundColor: colors.bg,
++      color: colors.text,
++    },
++    ".cm-gutters": {
++      backgroundColor: colors.gutterBg,
++      color: colors.gutterText,
++      borderRight: `1px solid ${colors.gutterBorder}`,
++    },
++    // Active line highlights are intentionally transparent. CodeMirror paints
++    // .cm-activeLine as a solid line background and .cm-selectionBackground
++    // as a semi-transparent overlay; with both opaque, the selection blends
++    // back into the active line and becomes invisible. We keep the cursor
++    // alone as the "where am I" indicator.
++    ".cm-activeLineGutter": {
++      backgroundColor: "transparent",
++    },
++    ".cm-activeLine": {
++      backgroundColor: "transparent",
++    },
++    ".cm-cursor": {
++      borderLeftColor: colors.cursor,
++    },
++    "&.cm-focused .cm-selectionBackground, .cm-selectionBackground": {
++      backgroundColor: `${colors.selection} !important`,
++    },
++  });
++
++  const highlighting = syntaxHighlighting(
++    HighlightStyle.define([
++      // Headings
++      { tag: tags.heading1, color: colors.heading, fontWeight: "bold", fontSize: "1.3em" },
++      { tag: tags.heading2, color: colors.heading, fontWeight: "bold", fontSize: "1.2em" },
++      { tag: tags.heading3, color: colors.heading, fontWeight: "bold", fontSize: "1.1em" },
++      {
++        tag: [tags.heading4, tags.heading5, tags.heading6],
++        color: colors.heading,
++        fontWeight: "bold",
++      },
++      // Emphasis & strong
++      { tag: tags.emphasis, color: colors.emphasis, fontStyle: "italic" },
++      { tag: tags.strong, color: colors.strong, fontWeight: "bold" },
++      // Links & URLs
++      { tag: tags.link, color: colors.link, textDecoration: "underline" },
++      { tag: tags.url, color: colors.url },
++      // Code
++      { tag: [tags.monospace, tags.processingInstruction], color: colors.code },
++      // Quotes
++      { tag: tags.quote, color: colors.quote, fontStyle: "italic" },
++      // List markers
++      { tag: tags.list, color: colors.list },
++      // Metadata / markers (e.g. #, *, >, ```)
++      { tag: [tags.meta, tags.comment], color: colors.meta },
++      { tag: tags.contentSeparator, color: colors.meta },
++      // Strikethrough
++      { tag: tags.strikethrough, textDecoration: "line-through", color: colors.meta },
++    ]),
++  );
++
++  return [theme, highlighting];
++}
++
++export function getEditorScheme(name: string): EditorColorScheme {
++  return EDITOR_COLOR_SCHEMES.find((s) => s.name === name) ?? EDITOR_COLOR_SCHEMES[0];
++}
++
++export function getEditorTheme(schemeName: string, mode: "dark" | "light"): Extension[] {
++  const scheme = getEditorScheme(schemeName);
++  return buildTheme(scheme[mode]);
++}
+diff --git a/internal/frontend/src/lib/settings.ts b/internal/frontend/src/lib/settings.ts
+index f35e873..6155188 100644
+--- a/internal/frontend/src/lib/settings.ts
++++ b/internal/frontend/src/lib/settings.ts
+@@ -5,6 +5,9 @@ export interface Settings {
+   sidebarOverlay: boolean;
+   tocFloating: boolean;
+   smoothScroll: boolean;
++  editorLineWrapping: boolean;
++  editorAutoSave: boolean;
++  editorColorScheme: string;
+ }
+ 
+ const STORAGE_KEY = "mo-settings";
+@@ -16,6 +19,9 @@ const defaults: Settings = {
+   sidebarOverlay: false,
+   tocFloating: false,
+   smoothScroll: true,
++  editorLineWrapping: true,
++  editorAutoSave: false,
++  editorColorScheme: "default",
+ };
+ 
+ export function loadSettings(): Settings {
+diff --git a/internal/frontend/src/styles/app.css b/internal/frontend/src/styles/app.css
+index 07a84d9..a351811 100644
+--- a/internal/frontend/src/styles/app.css
++++ b/internal/frontend/src/styles/app.css
+@@ -211,6 +211,12 @@ body,
+   color: var(--fgColor-danger);
+ }
+ 
++/* CodeMirror editor */
++.mo-editor .cm-editor {
++  font-family: "Menlo", "Monaco", "Courier New", monospace;
++  font-size: 14px;
++}
++
+ [data-theme="dark"] .markdown-body {
+   color-scheme: dark;
+   --fgColor-accent: #4493f8;
+diff --git a/internal/server/server.go b/internal/server/server.go
+index 62a1984..7e05c74 100644
+--- a/internal/server/server.go
++++ b/internal/server/server.go
+@@ -382,6 +382,40 @@ func (s *State) FindFile(id, groupName string) *FileEntry {
+ 	return nil
+ }
+ 
++func (s *State) SaveFileContent(id, groupName, content string) error {
++	entry := s.FindFile(id, groupName)
++	if entry == nil {
++		return fmt.Errorf("file not found")
++	}
++
++	if entry.Uploaded {
++		head := content
++		if len(head) > headFileSizeLimit {
++			head = head[:headFileSizeLimit]
++		}
++		newTitle := extractTitle(head)
++
++		s.mu.Lock()
++		entry.content = content
++		if entry.Title != newTitle {
++			entry.Title = newTitle
++		}
++		s.mu.Unlock()
++
++		// Always send eventUpdate so markDirty() triggers a backup save.
++		// Without this, edited uploaded content would be lost on restart.
++		s.sendEvent(sseEvent{Name: eventUpdate, Data: "{}"})
++		s.notifyFileChanged([]string{id})
++		return nil
++	}
++
++	// Filesystem file: write to disk. fsnotify will fire file-changed SSE automatically.
++	if err := os.WriteFile(entry.Path, []byte(content), 0o644); err != nil { //nolint:gosec // Path is server-managed
++		return fmt.Errorf("failed to write file: %w", err)
++	}
++	return nil
++}
++
+ func (s *State) ReorderFiles(groupName string, fileIDs []string) bool {
+ 	s.mu.Lock()
+ 	defer s.mu.Unlock()
+@@ -1161,6 +1195,10 @@ type uploadFileRequest struct {
+ 	Content string `json:"content"`
+ }
+ 
++type saveFileContentRequest struct {
++	Content string `json:"content"`
++}
++
+ type patternRequest struct {
+ 	Pattern string `json:"pattern"`
+ 	Group   string `json:"group"`
+@@ -1230,6 +1268,7 @@ func NewHandler(state *State) http.Handler {
+ 	mux.HandleFunc("GET /_/api/groups", handleGroups(state))
+ 	mux.HandleFunc("PUT /_/api/groups/{group}/reorder", handleReorderFiles(state))
+ 	mux.HandleFunc("GET /_/api/groups/{group}/files/{id}/content", handleFileContent(state))
++	mux.HandleFunc("PUT /_/api/groups/{group}/files/{id}/content", handleSaveFileContent(state))
+ 	mux.HandleFunc("GET /_/api/search", handleSearch(state))
+ 	mux.HandleFunc("GET /_/api/groups/{group}/files/{id}/raw/{path...}", handleFileRaw(state))
+ 	mux.HandleFunc("POST /_/api/groups/{group}/files/open", handleOpenFile(state))
+@@ -1466,6 +1505,47 @@ func handleFileContent(state *State) http.HandlerFunc {
+ 	}
+ }
+ 
++func handleSaveFileContent(state *State) http.HandlerFunc {
++	const maxRequestSize = 12 << 20 // 12MB (headroom for JSON envelope)
++	const maxContentSize = 10 << 20 // 10MB
++	return func(w http.ResponseWriter, r *http.Request) {
++		group, err := resolveGroupFromPath(r)
++		if err != nil {
++			http.Error(w, err.Error(), http.StatusBadRequest)
++			return
++		}
++		id := r.PathValue("id")
++		if id == "" {
++			http.Error(w, "missing file id", http.StatusBadRequest)
++			return
++		}
++
++		r.Body = http.MaxBytesReader(w, r.Body, maxRequestSize)
++		var req saveFileContentRequest
++		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
++			var maxBytesErr *http.MaxBytesError
++			if errors.As(err, &maxBytesErr) {
++				http.Error(w, "content too large (max 10MB)", http.StatusRequestEntityTooLarge)
++				return
++			}
++			http.Error(w, err.Error(), http.StatusBadRequest)
++			return
++		}
++
++		if len(req.Content) > maxContentSize {
++			http.Error(w, "content too large (max 10MB)", http.StatusRequestEntityTooLarge)
++			return
++		}
++
++		if err := state.SaveFileContent(id, group, req.Content); err != nil {
++			http.Error(w, err.Error(), http.StatusNotFound)
++			return
++		}
++
++		w.WriteHeader(http.StatusNoContent)
++	}
++}
++
+ func handleSearch(state *State) http.HandlerFunc {
+ 	return func(w http.ResponseWriter, r *http.Request) {
+ 		q := strings.TrimSpace(r.URL.Query().Get("q"))

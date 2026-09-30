@@ -1,0 +1,222 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 19:09:35 +0900
+Subject: [PATCH] Show the raw view full screen, highlighted in the editor's
+ colors
+
+The raw toggle showed the Markdown source inside the page layout, always
+in github-dark. It now fills the content area like the editor, wraps long
+lines, uses the font size setting, and highlights with the Shiki theme
+that matches the editor color scheme and the page theme. Non-Markdown
+files are highlighted with the same theme.
+---
+ .../src/components/MarkdownViewer.tsx         | 107 ++++++++++++++++--
+ internal/frontend/src/lib/editorThemes.ts     |  15 +++
+ 2 files changed, 110 insertions(+), 12 deletions(-)
+
+diff --git a/internal/frontend/src/components/MarkdownViewer.tsx b/internal/frontend/src/components/MarkdownViewer.tsx
+index 903a8f8..4ca2477 100644
+--- a/internal/frontend/src/components/MarkdownViewer.tsx
++++ b/internal/frontend/src/components/MarkdownViewer.tsx
+@@ -22,6 +22,7 @@ import { resolveLink, resolveImageSrc, extractLanguage } from "../utils/resolve"
+ import { parseFrontmatter } from "../utils/frontmatter";
+ import { stripMdxSyntax } from "../utils/mdx";
+ import { isMarkdownFile, detectLanguage } from "../utils/filetype";
++import { getShikiTheme } from "../lib/editorThemes";
+ import type { ZoomContent } from "./ZoomModal";
+ import type { TocHeading } from "./TocPanel";
+ import type { Components } from "react-markdown";
+@@ -564,19 +565,27 @@ function FrontmatterBlock({ yaml }: { yaml: string }) {
+   );
+ }
+ 
+-function HighlightedView({ content, language }: { content: string; language: string }) {
++function HighlightedView({
++  content,
++  language,
++  shikiTheme = "github-dark",
++}: {
++  content: string;
++  language: string;
++  shikiTheme?: string;
++}) {
+   const [html, setHtml] = useState("");
+ 
+   useEffect(() => {
+     let cancelled = false;
+     setHtml("");
+-    codeToHtml(content, { lang: language, theme: "github-dark" })
++    codeToHtml(content, { lang: language, theme: shikiTheme })
+       .then((result) => {
+         if (!cancelled) setHtml(result);
+       })
+       .catch(() => {
+         if (!cancelled) {
+-          codeToHtml(content, { lang: "text", theme: "github-dark" })
++          codeToHtml(content, { lang: "text", theme: shikiTheme })
+             .then((result) => {
+               if (!cancelled) setHtml(result);
+             })
+@@ -586,10 +595,15 @@ function HighlightedView({ content, language }: { content: string; language: str
+     return () => {
+       cancelled = true;
+     };
+-  }, [content, language]);
++  }, [content, language, shikiTheme]);
+ 
+   if (html) {
+-    return <div className="[&_pre]:!rounded-none" dangerouslySetInnerHTML={{ __html: html }} />;
++    return (
++      <div
++        className="min-h-full [&_pre]:!rounded-none [&_pre]:min-h-full"
++        dangerouslySetInnerHTML={{ __html: html }}
++      />
++    );
+   }
+   return (
+     <pre>
+@@ -598,8 +612,49 @@ function HighlightedView({ content, language }: { content: string; language: str
+   );
+ }
+ 
+-function RawView({ content }: { content: string }) {
+-  return <HighlightedView content={content} language="markdown" />;
++function RawView({ content, shikiTheme }: { content: string; shikiTheme?: string }) {
++  return <HighlightedView content={content} language="markdown" shikiTheme={shikiTheme} />;
++}
++
++const RAW_FONT_SIZE: Record<FontSize, string> = {
++  small: "14px",
++  medium: "16px",
++  large: "18px",
++  xlarge: "20px",
++};
++
++function RawFullscreen({
++  children,
++  onToggle,
++  fontSize = "medium",
++}: {
++  children: React.ReactNode;
++  onToggle: () => void;
++  fontSize?: FontSize;
++}) {
++  const containerRef = useRef<HTMLDivElement>(null);
++
++  useEffect(() => {
++    const el = containerRef.current;
++    if (!el) return;
++    const pre = el.querySelector("pre");
++    if (pre) {
++      el.style.backgroundColor = pre.style.backgroundColor || "";
++    }
++  });
++
++  return (
++    <div
++      ref={containerRef}
++      className="relative h-full overflow-y-auto [&_pre]:!m-0 [&_pre]:!whitespace-pre-wrap [&_pre]:!break-words [&_pre]:!p-4 [&_pre]:!bg-transparent"
++      style={{ fontSize: RAW_FONT_SIZE[fontSize] }}
++    >
++      <div className="sticky top-4 float-right mr-4 z-10">
++        <RawToggle isRaw onToggle={onToggle} />
++      </div>
++      {children}
++    </div>
++  );
+ }
+ 
+ export function MarkdownViewer({
+@@ -631,8 +686,8 @@ export function MarkdownViewer({
+   const [isRawView, setIsRawView] = useState(false);
+   const [isEditView, setIsEditView] = useState(false);
+   useEffect(() => {
+-    onEditStateChange?.(isEditView);
+-  }, [isEditView, onEditStateChange]);
++    onEditStateChange?.(isEditView || isRawView);
++  }, [isEditView, isRawView, onEditStateChange]);
+   const [editAnchor, setEditAnchor] = useState<ScrollAnchor | null>(null);
+   const editorRef = useRef<EditorHandle>(null);
+   const editTargetRef = useRef<{ group: string; fileId: string } | null>(null);
+@@ -807,12 +862,23 @@ export function MarkdownViewer({
+     [content, isRawView, isMarkdown],
+   );
+ 
++  const currentShikiTheme = useMemo(() => {
++    const mode = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
++    return getShikiTheme(editorColorScheme, mode);
++  }, [editorColorScheme]);
++
+   const renderedContent = useMemo(() => {
+     if (!isMarkdown) {
+-      return <HighlightedView content={content} language={codeLanguage!} />;
++      return (
++        <HighlightedView
++          content={content}
++          language={codeLanguage!}
++          shikiTheme={currentShikiTheme}
++        />
++      );
+     }
+     if (isRawView) {
+-      return <RawView content={content} />;
++      return <RawView content={content} shikiTheme={currentShikiTheme} />;
+     }
+     const base = parsed ? parsed.content : content;
+     const md = fileName.toLowerCase().endsWith(".mdx") ? stripMdxSyntax(base) : base;
+@@ -835,7 +901,16 @@ export function MarkdownViewer({
+         </Markdown>
+       </>
+     );
+-  }, [content, isRawView, isMarkdown, codeLanguage, parsed, components, fileName]);
++  }, [
++    content,
++    isRawView,
++    isMarkdown,
++    codeLanguage,
++    parsed,
++    components,
++    fileName,
++    currentShikiTheme,
++  ]);
+ 
+   const prevHeadingsKey = useRef("");
+   useEffect(() => {
+@@ -1018,6 +1093,14 @@ export function MarkdownViewer({
+     );
+   }
+ 
++  if (isRawView) {
++    return (
++      <RawFullscreen onToggle={handleToggleRaw} fontSize={fontSize}>
++        {renderedContent}
++      </RawFullscreen>
++    );
++  }
++
+   return (
+     <div className="flex items-start gap-2">
+       <article
+diff --git a/internal/frontend/src/lib/editorThemes.ts b/internal/frontend/src/lib/editorThemes.ts
+index 1eb65ec..65ef172 100644
+--- a/internal/frontend/src/lib/editorThemes.ts
++++ b/internal/frontend/src/lib/editorThemes.ts
+@@ -460,3 +460,18 @@ export function getEditorTheme(schemeName: string, mode: "dark" | "light"): Exte
+   const scheme = getEditorScheme(schemeName);
+   return buildTheme(scheme[mode]);
+ }
++
++const SHIKI_THEME_MAP: Record<string, { dark: string; light: string }> = {
++  default: { dark: "github-dark", light: "github-light" },
++  "tokyo-night": { dark: "tokyo-night", light: "github-light" },
++  nord: { dark: "nord", light: "github-light" },
++  solarized: { dark: "solarized-dark", light: "solarized-light" },
++  dracula: { dark: "dracula", light: "github-light" },
++  catppuccin: { dark: "catppuccin-mocha", light: "catppuccin-latte" },
++  "rose-pine": { dark: "rose-pine", light: "rose-pine-dawn" },
++  gruvbox: { dark: "gruvbox-dark-medium", light: "gruvbox-light-medium" },
++};
++
++export function getShikiTheme(schemeName: string, mode: "dark" | "light"): string {
++  return SHIKI_THEME_MAP[schemeName]?.[mode] ?? SHIKI_THEME_MAP.default[mode];
++}

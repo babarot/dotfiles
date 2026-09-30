@@ -1,0 +1,44 @@
+diff --git a/src/ui/app.rs b/src/ui/app.rs
+index dfc935d..95ecc34 100644
+--- a/src/ui/app.rs
++++ b/src/ui/app.rs
+@@ -150,6 +150,9 @@ pub struct App {
+     author_enrichment_rx: Option<Receiver<EnrichmentResult>>,
+     // In-flight quick-merge, one at a time (guards double-submission).
+     merge_rx: Option<Receiver<MergeOutcome>>,
++    // Time and list row of the last click on a notification, to tell a
++    // double click that opens it like Enter.
++    last_click: Option<(Instant, usize)>,
+ }
+ 
+ /// Result of a background pull-request merge.
+@@ -230,6 +233,7 @@ impl App {
+             last_seen_mutation_seq: 0,
+             author_enrichment_rx: None,
+             merge_rx: None,
++            last_click: None,
+         }
+     }
+ 
+@@ -3949,6 +3953,21 @@ impl App {
+                         if let Some(crate::state::TreeItem::Notification(_)) =
+                             self.state.tree_items.get(clicked_item_idx)
+                         {
++                            let now = Instant::now();
++                            let double_click = self.last_click.is_some_and(|(at, idx)| {
++                                idx == clicked_item_idx
++                                    && now.duration_since(at) < Duration::from_millis(400)
++                            });
++                            if double_click {
++                                self.last_click = None;
++                                self.state.selected_index = clicked_item_idx;
++                                return self.handle_normal_key(KeyEvent::new(
++                                    KeyCode::Enter,
++                                    KeyModifiers::NONE,
++                                ));
++                            }
++                            self.last_click = Some((now, clicked_item_idx));
++
+                             // Clicked on a notification - select it and show preview
+                             self.state.selected_index = clicked_item_idx;
+                             self.state.preview_scroll = 0;

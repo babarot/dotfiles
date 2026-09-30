@@ -23,6 +23,9 @@ let
       # merged, closed or approved by others; gh-news filters cannot see a
       # pull request's state
       ./gh-news/hide-resolved-review-requests.patch
+      # Double-clicking a notification opens it like Enter; a click only
+      # selects it
+      ./gh-news/double-click-open.patch
     ];
   };
 in

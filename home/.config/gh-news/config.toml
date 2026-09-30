@@ -1,4 +1,4 @@
-auto_refresh_interval = 60
+auto_refresh_interval = 30
 show_read = false
 theme = "tokyo_night"
 

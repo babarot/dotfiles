@@ -52,7 +52,7 @@ Nothing is pinned for App Store or vendor apps; only a missing app is installed.
 
 My own tools (e.g. [naminator](https://github.com/babarot/naminator)) are published to [babarot/nur-packages](https://github.com/babarot/nur-packages) by GoReleaser on each release.
 
-Herdr is built from nixpkgs with small patches, one per change ([herdr.nix](../../nix/home-manager/tools/herdr.nix)).
+Herdr is built from nixpkgs with small patches, one per change, exported from a fork branch ([herdr.nix](../../nix/home-manager/tools/herdr.nix), [maintenance.md](../guides/maintenance.md#patch-a-package-from-a-fork-branch)).
 
 ## Agent Skills
 

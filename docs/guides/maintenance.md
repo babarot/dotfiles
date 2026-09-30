@@ -20,28 +20,16 @@ nix build ".#darwinConfigurations.$(scutil --get LocalHostName).system" --no-lin
 
 [.githooks/pre-push](../../.githooks/pre-push) builds every Mac before a push that changes Nix files. It is usually quick because the local store already holds nearly everything. After nixpkgs moves, it rebuilds what cache.nixos.org does not have, such as the patched herdr and the packages built here from source, so expect the push to take a while. If a Mac does not build, fix it and push again; do not skip the hook.
 
-## Patch a nixpkgs package
-
-Herdr is the example: [herdr.nix](../../nix/home-manager/tools/herdr.nix) overrides nixpkgs' herdr with the patches in [tools/herdr/](../../nix/home-manager/tools/herdr/). The rules for the patches are in the comment at the top of herdr.nix.
-
-To make a patch, clone herdr at the tag nixpkgs builds, make the change, and save the diff next to the others:
-
-```bash
-git clone --branch <tag> https://github.com/herdrdev/herdr
-cd herdr
-# edit, then
-git diff > ~/src/github.com/babarot/dotfiles/nix/home-manager/tools/herdr/<change>.patch
-```
-
-Then list it in `patches` and `git add` the file so Nix can see it.
-
-When a herdr bump breaks a patch, the build log names the patch that failed to apply. Remake that one patch against the new tag, or drop it if upstream took the change. The other patches stay as they are.
-
 ## Patch a package from a fork branch
 
-gh-news is the example: [gh.nix](../../nix/home-manager/tools/gh.nix) builds it from its release tag and applies every patch in [tools/gh-news/](../../nix/home-manager/tools/gh-news/) in name order. The patch files are not edited by hand. Each one is a commit on the `patches` branch of the fork [babarot/gh-news](https://github.com/babarot/gh-news), exported with `git format-patch`, so git does the rebasing onto a new release and every file carries its commit message.
+Two packages carry local patches, each applied from a directory in name order:
 
-The fork is cloned at `~/src/github.com/babarot/gh-news`, with `origin` the fork and `upstream` chmouel/gh-news. The examples below run there, with `<version>` the release the branch sits on (the `version` in gh.nix).
+| Package | Built from | Patches | Fork |
+|---|---|---|---|
+| herdr | nixpkgs' package, overridden in [herdr.nix](../../nix/home-manager/tools/herdr.nix) | [tools/herdr/](../../nix/home-manager/tools/herdr/) | [babarot/herdr](https://github.com/babarot/herdr), `upstream` herdrdev/herdr |
+| gh-news | its release tag, in [gh.nix](../../nix/home-manager/tools/gh.nix) | [tools/gh-news/](../../nix/home-manager/tools/gh-news/) | [babarot/gh-news](https://github.com/babarot/gh-news), `upstream` chmouel/gh-news |
+
+The patch files are not edited by hand. Each one is a commit on the fork's `patches` branch, exported with `git format-patch`, so git does the rebasing onto a new release and every file carries its commit message. Each fork is cloned at `~/src/github.com/babarot/<name>`, with `origin` the fork. The examples below run there, with `<name>` the package and `<version>` the release the branch sits on: for herdr the version nixpkgs builds (`nix eval --raw .#darwinConfigurations.pro23.pkgs.herdr.version` in dotfiles), for gh-news the `version` in gh.nix.
 
 Change a patch or add one:
 
@@ -53,7 +41,7 @@ git commit --fixup=<its commit>   # a fix to an existing one, then fold it in:
 git rebase --autosquash v<version>
 ```
 
-Check it with a throwaway Rust toolchain, then push the branch. It is rebased, so the push rewrites it:
+Check it, then push the branch. It is rebased, so the push rewrites it. gh-news is checked with a throwaway Rust toolchain:
 
 ```bash
 nix shell 'nixpkgs#cargo' 'nixpkgs#rustc' 'nixpkgs#clippy' 'nixpkgs#rustfmt' \
@@ -61,21 +49,23 @@ nix shell 'nixpkgs#cargo' 'nixpkgs#rustc' 'nixpkgs#clippy' 'nixpkgs#rustfmt' \
 git push --force-with-lease origin patches
 ```
 
-Then export the patches over the old ones and `git add` them. gh.nix picks up whatever the directory holds, so it needs no change:
+herdr's whole test suite depends on the host, so run the tests the patches touch by building it with the `doCheck` lines in the comment at the top of herdr.nix, after exporting.
+
+Then export the patches over the old ones and `git add` them. The Nix file picks up whatever the directory holds, so it needs no change:
 
 ```bash
-dir=~/src/github.com/babarot/dotfiles/nix/home-manager/tools/gh-news
+dir=~/src/github.com/babarot/dotfiles/nix/home-manager/tools/<name>
 rm "$dir"/*.patch
 git format-patch --no-numbered --zero-commit --no-signature -o "$dir" v<version>
 ```
 
 `--no-numbered`, `--zero-commit` and `--no-signature` keep a file unchanged when only the number of patches, commit hashes or the git version change.
 
-Follow a new release:
+Follow a new release (for herdr, when a nixpkgs bump moves its version and the build log names a patch that failed to apply):
 
 1. `git fetch upstream --tags`, then `git rebase v<new>`. If a commit conflicts, resolve it; if upstream took the change, drop the commit.
 2. Check, push and export as above, with `v<new>`.
-3. In gh.nix, set `version` to the new release and both hashes to `lib.fakeHash`, then build: each failure prints the right hash to put back.
+3. For gh-news, set `version` in gh.nix to the new release and both hashes to `lib.fakeHash`, then build: each failure prints the right hash to put back. herdr follows nixpkgs and needs nothing more.
 
 ## Bump a flake input pinned to a tag
 

@@ -1,3 +1,20 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 17:25:18 +0900
+Subject: [PATCH] Add a worktree space token
+
+The token is the checkout's directory name, which other sessions go by.
+---
+ src/client/shell/sidebar.rs                              | 4 ++++
+ src/client/shell/tests/agents_worktrees_notifications.rs | 5 +++++
+ src/client/shell/tests/endpoints.rs                      | 4 ++++
+ src/client/shell/tests/workspace_navigation.rs           | 1 +
+ src/config/sidebar.rs                                    | 3 +++
+ src/protocol/wire.rs                                     | 3 +++
+ src/server/client_shell.rs                               | 8 ++++++++
+ src/ui/sidebar/tokens.rs                                 | 8 ++++++++
+ 8 files changed, 36 insertions(+)
+
 diff --git a/src/client/shell/sidebar.rs b/src/client/shell/sidebar.rs
 index 89a1377e..e4b02773 100644
 --- a/src/client/shell/sidebar.rs

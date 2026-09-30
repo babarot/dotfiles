@@ -2,9 +2,11 @@
 # Its settings live in home/.config/herdr/config.toml.
 { lib, pkgs, ... }:
 let
-  # Small patches on nixpkgs' herdr, one per change, made against its release
-  # tag and applied in order. Patching loses the binary cache, so a herdr or
-  # nixpkgs bump builds herdr locally (~9 min).
+  # Small patches on nixpkgs' herdr, one per change, applied in name order;
+  # each patch's message says what it does. They are exported from a fork
+  # branch on the tag nixpkgs builds, not edited here
+  # (docs/guides/maintenance.md). Patching loses the binary cache, so a herdr
+  # or nixpkgs bump builds herdr locally (~9 min).
   #
   # Each patch also updates herdr's tests. nixpkgs leaves them off
   # (doCheck = false) because they change between releases and depend on the
@@ -12,24 +14,9 @@ let
   #   doCheck = true;
   #   checkFlags = [ "client::shell::tests" "client::shell::endpoint_agent_state" "ui::sidebar" ];
   herdr = pkgs.herdr.overrideAttrs (old: {
-    patches = (old.patches or [ ]) ++ [
-      # A worktree space renamed after its feature keeps its branch and
-      # ahead/behind in the sidebar; herdr hides them on every grouped
-      # worktree (herdrdev/herdr#2952)
-      ./herdr/renamed-worktree-branch.patch
-      # A `worktree` space token: the checkout's directory name, which other
-      # sessions go by
-      ./herdr/worktree-token.patch
-      # A name field in the new worktree dialog: it names the space and
-      # leaves the generated branch and checkout alone, like renaming the
-      # space afterwards does
-      ./herdr/worktree-label.patch
-      # "Mark as unread" in a space's menu: its seen idle agents show Done
-      # again until they are viewed, which in the focused space means after
-      # leaving it. herdr keeps Done for unviewed completions only
-      # (herdrdev/herdr#4622)
-      ./herdr/mark-workspace-unread.patch
-    ];
+    patches =
+      (old.patches or [ ])
+      ++ lib.filter (lib.hasSuffix ".patch") (lib.filesystem.listFilesRecursive ./herdr);
   });
 in
 {

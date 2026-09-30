@@ -1,3 +1,20 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 17:25:18 +0900
+Subject: [PATCH] Add a name field to the new worktree dialog
+
+It names the space and leaves the generated branch and checkout alone,
+like renaming the space afterwards does.
+---
+ src/client/shell/state.rs                     |  3 ++
+ .../tests/agents_worktrees_notifications.rs   | 41 ++++++++++++++
+ src/client/shell/tests/graphics.rs            |  2 +
+ .../shell/tests/popup_focus_projection.rs     |  2 +
+ src/client/shell/tests/text_editing.rs        |  2 +
+ src/client/shell/worktree_overlays.rs         | 53 +++++++++++--------
+ src/client/shell/worktrees.rs                 | 22 ++++++--
+ 7 files changed, 100 insertions(+), 25 deletions(-)
+
 diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
 index 901c5a28..b7f1118b 100644
 --- a/src/client/shell/state.rs

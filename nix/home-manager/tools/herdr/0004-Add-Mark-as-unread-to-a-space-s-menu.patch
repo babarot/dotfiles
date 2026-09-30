@@ -1,5 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 17:25:18 +0900
+Subject: [PATCH] Add "Mark as unread" to a space's menu
+
+A finished agent's Done dot clears once its pane is viewed, and herdr
+has no way to bring it back; it keeps Done for unviewed completions
+only (herdrdev/herdr#4622). The item makes the space's seen idle agents
+show Done again until they are viewed. In the focused space, whose
+agents are acknowledged on every frame, the marked panes stay unread
+until they leave the screen or their agent moves on.
+---
+ src/client/shell/context_menu.rs         | 18 ++++-
+ src/client/shell/endpoint_agent_state.rs | 66 ++++++++++++++++++
+ src/client/shell/endpoints.rs            | 23 +++++++
+ src/client/shell/state.rs                |  4 ++
+ src/client/shell/tests/chrome_context.rs | 87 ++++++++++++++++++++++++
+ 5 files changed, 197 insertions(+), 1 deletion(-)
+
 diff --git a/src/client/shell/context_menu.rs b/src/client/shell/context_menu.rs
-index 96f5717..c261e03 100644
+index 96f57178..c261e036 100644
 --- a/src/client/shell/context_menu.rs
 +++ b/src/client/shell/context_menu.rs
 @@ -5,7 +5,7 @@ impl ClientContextMenuOverlay {
@@ -57,7 +76,7 @@ index 96f5717..c261e03 100644
          }
      }
 diff --git a/src/client/shell/endpoint_agent_state.rs b/src/client/shell/endpoint_agent_state.rs
-index f8ba7a9..a492489 100644
+index f8ba7a9b..a4924899 100644
 --- a/src/client/shell/endpoint_agent_state.rs
 +++ b/src/client/shell/endpoint_agent_state.rs
 @@ -7,6 +7,10 @@ use crate::protocol::{ClientShellAgent, ClientShellSnapshot, PaneSurfaceFrame};
@@ -169,7 +188,7 @@ index f8ba7a9..a492489 100644
      fn stale_or_unfocused_surface_does_not_acknowledge_completion() {
          let mut presentation = EndpointAgentPresentation::default();
 diff --git a/src/client/shell/endpoints.rs b/src/client/shell/endpoints.rs
-index c27358e..01b34c3 100644
+index c27358e5..01b34c3e 100644
 --- a/src/client/shell/endpoints.rs
 +++ b/src/client/shell/endpoints.rs
 @@ -610,6 +610,29 @@ impl ClientShellState {
@@ -203,7 +222,7 @@ index c27358e..01b34c3 100644
          let Some(index) = self
              .endpoints
 diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
-index b7f1118..e903e43 100644
+index b7f1118b..e903e439 100644
 --- a/src/client/shell/state.rs
 +++ b/src/client/shell/state.rs
 @@ -517,6 +517,7 @@ pub(super) enum ClientContextMenuAction {
@@ -225,7 +244,7 @@ index b7f1118..e903e43 100644
      Tab {
          tab_id: String,
 diff --git a/src/client/shell/tests/chrome_context.rs b/src/client/shell/tests/chrome_context.rs
-index ed21bc8..ad96327 100644
+index ed21bc8a..ad963272 100644
 --- a/src/client/shell/tests/chrome_context.rs
 +++ b/src/client/shell/tests/chrome_context.rs
 @@ -377,6 +377,93 @@ fn context_menus_capture_stable_targets_and_route_actions() {

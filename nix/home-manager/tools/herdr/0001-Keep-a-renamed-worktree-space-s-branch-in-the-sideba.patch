@@ -1,5 +1,17 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 17:25:18 +0900
+Subject: [PATCH] Keep a renamed worktree space's branch in the sidebar
+
+A worktree space renamed after its feature keeps its branch and
+ahead/behind in the sidebar; herdr hides them on every grouped worktree
+(herdrdev/herdr#2952).
+---
+ src/client/shell/sidebar.rs | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
 diff --git a/src/client/shell/sidebar.rs b/src/client/shell/sidebar.rs
-index 161aecd..89a1377 100644
+index 161aecd5..89a1377e 100644
 --- a/src/client/shell/sidebar.rs
 +++ b/src/client/shell/sidebar.rs
 @@ -631,7 +631,9 @@ pub(in crate::client::shell) fn workspace_rows(

@@ -1,0 +1,47 @@
+# Modules
+
+The home-manager modules in [nix/home-manager/](../../nix/home-manager/) define a few options of their own under `my.*`. They are what lets a tool file in `tools/` set its shell variables, aliases, plugins, skills and apps next to its package, as the [README](../../README.md#one-file-per-tool) describes. This page lists each option and how it reaches the Mac. Where the files sit is in [structure.md](../reference/structure.md#layout).
+
+## Importing tools
+
+[default.nix](../../nix/home-manager/default.nix) imports the modules below and every `*.nix` file in `tools/`. Only files ending in `.nix` are imported, so a tool's own scripts and patches can sit beside its file. Adding a tool means adding a file; nothing lists it.
+
+## Dotfile links
+
+[dotfiles.nix](../../nix/home-manager/dotfiles.nix) links the hand-written files in `home/` into `~` under the same names. The links are made with `mkOutOfStoreSymlink` and point at the repo checkout, not the Nix store, so an edit applies without a switch. A new file still needs to be added to the list and switched once.
+
+`~/.config` is linked to `home/.config` as a whole, so tools that write their own config keep writing it into the repo. It cannot be a `home.file` entry: home-manager itself writes files inside it. An activation script makes the link before home-manager checks its targets, so those generated files go through the link and land in the repo, where `home/.config/.gitignore` ignores them. If `~/.config` exists and is not that link, the switch stops and asks to move it aside.
+
+## my.env
+
+[env.nix](../../nix/home-manager/env.nix). Plain variables every zsh gets, AI agents included. Values are literal strings. They are rendered as `export` lines into `~/.config/zsh/env.zsh`, which [.zshenv](../../home/.zshenv) sources before the `is_human` branch.
+
+Put a variable here when agents need it too and it belongs to one tool. `PATH` stays hand-written in `.zshenv`, because its order is global and not any one tool's. Other variables not tied to a tool (locale, `EDITOR`) are in `.zshenv` as well.
+
+## my.human
+
+[human.nix](../../nix/home-manager/human.nix). Shell UX for humans only: environment variables, aliases, zsh plugins and free-form zsh. It is rendered into `~/.config/zsh/human.zsh`, which [.zshrc](../../home/.zshrc) sources after the `is_human` guard, so agents never load any of it. The options and the order they are written in are in human.nix.
+
+Plugins are sorted by an `order`. Two entries are landmarks the others are placed around: the hand-written `~/.zsh/*.zsh` (bindkeys, setopts, zstyles), and zsh-abbr after it. A plugin that binds keys has to come before the hand-written files, since they switch to vi mode; zsh-abbr has to come after them, since it binds space in that keymap. Their values are in human.nix and [zsh-abbr.nix](../../nix/home-manager/tools/zsh-abbr.nix).
+
+Abbreviations are declared with `abbr --session`, so none is saved to zsh-abbr's user file and one removed from Nix does not live on.
+
+## my.skills
+
+[skills.nix](../../nix/home-manager/skills.nix). Agent Skill directories (each holding a `SKILL.md`) by skill name. Each one is linked into both `~/.claude/skills/<name>` and `~/.agents/skills/<name>`, so Claude Code and Codex know how to use a tool as soon as it is installed. A tool file sets it next to the package, pointing at the skill the package ships.
+
+The same module adds every directory in [home/skills/](../../home/skills/), my own skills on trial. Those links point at the repo, not the store, so edits apply without a switch; a new skill needs one. Why the directory exists is in [structure.md](../reference/structure.md#agent-skills).
+
+## my.agentSkills.scopes
+
+[tools/agent-skills.nix](../../nix/home-manager/tools/agent-skills.nix). Which plugins of the private babarot/agent-skills input are linked into `~/.agents/skills`, for Codex and other agents. Work skills are picked only in the work Mac's host file. Each skill directory is linked on its own, so `~/.agents/skills` stays open to skills from elsewhere, including `my.skills`. Claude Code gets these skills from the plugin marketplace instead.
+
+## my.herdrPlugins
+
+[herdr-plugins.nix](../../nix/home-manager/herdr-plugins.nix). herdr plugins built by Nix, by plugin id.
+
+On every switch, an activation script runs `herdr plugin link` on each store path. Linking never writes into the plugin directory, so a read-only store path works, and linking an id again replaces its old store path in `~/.config/herdr/plugins.json`. It then runs `herdr plugin unlink` on every registered plugin whose root is in `/nix/store` but whose id is no longer in `my.herdrPlugins`. Plugins installed or linked by hand are left alone. A failed link or unlink warns and does not stop the switch.
+
+## my.masApps
+
+[mas.nix](../../nix/home-manager/mas.nix). Mac App Store apps, shared in [tools/app-store.nix](../../nix/home-manager/tools/app-store.nix) or per host. Each switch installs the missing ones with `mas`. It only installs: versions and updates are left to the App Store, and an app dropped from the list is not removed. If an install fails (usually because nobody is signed in to the App Store), the switch warns and goes on.

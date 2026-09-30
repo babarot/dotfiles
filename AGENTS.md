@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Instructions for AI coding agents (Claude Code, Codex, ...) working in this repository. Claude Code reads this file because there is no CLAUDE.md here. See README.md for the overview, docs/structure.md for the layout and docs/setup-mac.md for setting up a Mac.
+Instructions for AI coding agents (Claude Code, Codex, ...) working in this repository. Claude Code reads this file because there is no CLAUDE.md here. See README.md for the overview, docs/reference/structure.md for the layout and docs/guides/setup-mac.md for setting up a Mac.
 
 ## What this repo is
 
@@ -13,11 +13,13 @@ babarot's macOS environment, shared by two Macs through one Nix flake (nix-darwi
 
 `darwin-rebuild` picks the configuration by `scutil --get LocalHostName`. Anything not in a host file applies to both Macs. The work Mac is operated by a separate agent session on that machine; changes for it are made here, pushed, then pulled and applied there.
 
+This repository takes no PRs: work is done in a git worktree and landed in main with `git land` (`--push` to push), which the `/land` skill wraps. Land or push only when the user asks.
+
 This repository is public. Never commit credentials, tokens, or internal names from work (company, org, internal hosts or repos).
 
 ## Layout
 
-The directory tree, with what each file is for, is in [docs/structure.md](docs/structure.md#layout). Read it before adding or moving files.
+The directory tree, with what each file is for, is in [docs/reference/structure.md](./docs/reference/structure.md#layout). Read it before adding or moving files.
 
 Do not add a directory at the repository root without a strong reason; put new files under `nix/`, `home/` or `docs/`. The README describes the root directories, so each new one means editing it too.
 
@@ -28,7 +30,7 @@ Do not add a directory at the repository root without a strong reason; put new f
 - Nix only sees files tracked by git: `git add` (or `git add -N`) new files first.
 - Run `nix fmt` before committing: nixfmt, deadnix, statix and shfmt, configured in `nix/treefmt.nix`. `nix flake check` fails on unformatted files.
 - `.githooks/pre-commit` (turned on for this repo and its worktrees by an `includeIf` in `home/.gitconfig`) runs gitleaks on the staged changes and checks `nix fmt`. When it stops a commit, remove the secret or stage the reformatted files; never bypass it with `--no-verify`. A reviewed false positive goes in `.gitleaksignore`.
-- `.githooks/pre-push` builds every Mac in `darwinConfigurations` at the pushed commit when the push changes `flake.nix`, `flake.lock`, `nix/` or `home/skills/`. It uses the local store and the real `agent-skills`, so it is quick unless nixpkgs moved. When it fails, fix the build; do not push with `--no-verify`.
+- `.githooks/pre-push` builds every Mac at the pushed commit when the push changes Nix files. It uses the local store and the real `agent-skills`, so it is quick unless nixpkgs moved. When it fails, fix the build; do not push with `--no-verify`.
 - CI (`.github/workflows/nix.yaml`) runs `nix flake check` and evaluates every Mac's system derivation on pushes to main and PRs that touch Nix files. It does not build them: a fresh runner rebuilds everything (~15 min), which the pre-push hook does locally from a warm store. It cannot fetch the private `agent-skills` input, so it overrides it with an empty stub made in the job; a change that only breaks with the real skills passes CI.
 - Applying needs sudo, so the user runs it:
   `sudo darwin-rebuild switch --flake ~/src/github.com/babarot/dotfiles` (always the absolute path).
@@ -55,6 +57,7 @@ Do not add a directory at the repository root without a strong reason; put new f
 | Third-party tool not in nixpkgs that ships a flake | a flake input pinned to a release tag (see `crit`) |
 | zsh plugin or source not in nixpkgs | a flake input with `flake = false` |
 | Third-party Homebrew tap | `homebrew.brews` / `homebrew.casks` with the full `owner/tap/name`; nix-darwin marks each entry `trusted: true` |
+| A new doc | `docs/guides/`, `docs/concepts/` or `docs/reference/` by what the reader wants (see [docs/README.md](./docs/README.md)); never duplicate what the code or its comments already say |
 | Per-project language or tool versions | the project's `mise.toml`, not this repo |
 | Claude Code | not from nixpkgs: it updates itself, so `nix/home-manager/tools/claude-code.nix` runs the official installer only when `~/.local/bin/claude` is missing |
 | Neovim LSP servers and treesitter parsers | `nix/home-manager/tools/neovim.nix` (servers in `home.packages`, languages in its `languages` list); not mason or `:TSInstall` |

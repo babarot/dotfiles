@@ -66,10 +66,10 @@ home/                    # hand-written dotfiles, linked into ~ under the same n
   bin/                   # my scripts
   skills/                # my own Agent Skills on trial
   ...
-docs/                    # setup guide (setup-mac.md), the full tree (structure.md), ...
+docs/                    # guides, concepts and reference (see docs/README.md)
 ```
 
-The full tree is in [docs/structure.md](./docs/structure.md#layout).
+The full tree is in [docs/structure.md](./docs/reference/structure.md#layout).
 
 ## Apply changes
 
@@ -81,5 +81,5 @@ New files must be tracked by git (`git add`) before Nix can see them. To update 
 
 ## Docs
 
-- [Setting up a Mac](./docs/setup-mac.md)
-- [Structure](./docs/structure.md): how the flake is organized, packages, Agent Skills, applying and updating
+- [Setting up a Mac](./docs/guides/setup-mac.md)
+- Everything else (how things work, how to maintain them, why they are this way) is indexed in [docs/](./docs/README.md)

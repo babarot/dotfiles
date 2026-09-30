@@ -12,10 +12,10 @@ long document. With the setting off it jumps there at once.
  3 files changed, 17 insertions(+), 5 deletions(-)
 
 diff --git a/internal/frontend/src/App.tsx b/internal/frontend/src/App.tsx
-index 4305928..764c59d 100644
+index b82c063..12904b2 100644
 --- a/internal/frontend/src/App.tsx
 +++ b/internal/frontend/src/App.tsx
-@@ -380,11 +380,15 @@ export function App() {
+@@ -440,11 +440,15 @@ export function App() {
      activeFileId,
    );
  

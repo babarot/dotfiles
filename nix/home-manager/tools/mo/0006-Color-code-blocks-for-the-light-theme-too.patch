@@ -12,10 +12,10 @@ picks one by the page theme. The copy button follows the theme too.
  2 files changed, 29 insertions(+), 10 deletions(-)
 
 diff --git a/internal/frontend/src/components/MarkdownViewer.tsx b/internal/frontend/src/components/MarkdownViewer.tsx
-index ccb5190..28d13b1 100644
+index 4a3ac85..2a861bc 100644
 --- a/internal/frontend/src/components/MarkdownViewer.tsx
 +++ b/internal/frontend/src/components/MarkdownViewer.tsx
-@@ -388,7 +388,7 @@ function ZoomButton({
+@@ -423,7 +423,7 @@ function ZoomButton({
  
  const darkButtonStyle = "border-[#484f58] hover:border-[#8b949e] text-[#8b949e] bg-[#2d333b]";
  const themedButtonStyle =
@@ -24,7 +24,7 @@ index ccb5190..28d13b1 100644
  
  function CodeBlockCopyButton({ code, themed = false }: { code: string; themed?: boolean }) {
    const [copied, setCopied] = useState(false);
-@@ -429,21 +429,23 @@ function CodeBlockCopyButton({ code, themed = false }: { code: string; themed?:
+@@ -464,21 +464,23 @@ function CodeBlockCopyButton({ code, themed = false }: { code: string; themed?:
    );
  }
  
@@ -53,7 +53,7 @@ index ccb5190..28d13b1 100644
              })
              .catch(() => {});
          }
-@@ -455,18 +457,18 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
+@@ -490,18 +492,18 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
  
    if (html) {
      return (
@@ -77,10 +77,10 @@ index ccb5190..28d13b1 100644
    );
  }
 diff --git a/internal/frontend/src/styles/app.css b/internal/frontend/src/styles/app.css
-index 620f04a..07a84d9 100644
+index 823c50a..5d989d8 100644
 --- a/internal/frontend/src/styles/app.css
 +++ b/internal/frontend/src/styles/app.css
-@@ -58,6 +58,23 @@ body,
+@@ -63,6 +63,23 @@ body,
    line-height: 1.5;
  }
  

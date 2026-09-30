@@ -20,24 +20,24 @@ the editor's syntax highlighting, line wrapping and auto save.
  internal/frontend/package.json                |   8 +
  internal/frontend/pnpm-lock.yaml              | 552 ++++++++++++++++++
  internal/frontend/src/App.test.tsx            |   2 +
- internal/frontend/src/App.tsx                 |  10 +-
+ internal/frontend/src/App.tsx                 |   9 +-
  .../frontend/src/components/EditToggle.tsx    |  52 ++
  internal/frontend/src/components/Editor.tsx   | 191 ++++++
- .../src/components/MarkdownViewer.tsx         | 226 ++++++-
+ .../src/components/MarkdownViewer.tsx         | 224 ++++++-
  .../frontend/src/components/RestartButton.tsx |   4 +-
  .../src/components/SettingsDialog.tsx         |  66 +++
  internal/frontend/src/hooks/useApi.ts         |  12 +
  internal/frontend/src/lib/editorThemes.ts     | 462 +++++++++++++++
  internal/frontend/src/lib/settings.ts         |   6 +
  internal/frontend/src/styles/app.css          |   6 +
- internal/server/server.go                     |  80 +++
- 14 files changed, 1665 insertions(+), 12 deletions(-)
+ internal/server/server.go                     |  79 +++
+ 14 files changed, 1661 insertions(+), 12 deletions(-)
  create mode 100644 internal/frontend/src/components/EditToggle.tsx
  create mode 100644 internal/frontend/src/components/Editor.tsx
  create mode 100644 internal/frontend/src/lib/editorThemes.ts
 
 diff --git a/internal/frontend/package.json b/internal/frontend/package.json
-index 1b0ac2f..26aeae0 100644
+index a553240..dd713a8 100644
 --- a/internal/frontend/package.json
 +++ b/internal/frontend/package.json
 @@ -24,10 +24,18 @@
@@ -54,13 +54,13 @@ index 1b0ac2f..26aeae0 100644
      "@dnd-kit/sortable": "^10.0.0",
      "@dnd-kit/utilities": "^3.2.2",
 +    "@lezer/highlight": "^1.2.3",
-     "@shikijs/rehype": "^4.0.2",
+     "@shikijs/rehype": "^4.4.3",
 +    "codemirror": "^6.0.2",
      "github-markdown-css": "^5.8.1",
-     "katex": "^0.16.45",
-     "mermaid": "^11.14.0",
+     "katex": "^0.18.7",
+     "mermaid": "^12.0.0",
 diff --git a/internal/frontend/pnpm-lock.yaml b/internal/frontend/pnpm-lock.yaml
-index c8dfc00..6520708 100644
+index a128332..bb1efbd 100644
 --- a/internal/frontend/pnpm-lock.yaml
 +++ b/internal/frontend/pnpm-lock.yaml
 @@ -8,6 +8,24 @@ importers:
@@ -87,26 +87,26 @@ index c8dfc00..6520708 100644
 +        version: 6.43.13
        '@dnd-kit/core':
          specifier: ^6.3.1
-         version: 6.3.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+         version: 6.3.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
 @@ -17,9 +35,15 @@ importers:
        '@dnd-kit/utilities':
          specifier: ^3.2.2
-         version: 3.2.2(react@19.2.5)
+         version: 3.2.2(react@19.3.0)
 +      '@lezer/highlight':
 +        specifier: ^1.2.3
 +        version: 1.2.5
        '@shikijs/rehype':
-         specifier: ^4.0.2
-         version: 4.0.2
+         specifier: ^4.4.3
+         version: 4.4.3
 +      codemirror:
 +        specifier: ^6.0.2
 +        version: 6.0.2
        github-markdown-css:
          specifier: ^5.8.1
          version: 5.9.0
-@@ -192,6 +216,99 @@ packages:
-   '@chevrotain/utils@12.0.0':
-     resolution: {integrity: sha512-lB59uJoaGIfOOL9knQqQRfhl9g7x8/wqFkp13zTdkRu1huG9kg6IJs1O8hqj9rs6h7orGxHJUKb+mX3rPbWGhA==}
+@@ -188,6 +212,99 @@ packages:
+   '@chevrotain/utils@11.1.2':
+     resolution: {integrity: sha512-4mudFAQ6H+MqBTfqLmU7G1ZwRzCLfJEooL/fsF6rCX5eePMbGhoy5n4g+G4vlh2muDcsCTJtL+uKbOzWxs5LHA==}
  
 +  '@codemirror/autocomplete@6.20.3':
 +    resolution: {integrity: sha512-tlosUqb+3BbxCxZdu4tKeRghPFC+QM7q4X5YhKV2eCmPG+1r2F3f4AaSz5sCrFqUtX4Jh20VFTKecl16MgiV9g==}
@@ -201,10 +201,10 @@ index c8dfc00..6520708 100644
 +  '@codemirror/view@6.43.13':
 +    resolution: {integrity: sha512-sihaFrUzAsYBQsL9J2t69y8nfMQGwcYmggAZsk+kjPbjYZMyuf2hU8tUNTZ+P+isb6XRr8JE22TZlJxBoVdH1A==}
 +
-   '@csstools/color-helpers@6.0.2':
-     resolution: {integrity: sha512-LMGQLS9EuADloEFkcTBR3BwV/CGHV7zyDxVRtVDTwdI2Ca4it0CCVTT9wCkxSgokjE5Ho41hEPgb8OEUwoXr6Q==}
+   '@csstools/color-helpers@6.1.1':
+     resolution: {integrity: sha512-gLNsunvwf3mCi5u5o46/Z/JcJMnhbHSaZ69rkgPzNM3J4s8hWwpPUQB6/tt0EDFyCiWzxANlx+2LJwpYj4zS1w==}
      engines: {node: '>=20.19.0'}
-@@ -290,6 +407,60 @@ packages:
+@@ -433,6 +550,60 @@ packages:
    '@jridgewell/trace-mapping@0.3.31':
      resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
  
@@ -262,12 +262,12 @@ index c8dfc00..6520708 100644
 +  '@marijn/find-cluster-break@1.0.4':
 +    resolution: {integrity: sha512-Wy0V7+SGUjnF9/TkiM1hKVDPj7jKXduPNboMVtHTA8dySMURWqfg/JZ9E2Sq8JgSJmkl7k7Qe9FLeMSrSraWmQ==}
 +
-   '@mermaid-js/parser@1.1.0':
-     resolution: {integrity: sha512-gxK9ZX2+Fex5zu8LhRQoMeMPEHbc73UKZ0FQ54YrQtUxE1VVhMwzeNtKRPAu5aXks4FasbMe4xB4bWrmq6Jlxw==}
- 
-@@ -1178,6 +1349,9 @@ packages:
-     resolution: {integrity: sha512-csJvb+6kEiQaqo1woTdSAuOWdN0WTLIydkKrBnS+V5gZz0oqBrp4kQ35519QgK6TpBThiG3V1vNSHlIkv4AglQ==}
-     engines: {node: '>=22.0.0'}
+   '@mermaid-js/parser@2.0.0':
+     resolution: {integrity: sha512-K8BeapFUfrfxbRAUQAG5oBOCwo1+bNWzaVnPxTCutkfrTBn6T/j91FIhqxWJ32SUeQ9T3iy1zcmPZ5ROZEvDrg==}
+     engines: {node: '>=22.12.0'}
+@@ -1465,6 +1636,9 @@ packages:
+   chevrotain@11.1.2:
+     resolution: {integrity: sha512-opLQzEVriiH1uUQ4Kctsd49bRoFDXGGSC4GUqj7pGyxM3RehRhvTlZJc1FL/Flew2p5uwxa1tUDWKzI4wNM8pg==}
  
 +  codemirror@6.0.2:
 +    resolution: {integrity: sha512-VhydHotNW5w1UGK0Qj96BwSk/Zqbp9WbnyK2W/eVMv4QyF41INRGpjUhFJY7/uDNuudSc33a/PKr4iDqRduvHw==}
@@ -275,7 +275,7 @@ index c8dfc00..6520708 100644
    comma-separated-tokens@2.0.3:
      resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
  
-@@ -1204,6 +1378,9 @@ packages:
+@@ -1489,6 +1663,9 @@ packages:
    cose-base@2.2.0:
      resolution: {integrity: sha512-AzlgcsCbUMymkADOJtQm3wO9S3ltPfYOFD5033keQn9NJzIbtnZj+UdBJe7DYml/8TdbtHJW3j58SOnKhWY/5g==}
  
@@ -285,7 +285,7 @@ index c8dfc00..6520708 100644
    css-tree@3.2.1:
      resolution: {integrity: sha512-X7sjQzceUhu1u7Y/ylrRZFU2FS6LRiFVp6rKLPg23y3x3c3DOKAwuXGDp+PAGjh6CSnCjYeAul8pcT8bAl+lSA==}
      engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
-@@ -2144,6 +2321,9 @@ packages:
+@@ -2501,6 +2678,9 @@ packages:
      resolution: {integrity: sha512-laJTa3Jb+VQpaC6DseHhF7dXVqHTfJPCRDaEbid/drOhgitgYku/letMUqOXFoWV0zIIUbjpdH2t+tYj4bQMRQ==}
      engines: {node: '>=8'}
  
@@ -295,9 +295,9 @@ index c8dfc00..6520708 100644
    style-to-js@1.1.21:
      resolution: {integrity: sha512-RjQetxJrrUJLQPHbLku6U/ocGtzyjbJMP9lCNK7Ag0CNh690nSH8woqWH9u16nMjYBAok+i7JO1NP2pOy8IsPQ==}
  
-@@ -2367,6 +2547,9 @@ packages:
-   vscode-uri@3.1.0:
-     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
+@@ -2699,6 +2879,9 @@ packages:
+       jsdom:
+         optional: true
  
 +  w3c-keyname@2.2.8:
 +    resolution: {integrity: sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==}
@@ -305,9 +305,9 @@ index c8dfc00..6520708 100644
    w3c-xmlserializer@5.0.0:
      resolution: {integrity: sha512-o8qghlI8NZHU1lLPrpi2+Uq7abh4GGPpYANlalzWxyWteJOCsr/P+oPBA49TOLu5FTZO4d3F9MnWJfiMo4BkmA==}
      engines: {node: '>=18'}
-@@ -2474,6 +2657,264 @@ snapshots:
+@@ -2807,6 +2990,264 @@ snapshots:
  
-   '@chevrotain/utils@12.0.0': {}
+   '@chevrotain/utils@11.1.2': {}
  
 +  '@codemirror/autocomplete@6.20.3':
 +    dependencies:
@@ -567,12 +567,12 @@ index c8dfc00..6520708 100644
 +      style-mod: 4.1.4
 +      w3c-keyname: 2.2.8
 +
-   '@csstools/color-helpers@6.0.2': {}
+   '@csstools/color-helpers@6.1.1': {}
  
-   '@csstools/css-calc@3.2.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)':
-@@ -2568,6 +3009,101 @@ snapshots:
+   '@csstools/css-calc@3.4.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.1))(@csstools/css-tokenizer@4.0.1)':
+@@ -2963,6 +3404,101 @@ snapshots:
        '@jridgewell/resolve-uri': 3.1.2
-       '@jridgewell/sourcemap-codec': 1.5.5
+       '@jridgewell/sourcemap-codec': 1.6.0
  
 +  '@lezer/common@1.5.3': {}
 +
@@ -669,12 +669,12 @@ index c8dfc00..6520708 100644
 +
 +  '@marijn/find-cluster-break@1.0.4': {}
 +
-   '@mermaid-js/parser@1.1.0':
+   '@mermaid-js/parser@2.0.0':
      dependencies:
-       langium: 4.2.2
-@@ -3270,6 +3806,16 @@ snapshots:
-       '@chevrotain/types': 12.0.0
-       '@chevrotain/utils': 12.0.0
+       '@chevrotain/types': 11.1.2
+@@ -3682,6 +4218,16 @@ snapshots:
+       '@chevrotain/utils': 11.1.2
+       lodash-es: 4.17.23
  
 +  codemirror@6.0.2:
 +    dependencies:
@@ -688,8 +688,8 @@ index c8dfc00..6520708 100644
 +
    comma-separated-tokens@2.0.3: {}
  
-   commander@7.2.0: {}
-@@ -3290,6 +3836,8 @@ snapshots:
+   commander@15.0.0: {}
+@@ -3700,6 +4246,8 @@ snapshots:
      dependencies:
        layout-base: 2.0.1
  
@@ -698,7 +698,7 @@ index c8dfc00..6520708 100644
    css-tree@3.2.1:
      dependencies:
        mdn-data: 2.27.1
-@@ -4683,6 +5231,8 @@ snapshots:
+@@ -5138,6 +5686,8 @@ snapshots:
      dependencies:
        min-indent: 1.0.1
  
@@ -707,9 +707,9 @@ index c8dfc00..6520708 100644
    style-to-js@1.1.21:
      dependencies:
        style-to-object: 1.0.14
-@@ -4860,6 +5410,8 @@ snapshots:
- 
-   vscode-uri@3.1.0: {}
+@@ -5308,6 +5858,8 @@ snapshots:
+     transitivePeerDependencies:
+       - msw
  
 +  w3c-keyname@2.2.8: {}
 +
@@ -717,10 +717,10 @@ index c8dfc00..6520708 100644
      dependencies:
        xml-name-validator: 5.0.0
 diff --git a/internal/frontend/src/App.test.tsx b/internal/frontend/src/App.test.tsx
-index 25d674d..975c36a 100644
+index eb208f5..fa065a4 100644
 --- a/internal/frontend/src/App.test.tsx
 +++ b/internal/frontend/src/App.test.tsx
-@@ -11,6 +11,8 @@ describe("loadSettings", () => {
+@@ -33,6 +33,8 @@ describe("loadSettings", () => {
      expect(s.theme).toBe("auto");
      expect(s.fontSize).toBe("medium");
      expect(s.wide).toBe(false);
@@ -730,10 +730,10 @@ index 25d674d..975c36a 100644
  
    it("returns stored settings", () => {
 diff --git a/internal/frontend/src/App.tsx b/internal/frontend/src/App.tsx
-index 764c59d..4e5cfed 100644
+index 12904b2..958c70a 100644
 --- a/internal/frontend/src/App.tsx
 +++ b/internal/frontend/src/App.tsx
-@@ -90,6 +90,7 @@ export function App() {
+@@ -104,6 +104,7 @@ export function App() {
    });
    const [settings, setSettings] = useState<Settings>(loadSettings);
    const [settingsOpen, setSettingsOpen] = useState(false);
@@ -741,7 +741,7 @@ index 764c59d..4e5cfed 100644
    const knownFileIds = useRef<Set<string>>(new Set());
    const [initialFileId, setInitialFileId] = useState<string | null>(() => {
      const fromUrl = parseFileIdFromSearch(window.location.search);
-@@ -487,7 +488,7 @@ export function App() {
+@@ -547,7 +548,7 @@ export function App() {
          <main className="flex-1 flex flex-col overflow-hidden relative">
            <div
              ref={setScrollContainer}
@@ -750,7 +750,7 @@ index 764c59d..4e5cfed 100644
            >
              {activeFileId != null ? (
                <MarkdownViewer
-@@ -504,10 +505,15 @@ export function App() {
+@@ -567,6 +568,10 @@ export function App() {
                  uploaded={activeFile?.uploaded}
                  isWide={settings.wide}
                  fontSize={settings.fontSize}
@@ -761,12 +761,7 @@ index 764c59d..4e5cfed 100644
                  onZoom={handleZoom}
                  scrollToHeading={pendingSearchHeading}
                  onScrolledToHeading={() => setPendingSearchHeading(null)}
-                 searchQuery={searchQuery}
-+                scrollContainer={scrollContainer}
-               />
-             ) : (
-               <div className="flex items-center justify-center h-50 text-gh-text-secondary text-sm">
-@@ -535,7 +541,7 @@ export function App() {
+@@ -596,7 +601,7 @@ export function App() {
            />
          )}
        </div>
@@ -1031,11 +1026,11 @@ index 0000000..a4f707d
 +  return <div ref={containerRef} className="mo-editor h-full overflow-hidden" />;
 +});
 diff --git a/internal/frontend/src/components/MarkdownViewer.tsx b/internal/frontend/src/components/MarkdownViewer.tsx
-index 28d13b1..903a8f8 100644
+index 2a861bc..dc9ce7a 100644
 --- a/internal/frontend/src/components/MarkdownViewer.tsx
 +++ b/internal/frontend/src/components/MarkdownViewer.tsx
-@@ -13,6 +13,8 @@ import mermaid from "mermaid";
- import { fetchFileContent, openRelativeFile } from "../hooks/useApi";
+@@ -14,6 +14,8 @@ import { fetchFileContent, openRelativeFile } from "../hooks/useApi";
+ import { isPlainLeftClick } from "../utils/linkClick";
  import { escapeRegExp } from "../utils/regex";
  import { RawToggle } from "./RawToggle";
 +import { EditToggle } from "./EditToggle";
@@ -1043,19 +1038,18 @@ index 28d13b1..903a8f8 100644
  import { TocToggle } from "./TocToggle";
  import { CopyButton } from "./CopyButton";
  import { CloseFileButton } from "./CloseFileButton";
-@@ -79,6 +81,11 @@ interface MarkdownViewerProps {
+@@ -99,6 +101,10 @@ interface MarkdownViewerProps {
    scrollToHeading?: string | null;
    onScrolledToHeading?: () => void;
    searchQuery?: string | null;
 +  editorLineWrapping?: boolean;
 +  editorAutoSave?: boolean;
 +  editorColorScheme?: string;
-+  scrollContainer?: HTMLElement | null;
 +  onEditStateChange?: (editing: boolean) => void;
  }
  
  interface SearchHitMarker {
-@@ -86,6 +93,77 @@ interface SearchHitMarker {
+@@ -106,6 +112,77 @@ interface SearchHitMarker {
    height: number;
  }
  
@@ -1133,14 +1127,13 @@ index 28d13b1..903a8f8 100644
  const SEARCH_HIT_COLUMN_OFFSET = -24;
  
  function collectSearchHitMarkers(root: HTMLElement, query: string): SearchHitMarker[] {
-@@ -542,20 +620,58 @@ export function MarkdownViewer({
+@@ -580,10 +657,21 @@ export function MarkdownViewer({
    scrollToHeading,
    onScrolledToHeading,
    searchQuery,
 +  editorLineWrapping = true,
 +  editorAutoSave = false,
 +  editorColorScheme = "default",
-+  scrollContainer,
 +  onEditStateChange,
  }: MarkdownViewerProps) {
    const [content, setContent] = useState("");
@@ -1154,7 +1147,10 @@ index 28d13b1..903a8f8 100644
 +  const editorRef = useRef<EditorHandle>(null);
 +  const editTargetRef = useRef<{ group: string; fileId: string } | null>(null);
    const [searchHitMarkers, setSearchHitMarkers] = useState<SearchHitMarker[]>([]);
-   const articleRef = useRef<HTMLElement>(null);
+   // The sticky bar shows the file name only while the document's own title is on
+   // screen (so it never duplicates it), then folds the title into the label once
+@@ -593,12 +681,38 @@ export function MarkdownViewer({
+   const stickyLabelRef = useRef<HTMLDivElement>(null);
    const [prevFetchKey, setPrevFetchKey] = useState({ fileId, revision });
  
 -  if (fileId !== prevFetchKey.fileId || revision !== prevFetchKey.revision) {
@@ -1193,7 +1189,7 @@ index 28d13b1..903a8f8 100644
      let cancelled = false;
      fetchFileContent(activeGroup, fileId)
        .then((data) => {
-@@ -573,7 +689,7 @@ export function MarkdownViewer({
+@@ -616,7 +730,7 @@ export function MarkdownViewer({
      return () => {
        cancelled = true;
      };
@@ -1202,7 +1198,7 @@ index 28d13b1..903a8f8 100644
  
    const handleLinkClick = useCallback(
      async (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-@@ -769,6 +885,16 @@ export function MarkdownViewer({
+@@ -823,6 +937,16 @@ export function MarkdownViewer({
      }
    }, [loading, renderedContent, scrollToHeading, onScrolledToHeading]);
  
@@ -1219,9 +1215,9 @@ index 28d13b1..903a8f8 100644
    useLayoutEffect(() => {
      if (loading || !articleRef.current || !isMarkdown || isRawView || !searchQuery?.trim()) {
        setSearchHitMarkers([]);
-@@ -795,6 +921,65 @@ export function MarkdownViewer({
-     };
-   }, [loading, renderedContent, isMarkdown, isRawView, searchQuery]);
+@@ -888,6 +1012,65 @@ export function MarkdownViewer({
+     // isWide/fontSize/isTocOpen change the layout, so recompute on those too.
+   }, [loading, renderedContent, scrollContainer, isWide, fontSize, isTocOpen]);
  
 +  /** Build anchor from editor cursor line (Edit → View). */
 +  const anchorFromEditor = useCallback((): ScrollAnchor | null => {
@@ -1285,7 +1281,7 @@ index 28d13b1..903a8f8 100644
    if (loading) {
      return (
        <div className="flex items-center justify-center h-50 text-gh-text-secondary text-sm">
-@@ -803,6 +988,36 @@ export function MarkdownViewer({
+@@ -896,6 +1079,36 @@ export function MarkdownViewer({
      );
    }
  
@@ -1321,11 +1317,11 @@ index 28d13b1..903a8f8 100644
 +
    return (
      <div className="flex items-start gap-2">
-       <article
-@@ -824,12 +1039,7 @@ export function MarkdownViewer({
-         </div>
-         {renderedContent}
-       </article>
+       <div className="min-w-0 flex-1">
+@@ -930,12 +1143,7 @@ export function MarkdownViewer({
+           {renderedContent}
+         </article>
+       </div>
 -      <div className="shrink-0 flex flex-col gap-2 -mr-4 -mt-4 sticky -top-4">
 -        {isMarkdown && <TocToggle isTocOpen={isTocOpen} onToggle={onTocToggle} />}
 -        {isMarkdown && <RawToggle isRaw={isRawView} onToggle={() => setIsRawView((v) => !v)} />}
@@ -1441,10 +1437,10 @@ index 8b28c27..8956876 100644
      </div>
    );
 diff --git a/internal/frontend/src/hooks/useApi.ts b/internal/frontend/src/hooks/useApi.ts
-index 0561c3c..6bf2232 100644
+index f40363e..6a3c59b 100644
 --- a/internal/frontend/src/hooks/useApi.ts
 +++ b/internal/frontend/src/hooks/useApi.ts
-@@ -126,6 +126,18 @@ export async function uploadFile(name: string, content: string, group: string):
+@@ -130,6 +130,18 @@ export async function uploadFile(name: string, content: string, group: string):
    }
  }
  
@@ -1956,10 +1952,10 @@ index f35e873..6155188 100644
  
  export function loadSettings(): Settings {
 diff --git a/internal/frontend/src/styles/app.css b/internal/frontend/src/styles/app.css
-index 07a84d9..a351811 100644
+index 5d989d8..efba90b 100644
 --- a/internal/frontend/src/styles/app.css
 +++ b/internal/frontend/src/styles/app.css
-@@ -211,6 +211,12 @@ body,
+@@ -215,6 +215,12 @@ body,
    color: var(--fgColor-danger);
  }
  
@@ -1970,13 +1966,13 @@ index 07a84d9..a351811 100644
 +}
 +
  [data-theme="dark"] .markdown-body {
-   color-scheme: dark;
    --fgColor-accent: #4493f8;
+   --fgColor-danger: #f85149;
 diff --git a/internal/server/server.go b/internal/server/server.go
-index 62a1984..7e05c74 100644
+index a991d1b..fd31f83 100644
 --- a/internal/server/server.go
 +++ b/internal/server/server.go
-@@ -382,6 +382,40 @@ func (s *State) FindFile(id, groupName string) *FileEntry {
+@@ -460,6 +460,40 @@ func (s *State) FindFile(id, groupName string) *FileEntry {
  	return nil
  }
  
@@ -2017,7 +2013,7 @@ index 62a1984..7e05c74 100644
  func (s *State) ReorderFiles(groupName string, fileIDs []string) bool {
  	s.mu.Lock()
  	defer s.mu.Unlock()
-@@ -1161,6 +1195,10 @@ type uploadFileRequest struct {
+@@ -1575,6 +1609,10 @@ type uploadFileRequest struct {
  	Content string `json:"content"`
  }
  
@@ -2028,7 +2024,7 @@ index 62a1984..7e05c74 100644
  type patternRequest struct {
  	Pattern string `json:"pattern"`
  	Group   string `json:"group"`
-@@ -1230,6 +1268,7 @@ func NewHandler(state *State) http.Handler {
+@@ -1644,6 +1682,7 @@ func NewHandler(state *State) http.Handler {
  	mux.HandleFunc("GET /_/api/groups", handleGroups(state))
  	mux.HandleFunc("PUT /_/api/groups/{group}/reorder", handleReorderFiles(state))
  	mux.HandleFunc("GET /_/api/groups/{group}/files/{id}/content", handleFileContent(state))
@@ -2036,7 +2032,7 @@ index 62a1984..7e05c74 100644
  	mux.HandleFunc("GET /_/api/search", handleSearch(state))
  	mux.HandleFunc("GET /_/api/groups/{group}/files/{id}/raw/{path...}", handleFileRaw(state))
  	mux.HandleFunc("POST /_/api/groups/{group}/files/open", handleOpenFile(state))
-@@ -1466,6 +1505,47 @@ func handleFileContent(state *State) http.HandlerFunc {
+@@ -1909,6 +1948,46 @@ func handleFileContent(state *State) http.HandlerFunc {
  	}
  }
  
@@ -2058,8 +2054,7 @@ index 62a1984..7e05c74 100644
 +		r.Body = http.MaxBytesReader(w, r.Body, maxRequestSize)
 +		var req saveFileContentRequest
 +		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-+			var maxBytesErr *http.MaxBytesError
-+			if errors.As(err, &maxBytesErr) {
++			if _, ok := errors.AsType[*http.MaxBytesError](err); ok { //nostyle:handlerrors
 +				http.Error(w, "content too large (max 10MB)", http.StatusRequestEntityTooLarge)
 +				return
 +			}

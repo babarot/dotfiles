@@ -13,10 +13,10 @@ instead of a column beside it, and closes on a click outside.
  4 files changed, 58 insertions(+), 3 deletions(-)
 
 diff --git a/internal/frontend/src/App.tsx b/internal/frontend/src/App.tsx
-index 3a67a23..4305928 100644
+index 9421563..b82c063 100644
 --- a/internal/frontend/src/App.tsx
 +++ b/internal/frontend/src/App.tsx
-@@ -480,7 +480,7 @@ export function App() {
+@@ -540,7 +540,7 @@ export function App() {
              />
            </>
          )}
@@ -25,8 +25,8 @@ index 3a67a23..4305928 100644
            <div
              ref={setScrollContainer}
              className="flex-1 overflow-y-auto overscroll-contain p-8 bg-gh-bg"
-@@ -511,8 +511,19 @@ export function App() {
-               </div>
+@@ -572,8 +572,19 @@ export function App() {
+               <EmptyGroupMessage group={activeGroupData} />
              )}
            </div>
 +          {tocOpen && settings.tocFloating && (
@@ -64,10 +64,10 @@ index 69abccc..1aaafc6 100644
        </div>
      </div>
 diff --git a/internal/frontend/src/components/TocPanel.tsx b/internal/frontend/src/components/TocPanel.tsx
-index 31f5f8e..28da062 100644
+index 534dad8..68026c7 100644
 --- a/internal/frontend/src/components/TocPanel.tsx
 +++ b/internal/frontend/src/components/TocPanel.tsx
-@@ -10,6 +10,7 @@ interface TocPanelProps {
+@@ -11,6 +11,7 @@ interface TocPanelProps {
    headings: TocHeading[];
    activeHeadingId: string | null;
    onHeadingClick: (id: string) => void;
@@ -75,7 +75,7 @@ index 31f5f8e..28da062 100644
  }
  
  const MIN_WIDTH = 180;
-@@ -35,7 +36,12 @@ const INDENT: Record<number, string> = {
+@@ -36,7 +37,12 @@ const INDENT: Record<number, string> = {
    6: "pl-18",
  };
  
@@ -89,7 +89,7 @@ index 31f5f8e..28da062 100644
    const [width, setWidth] = useState(getInitialWidth);
    const dragging = useRef(false);
  
-@@ -70,6 +76,36 @@ export function TocPanel({ headings, activeHeadingId, onHeadingClick }: TocPanel
+@@ -71,6 +77,36 @@ export function TocPanel({ headings, activeHeadingId, onHeadingClick }: TocPanel
      localStorage.setItem(STORAGE_KEY, String(width));
    }, [width]);
  

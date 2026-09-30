@@ -10,10 +10,10 @@ makes the nesting visible at a glance.
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/internal/frontend/src/components/TreeView.tsx b/internal/frontend/src/components/TreeView.tsx
-index b075576..188c466 100644
+index 9c429df..cb9721a 100644
 --- a/internal/frontend/src/components/TreeView.tsx
 +++ b/internal/frontend/src/components/TreeView.tsx
-@@ -178,7 +178,7 @@ function TreeNodeItem({
+@@ -184,7 +184,7 @@ function TreeNodeItem({
      <div>
        <button
          className="flex items-center gap-1.5 w-full px-3 py-1.5 border-none cursor-pointer text-left text-sm bg-transparent text-gh-text-secondary hover:bg-gh-bg-hover transition-colors duration-150"
@@ -22,12 +22,12 @@ index b075576..188c466 100644
          onClick={() => onToggleCollapse(node.fullPath)}
        >
          {/* Chevron */}
-@@ -270,7 +270,7 @@ function FileNodeItem({
+@@ -280,7 +280,7 @@ function FileNodeItem({
              ? "bg-gh-bg-active text-gh-text font-semibold"
              : "bg-transparent text-gh-text-secondary hover:bg-gh-bg-hover"
          }`}
 -        style={{ paddingLeft: `${depth * 16 + 12}px` }}
 +        style={{ paddingLeft: `${depth * 28 + 12}px` }}
-         onClick={() => onFileSelect(file.id)}
-         title={file.uploaded ? file.name : file.path}
-       >
+         onClick={(e) => {
+           if (!isPlainLeftClick(e)) return;
+           e.preventDefault();

@@ -7,17 +7,17 @@ With it on, the sidebar floats over the content instead of pushing it
 aside, closes on a file select or a click outside, and does not open by
 itself when a group has several files.
 ---
- internal/frontend/src/App.tsx                 | 54 ++++++++++++-------
+ internal/frontend/src/App.tsx                 | 49 +++++++++++--------
  .../src/components/SettingsDialog.tsx         |  6 +++
  internal/frontend/src/components/Sidebar.tsx  |  4 +-
  internal/frontend/src/lib/settings.ts         |  2 +
- 4 files changed, 46 insertions(+), 20 deletions(-)
+ 4 files changed, 40 insertions(+), 21 deletions(-)
 
 diff --git a/internal/frontend/src/App.tsx b/internal/frontend/src/App.tsx
-index e58d999..3a67a23 100644
+index 585d55c..9421563 100644
 --- a/internal/frontend/src/App.tsx
 +++ b/internal/frontend/src/App.tsx
-@@ -120,7 +120,9 @@ export function App() {
+@@ -134,7 +134,9 @@ export function App() {
  
      // Active file selection and sidebar auto open/close
      const group = groups.find((g) => g.name === activeGroup);
@@ -28,22 +28,18 @@ index e58d999..3a67a23 100644
  
      if (groups.length === 0) {
        setActiveFileId(null);
-@@ -329,6 +331,14 @@ export function App() {
-     window.history.pushState(null, "", groupToPath(name));
-   };
- 
-+  const handleFileSelect = useCallback(
-+    (fileId: string) => {
-+      setActiveFileId(fileId);
+@@ -384,8 +386,9 @@ export function App() {
+     (fileId: string) => {
+       window.history.pushState(null, "", buildFileUrl(activeGroup, fileId));
+       setActiveFileId(fileId);
 +      if (settings.sidebarOverlay) setSidebarOpen(false);
-+    },
-+    [settings.sidebarOverlay],
-+  );
-+
-   const handleFileOpened = useCallback((fileId: string) => {
-     setActiveFileId(fileId);
-     setPendingSearchHeading(null);
-@@ -444,25 +454,31 @@ export function App() {
+     },
+-    [activeGroup],
++    [activeGroup, settings.sidebarOverlay],
+   );
+ 
+   const handleFileOpened = useCallback(
+@@ -511,25 +514,31 @@ export function App() {
            </button>
          </div>
        </header>
@@ -54,7 +50,7 @@ index e58d999..3a67a23 100644
 -            groups={groups}
 -            activeGroup={activeGroup}
 -            activeFileId={activeFileId}
--            onFileSelect={setActiveFileId}
+-            onFileSelect={handleFileSelect}
 -            onFilesReorder={handleFilesReorder}
 -            viewMode={currentViewMode}
 -            showTitle={currentShowTitle}
@@ -111,10 +107,10 @@ index 6ba6c8d..69abccc 100644
        </div>
      </div>
 diff --git a/internal/frontend/src/components/Sidebar.tsx b/internal/frontend/src/components/Sidebar.tsx
-index fa26ff7..54a0709 100644
+index d39bb76..daa679b 100644
 --- a/internal/frontend/src/components/Sidebar.tsx
 +++ b/internal/frontend/src/components/Sidebar.tsx
-@@ -153,6 +153,7 @@ interface SidebarProps {
+@@ -162,6 +162,7 @@ interface SidebarProps {
    searchResults?: SearchResult[];
    searchLoading?: boolean;
    onSearchResultSelect?: (fileId: string, heading?: string) => void;
@@ -122,7 +118,7 @@ index fa26ff7..54a0709 100644
  }
  
  export function Sidebar({
-@@ -171,6 +172,7 @@ export function Sidebar({
+@@ -180,6 +181,7 @@ export function Sidebar({
    searchResults = [],
    searchLoading = false,
    onSearchResultSelect,
@@ -130,7 +126,7 @@ index fa26ff7..54a0709 100644
  }: SidebarProps) {
    const allFiles = useMemo(() => {
      const currentGroup = groups.find((g) => g.name === activeGroup);
-@@ -327,7 +329,7 @@ export function Sidebar({
+@@ -336,7 +338,7 @@ export function Sidebar({
  
    return (
      <aside

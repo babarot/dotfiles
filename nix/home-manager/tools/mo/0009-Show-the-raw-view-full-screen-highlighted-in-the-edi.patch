@@ -15,18 +15,18 @@ files are highlighted with the same theme.
  2 files changed, 110 insertions(+), 12 deletions(-)
 
 diff --git a/internal/frontend/src/components/MarkdownViewer.tsx b/internal/frontend/src/components/MarkdownViewer.tsx
-index 903a8f8..4ca2477 100644
+index dc9ce7a..1838861 100644
 --- a/internal/frontend/src/components/MarkdownViewer.tsx
 +++ b/internal/frontend/src/components/MarkdownViewer.tsx
-@@ -22,6 +22,7 @@ import { resolveLink, resolveImageSrc, extractLanguage } from "../utils/resolve"
- import { parseFrontmatter } from "../utils/frontmatter";
+@@ -25,6 +25,7 @@ import { parseFrontmatter } from "../utils/frontmatter";
  import { stripMdxSyntax } from "../utils/mdx";
  import { isMarkdownFile, detectLanguage } from "../utils/filetype";
+ import { formatFileLabel } from "../utils/fileLabel";
 +import { getShikiTheme } from "../lib/editorThemes";
  import type { ZoomContent } from "./ZoomModal";
  import type { TocHeading } from "./TocPanel";
  import type { Components } from "react-markdown";
-@@ -564,19 +565,27 @@ function FrontmatterBlock({ yaml }: { yaml: string }) {
+@@ -598,19 +599,27 @@ function FrontmatterBlock({ yaml }: { yaml: string }) {
    );
  }
  
@@ -57,7 +57,7 @@ index 903a8f8..4ca2477 100644
              .then((result) => {
                if (!cancelled) setHtml(result);
              })
-@@ -586,10 +595,15 @@ function HighlightedView({ content, language }: { content: string; language: str
+@@ -620,10 +629,15 @@ function HighlightedView({ content, language }: { content: string; language: str
      return () => {
        cancelled = true;
      };
@@ -75,7 +75,7 @@ index 903a8f8..4ca2477 100644
    }
    return (
      <pre>
-@@ -598,8 +612,49 @@ function HighlightedView({ content, language }: { content: string; language: str
+@@ -632,8 +646,49 @@ function HighlightedView({ content, language }: { content: string; language: str
    );
  }
  
@@ -127,7 +127,7 @@ index 903a8f8..4ca2477 100644
  }
  
  export function MarkdownViewer({
-@@ -631,8 +686,8 @@ export function MarkdownViewer({
+@@ -667,8 +722,8 @@ export function MarkdownViewer({
    const [isRawView, setIsRawView] = useState(false);
    const [isEditView, setIsEditView] = useState(false);
    useEffect(() => {
@@ -138,7 +138,7 @@ index 903a8f8..4ca2477 100644
    const [editAnchor, setEditAnchor] = useState<ScrollAnchor | null>(null);
    const editorRef = useRef<EditorHandle>(null);
    const editTargetRef = useRef<{ group: string; fileId: string } | null>(null);
-@@ -807,12 +862,23 @@ export function MarkdownViewer({
+@@ -858,12 +913,23 @@ export function MarkdownViewer({
      [content, isRawView, isMarkdown],
    );
  
@@ -164,7 +164,7 @@ index 903a8f8..4ca2477 100644
      }
      const base = parsed ? parsed.content : content;
      const md = fileName.toLowerCase().endsWith(".mdx") ? stripMdxSyntax(base) : base;
-@@ -835,7 +901,16 @@ export function MarkdownViewer({
+@@ -887,7 +953,16 @@ export function MarkdownViewer({
          </Markdown>
        </>
      );
@@ -182,7 +182,7 @@ index 903a8f8..4ca2477 100644
  
    const prevHeadingsKey = useRef("");
    useEffect(() => {
-@@ -1018,6 +1093,14 @@ export function MarkdownViewer({
+@@ -1109,6 +1184,14 @@ export function MarkdownViewer({
      );
    }
  
@@ -196,7 +196,7 @@ index 903a8f8..4ca2477 100644
 +
    return (
      <div className="flex items-start gap-2">
-       <article
+       <div className="min-w-0 flex-1">
 diff --git a/internal/frontend/src/lib/editorThemes.ts b/internal/frontend/src/lib/editorThemes.ts
 index 1eb65ec..65ef172 100644
 --- a/internal/frontend/src/lib/editorThemes.ts

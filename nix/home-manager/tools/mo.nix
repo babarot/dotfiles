@@ -4,14 +4,14 @@
 let
   mo = pkgs.buildGoModule (finalAttrs: {
     pname = "mo";
-    version = "1.4.0";
+    version = "1.6.9";
     src = pkgs.fetchFromGitHub {
       owner = "k1LoW";
       repo = "mo";
       tag = "v${finalAttrs.version}";
-      hash = "sha256-lEngCTFi9FkKMw8dHbf0+A15/SKHyadY8iA4ji+JMhs=";
+      hash = "sha256-BXGMjybhKZzw+yae478EP2j3cKw/ZbJMrW342W8ZCmY=";
     };
-    vendorHash = "sha256-EMmDN42gl/OFxSsuTIImN0oUa/W9gv2OMYRVm5kArS0=";
+    vendorHash = "sha256-v1EfsHryyLfv9/ZzVazSMFySio62upqsB33eLV6LZZU=";
     # Local changes, one patch per feature, applied in name order; each
     # patch's message says what it does. They are exported from a fork
     # branch, not edited here (docs/guides/maintenance.md)
@@ -31,7 +31,7 @@ let
       # The lockfile is in the frontend directory, but the patches apply
       # from the top of the source
       postPatch = "cd ${finalAttrs.pnpmRoot}";
-      hash = "sha256-jDE/I7DieGHO/P/tCmQFPL5A6Xt1VhFwvOZxTVK2ptM=";
+      hash = "sha256-FjVAGkxXmykGMEdB9FWEEWg6hnxUXLjARLEI23s2EZ4=";
     };
     nativeBuildInputs = [
       pkgs.nodejs

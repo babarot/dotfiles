@@ -25,6 +25,7 @@ herdr plugin pane open --plugin persiyanov.reviewr --entrypoint pane --placement
 herdr pane resize --pane "$claude_pane" --direction down --amount 0.1667 >/dev/null || true
 news_pane=$(herdr pane split "$claude_pane" --direction right --cwd "$dir" --no-focus |
   jq -r '.result.pane.pane_id')
+herdr pane rename "$news_pane" news >/dev/null || true
 # The typed command waits in the terminal until the new shell reads it
 herdr pane run "$news_pane" 'gh news' >/dev/null || true
 

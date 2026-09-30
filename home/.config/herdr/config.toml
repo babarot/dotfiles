@@ -5,6 +5,9 @@ onboarding = false
 window_title = "{workspace}: {terminal_title}"
 # Agent states as shapes, not colored dots (the default), so they differ without color
 status_indicators = "symbols"
+# Name agent panes (claude) on their borders, as gh-news and reviewr are named;
+# a pane renamed by hand shows its own name instead
+show_agent_labels_on_pane_borders = true
 # Right end of the tab bar: ZOOM while a pane is zoomed, the focused pane's
 # git branch (one worktree goes through several PR branches), and the time
 tab_bar_right = [

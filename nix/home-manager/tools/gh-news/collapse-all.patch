@@ -1,8 +1,8 @@
 diff --git a/src/state/mod.rs b/src/state/mod.rs
-index 2e817d7..a30e136 100644
+index 2e817d7..972d81a 100644
 --- a/src/state/mod.rs
 +++ b/src/state/mod.rs
-@@ -403,6 +403,20 @@ impl AppState {
+@@ -403,6 +403,24 @@ impl AppState {
          }
      }
  
@@ -13,6 +13,10 @@ index 2e817d7..a30e136 100644
 +            self.expanded_orgs.clear();
 +        } else {
 +            self.collapse_all_repos();
++            for n in &self.notifications {
++                self.expanded_orgs
++                    .insert(n.repository.owner.login.clone(), false);
++            }
 +        }
 +        self.build_tree();
 +        if !self.tree_items.is_empty() {
@@ -37,7 +41,7 @@ index dfc935d..fae1f46 100644
                  // Collapse org if on an org header
                  if let Some(org_name) = self.state.selected_org() {
 diff --git a/src/ui/components/help.rs b/src/ui/components/help.rs
-index 797090f..8b05b86 100644
+index 797090f..e8ba054 100644
 --- a/src/ui/components/help.rs
 +++ b/src/ui/components/help.rs
 @@ -159,6 +159,10 @@ impl HelpWidget {
@@ -46,7 +50,7 @@ index 797090f..8b05b86 100644
                      },
 +                    HelpLine {
 +                        key: "H/L",
-+                        desc: "Collapse/expand all repositories",
++                        desc: "Collapse/expand all groups",
 +                    },
                      HelpLine {
                          key: "x",

@@ -16,8 +16,8 @@ let
     # Small patches, one per change, made against the release tag and
     # applied in order
     patches = [
-      # H and L collapse and expand every repository; only h and l on the
-      # current one exist
+      # H and L collapse and expand every group; only h and l on the current
+      # one exist
       ./gh-news/collapse-all.patch
       # Hide review requests on pull requests that no longer need the review:
       # merged, closed or approved by others; gh-news filters cannot see a
@@ -26,6 +26,9 @@ let
       # Double-clicking a notification opens it like Enter; a click only
       # selects it
       ./gh-news/double-click-open.patch
+      # Users get a header like organisations, so their repositories collapse
+      # together; gh-news groups only organisations
+      ./gh-news/group-users.patch
     ];
   };
 in

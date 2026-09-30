@@ -1,0 +1,130 @@
+diff --git a/src/state/mod.rs b/src/state/mod.rs
+index 2e817d7..09a3258 100644
+--- a/src/state/mod.rs
++++ b/src/state/mod.rs
+@@ -22,6 +22,7 @@ pub enum OrgGroupingMode {
+ pub struct OrgHeaderInfo {
+     pub login: String,
+     pub notification_count: usize,
++    pub is_user: bool,
+ }
+ 
+ #[derive(Debug, Clone, PartialEq, Eq)]
+diff --git a/src/state/tree.rs b/src/state/tree.rs
+index ffbc8a2..96f3d52 100644
+--- a/src/state/tree.rs
++++ b/src/state/tree.rs
+@@ -70,11 +70,9 @@ impl<'a> TreeBuilder<'a> {
+         let mut org_counts: HashMap<String, usize> = HashMap::new();
+         for idx in &regular_indices {
+             if let Some(notif) = self.notifications.get(*idx) {
+-                if notif.repository.owner.owner_type == "Organization" {
+-                    *org_counts
+-                        .entry(notif.repository.owner.login.clone())
+-                        .or_insert(0) += 1;
+-                }
++                *org_counts
++                    .entry(notif.repository.owner.login.clone())
++                    .or_insert(0) += 1;
+             }
+         }
+ 
+@@ -98,19 +96,15 @@ impl<'a> TreeBuilder<'a> {
+             return tree_items;
+         }
+ 
++        // Users get a header like organisations, so their repositories can
++        // be collapsed together too.
+         let mut org_groups: HashMap<String, Vec<usize>> = HashMap::new();
+-        let mut non_org_indices: Vec<usize> = Vec::new();
+-
+         for idx in regular_indices {
+             if let Some(notif) = self.notifications.get(idx) {
+-                if notif.repository.owner.owner_type == "Organization" {
+-                    org_groups
+-                        .entry(notif.repository.owner.login.clone())
+-                        .or_default()
+-                        .push(idx);
+-                } else {
+-                    non_org_indices.push(idx);
+-                }
++                org_groups
++                    .entry(notif.repository.owner.login.clone())
++                    .or_default()
++                    .push(idx);
+             }
+         }
+ 
+@@ -135,9 +129,15 @@ impl<'a> TreeBuilder<'a> {
+         for (org, indices, _) in org_list {
+             let notification_count = indices.len();
+ 
++            let is_user = indices
++                .first()
++                .and_then(|&idx| self.notifications.get(idx))
++                .is_some_and(|n| n.repository.owner.owner_type != "Organization");
++
+             tree_items.push(TreeItem::OrgHeader(OrgHeaderInfo {
+                 login: org.clone(),
+                 notification_count,
++                is_user,
+             }));
+ 
+             let is_org_expanded = *self.expanded_orgs.get(&org).unwrap_or(&true);
+@@ -158,18 +158,6 @@ impl<'a> TreeBuilder<'a> {
+             }
+         }
+ 
+-        if !non_org_indices.is_empty() {
+-            let mut repo_groups: HashMap<String, Vec<usize>> = HashMap::new();
+-            for idx in non_org_indices {
+-                if let Some(notif) = self.notifications.get(idx) {
+-                    let repo_name = notif.repo_full_name().to_string();
+-                    repo_groups.entry(repo_name).or_default().push(idx);
+-                }
+-            }
+-
+-            self.append_repos(&mut tree_items, &self.sort_repo_groups(repo_groups), None);
+-        }
+-
+         tree_items
+     }
+ 
+@@ -314,6 +302,24 @@ mod tests {
+             .any(|i| matches!(i, TreeItem::OrgHeader(info) if info.login == "org1")));
+     }
+ 
++    #[test]
++    fn users_get_a_header_like_organisations() {
++        let items = build(
++            vec![
++                notif("1", "alice", "r1", "User", 10),
++                notif("2", "alice", "r2", "User", 20),
++                notif("3", "org1", "r3", "Organization", 30),
++            ],
++            OrgGroupingMode::Auto,
++        );
++        assert!(items.iter().any(
++            |i| matches!(i, TreeItem::OrgHeader(info) if info.login == "alice" && info.is_user)
++        ));
++        assert!(items.iter().any(
++            |i| matches!(i, TreeItem::OrgHeader(info) if info.login == "org1" && !info.is_user)
++        ));
++    }
++
+     #[test]
+     fn org_grouping_off_never_emits_org_header() {
+         let items = build(
+diff --git a/src/ui/components/list.rs b/src/ui/components/list.rs
+index 14bf7a6..70440a0 100644
+--- a/src/ui/components/list.rs
++++ b/src/ui/components/list.rs
+@@ -139,7 +139,7 @@ impl ListWidget {
+                             .unwrap_or(true);
+ 
+                         line.push(Span::styled(
+-                            "󰊻 ",
++                            if org_info.is_user { "\u{f007} " } else { "󰊻 " },
+                             if is_selected {
+                                 Style::default().fg(self.theme.highlight_fg)
+                             } else {

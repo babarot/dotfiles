@@ -73,6 +73,16 @@ prefix = "ctrl+s"
 cycle_pane_next = "prefix+o"
 open_notification_target = "prefix+a"
 
+# A scratch shell in a popup over the layout, in the focused pane's directory;
+# exiting the shell closes it
+[[keys.command]]
+key = "prefix+t"
+type = "popup"
+command = "exec \"${SHELL:-sh}\""
+description = "open scratch shell"
+width = "80%"
+height = "80%"
+
 # Review plugins from nix/home-manager/tools/herdr-reviewr.nix and herdr-hunk-diff.nix.
 # The hunk keys are the ones its setup-keys action would add.
 [[keys.command]]

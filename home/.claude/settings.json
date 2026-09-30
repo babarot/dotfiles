@@ -16,7 +16,10 @@
       "Bash(python3 -m pip:*)",
       "Bash(pip3:*)",
       "Bash(pipx:*)",
-      "Bash(pip:*)"
+      "Bash(pip:*)",
+      "Bash(sudo:*)",
+      "Read(~/.ssh/**)",
+      "Read(**/.env)"
     ],
     "defaultMode": "auto"
   },

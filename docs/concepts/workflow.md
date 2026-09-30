@@ -6,7 +6,7 @@ How work gets done day to day: each change gets its own git worktree and herdr w
 
 A worktree stays open for a whole feature, and each one gets its own herdr workspace. herdr creates the worktrees itself.
 
-When herdr creates or opens a worktree workspace, a plugin ([herdr-worktree-layout.nix](../../nix/home-manager/tools/herdr-worktree-layout.nix)) lays it out with Claude Code, a reviewr pane beside it and a shell, all in the worktree. Reopening a worktree picks up Claude's conversation where it left off, and a workspace someone already arranged is left alone.
+When herdr creates or opens a worktree workspace, a plugin ([herdr-worktree-layout.nix](../../nix/home-manager/tools/herdr-worktree-layout.nix)) lays it out with Claude Code, gh-news beside it and a reviewr pane below them, all in the worktree. Reopening a worktree picks up Claude's conversation where it left off, and a workspace someone already arranged is left alone.
 
 herdr's integrations for Claude Code and Codex are installed on every switch, so herdr resumes their conversations after its server restarts.
 
@@ -24,7 +24,7 @@ The bindings, including the ones for the review plugins, are in [config.toml](..
 
 All of them show an agent's changes and send line comments back to it.
 
-- [reviewr](../../nix/home-manager/tools/herdr-reviewr.nix): the pane the layout opens beside the agent. It opens on the uncommitted edits; `b` switches to everything on the branch against main.
+- [reviewr](../../nix/home-manager/tools/herdr-reviewr.nix): the pane the layout opens below the agent, files on the left and the diff on the right. It opens on the uncommitted edits; `b` switches to everything on the branch against main.
 - [hunk-diff](../../nix/home-manager/tools/herdr-hunk-diff.nix): opens hunk on the focused agent's worktree and sends the comments to that agent. An agent can also drive hunk itself with its skill.
 - [tuicr](../../nix/home-manager/tools/tuicr.nix): a review TUI the agent opens in a herdr pane through its skill, then reads the comments from.
 - [crit](../../nix/home-manager/tools/crit.nix): `/crit` makes the agent start crit itself and wait for Finish Review, so every round's comments reach it directly. It also reviews plans and pages, not only code.

@@ -1,32 +1,36 @@
 diff --git a/src/models/notification.rs b/src/models/notification.rs
-index 9e71bc3..adc2fbf 100644
+index 9e71bc3..f3f46f7 100644
 --- a/src/models/notification.rs
 +++ b/src/models/notification.rs
-@@ -37,6 +37,14 @@ impl Notification {
+@@ -37,6 +37,17 @@ impl Notification {
          self.unread
      }
  
-+    /// A review request on a pull request that has since been merged or
-+    /// closed, so there is nothing left to review.
++    /// A review request on a pull request that no longer needs this
++    /// review: merged, closed, or approved by the reviews it requires.
 +    pub fn is_resolved_review_request(&self) -> bool {
 +        self.reason_enum() == NotificationReason::ReviewRequested
 +            && self.notification_type() == NotificationType::PullRequest
-+            && matches!(self.context.as_deref(), Some("merged" | "closed"))
++            && matches!(
++                self.context.as_deref(),
++                Some("merged" | "closed" | "approved")
++            )
 +    }
 +
      pub fn notification_type(&self) -> NotificationType {
          // If the type is Unknown but we have a security_alert reason, infer it's a RepositoryVulnerabilityAlert
          if matches!(self.subject.subject_type, NotificationType::Unknown)
-@@ -608,6 +616,31 @@ mod tests {
+@@ -608,6 +619,32 @@ mod tests {
          n
      }
  
 +    #[test]
-+    fn resolved_review_request_needs_a_merged_or_closed_pr() {
++    fn resolved_review_request_needs_a_merged_closed_or_approved_pr() {
 +        let pr = NotificationType::PullRequest;
 +        for (reason, ntype, context, resolved) in [
 +            ("review_requested", pr.clone(), Some("merged"), true),
 +            ("review_requested", pr.clone(), Some("closed"), true),
++            ("review_requested", pr.clone(), Some("approved"), true),
 +            ("review_requested", pr.clone(), Some("open"), false),
 +            ("review_requested", pr.clone(), None, false),
 +            ("author", pr.clone(), Some("merged"), false),
@@ -72,27 +76,45 @@ index 2e817d7..5c374e2 100644
                      } else {
                          Some(i)
 diff --git a/src/ui/app.rs b/src/ui/app.rs
-index dfc935d..221c5b8 100644
+index dfc935d..0909db3 100644
 --- a/src/ui/app.rs
 +++ b/src/ui/app.rs
-@@ -734,8 +734,14 @@ impl App {
+@@ -726,6 +726,7 @@ impl App {
+             comment_url: Option<String>,
+             subject_url: Option<String>,
+             is_pr: bool,
++            review_request: bool,
+         }
+ 
+         let to_fetch: Vec<FetchItem> = self
+@@ -734,8 +735,16 @@ impl App {
              .iter()
              .filter_map(|n| {
                  let needs_author = n.author.is_none() && n.latest_comment_url().is_some();
 -                let needs_context =
 -                    n.reason_enum() == NotificationReason::StateChange && n.subject_url().is_some();
-+                // An open review request is checked again on every refresh,
-+                // since someone else may merge or close the pull request.
-+                let needs_review_state = n.reason_enum() == NotificationReason::ReviewRequested
-+                    && n.notification_type() == NotificationType::PullRequest
-+                    && !n.is_resolved_review_request();
++                // A review request is checked again on every refresh until
++                // its pull request is merged or closed: others may approve
++                // it, or a new push may dismiss their approvals.
++                let review_request = n.reason_enum() == NotificationReason::ReviewRequested
++                    && n.notification_type() == NotificationType::PullRequest;
++                let needs_review_state =
++                    review_request && !matches!(n.context.as_deref(), Some("merged" | "closed"));
 +                let needs_context = (n.reason_enum() == NotificationReason::StateChange
 +                    || needs_review_state)
 +                    && n.subject_url().is_some();
  
                  if !needs_author && !needs_context {
                      return None;
-@@ -791,7 +797,7 @@ impl App {
+@@ -756,6 +765,7 @@ impl App {
+                         None
+                     },
+                     is_pr,
++                    review_request,
+                 })
+             })
+             .collect();
+@@ -791,7 +801,7 @@ impl App {
                              }
                          }
  
@@ -101,3 +123,43 @@ index dfc935d..221c5b8 100644
                          if let Some(url) = &item.subject_url {
                              if let Ok(value) = client.get_json_by_url(url) {
                                  let context = if item.is_pr {
+@@ -816,11 +826,37 @@ impl App {
+                                         }
+                                         "merged".to_string()
+                                     } else {
+-                                        value
++                                        let state = value
+                                             .get("state")
+                                             .and_then(|v| v.as_str())
+                                             .unwrap_or("open")
+-                                            .to_lowercase()
++                                            .to_lowercase();
++                                        // The REST pull request has no review
++                                        // decision; only GraphQL does.
++                                        let approved = item.review_request
++                                            && state == "open"
++                                            && value
++                                                .get("node_id")
++                                                .and_then(|v| v.as_str())
++                                                .and_then(|id| {
++                                                    client
++                                                        .graphql(
++                                                            "query($id: ID!) { node(id: $id) { ... on PullRequest { reviewDecision } } }",
++                                                            serde_json::json!({ "id": id }),
++                                                        )
++                                                        .ok()
++                                                })
++                                                .and_then(|v| {
++                                                    v.pointer("/data/node/reviewDecision")
++                                                        .and_then(|d| d.as_str())
++                                                        .map(|d| d == "APPROVED")
++                                                })
++                                                .unwrap_or(false);
++                                        if approved {
++                                            "approved".to_string()
++                                        } else {
++                                            state
++                                        }
+                                     }
+                                 } else {
+                                     let state = value

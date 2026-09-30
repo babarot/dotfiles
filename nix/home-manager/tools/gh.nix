@@ -19,8 +19,9 @@ let
       # H and L collapse and expand every repository; only h and l on the
       # current one exist
       ./gh-news/collapse-all.patch
-      # Hide review requests on pull requests someone else already merged or
-      # closed; gh-news filters cannot see a pull request's state
+      # Hide review requests on pull requests that no longer need the review:
+      # merged, closed or approved by others; gh-news filters cannot see a
+      # pull request's state
       ./gh-news/hide-resolved-review-requests.patch
     ];
   };

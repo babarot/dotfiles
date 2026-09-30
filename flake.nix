@@ -84,7 +84,7 @@
               # Move files in the way (e.g. old afx links) aside instead of failing
               home-manager.backupFileExtension = "before-hm";
               home-manager.extraSpecialArgs = { inherit inputs; };
-              home-manager.users.babarot = import ./nix/home;
+              home-manager.users.babarot = import ./nix/home-manager;
             }
           ];
         };

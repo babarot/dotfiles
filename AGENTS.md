@@ -40,27 +40,27 @@ Do not add a directory at the repository root without a strong reason; put new f
 
 | What | Where |
 |---|---|
-| New hand-written dotfile | put it in `home/` under its name in ~ and list it in `nix/home/dotfiles.nix` (a tool's own dotfile is linked from its `nix/home/tools/<tool>.nix`, like `.tmux.conf`) |
-| CLI tool with no shell settings | `nix/home/tools/packages.nix` (alphabetical) |
-| CLI tool with aliases, env or a zsh hook | its own `nix/home/tools/<tool>.nix`, settings under `my.human` |
+| New hand-written dotfile | put it in `home/` under its name in ~ and list it in `nix/home-manager/dotfiles.nix` (a tool's own dotfile is linked from its `nix/home-manager/tools/<tool>.nix`, like `.tmux.conf`) |
+| CLI tool with no shell settings | `nix/home-manager/tools/packages.nix` (alphabetical) |
+| CLI tool with aliases, env or a zsh hook | its own `nix/home-manager/tools/<tool>.nix`, settings under `my.human` |
 | Tool or app for one Mac only | `nix/hosts/<host>.nix` |
 | zsh plugin | `my.human.plugins.<name>` with `src`, `file`, `order` (hand-written `~/.zsh` loads at 5000, zsh-abbr at 6000) |
-| Variable agents also need (GOPATH, ...) | `my.env` in the tool's `nix/home/tools/<tool>.nix`; rendered to `~/.config/zsh/env.zsh`, which `.zshenv` sources |
+| Variable agents also need (GOPATH, ...) | `my.env` in the tool's `nix/home-manager/tools/<tool>.nix`; rendered to `~/.config/zsh/env.zsh`, which `.zshenv` sources |
 | PATH entries, and env not tied to a tool (EDITOR, locale) | `.zshenv`, before or outside the `is_human` branch |
-| GUI app that does not self-update and passes `codesign --verify --deep --strict` | `nix/home/tools/apps.nix` |
+| GUI app that does not self-update and passes `codesign --verify --deep --strict` | `nix/home-manager/tools/apps.nix` |
 | GUI app that self-updates, needs `/Applications` or system components, or fails codesign in nixpkgs | a cask in `nix/homebrew.nix` (or the host file) |
 | macOS System Settings (Dock, Finder, trackpad, ...) | `nix/macos.nix`, only values that differ from the macOS default; check the key with `defaults read` first |
-| Mac App Store app | `my.masApps` in `nix/home/tools/app-store.nix` (or the host file); IDs from `mas list` |
+| Mac App Store app | `my.masApps` in `nix/home-manager/tools/app-store.nix` (or the host file); IDs from `mas list` |
 | babarot's own tools | released with GoReleaser's `nix` publisher (or c-c-statusline's workflow) to babarot/nur-packages, then `inputs.babarot.packages.<system>.<name>` |
 | Third-party tool not in nixpkgs that ships a flake | a flake input pinned to a release tag (see `crit`) |
 | zsh plugin or source not in nixpkgs | a flake input with `flake = false` |
 | Third-party Homebrew tap | `homebrew.brews` / `homebrew.casks` with the full `owner/tap/name`; nix-darwin marks each entry `trusted: true` |
 | Per-project language or tool versions | the project's `mise.toml`, not this repo |
-| Claude Code | not from nixpkgs: it updates itself, so `nix/home/tools/claude-code.nix` runs the official installer only when `~/.local/bin/claude` is missing |
-| Neovim LSP servers and treesitter parsers | `nix/home/tools/neovim.nix` (servers in `home.packages`, languages in its `languages` list); not mason or `:TSInstall` |
-| Agent Skill that ships with a tool | `my.skills.<name> = <dir with SKILL.md>` next to the package (`nix/home/skills.nix` links it into `~/.claude/skills` and `~/.agents/skills`) |
-| My own Agent Skill on trial | `home/skills/<name>/SKILL.md` (`nix/home/skills.nix` links each directory into `~/.claude/skills` and `~/.agents/skills`). A proving ground, not the main home: it skips the release flow of babarot/agent-skills, so edits apply at once. Keep it public-safe (nothing from work); once a skill settles, move it to babarot/agent-skills and delete it here |
-| Agent Skills for Codex and other agents | babarot/agent-skills (private, fetched over SSH) linked into `~/.agents/skills` by `nix/home/tools/agent-skills.nix`; `my.agentSkills.scopes` picks the plugins (`work` only on the work Mac). Claude Code uses the plugin marketplace instead |
+| Claude Code | not from nixpkgs: it updates itself, so `nix/home-manager/tools/claude-code.nix` runs the official installer only when `~/.local/bin/claude` is missing |
+| Neovim LSP servers and treesitter parsers | `nix/home-manager/tools/neovim.nix` (servers in `home.packages`, languages in its `languages` list); not mason or `:TSInstall` |
+| Agent Skill that ships with a tool | `my.skills.<name> = <dir with SKILL.md>` next to the package (`nix/home-manager/skills.nix` links it into `~/.claude/skills` and `~/.agents/skills`) |
+| My own Agent Skill on trial | `home/skills/<name>/SKILL.md` (`nix/home-manager/skills.nix` links each directory into `~/.claude/skills` and `~/.agents/skills`). A proving ground, not the main home: it skips the release flow of babarot/agent-skills, so edits apply at once. Keep it public-safe (nothing from work); once a skill settles, move it to babarot/agent-skills and delete it here |
+| Agent Skills for Codex and other agents | babarot/agent-skills (private, fetched over SSH) linked into `~/.agents/skills` by `nix/home-manager/tools/agent-skills.nix`; `my.agentSkills.scopes` picks the plugins (`work` only on the work Mac). Claude Code uses the plugin marketplace instead |
 
 Before adding a nixpkgs package, check it is the same tool: several names belong to something else (`yq` is Python's, use `yq-go`; `mmv` is not itchyny's, use `mmv-go`; `pup`, `ktop`, `kubesec`, `gist` differ too).
 

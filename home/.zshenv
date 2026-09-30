@@ -34,10 +34,10 @@ path=( \
 )
 
 # fpath needs nothing here: completions of Nix packages (including the
-# carapace ones from nix/home/tools/carapace.nix) are added by nix-darwin's
+# carapace ones from nix/home-manager/tools/carapace.nix) are added by nix-darwin's
 # /etc/zshenv
 
-# Tool variables from nix/home/tools/*.nix (my.env); missing until the
+# Tool variables from nix/home-manager/tools/*.nix (my.env); missing until the
 # first darwin-rebuild switch
 [[ -r ~/.config/zsh/env.zsh ]] && source ~/.config/zsh/env.zsh
 

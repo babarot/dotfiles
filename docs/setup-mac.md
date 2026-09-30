@@ -91,14 +91,14 @@ Clone this repo into `~/src/github.com/babarot/dotfiles`. Keep this exact path: 
 git clone git@github.com:babarot/dotfiles.git ~/src/github.com/babarot/dotfiles
 ```
 
-The first `darwin-rebuild switch` (see [Nix/Zsh](#nixzsh)) links the dotfiles (`.zshrc`, `.gitconfig`, `.config`, `bin`, ...) into `$HOME`, as listed in [nix/home/dotfiles.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home/dotfiles.nix). The links point at the repo, so edits apply without a switch. Until then, the shell is plain macOS zsh. The linked `.gitconfig` also turns on this repo's pre-commit hook (`.githooks`), which stops commits that leak a secret or skip `nix fmt`.
+The first `darwin-rebuild switch` (see [Nix/Zsh](#nixzsh)) links the dotfiles (`.zshrc`, `.gitconfig`, `.config`, `bin`, ...) into `$HOME`, as listed in [nix/home-manager/dotfiles.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home-manager/dotfiles.nix). The links point at the repo, so edits apply without a switch. Until then, the shell is plain macOS zsh. The linked `.gitconfig` also turns on this repo's pre-commit hook (`.githooks`), which stops commits that leak a secret or skip `nix fmt`.
 
 ## Homebrew
 
 Homebrew is only used to install vendor apps that update themselves or install system components (1Password, Google Chrome, Docker, ...), listed in [nix/homebrew.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/homebrew.nix). There is nothing to install by hand: `darwin-rebuild switch` (see [Nix/Zsh](#nixzsh)) installs Homebrew itself with [nix-homebrew](https://github.com/zhaofengli/nix-homebrew), then installs the missing apps and never upgrades or removes anything.
 
 > [!NOTE]
-> Claude Code is installed the same way when missing, with its official installer, and then updates itself. Mac App Store apps are installed by `darwin-rebuild switch` too, with [mas](https://github.com/mas-cli/mas), from [app-store.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home/tools/app-store.nix). Sign in to the App Store first; an app that fails to install only prints a warning, so switch again after signing in.
+> Claude Code is installed the same way when missing, with its official installer, and then updates itself. Mac App Store apps are installed by `darwin-rebuild switch` too, with [mas](https://github.com/mas-cli/mas), from [app-store.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home-manager/tools/app-store.nix). Sign in to the App Store first; an app that fails to install only prints a warning, so switch again after signing in.
 
 ## Nix/Zsh
 
@@ -151,12 +151,12 @@ On a Mac set up by hand (or with the old afx/Brewfile setup), a few things get i
 
 References:
 
-- My tools list: [nix/home/tools](https://github.com/babarot/dotfiles/tree/HEAD/nix/home/tools)
+- My tools list: [nix/home-manager/tools](https://github.com/babarot/dotfiles/tree/HEAD/nix/home-manager/tools)
 - How the shell switches between humans and AI agents: [README](https://github.com/babarot/dotfiles#shell-for-humans-and-ai-agents)
 
 ## Tmux
 
-[tmux](https://github.com/tmux/tmux) is not installed at the moment; `.tmux.conf` and [tpm](https://github.com/tmux-plugins/tpm) (placed at `~/.tmux/plugins/tpm` by Nix) are kept for reference. To use it again, add `pkgs.tmux` to `nix/home/tools/tmux.nix`, run `tmux` and press `prefix` + <kbd>I</kbd> to install plugins.
+[tmux](https://github.com/tmux/tmux) is not installed at the moment; `.tmux.conf` and [tpm](https://github.com/tmux-plugins/tpm) (placed at `~/.tmux/plugins/tpm` by Nix) are kept for reference. To use it again, add `pkgs.tmux` to `nix/home-manager/tools/tmux.nix`, run `tmux` and press `prefix` + <kbd>I</kbd> to install plugins.
 
 ## Some migrations
 

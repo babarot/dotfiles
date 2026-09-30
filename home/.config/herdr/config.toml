@@ -27,8 +27,8 @@ delivery = "herdr"
 claude = [
   ["state_icon", "agent", "state_text", { token = "pane", rules = [{ starts_with = "*", fg = "#e5c07b", bold = true }, { starts_with = "!", fg = "#e5c07b", bold = true }] }],
   ["terminal_title_stripped"],
-  # Off with nix/home/tools/herdr-activity.nix; uncomment to turn it back on.
-  # The latest tool call, reported by nix/home/tools/herdr-activity.sh. The
+  # Off with nix/home-manager/tools/herdr-activity.nix; uncomment to turn it back on.
+  # The latest tool call, reported by nix/home-manager/tools/herdr-activity.sh. The
   # tool name starts with an invisible mark of its kind that picks the colour:
   # edit, shell, read, agent, web, task/skill, mcp (tokyo-night colours).
   # While the agent is idle, herdr-activity-idle.sh puts U+FEFF in front, and
@@ -53,7 +53,7 @@ claude = [
 # worktree dialog, or prefix+shift+w later) reads its name, then its branch,
 # which follows every checkout, then its worktree dir, which other sessions go
 # by. `worktree`, the name field and the branch on named worktree spaces come
-# from the patches in nix/home/tools/herdr.
+# from the patches in nix/home-manager/tools/herdr.
 [ui.sidebar.spaces]
 rows = [
   ["state_icon", "workspace"],
@@ -70,7 +70,7 @@ prefix = "ctrl+s"
 cycle_pane_next = "prefix+o"
 open_notification_target = "prefix+a"
 
-# Review plugins from nix/home/tools/herdr-reviewr.nix and herdr-hunk-diff.nix.
+# Review plugins from nix/home-manager/tools/herdr-reviewr.nix and herdr-hunk-diff.nix.
 # The hunk keys are the ones its setup-keys action would add.
 [[keys.command]]
 key = "prefix+shift+v"

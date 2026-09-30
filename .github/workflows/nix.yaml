@@ -14,7 +14,7 @@ on:
       - 'flake.nix'
       - 'flake.lock'
       - 'nix/**'
-      - 'home/skills/**' # nix/home/skills.nix reads the directory
+      - 'home/skills/**' # nix/home-manager/skills.nix reads the directory
       - '**.sh' # shfmt in nix flake check
       - '**.bash'
       - '.github/workflows/nix.yaml'
@@ -39,7 +39,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: DeterminateSystems/determinate-nix-action@8d87e8d5e5b8a8309d4281094560f127d9a265f1 # v3.22.5
-      # nix/home/tools/agent-skills.nix only lists the directories under
+      # nix/home-manager/tools/agent-skills.nix only lists the directories under
       # plugins/<scope>/skills, so empty ones evaluate
       - run: |
           stub=$RUNNER_TEMP/agent-skills-stub

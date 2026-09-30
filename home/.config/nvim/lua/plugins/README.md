@@ -26,7 +26,7 @@
 - [nvimdev/lspsaga.nvim](https://github.com/nvimdev/lspsaga.nvim) - LSP UI enhancement (hover, peek, outline, etc.)
 - [saghen/blink.cmp](https://github.com/saghen/blink.cmp) - Completion engine (Rust-based, fast)
 
-LSP servers and treesitter parsers (with their queries) come from Nix, in `nix/home/tools/neovim.nix`, not from mason or nvim-treesitter. Highlighting is Neovim's own (`vim.treesitter.start` in `lua/config/autocmds.lua`).
+LSP servers and treesitter parsers (with their queries) come from Nix, in `nix/home-manager/tools/neovim.nix`, not from mason or nvim-treesitter. Highlighting is Neovim's own (`vim.treesitter.start` in `lua/config/autocmds.lua`).
 
 ### Completion & Snippets (2)
 

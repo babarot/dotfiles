@@ -16,15 +16,15 @@ nix/
   homebrew.nix         # vendor apps installed by Homebrew casks (install only)
   treefmt.nix          # formatters and linters behind `nix fmt`
   hosts/<host>.nix     # per-Mac packages, casks and App Store apps
-  home/
-    default.nix        # imports every file in nix/home/tools
+  home-manager/
+    default.nix        # imports every file in nix/home-manager/tools
     dotfiles.nix       # links the files in home/ (.zshrc, .gitconfig, bin, .config, ...) into ~
     env.nix            # my.env: variables for every shell, rendered to ~/.config/zsh/env.zsh
     human.nix          # my.human: human-only zsh UX, rendered to ~/.config/zsh/human.zsh
     mas.nix            # my.masApps: Mac App Store apps installed with mas
     skills.nix         # my.skills: Agent Skills shipped with tools or on trial in home/skills
     tools/<tool>.nix   # one file per tool: its package and its shell settings
-home/                  # files linked into ~ under the same names (nix/home/dotfiles.nix)
+home/                  # files linked into ~ under the same names (nix/home-manager/dotfiles.nix)
   .zshenv, .zshrc, .zsh/ # hand-written zsh
   .gitconfig, bin/, ...
   .claude/             # Claude Code user settings, linked into ~/.claude
@@ -43,14 +43,14 @@ How a tool file is written is in the [README](../README.md#one-file-per-tool).
 Everything is declared in the flake and installed by `darwin-rebuild switch`:
 
 - CLI tools, zsh plugins, fonts and most GUI apps: Nix
-- Mac App Store apps: `mas`, from the list in [app-store.nix](../nix/home/tools/app-store.nix)
+- Mac App Store apps: `mas`, from the list in [app-store.nix](../nix/home-manager/tools/app-store.nix)
 - Vendor apps that update themselves or install system components (1Password, Chrome, Docker, ...): Homebrew casks in [homebrew.nix](../nix/homebrew.nix), used only to install them
 
 Nothing is pinned for App Store or vendor apps; only a missing app is installed.
 
 My own tools (e.g. [naminator](https://github.com/babarot/naminator)) are published to [babarot/nur-packages](https://github.com/babarot/nur-packages) by GoReleaser on each release.
 
-Herdr is built from nixpkgs with small patches, one per change ([herdr.nix](../nix/home/tools/herdr.nix)).
+Herdr is built from nixpkgs with small patches, one per change ([herdr.nix](../nix/home-manager/tools/herdr.nix)).
 
 ## Agent Skills
 

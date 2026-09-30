@@ -23,6 +23,6 @@ autoload -Uz colors && colors
 # word split: `-`, `_`, `.`, `=`
 export WORDCHARS='*?[]~&;!#$%^(){}<>'
 
-# Plugins, aliases and env from nix/home/tools/*.nix (my.human), plus the
+# Plugins, aliases and env from nix/home-manager/tools/*.nix (my.human), plus the
 # hand-written ~/.zsh/[0-9]*.zsh
 source ~/.config/zsh/human.zsh

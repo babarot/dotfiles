@@ -1,7 +1,7 @@
 -- ============================================================================
 -- LSP Configuration (Neovim 0.11+ vim.lsp.config / vim.lsp.enable)
 -- ============================================================================
--- Servers come from Nix (nix/home/tools/neovim.nix) and are found on PATH.
+-- Servers come from Nix (nix/home-manager/tools/neovim.nix) and are found on PATH.
 -- nvim-lspconfig is only the source of per-server defaults (its lsp/*.lua);
 -- its old require('lspconfig').xxx.setup() framework is deprecated.
 -- Keymaps are Neovim's defaults (K, grn, gra, grr, gri, grt, gO, [d, ]d),

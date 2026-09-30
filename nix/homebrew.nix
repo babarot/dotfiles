@@ -5,7 +5,7 @@
 #
 # Homebrew itself is installed by nix-homebrew, which pins its version
 # (update with `nix flake update nix-homebrew`). Mac App Store apps are
-# in nix/home/tools/app-store.nix; host-only apps are in
+# in nix/home-manager/tools/app-store.nix; host-only apps are in
 # nix/hosts/<hostname>.nix.
 { config, ... }:
 {

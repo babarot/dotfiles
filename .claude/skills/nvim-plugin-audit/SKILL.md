@@ -12,7 +12,7 @@ Audit the Neovim plugins in this repository together with the user: build the fa
   - Plugin specs: `lua/plugins/*.lua` (lazy.nvim, one file per area)
   - Lockfile: `lazy-lock.json`; plugin list with sections and counts: `lua/plugins/README.md`
   - Options, keymaps, autocmds: `lua/config/{options,keymaps,autocmds}.lua`
-- Neovim itself, LSP servers and treesitter parsers come from Nix: `nix/home/tools/neovim.nix`. Never install servers or parsers from inside Neovim (no mason, no `:TSInstall`).
+- Neovim itself, LSP servers and treesitter parsers come from Nix: `nix/home-manager/tools/neovim.nix`. Never install servers or parsers from inside Neovim (no mason, no `:TSInstall`).
 - The work Mac applies changes made here after pulling; see AGENTS.md.
 
 ## Step 1: Establish the baseline
@@ -53,7 +53,7 @@ For each removal or replacement:
 - Reroute keymaps the user relies on to the replacement (usually in `lua/config/keymaps.lua`), keeping the same keys when possible
 - Update `lua/plugins/README.md`: remove the entry, fix the section counts, and note replacements under "Replaced by Neovim itself"
 - Run `nvim --headless '+Lazy! clean' +qa` so the plugin is removed and `lazy-lock.json` is updated
-- If the change needs something outside Neovim (a server, a parser), add it to `nix/home/tools/neovim.nix`, build both hosts as AGENTS.md describes, and ask the user to run darwin-rebuild
+- If the change needs something outside Neovim (a server, a parser), add it to `nix/home-manager/tools/neovim.nix`, build both hosts as AGENTS.md describes, and ask the user to run darwin-rebuild
 
 ## Step 5: Verify
 

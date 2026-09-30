@@ -1,4 +1,4 @@
-# Mac App Store apps used on every Mac, installed by nix/home/mas.nix
+# Mac App Store apps used on every Mac, installed by nix/home-manager/mas.nix
 # (IDs: `mas list`). Host-only apps are in nix/hosts/<hostname>.nix.
 { ... }:
 {

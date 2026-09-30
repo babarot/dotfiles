@@ -42,11 +42,30 @@
   delete-merged-branches = !git fetch -p && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs git branch -D
   branch-log = log --oneline HEAD --not main
   blog = log --oneline HEAD --not origin/main
-  ; From a worktree, land this branch in main without a PR: rebase onto
-  ; main and fast-forward main in the main worktree (git will not move a
-  ; branch checked out elsewhere). Local only unless --push (-p) is given.
+
+  ; Worktree commands
+  ;
+  ; land and sync run from a linked worktree and move main in the main
+  ; worktree for it (git will not move a branch checked out elsewhere).
+  ;
+  ; land: in a repo that takes no PRs, put this branch's commits in main.
+  ; Local only unless --push (-p) is given. It is the same as:
+  ;   1. git pull --ff-only origin main    (in the main worktree)
+  ;   2. git rebase main                   (in this worktree)
+  ;   3. git merge --ff-only <branch>      (in the main worktree; like
+  ;                                         "Rebase and merge" on a PR)
+  ;   4. git push origin main              (with --push only)
+  ;
+  ; sync: in a repo that takes PRs, bring what others merged into this
+  ; branch. It never pushes. It is the same as:
+  ;   1. git fetch origin main
+  ;   2. git merge --ff-only origin/main   (in the main worktree)
+  ;   3. git rebase origin/main            (in this worktree)
+  ;   4. git push --force-with-lease       (by hand, if the branch was
+  ;                                         pushed; sync says when)
+  ;
   ; Shell aliases get this worktree's GIT_DIR, which would win over -C, so
-  ; drop it first
+  ; both drop it first
   land = "!f() { \
     unset GIT_DIR GIT_WORK_TREE; \
     push=; \
@@ -66,6 +85,22 @@
     git -C \"$root\" log --oneline -1 && \
     if [ -n \"$push\" ]; then git -C \"$root\" push -q origin \"$m\"; fi; \
   }; f"
+  sync = "!f() { \
+    unset GIT_DIR GIT_WORK_TREE; \
+    m=$(git symbolic-ref -q --short refs/remotes/origin/HEAD); m=${m#origin/}; m=${m:-main}; \
+    b=$(git branch --show-current); \
+    root=$(git worktree list --porcelain | sed -n '1s/^worktree //p'); \
+    git fetch -q origin \"$m\" || return 1; \
+    if [ \"$(git -C \"$root\" branch --show-current)\" = \"$m\" ]; then \
+      git -C \"$root\" merge -q --ff-only \"origin/$m\" || echo \"sync: could not fast-forward $m in $root\" >&2; \
+    fi; \
+    [ -n \"$b\" ] && [ \"$b\" != \"$m\" ] || return 0; \
+    git rebase \"origin/$m\" || return 1; \
+    if git rev-parse -q --verify '@{push}' >/dev/null && ! git merge-base --is-ancestor '@{push}' HEAD; then \
+      echo \"sync: $b was rebased; push with: git push --force-with-lease\" >&2; \
+    fi; \
+  }; f"
+
   df = diff --no-ext-diff
   dft = difft --syntax-highlight=off
   ; mylog = log --oneline HEAD --not main

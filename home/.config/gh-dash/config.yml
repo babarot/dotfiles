@@ -3,15 +3,18 @@
 # on PRs and issues, so it opens on the PRs view.
 
 prSections:
-  # A search, not the notification inbox, so a PR drops out once merged
-  # or closed (what gh-news needs hide-resolved-review-requests.patch for)
-  - title: Needs My Review
-    filters: is:open review-requested:@me -is:draft -author:app/renovate
+  # PRs waiting on my approval. A search, not the notification inbox, so a
+  # PR drops out once someone approves it (review:approved), it is merged
+  # or closed, or I review it (GitHub then drops the request)
+  - title: To Review
+    filters: >-
+      is:open review-requested:@me -review:approved
+      -is:draft -author:app/renovate
+  - title: My PRs
+    filters: is:open author:@me
   # Look, v to approve, m to merge; both ask before acting
   - title: Renovate
     filters: is:open author:app/renovate review-requested:@me
-  - title: My PRs
-    filters: is:open author:@me
   - title: Involved
     filters: >-
       is:open involves:@me -author:@me
@@ -25,16 +28,22 @@ prSections:
         hidden: true
 
 issuesSections:
+  # Every open issue I filed, most recently updated first
+  - title: My Issues
+    filters: is:open author:@me
+    limit: 50
   - title: Assigned
     filters: is:open assignee:@me
-  - title: Created
-    filters: is:open author:@me
   - title: Involved
     filters: >-
       is:open involves:@me -author:@me
       updated:>={{ nowModify "-2w" }}
 
 notificationsSections:
+  # New activity on threads I filed or joined; Enter marks one read and it
+  # drops out. PRs show up here too: notification filters have no type
+  - title: New Activity
+    filters: is:unread reason:author reason:comment reason:mention
   - title: Participating
     filters: reason:participating
   - title: Review Requested

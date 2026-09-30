@@ -1,5 +1,16 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 16:26:12 +0900
+Subject: [PATCH 3/4] Open a notification on double click
+
+A click only selects a notification; opening one took the keyboard.
+Two clicks on the same row within 400ms now act like Enter.
+---
+ src/ui/app.rs | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
 diff --git a/src/ui/app.rs b/src/ui/app.rs
-index dfc935d..95ecc34 100644
+index c09cc10..135f3bb 100644
 --- a/src/ui/app.rs
 +++ b/src/ui/app.rs
 @@ -150,6 +150,9 @@ pub struct App {
@@ -20,7 +31,7 @@ index dfc935d..95ecc34 100644
          }
      }
  
-@@ -3949,6 +3953,21 @@ impl App {
+@@ -3987,6 +3991,21 @@ impl App {
                          if let Some(crate::state::TreeItem::Notification(_)) =
                              self.state.tree_items.get(clicked_item_idx)
                          {

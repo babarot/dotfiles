@@ -1,5 +1,20 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 16:26:12 +0900
+Subject: [PATCH 2/4] Hide review requests that no longer need a review
+
+A review request stayed listed after someone else merged, closed or
+approved the pull request, and gh-news filters cannot see a pull
+request's state. Check it on every refresh (REST for the state, GraphQL
+for the review decision) and hide it once resolved.
+---
+ src/models/notification.rs | 37 ++++++++++++++++++++++++++++++
+ src/state/mod.rs           |  4 ++--
+ src/ui/app.rs              | 46 +++++++++++++++++++++++++++++++++-----
+ 3 files changed, 80 insertions(+), 7 deletions(-)
+
 diff --git a/src/models/notification.rs b/src/models/notification.rs
-index 9e71bc3..f3f46f7 100644
+index 9e71bc3..c072c61 100644
 --- a/src/models/notification.rs
 +++ b/src/models/notification.rs
 @@ -37,6 +37,17 @@ impl Notification {
@@ -28,12 +43,12 @@ index 9e71bc3..f3f46f7 100644
 +    fn resolved_review_request_needs_a_merged_closed_or_approved_pr() {
 +        let pr = NotificationType::PullRequest;
 +        for (reason, ntype, context, resolved) in [
-+            ("review_requested", pr.clone(), Some("merged"), true),
-+            ("review_requested", pr.clone(), Some("closed"), true),
-+            ("review_requested", pr.clone(), Some("approved"), true),
-+            ("review_requested", pr.clone(), Some("open"), false),
-+            ("review_requested", pr.clone(), None, false),
-+            ("author", pr.clone(), Some("merged"), false),
++            ("review_requested", pr, Some("merged"), true),
++            ("review_requested", pr, Some("closed"), true),
++            ("review_requested", pr, Some("approved"), true),
++            ("review_requested", pr, Some("open"), false),
++            ("review_requested", pr, None, false),
++            ("author", pr, Some("merged"), false),
 +            (
 +                "review_requested",
 +                NotificationType::Issue,
@@ -54,7 +69,7 @@ index 9e71bc3..f3f46f7 100644
      fn display_reason_state_change_merged_with_author() {
          let n = make_reason_notification(
 diff --git a/src/state/mod.rs b/src/state/mod.rs
-index 2e817d7..5c374e2 100644
+index 972d81a..81f6b03 100644
 --- a/src/state/mod.rs
 +++ b/src/state/mod.rs
 @@ -300,7 +300,7 @@ impl AppState {
@@ -76,7 +91,7 @@ index 2e817d7..5c374e2 100644
                      } else {
                          Some(i)
 diff --git a/src/ui/app.rs b/src/ui/app.rs
-index dfc935d..0909db3 100644
+index fae1f46..c09cc10 100644
 --- a/src/ui/app.rs
 +++ b/src/ui/app.rs
 @@ -726,6 +726,7 @@ impl App {

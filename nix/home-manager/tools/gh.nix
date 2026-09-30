@@ -1,4 +1,9 @@
-{ inputs, pkgs, ... }:
+{
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 let
   babarot = inputs.babarot.packages.${pkgs.stdenv.hostPlatform.system};
 
@@ -13,23 +18,12 @@ let
       hash = "sha256-FzOcusIiwo2FNxfeXjj1rY13jXZq9j3snI2NYmUQxaI=";
     };
     cargoHash = "sha256-rCIpKXfwin0p1zT+N3ZfPdNhzPIa2112rEJs7pZc4XE=";
-    # Small patches, one per change, made against the release tag and
-    # applied in order
-    patches = [
-      # H and L collapse and expand every group; only h and l on the current
-      # one exist
-      ./gh-news/collapse-all.patch
-      # Hide review requests on pull requests that no longer need the review:
-      # merged, closed or approved by others; gh-news filters cannot see a
-      # pull request's state
-      ./gh-news/hide-resolved-review-requests.patch
-      # Double-clicking a notification opens it like Enter; a click only
-      # selects it
-      ./gh-news/double-click-open.patch
-      # Users get a header like organisations, so their repositories collapse
-      # together; gh-news groups only organisations
-      ./gh-news/group-users.patch
-    ];
+    # Local changes, one patch per feature, applied in name order. They are
+    # made as commits on the patches branch of babarot/gh-news, which is
+    # rebased onto each release, and exported with
+    #   git format-patch --zero-commit --no-signature -o <this dir>/gh-news v<version>
+    # after removing the old files; each patch's message says what it does.
+    patches = lib.filter (lib.hasSuffix ".patch") (lib.filesystem.listFilesRecursive ./gh-news);
   };
 in
 {

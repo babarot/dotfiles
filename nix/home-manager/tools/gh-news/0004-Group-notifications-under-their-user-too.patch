@@ -1,5 +1,18 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 16:26:12 +0900
+Subject: [PATCH 4/4] Group notifications under their user too
+
+Only organisations got a header, so a user's repositories could not be
+collapsed together. Users now get one as well, with their own icon.
+---
+ src/state/mod.rs          |  1 +
+ src/state/tree.rs         | 60 +++++++++++++++++++++------------------
+ src/ui/components/list.rs |  2 +-
+ 3 files changed, 35 insertions(+), 28 deletions(-)
+
 diff --git a/src/state/mod.rs b/src/state/mod.rs
-index 2e817d7..09a3258 100644
+index 81f6b03..b4c5840 100644
 --- a/src/state/mod.rs
 +++ b/src/state/mod.rs
 @@ -22,6 +22,7 @@ pub enum OrgGroupingMode {

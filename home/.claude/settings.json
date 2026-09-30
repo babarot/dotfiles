@@ -61,7 +61,8 @@
       "source": {
         "source": "github",
         "repo": "babarot/agent-skills"
-      }
+      },
+      "autoUpdate": true
     }
   },
   "language": "Japanese",

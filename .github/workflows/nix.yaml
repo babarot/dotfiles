@@ -3,8 +3,8 @@
 # is left to .githooks/pre-push: a fresh runner downloads and builds
 # everything again (~15 min), while a local store already has almost all
 # of it, and the local build sees the real agent-skills. agent-skills is a
-# private input CI cannot fetch; an empty stub stands in for it
-# (ci/agent-skills-stub).
+# private input CI cannot fetch; an empty stub made in the job stands in
+# for it.
 name: nix
 
 on:
@@ -14,7 +14,6 @@ on:
       - 'flake.nix'
       - 'flake.lock'
       - 'nix/**'
-      - 'ci/**'
       - 'home/skills/**' # nix/home/skills.nix reads the directory
       - '**.sh' # shfmt in nix flake check
       - '**.bash'
@@ -40,12 +39,18 @@ jobs:
         with:
           persist-credentials: false
       - uses: DeterminateSystems/determinate-nix-action@8d87e8d5e5b8a8309d4281094560f127d9a265f1 # v3.22.5
-      - run: nix flake check --override-input agent-skills path:./ci/agent-skills-stub
+      # nix/home/tools/agent-skills.nix only lists the directories under
+      # plugins/<scope>/skills, so empty ones evaluate
+      - run: |
+          stub=$RUNNER_TEMP/agent-skills-stub
+          mkdir -p "$stub"/plugins/{core,work}/skills
+          echo "STUB=path:$stub" >>"$GITHUB_ENV"
+      - run: nix flake check --override-input agent-skills "$STUB"
       # flake check does not know darwinConfigurations; evaluating each
       # system's derivation catches wrong options and host-only breakage.
       # Hosts come from the flake, so a new Mac needs no change here.
       - run: |
-          stub=(--override-input agent-skills path:./ci/agent-skills-stub)
+          stub=(--override-input agent-skills "$STUB")
           hosts=$(nix eval --raw .#darwinConfigurations "${stub[@]}" \
             --apply 'c: builtins.concatStringsSep " " (builtins.attrNames c)')
           for host in $hosts; do

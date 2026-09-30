@@ -1,0 +1,142 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 16:47:41 +0900
+Subject: [PATCH] Add groups_collapsed to start with every group folded
+
+repos_collapsed folds only the repositories and leaves organisation and
+user headers open. groups_collapsed starts as H leaves the list: every
+header folded.
+---
+ config.example.toml |  6 ++++++
+ src/config.rs       |  9 +++++++++
+ src/main.rs         |  1 +
+ src/state/mod.rs    | 15 ++++++++++-----
+ src/ui/app.rs       |  6 +++++-
+ 5 files changed, 31 insertions(+), 6 deletions(-)
+
+diff --git a/config.example.toml b/config.example.toml
+index 0b58b92..574f424 100644
+--- a/config.example.toml
++++ b/config.example.toml
+@@ -146,6 +146,12 @@ default_preview_mode = "vertical"
+ # CLI flag: (not available as flag, set via env or config)
+ repos_collapsed = false
+ 
++# Start with every group collapsed, organisation and user headers too, as
++# after pressing H. Implies repos_collapsed.
++# Default: false
++# CLI flag: (not available as flag, set via env or config)
++groups_collapsed = false
++
+ # Group notifications by organisation above repository grouping.
+ # Options:
+ #   - "off":    only group by repository
+diff --git a/src/config.rs b/src/config.rs
+index 48ccbc8..7d9c0b5 100644
+--- a/src/config.rs
++++ b/src/config.rs
+@@ -187,6 +187,7 @@ pub struct Config {
+     // Display defaults
+     pub default_preview_mode: String,
+     pub repos_collapsed: bool,
++    pub groups_collapsed: bool,
+     pub org_grouping: OrgGroupingMode,
+     pub list_layout: ListLayout,
+ 
+@@ -287,6 +288,7 @@ impl Default for Config {
+             theme_colors: None,
+             default_preview_mode: "vertical".to_string(),
+             repos_collapsed: false,
++            groups_collapsed: false,
+             org_grouping: OrgGroupingMode::default(),
+             list_layout: ListLayout::default(),
+             auto_mark_read: false,
+@@ -543,6 +545,13 @@ priority = 1
+         assert_eq!(config.actions[0].priority, Some(1));
+     }
+ 
++    #[test]
++    fn test_groups_collapsed_defaults_off() {
++        assert!(!toml::from_str::<Config>("").unwrap().groups_collapsed);
++        let config: Config = toml::from_str("groups_collapsed = true").unwrap();
++        assert!(config.groups_collapsed);
++    }
++
+     #[test]
+     fn test_parse_sessions_from_toml() {
+         let toml_str = r#"
+diff --git a/src/main.rs b/src/main.rs
+index 23b8436..a4cb9df 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -178,6 +178,7 @@ fn run() -> Result<()> {
+         filter_pattern: opts.filter_pattern.clone(),
+         show_all: opts.show_all,
+         repos_collapsed: config.repos_collapsed,
++        groups_collapsed: config.groups_collapsed,
+         preview_mode,
+     };
+ 
+diff --git a/src/state/mod.rs b/src/state/mod.rs
+index b4c5840..f81cb12 100644
+--- a/src/state/mod.rs
++++ b/src/state/mod.rs
+@@ -404,17 +404,22 @@ impl AppState {
+         }
+     }
+ 
++    /// Collapse every repository and owner header (no tree rebuild).
++    pub fn collapse_all_groups(&mut self) {
++        self.collapse_all_repos();
++        for n in &self.notifications {
++            self.expanded_orgs
++                .insert(n.repository.owner.login.clone(), false);
++        }
++    }
++
+     /// Collapse or expand every repository and organisation at once.
+     pub fn set_all_expanded(&mut self, expanded: bool) {
+         if expanded {
+             self.expanded_repos.clear();
+             self.expanded_orgs.clear();
+         } else {
+-            self.collapse_all_repos();
+-            for n in &self.notifications {
+-                self.expanded_orgs
+-                    .insert(n.repository.owner.login.clone(), false);
+-            }
++            self.collapse_all_groups();
+         }
+         self.build_tree();
+         if !self.tree_items.is_empty() {
+diff --git a/src/ui/app.rs b/src/ui/app.rs
+index 135f3bb..0a25c34 100644
+--- a/src/ui/app.rs
++++ b/src/ui/app.rs
+@@ -47,6 +47,7 @@ pub struct PendingStateSettings {
+     pub filter_pattern: Option<String>,
+     pub show_all: bool,
+     pub repos_collapsed: bool,
++    pub groups_collapsed: bool,
+     pub preview_mode: PreviewMode,
+ }
+ 
+@@ -350,6 +351,7 @@ impl App {
+                 filter_pattern: None,
+                 show_all: false,
+                 repos_collapsed: self.config.repos_collapsed,
++                groups_collapsed: self.config.groups_collapsed,
+                 preview_mode: self.config.get_default_preview_mode(),
+             });
+ 
+@@ -379,7 +381,9 @@ impl App {
+             app_state.set_pinned_notifications(data.pinned_notifications);
+         }
+ 
+-        if settings.repos_collapsed {
++        if settings.groups_collapsed {
++            app_state.collapse_all_groups();
++        } else if settings.repos_collapsed {
+             app_state.collapse_all_repos();
+         }
+ 

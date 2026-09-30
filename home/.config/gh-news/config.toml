@@ -1,6 +1,8 @@
 auto_refresh_interval = 30
 show_read = false
 theme = "tokyo_night"
+# Start with every group folded, as after H (a local patch)
+groups_collapsed = true
 
 # What the built-in Participating view hides, applied by default since
 # there is no setting for the view to start in

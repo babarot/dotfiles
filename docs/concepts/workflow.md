@@ -16,7 +16,7 @@ A worktree workspace is named after what it is for, when it is created or later.
 
 herdr is patched ([herdr/](../../nix/home-manager/tools/herdr), one patch per change, each described in [herdr.nix](../../nix/home-manager/tools/herdr.nix)) so a named worktree workspace still shows its branch and its worktree directory, which other sessions go by.
 
-On the private Mac, a green mark follows the name of a workspace whose folder has a minitube devstack running. A launchd agent ([herdr-devstack.nix](../../nix/home-manager/tools/herdr-devstack.nix)) checks the running compose projects against the workspaces every 10 seconds and reports the mark with a TTL, so the mark goes away when the agent stops.
+A worktree workspace can also carry marks after its name, each put by a condition that holds in its folder. A launchd agent ([herdr-worktree-status.nix](../../nix/home-manager/tools/herdr-worktree-status.nix)) runs every condition, a line of shell set per Mac, in each worktree every 10 seconds, and reports the marks with a TTL, so they go away when the agent stops. On the private Mac, a green mark shows which worktrees have a minitube devstack running.
 
 ## Keys
 

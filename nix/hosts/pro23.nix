@@ -17,8 +17,18 @@
     {
       home.packages = [ pkgs.agent-browser ];
 
-      # minitube's devstacks run only here (nix/home-manager/tools/herdr-devstack.nix)
-      my.herdrDevstack.enable = true;
+      # $devstack in herdr's sidebar: the worktree has its minitube devstack
+      # running, a compose project started from its compose.devstack.yaml.
+      # minitube's devstacks run only on this Mac.
+      my.herdrWorktreeStatus.devstack = {
+        repos = [ "minitube" ];
+        condition = ''
+          test -f compose.devstack.yaml &&
+            docker compose ls --format json | jq -e --arg d "$PWD" 'any(.[];
+              (.ConfigFiles | split(",") | index($d + "/compose.devstack.yaml"))
+              and (.Status | test("running")))'
+        '';
+      };
 
       # The shipped skill tells agents to prefer agent-browser over any other
       # browser tool; claude-in-chrome stays the default, so rewrite its

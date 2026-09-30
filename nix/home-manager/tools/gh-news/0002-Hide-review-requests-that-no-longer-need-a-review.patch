@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: babarot <b4b4r07@gmail.com>
 Date: Wed, 30 Sep 2026 16:26:12 +0900
-Subject: [PATCH 2/4] Hide review requests that no longer need a review
+Subject: [PATCH] Hide review requests that no longer need a review
 
 A review request stayed listed after someone else merged, closed or
 approved the pull request, and gh-news filters cannot see a pull

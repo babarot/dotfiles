@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: babarot <b4b4r07@gmail.com>
 Date: Wed, 30 Sep 2026 16:26:12 +0900
-Subject: [PATCH 1/4] Add H and L to collapse and expand every group
+Subject: [PATCH] Add H and L to collapse and expand every group
 
 Only h and l on the current repository or organisation exist, so
 folding a long list took one key per group.

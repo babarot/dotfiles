@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: babarot <b4b4r07@gmail.com>
 Date: Wed, 30 Sep 2026 16:26:12 +0900
-Subject: [PATCH 4/4] Group notifications under their user too
+Subject: [PATCH] Group notifications under their user too
 
 Only organisations got a header, so a user's repositories could not be
 collapsed together. Users now get one as well, with their own icon.

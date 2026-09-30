@@ -66,10 +66,10 @@ Then export the patches over the old ones and `git add` them. gh.nix picks up wh
 ```bash
 dir=~/src/github.com/babarot/dotfiles/nix/home-manager/tools/gh-news
 rm "$dir"/*.patch
-git format-patch --zero-commit --no-signature -o "$dir" v<version>
+git format-patch --no-numbered --zero-commit --no-signature -o "$dir" v<version>
 ```
 
-`--zero-commit` and `--no-signature` keep a file unchanged when only commit hashes or the git version change.
+`--no-numbered`, `--zero-commit` and `--no-signature` keep a file unchanged when only the number of patches, commit hashes or the git version change.
 
 Follow a new release:
 

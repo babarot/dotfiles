@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: babarot <b4b4r07@gmail.com>
 Date: Wed, 30 Sep 2026 16:26:12 +0900
-Subject: [PATCH 3/4] Open a notification on double click
+Subject: [PATCH] Open a notification on double click
 
 A click only selects a notification; opening one took the keyboard.
 Two clicks on the same row within 400ms now act like Enter.

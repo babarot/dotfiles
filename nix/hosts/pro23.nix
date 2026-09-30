@@ -22,6 +22,7 @@
       # minitube's devstacks run only on this Mac.
       my.herdrWorktreeStatus.devstack = {
         repos = [ "minitube" ];
+        mark = "dev";
         condition = ''
           test -f compose.devstack.yaml &&
             docker compose ls --format json | jq -e --arg d "$PWD" 'any(.[];

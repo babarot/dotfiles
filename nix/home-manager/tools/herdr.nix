@@ -24,6 +24,10 @@ let
       # leaves the generated branch and checkout alone, like renaming the
       # space afterwards does
       ./herdr/worktree-label.patch
+      # "Mark as unread" in the menu of a space other than the focused one:
+      # its seen idle agents show Done again until they are viewed. herdr
+      # keeps Done for unviewed completions only (herdrdev/herdr#4622)
+      ./herdr/mark-workspace-unread.patch
     ];
   });
 in

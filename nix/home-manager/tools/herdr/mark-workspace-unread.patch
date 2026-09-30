@@ -1,0 +1,247 @@
+diff --git a/src/client/shell/context_menu.rs b/src/client/shell/context_menu.rs
+index 96f5717..f995e3f 100644
+--- a/src/client/shell/context_menu.rs
++++ b/src/client/shell/context_menu.rs
+@@ -5,7 +5,7 @@ impl ClientContextMenuOverlay {
+         use ClientContextMenuAction as Action;
+ 
+         let item = |label, action| ClientContextMenuItem { label, action };
+-        match &self.target {
++        let mut items = match &self.target {
+             ClientContextMenuTarget::Workspace { is_git: false, .. } => {
+                 vec![item("Rename", Action::Rename), item("Close", Action::Close)]
+             }
+@@ -75,7 +75,15 @@ impl ClientContextMenuOverlay {
+                 ]);
+                 items
+             }
++        };
++        if let ClientContextMenuTarget::Workspace {
++            can_mark_unread: true,
++            ..
++        } = &self.target
++        {
++            items.push(item("Mark as unread", Action::MarkUnread));
+         }
++        items
+     }
+ }
+ 
+@@ -109,6 +117,12 @@ impl ClientShellState {
+         let collapsed = worktree.is_some_and(|worktree| {
+             self.group_is_collapsed(&self.active_endpoint_id, &worktree.key)
+         });
++        let can_mark_unread = snapshot.focused_workspace_id.as_deref()
++            != Some(workspace_id.as_str())
++            && snapshot.agents.iter().any(|agent| {
++                agent.workspace_id == workspace_id
++                    && agent.agent_status == crate::api::schema::AgentStatus::Idle
++            });
+         self.overlay = Some(ClientShellOverlay::ContextMenu(ClientContextMenuOverlay {
+             target: ClientContextMenuTarget::Workspace {
+                 workspace_id,
+@@ -116,6 +130,7 @@ impl ClientShellState {
+                 is_linked_worktree: worktree.is_some_and(|worktree| worktree.is_linked_worktree),
+                 has_worktree_children,
+                 collapsed,
++                can_mark_unread,
+             },
+             x,
+             y,
+@@ -284,6 +299,9 @@ impl ClientShellState {
+                     self.persist_chrome_preferences(outcome);
+                 }
+             }
++            ClientContextMenuAction::MarkUnread => {
++                self.mark_active_endpoint_workspace_unread(&workspace_id);
++            }
+             _ => {}
+         }
+     }
+diff --git a/src/client/shell/endpoint_agent_state.rs b/src/client/shell/endpoint_agent_state.rs
+index f8ba7a9..490a29a 100644
+--- a/src/client/shell/endpoint_agent_state.rs
++++ b/src/client/shell/endpoint_agent_state.rs
+@@ -71,6 +71,28 @@ impl EndpointAgentPresentation {
+         changed
+     }
+ 
++    // Forgets that the workspace's idle agents were viewed, so they show Done
++    // again until a surface presents them
++    pub(super) fn mark_workspace_unread(
++        &mut self,
++        snapshot: &mut ClientShellSnapshot,
++        workspace_id: &str,
++    ) -> bool {
++        let mut changed = false;
++        for agent in &snapshot.agents {
++            if agent.workspace_id == workspace_id && agent.agent_status == AgentStatus::Idle {
++                changed |= self.acknowledged.remove(&agent.pane_id).is_some();
++            }
++        }
++        if changed {
++            for agent in &mut snapshot.agents {
++                agent.agent_status = self.projected_status(agent);
++            }
++            project_aggregate_status(snapshot);
++        }
++        changed
++    }
++
+     pub(super) fn seen(&self, agent: &ClientShellAgent) -> bool {
+         self.acknowledged
+             .get(&agent.pane_id)
+diff --git a/src/client/shell/endpoints.rs b/src/client/shell/endpoints.rs
+index c27358e..01b34c3 100644
+--- a/src/client/shell/endpoints.rs
++++ b/src/client/shell/endpoints.rs
+@@ -610,6 +610,29 @@ impl ClientShellState {
+         }
+     }
+ 
++    pub(super) fn mark_active_endpoint_workspace_unread(&mut self, workspace_id: &str) -> bool {
++        let Some(index) = self
++            .endpoints
++            .iter()
++            .position(|endpoint| endpoint.endpoint_id == self.active_endpoint_id)
++        else {
++            return false;
++        };
++        let changed = {
++            let endpoint = &mut self.endpoints[index];
++            let Some(snapshot) = endpoint.snapshot.as_deref_mut() else {
++                return false;
++            };
++            endpoint
++                .agent_presentation
++                .mark_workspace_unread(snapshot, workspace_id)
++        };
++        if changed {
++            self.snapshot = self.endpoints[index].snapshot.clone();
++        }
++        changed
++    }
++
+     pub(crate) fn acknowledge_active_surface_agents(&mut self, surface: &PaneSurfaceFrame) -> bool {
+         let Some(index) = self
+             .endpoints
+diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
+index b7f1118..d1770ec 100644
+--- a/src/client/shell/state.rs
++++ b/src/client/shell/state.rs
+@@ -517,6 +517,7 @@ pub(super) enum ClientContextMenuAction {
+     OpenWorktree,
+     RemoveWorktree,
+     ToggleGroup,
++    MarkUnread,
+     NewTab,
+     RenamePane,
+     ClearPaneName,
+@@ -536,6 +537,9 @@ pub(super) enum ClientContextMenuTarget {
+         is_linked_worktree: bool,
+         has_worktree_children: bool,
+         collapsed: bool,
++        // Idle agents the user has seen, in a workspace other than the
++        // focused one: marking them unread there sticks until they are viewed
++        can_mark_unread: bool,
+     },
+     Tab {
+         tab_id: String,
+diff --git a/src/client/shell/tests/chrome_context.rs b/src/client/shell/tests/chrome_context.rs
+index ed21bc8..c4c8906 100644
+--- a/src/client/shell/tests/chrome_context.rs
++++ b/src/client/shell/tests/chrome_context.rs
+@@ -377,6 +377,93 @@ fn context_menus_capture_stable_targets_and_route_actions() {
+     ));
+ }
+ 
++#[test]
++fn workspace_menu_marks_an_unfocused_workspace_unread() {
++    let mut initial = snapshot();
++    let mut workspace = initial.workspaces[0].clone();
++    workspace.workspace_id = "ws_2".into();
++    workspace.active_tab_id = "tab_2".into();
++    workspace.number = 2;
++    workspace.label = "other".into();
++    workspace.focused = false;
++    initial.workspaces.push(workspace);
++    let mut tab = initial.tabs[0].clone();
++    tab.tab_id = "tab_2".into();
++    tab.workspace_id = "ws_2".into();
++    tab.focused = false;
++    initial.tabs.push(tab);
++    let mut pane = initial.panes[0].clone();
++    pane.pane_id = "pane_2".into();
++    pane.workspace_id = "ws_2".into();
++    pane.tab_id = "tab_2".into();
++    pane.focused = false;
++    initial.panes.push(pane);
++    let agent = |pane_id: &str, workspace_id: &str, tab_id: &str| ClientShellAgent {
++        pane_id: pane_id.into(),
++        workspace_id: workspace_id.into(),
++        tab_id: tab_id.into(),
++        name: None,
++        display_agent: None,
++        agent: None,
++        title: None,
++        terminal_title: None,
++        terminal_title_stripped: None,
++        agent_status: AgentStatus::Idle,
++        state_change_seq: 1,
++        state_labels: Vec::new(),
++        tokens: Vec::new(),
++        focused: false,
++    };
++    initial.agents = vec![
++        agent("pane_1", "ws_1", "tab_1"),
++        agent("pane_2", "ws_2", "tab_2"),
++    ];
++    let mut state = ClientShellState::new(ClientShellConfig::from_config(&Config::default()));
++    state.set_snapshot(Box::new(initial.clone()));
++    let mark_unread_index = |state: &ClientShellState| match state.overlay.as_ref() {
++        Some(ClientShellOverlay::ContextMenu(menu)) => menu
++            .items()
++            .iter()
++            .position(|item| item.action == ClientContextMenuAction::MarkUnread),
++        _ => panic!("workspace context menu"),
++    };
++    let status = |state: &ClientShellState, pane_id: &str| {
++        state
++            .snapshot
++            .as_deref()
++            .and_then(|snapshot| {
++                snapshot
++                    .agents
++                    .iter()
++                    .find(|agent| agent.pane_id == pane_id)
++            })
++            .map(|agent| agent.agent_status)
++    };
++
++    state.open_workspace_context_menu("ws_1".into(), 0, 0);
++    assert_eq!(mark_unread_index(&state), None);
++
++    state.open_workspace_context_menu("ws_2".into(), 0, 0);
++    let index = mark_unread_index(&state).expect("mark as unread item");
++    let mut outcome = ClientShellInput::default();
++    state.activate_context_menu_item(index, &mut outcome);
++    assert!(outcome.actions.is_empty());
++    assert_eq!(status(&state, "pane_1"), Some(AgentStatus::Idle));
++    assert_eq!(status(&state, "pane_2"), Some(AgentStatus::Done));
++    assert!(state.snapshot.as_deref().is_some_and(|snapshot| {
++        snapshot.workspaces.iter().any(|workspace| {
++            workspace.workspace_id == "ws_2" && workspace.agent_status == AgentStatus::Done
++        })
++    }));
++
++    let mut next = initial;
++    next.revision = 2;
++    state.set_snapshot(Box::new(next));
++    assert_eq!(status(&state, "pane_2"), Some(AgentStatus::Done));
++    state.open_workspace_context_menu("ws_2".into(), 0, 0);
++    assert_eq!(mark_unread_index(&state), None);
++}
++
+ #[test]
+ fn global_menu_opens_from_sidebar_and_routes_client_actions() {
+     let mut state = ClientShellState::new(ClientShellConfig::from_config(&Config::default()));

@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Instructions for AI coding agents (Claude Code, Codex, ...) working in this repository. Claude Code reads this file because there is no CLAUDE.md here. See README.md for the overview and docs/setup-mac.md for setting up a Mac.
+Instructions for AI coding agents (Claude Code, Codex, ...) working in this repository. Claude Code reads this file because there is no CLAUDE.md here. See README.md for the overview, docs/structure.md for the layout and docs/setup-mac.md for setting up a Mac.
 
 ## What this repo is
 
@@ -17,30 +17,7 @@ This repository is public. Never commit credentials, tokens, or internal names f
 
 ## Layout
 
-```
-flake.nix              # inputs, one darwinConfiguration per hostname, and the formatter
-nix/darwin.nix         # system settings for every Mac (allowUnfree, primaryUser)
-nix/macos.nix          # macOS System Settings for every Mac (system.defaults, keyboard, Touch ID sudo)
-nix/homebrew.nix       # vendor apps installed by Homebrew casks (install only)
-nix/treefmt.nix        # formatters and linters behind `nix fmt`
-nix/hosts/<host>.nix   # per-Mac packages, casks and App Store apps
-nix/home/default.nix   # imports every file in nix/home/tools
-nix/home/dotfiles.nix  # links the files in home/ (.zshrc, .gitconfig, bin, .config, ...) into ~
-nix/home/env.nix       # my.env: variables for every shell, rendered to ~/.config/zsh/env.zsh
-nix/home/human.nix     # my.human: human-only zsh UX, rendered to ~/.config/zsh/human.zsh
-nix/home/mas.nix       # my.masApps: Mac App Store apps installed with mas
-nix/home/tools/*.nix   # one file per tool: its package and its shell settings
-home/                  # files linked into ~ under the same names (nix/home/dotfiles.nix)
-  .zshenv, .zshrc, .zsh/ # hand-written zsh
-  .gitconfig, bin/, ...
-  .claude/             # Claude Code user settings, linked into ~/.claude
-  skills/              # my own Agent Skills on trial, linked into ~/.claude/skills and ~/.agents/skills
-  .config/             # linked to ~/.config as a whole (by activation, see dotfiles.nix)
-docs/                  # setup guide (setup-mac.md) and images
-.githooks/             # git hooks for this repo (pre-commit: gitleaks, nix fmt; pre-push: builds every Mac)
-.github/workflows/      # CI: nix flake check and evaluating every Mac
-.claude/skills/        # repo skills for this repo (e.g. nvim-plugin-audit); not linked into ~
-```
+The directory tree, with what each file is for, is in [docs/structure.md](docs/structure.md#layout). Read it before adding or moving files.
 
 ## Applying and checking changes
 

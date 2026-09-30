@@ -22,17 +22,17 @@ nix build ".#darwinConfigurations.$(scutil --get LocalHostName).system" --no-lin
 
 ## Patch a package from a fork branch
 
-Three packages carry local patches, each applied from a directory in name order:
+Some packages carry local patches, applied from a directory in name order. Each declares its entry in `my.forkPatches` ([fork-patches.nix](../../nix/home-manager/fork-patches.nix)) next to the package, which names the fork, the upstream source and the patch directory; `git grep my.forkPatches` lists them.
 
-| Package | Built from | Patches | Fork |
-|---|---|---|---|
-| herdr | nixpkgs' package, overridden in [herdr.nix](../../nix/home-manager/tools/herdr.nix) | [tools/herdr/](../../nix/home-manager/tools/herdr/) | [babarot/herdr](https://github.com/babarot/herdr), `upstream` herdrdev/herdr |
-| gh-news | its release tag, in [gh.nix](../../nix/home-manager/tools/gh.nix) | [tools/gh-news/](../../nix/home-manager/tools/gh-news/) | [babarot/gh-news](https://github.com/babarot/gh-news), `upstream` chmouel/gh-news |
-| mo | its release tag, in [mo.nix](../../nix/home-manager/tools/mo.nix) | [tools/mo/](../../nix/home-manager/tools/mo/) | [babarot/mo](https://github.com/babarot/mo), `upstream` k1LoW/mo |
+The patch files are not edited by hand. Each one is a commit on the fork's `patches` branch, exported with `git format-patch`, so git does the rebasing onto a new release and every file carries its commit message. [.githooks/check-patches](../../.githooks/check-patches) holds this: it exports each package's patches again from the branch on GitHub, on the tag the package is built from, and fails when the committed files differ. pre-commit runs it when patch files are staged, and [patches.yaml](../../.github/workflows/patches.yaml) in CI when they change. It compares with the pushed branch, so push the branch before exporting.
 
-The patch files are not edited by hand. Each one is a commit on the fork's `patches` branch, exported with `git format-patch`, so git does the rebasing onto a new release and every file carries its commit message. Each fork is cloned at `~/src/github.com/babarot/<name>`, with `origin` the fork. The examples below run there, with `<name>` the package and `<version>` the release the branch sits on: for herdr the version nixpkgs builds (`nix eval --raw .#darwinConfigurations.pro23.pkgs.herdr.version` in dotfiles), for gh-news and mo the `version` in gh.nix and mo.nix.
+Each fork is cloned at `~/src/github.com/babarot/<name>`, with `origin` the fork and `upstream` the original. The examples below run there, with `<name>` the package and `<tag>` the release the branch sits on, the one the package is built from:
 
-Development stays in the fork and distribution in dotfiles: a change is made, tested and pushed on the `patches` branch, and dotfiles only exports the patches and builds. dotfiles could instead take the `patches` branch itself as the source (a flake input or `fetchFromGitHub` pointing at it), so that shipping a change is only `nix flake update`. The patches are kept here anyway, so that what is added to each package can be read in this repo and all three packages are handled the same way. The export is two commands; if it becomes tedious, wrap it in a script rather than dropping the patch files.
+```bash
+nix eval --raw "$HOME/src/github.com/babarot/dotfiles#darwinConfigurations.pro23.config.home-manager.users.babarot.my.forkPatches.<name>.check.tag"
+```
+
+Development stays in the fork and distribution in dotfiles: a change is made, tested and pushed on the `patches` branch, and dotfiles only exports the patches and builds. dotfiles could instead take the `patches` branch itself as the source (a flake input or `fetchFromGitHub` pointing at it), so that shipping a change is only `nix flake update`. The patches are kept here anyway, so that what is added to each package can be read in this repo and every patched package is handled the same way. The export is two commands; if it becomes tedious, wrap it in a script rather than dropping the patch files.
 
 Change a patch or add one:
 
@@ -41,43 +41,42 @@ git switch patches
 # edit, then commit: one commit per feature
 git commit                        # a new feature
 git commit --fixup=<its commit>   # a fix to an existing one, then fold it in:
-git rebase --autosquash v<version>
+git rebase --autosquash <tag>
 ```
 
-Check it, then push the branch. It is rebased, so the push rewrites it. gh-news is checked with a throwaway Rust toolchain:
+Check it as the package's .nix file says, in a comment by the package or its `my.forkPatches` entry, then push the branch. It is rebased, so the push rewrites it:
 
 ```bash
-nix shell 'nixpkgs#cargo' 'nixpkgs#rustc' 'nixpkgs#clippy' 'nixpkgs#rustfmt' \
-  -c sh -c 'cargo fmt --check && cargo clippy --all-targets && cargo test'
 git push --force-with-lease origin patches
 ```
-
-mo's frontend is checked with the pnpm its package.json names (the Go tests run in the Nix build):
-
-```bash
-cd internal/frontend
-nix shell 'nixpkgs#pnpm_10' -c sh -c 'pnpm install --frozen-lockfile && pnpm run fmt:check && pnpm exec tsc --noEmit && pnpm run lint && pnpm test'
-```
-
-A patch that changes the frontend dependencies commits the lockfile that `pnpm install` rewrites.
-
-herdr's whole test suite depends on the host, so run the tests the patches touch by building it with the `doCheck` lines in the comment at the top of herdr.nix, after exporting.
 
 Then export the patches over the old ones and `git add` them. The Nix file picks up whatever the directory holds, so it needs no change:
 
 ```bash
 dir=~/src/github.com/babarot/dotfiles/nix/home-manager/tools/<name>
-rm "$dir"/*.patch
-git format-patch --no-numbered --zero-commit --no-signature -o "$dir" v<version>
+rm "${dir:?}"/*.patch
+git format-patch --no-numbered --zero-commit --no-signature -o "$dir" <tag>
 ```
 
 `--no-numbered`, `--zero-commit` and `--no-signature` keep a file unchanged when only the number of patches, commit hashes or the git version change.
 
-Follow a new release (for herdr, when a nixpkgs bump moves its version and the build log names a patch that failed to apply):
+Follow a new release (for a package from nixpkgs, when a nixpkgs bump moves its version and the build log names a patch that failed to apply):
 
-1. `git fetch upstream --tags`, then `git rebase --onto v<new> v<version>`, which moves only the commits after `v<version>`. herdr tags each release on a release branch, so an older tag is not an ancestor of a newer one and a plain `git rebase v<new>` would try to replay that branch's other commits too. If a commit conflicts, resolve it; if upstream took the change, drop the commit.
-2. Check, push and export as above, with `v<new>`.
-3. For gh-news and mo, set `version` to the new release and every hash to `lib.fakeHash` (two in gh.nix, three in mo.nix), then build: each failure prints the right hash to put back. herdr follows nixpkgs and needs nothing more.
+1. `git fetch upstream --tags`, then `git rebase --onto <new> <tag>`, which moves only the commits after `<tag>`. Some projects tag each release on a release branch (herdr does), so an older tag is not an ancestor of a newer one and a plain `git rebase <new>` would try to replay that branch's other commits too. If a commit conflicts, resolve it; if upstream took the change, drop the commit.
+2. Check, push and export as above, with `<new>`.
+3. For a package built from its release tag in its tool file, set `version` to the new release and every hash in the file to `lib.fakeHash`, then build: each failure prints the right hash to put back. A package from nixpkgs follows nixpkgs and needs nothing more.
+
+Patch another package: make a fork `babarot/<name>` with the patches on a `patches` branch based on the release tag, export them into `nix/home-manager/tools/<name>/`, and declare them next to the package, where `src` is the upstream source the patches apply to (fetched with `fetchFromGitHub` from that tag):
+
+```nix
+# How to check the patches branch: ...
+my.forkPatches.<name> = {
+  inherit (<package>) src;
+  dir = ./<name>;
+};
+```
+
+The package applies `config.my.forkPatches.<name>.patches`. Set `fork` when the fork has another name. check-patches picks the new entry up by itself.
 
 ## Bump a flake input pinned to a tag
 

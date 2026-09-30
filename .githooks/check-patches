@@ -1,0 +1,82 @@
+#!/bin/sh
+# Checks that each package's patch files are exactly what `git format-patch`
+# makes from its fork's patches branch on GitHub, on the tag the package is
+# built from, so they are never edited by hand and never come from a branch
+# that was not pushed (docs/guides/maintenance.md). The packages, forks and
+# tags come from my.forkPatches (nix/home-manager/fork-patches.nix) on every
+# Mac, so a new patched package needs no change here. Compares the staged
+# files, so pre-commit sees what it commits and CI sees the checkout.
+#
+# Usage: .githooks/check-patches [<nix eval args>...]
+#   e.g. --override-input agent-skills <stub> where that input is private
+set -eu
+
+cd "$(git rev-parse --show-toplevel)"
+
+# One line per package: name fork upstream tag dir. A package declared on
+# several Macs appears once.
+# shellcheck disable=SC2016 # ${...} is Nix, not the shell
+entries=$(nix --no-warn-dirty eval --raw "$@" .#darwinConfigurations --apply '
+  hosts:
+  let
+    entries = builtins.listToAttrs (builtins.concatMap (host:
+      let fp = host.config.home-manager.users.babarot.my.forkPatches; in
+      map (name: { inherit name; value = fp.${name}.check; }) (builtins.attrNames fp)
+    ) (builtins.attrValues hosts));
+  in
+  builtins.concatStringsSep "\n" (map (name:
+    let c = entries.${name}; in "${name} ${c.fork} ${c.upstream} ${c.tag} ${c.dir}"
+  ) (builtins.attrNames entries))
+')
+
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+status=0
+while read -r name fork upstream tag dir; do
+  work="$tmp/$name"
+  mkdir -p "$work/raw" "$work/want" "$work/have"
+  git init -q --bare "$work/repo"
+  # Shallow fetches keep this quick: the tag's commit, and the branch deep
+  # enough to reach it when it holds exactly the committed patches. A branch
+  # with more or fewer commits, or on another tag, does not match.
+  # The forks do not carry upstream's tags.
+  count=$(git ls-files "$dir/*.patch" | wc -l | tr -d ' ')
+  if ! git -C "$work/repo" fetch -q --no-tags --depth=1 \
+    "https://github.com/$upstream.git" "+refs/tags/$tag:refs/tags/$tag" ||
+    ! git -C "$work/repo" fetch -q --no-tags --depth=$((count + 1)) \
+      "https://github.com/$fork.git" "+refs/heads/patches:refs/heads/patches"; then
+    echo "check-patches: $name: cannot fetch $upstream's tag $tag or $fork's patches branch" >&2
+    status=1
+    continue
+  fi
+  if [ "$(git -C "$work/repo" rev-parse -q --verify "patches~$count^{commit}" || true)" != \
+    "$(git -C "$work/repo" rev-parse "$tag^{commit}")" ]; then
+    echo "check-patches: $dir/ has $count patches, but $fork's patches branch is not $count commits on $tag." >&2
+    echo "  Rebase the branch onto $tag or export the patches again (docs/guides/maintenance.md)." >&2
+    status=1
+    continue
+  fi
+
+  git -C "$work/repo" format-patch -q --no-numbered --zero-commit --no-signature \
+    -o "$work/raw" "$tag..patches"
+  # The index lines carry abbreviated blob hashes, whose length depends on
+  # how many objects the exporting clone has; the diffs are compared in full.
+  for f in "$work/raw"/*.patch; do
+    [ -e "$f" ] || continue
+    grep -v '^index [0-9a-f]*\.\.[0-9a-f]*' "$f" >"$work/want/${f##*/}"
+  done
+  git ls-files "$dir/*.patch" | while read -r f; do
+    git show ":$f" | grep -v '^index [0-9a-f]*\.\.[0-9a-f]*' >"$work/have/${f##*/}"
+  done
+
+  if ! (cd "$work" && diff -r want have) >"$work/diff"; then
+    echo "check-patches: $dir/ does not match $fork's patches branch on $tag." >&2
+    echo "  Change the branch (based on $tag), push it, then export the patches again (docs/guides/maintenance.md):" >&2
+    sed 's/^/  /' "$work/diff" | head -40 >&2
+    status=1
+  fi
+done <<EOF
+$entries
+EOF
+exit "$status"

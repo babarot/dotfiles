@@ -9,6 +9,15 @@ if ! nix --no-warn-dirty run --inputs-from . nixpkgs#gitleaks -- git --staged --
   exit 1
 fi
 
+# Patch files only come from a fork's patches branch. The check fetches
+# the forks, so it runs only when patch files change.
+if [ -n "$(git diff --cached --name-only -- 'nix/home-manager/tools/*/*.patch')" ]; then
+  if ! "$(dirname "$0")/check-patches"; then
+    echo "pre-commit: patch files differ from the fork's patches branch; see above" >&2
+    exit 1
+  fi
+fi
+
 files=$(git diff --cached --name-only --diff-filter=ACMR)
 [ -n "$files" ] || exit 0
 # shellcheck disable=SC2086 # one path per word; paths here have no spaces

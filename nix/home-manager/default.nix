@@ -6,6 +6,7 @@
   imports = [
     ./dotfiles.nix
     ./env.nix
+    ./fork-patches.nix
     ./human.nix
     ./skills.nix
     ./herdr-plugins.nix

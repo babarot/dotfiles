@@ -20,6 +20,7 @@ nix/
     default.nix        # imports every file in nix/home-manager/tools
     dotfiles.nix       # links the files in home/ (.zshrc, .gitconfig, bin, .config, ...) into ~
     env.nix            # my.env: variables for every shell, rendered to ~/.config/zsh/env.zsh
+    fork-patches.nix   # my.forkPatches: packages patched from a fork's patches branch
     herdr-plugins.nix  # my.herdrPlugins: herdr plugins linked on every switch
     human.nix          # my.human: human-only zsh UX, rendered to ~/.config/zsh/human.zsh
     mas.nix            # my.masApps: Mac App Store apps installed with mas
@@ -33,8 +34,8 @@ home/                  # files linked into ~ under the same names (nix/home-mana
   skills/              # my own Agent Skills on trial, linked into ~/.claude/skills and ~/.agents/skills
   .config/             # linked to ~/.config as a whole (by activation, see dotfiles.nix)
 docs/                  # guides/, concepts/, reference/ and images (docs/README.md)
-.githooks/             # git hooks for this repo (pre-commit: gitleaks, nix fmt; pre-push: builds every Mac)
-.github/workflows/     # CI: nix flake check and evaluating every Mac
+.githooks/             # git hooks for this repo (pre-commit: gitleaks, nix fmt, check-patches; pre-push: builds every Mac)
+.github/workflows/     # CI: nix flake check and evaluating every Mac; check-patches when patch files change
 .claude/skills/        # repo skills for this repo (e.g. nvim-plugin-audit); not linked into ~
 ```
 

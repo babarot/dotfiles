@@ -1,6 +1,11 @@
 # mo: Markdown viewer in the browser (k1LoW/mo). nixpkgs' mo is a
 # different tool (a mustache renderer), so it is built from the release tag
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   mo = pkgs.buildGoModule (finalAttrs: {
     pname = "mo";
@@ -12,10 +17,7 @@ let
       hash = "sha256-BXGMjybhKZzw+yae478EP2j3cKw/ZbJMrW342W8ZCmY=";
     };
     vendorHash = "sha256-v1EfsHryyLfv9/ZzVazSMFySio62upqsB33eLV6LZZU=";
-    # Local changes, one patch per feature, applied in name order; each
-    # patch's message says what it does. They are exported from a fork
-    # branch, not edited here (docs/guides/maintenance.md)
-    patches = lib.filter (lib.hasSuffix ".patch") (lib.filesystem.listFilesRecursive ./mo);
+    inherit (config.my.forkPatches.mo) patches;
 
     # The frontend is built with pnpm and embedded into the binary
     pnpmRoot = "internal/frontend";
@@ -61,4 +63,16 @@ let
 in
 {
   home.packages = [ mo ];
+
+  # Local changes, one patch per feature; each patch's message says what it
+  # does. They are exported from a fork branch, not edited here
+  # (docs/guides/maintenance.md). The Go tests run in the build; check the
+  # frontend on the branch with the pnpm its package.json names, and commit
+  # the lockfile `pnpm install` rewrites when a patch changes dependencies:
+  #   cd internal/frontend
+  #   nix shell 'nixpkgs#pnpm_10' -c sh -c 'pnpm install --frozen-lockfile && pnpm run fmt:check && pnpm exec tsc --noEmit && pnpm run lint && pnpm test'
+  my.forkPatches.mo = {
+    inherit (mo) src;
+    dir = ./mo;
+  };
 }

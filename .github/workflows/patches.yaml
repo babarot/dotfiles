@@ -1,0 +1,37 @@
+# Checks that the patch files are exported from each fork's patches branch
+# (.githooks/check-patches), for commits that skipped the pre-commit hook.
+# Only runs when they change: the forks' branches move ahead of this repo
+# while a change is being made, and that should not fail unrelated pushes.
+name: patches
+
+on:
+  push:
+    branches: [main]
+    paths: &paths
+      - 'nix/home-manager/tools/*/*.patch'
+      - 'nix/home-manager/fork-patches.nix'
+      - '.githooks/check-patches'
+      - '.github/workflows/patches.yaml'
+  pull_request:
+    paths: *paths
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  check:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: DeterminateSystems/determinate-nix-action@8d87e8d5e5b8a8309d4281094560f127d9a265f1 # v3.22.5
+      # The packages come from evaluating every Mac, which needs the private
+      # agent-skills input; an empty stub stands in, as in nix.yaml
+      - run: |
+          stub=$RUNNER_TEMP/agent-skills-stub
+          mkdir -p "$stub"/plugins/{core,work}/skills
+          .githooks/check-patches --override-input agent-skills "path:$stub"

@@ -1,6 +1,11 @@
 # herdr: terminal multiplexer for coding agents, used inside Ghostty.
 # Its settings live in home/.config/herdr/config.toml.
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   # Small patches on nixpkgs' herdr, one per change, applied in name order;
   # each patch's message says what it does. They are exported from a fork
@@ -14,13 +19,16 @@ let
   #   doCheck = true;
   #   checkFlags = [ "client::shell::tests" "client::shell::endpoint_agent_state" "ui::sidebar" ];
   herdr = pkgs.herdr.overrideAttrs (old: {
-    patches =
-      (old.patches or [ ])
-      ++ lib.filter (lib.hasSuffix ".patch") (lib.filesystem.listFilesRecursive ./herdr);
+    patches = (old.patches or [ ]) ++ config.my.forkPatches.herdr.patches;
   });
 in
 {
   home.packages = [ herdr ];
+
+  my.forkPatches.herdr = {
+    inherit (pkgs.herdr) src;
+    dir = ./herdr;
+  };
 
   my.skills.herdr = "${herdr}/share/skills/herdr/herdr";
 

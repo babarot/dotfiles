@@ -10,7 +10,7 @@ Two clicks on the same row within 400ms now act like Enter.
  1 file changed, 19 insertions(+)
 
 diff --git a/src/ui/app.rs b/src/ui/app.rs
-index c09cc10..135f3bb 100644
+index 37245d7..30f2a69 100644
 --- a/src/ui/app.rs
 +++ b/src/ui/app.rs
 @@ -150,6 +150,9 @@ pub struct App {
@@ -23,7 +23,7 @@ index c09cc10..135f3bb 100644
  }
  
  /// Result of a background pull-request merge.
-@@ -230,6 +233,7 @@ impl App {
+@@ -231,6 +234,7 @@ impl App {
              last_seen_mutation_seq: 0,
              author_enrichment_rx: None,
              merge_rx: None,
@@ -31,7 +31,7 @@ index c09cc10..135f3bb 100644
          }
      }
  
-@@ -3987,6 +3991,21 @@ impl App {
+@@ -3993,6 +3997,21 @@ impl App {
                          if let Some(crate::state::TreeItem::Notification(_)) =
                              self.state.tree_items.get(clicked_item_idx)
                          {

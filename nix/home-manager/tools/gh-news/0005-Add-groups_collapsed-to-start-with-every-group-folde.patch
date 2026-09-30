@@ -15,10 +15,10 @@ header folded.
  5 files changed, 31 insertions(+), 6 deletions(-)
 
 diff --git a/config.example.toml b/config.example.toml
-index 0b58b92..574f424 100644
+index ec134ce..4116e70 100644
 --- a/config.example.toml
 +++ b/config.example.toml
-@@ -146,6 +146,12 @@ default_preview_mode = "vertical"
+@@ -153,6 +153,12 @@ default_preview_mode = "vertical"
  # CLI flag: (not available as flag, set via env or config)
  repos_collapsed = false
  
@@ -32,10 +32,10 @@ index 0b58b92..574f424 100644
  # Options:
  #   - "off":    only group by repository
 diff --git a/src/config.rs b/src/config.rs
-index 48ccbc8..7d9c0b5 100644
+index 56cf0a8..6e9beee 100644
 --- a/src/config.rs
 +++ b/src/config.rs
-@@ -187,6 +187,7 @@ pub struct Config {
+@@ -208,6 +208,7 @@ pub struct Config {
      // Display defaults
      pub default_preview_mode: String,
      pub repos_collapsed: bool,
@@ -43,7 +43,7 @@ index 48ccbc8..7d9c0b5 100644
      pub org_grouping: OrgGroupingMode,
      pub list_layout: ListLayout,
  
-@@ -287,6 +288,7 @@ impl Default for Config {
+@@ -312,6 +313,7 @@ impl Default for Config {
              theme_colors: None,
              default_preview_mode: "vertical".to_string(),
              repos_collapsed: false,
@@ -51,8 +51,8 @@ index 48ccbc8..7d9c0b5 100644
              org_grouping: OrgGroupingMode::default(),
              list_layout: ListLayout::default(),
              auto_mark_read: false,
-@@ -543,6 +545,13 @@ priority = 1
-         assert_eq!(config.actions[0].priority, Some(1));
+@@ -584,6 +586,13 @@ priority = 1
+         assert!(toml::from_str::<Config>(r#"hide_resolved_review_requests = ["mreged"]"#).is_err());
      }
  
 +    #[test]
@@ -78,10 +78,10 @@ index 23b8436..a4cb9df 100644
      };
  
 diff --git a/src/state/mod.rs b/src/state/mod.rs
-index b4c5840..f81cb12 100644
+index 3dc1216..f5fdcde 100644
 --- a/src/state/mod.rs
 +++ b/src/state/mod.rs
-@@ -404,17 +404,22 @@ impl AppState {
+@@ -410,17 +410,22 @@ impl AppState {
          }
      }
  
@@ -110,7 +110,7 @@ index b4c5840..f81cb12 100644
          self.build_tree();
          if !self.tree_items.is_empty() {
 diff --git a/src/ui/app.rs b/src/ui/app.rs
-index 135f3bb..0a25c34 100644
+index 30f2a69..c0a2e7d 100644
 --- a/src/ui/app.rs
 +++ b/src/ui/app.rs
 @@ -47,6 +47,7 @@ pub struct PendingStateSettings {
@@ -121,7 +121,7 @@ index 135f3bb..0a25c34 100644
      pub preview_mode: PreviewMode,
  }
  
-@@ -350,6 +351,7 @@ impl App {
+@@ -351,6 +352,7 @@ impl App {
                  filter_pattern: None,
                  show_all: false,
                  repos_collapsed: self.config.repos_collapsed,
@@ -129,7 +129,7 @@ index 135f3bb..0a25c34 100644
                  preview_mode: self.config.get_default_preview_mode(),
              });
  
-@@ -379,7 +381,9 @@ impl App {
+@@ -381,7 +383,9 @@ impl App {
              app_state.set_pinned_notifications(data.pinned_notifications);
          }
  

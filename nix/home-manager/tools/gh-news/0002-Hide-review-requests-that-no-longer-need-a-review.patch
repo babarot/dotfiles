@@ -5,43 +5,149 @@ Subject: [PATCH] Hide review requests that no longer need a review
 
 A review request stayed listed after someone else merged, closed or
 approved the pull request, and gh-news filters cannot see a pull
-request's state. Check it on every refresh (REST for the state, GraphQL
-for the review decision) and hide it once resolved.
+request's state. hide_resolved_review_requests lists the states that
+hide one ("merged", "closed", "approved"); while it is set, the state is
+checked on every refresh (REST for the state, GraphQL for the review
+decision, only when "approved" is listed). Empty, the default, fetches
+nothing.
 ---
- src/models/notification.rs | 37 ++++++++++++++++++++++++++++++
- src/state/mod.rs           |  4 ++--
- src/ui/app.rs              | 46 +++++++++++++++++++++++++++++++++-----
- 3 files changed, 80 insertions(+), 7 deletions(-)
+ config.example.toml        |  7 +++++
+ src/config.rs              | 41 ++++++++++++++++++++++++++++++
+ src/models/notification.rs | 43 +++++++++++++++++++++++++++++++
+ src/state/mod.rs           | 10 ++++++--
+ src/ui/app.rs              | 52 ++++++++++++++++++++++++++++++++++----
+ 5 files changed, 146 insertions(+), 7 deletions(-)
 
+diff --git a/config.example.toml b/config.example.toml
+index 0b58b92..ec134ce 100644
+--- a/config.example.toml
++++ b/config.example.toml
+@@ -88,6 +88,13 @@ participating_only = false
+ # exclude_repos = ["dependabot/*", "some-org/noisy-repo"]
+ # exclude_subjects = ["\\[bot\\]", "^Bump ", "dependabot"]
+ 
++# Hide review requests on pull requests that no longer need your review:
++# "merged", "closed", or "approved" (open, with the reviews its branch
++# protection requires). The states are fetched on every refresh, one REST
++# call per open review request plus a GraphQL one for "approved".
++# Default: [] (off, nothing fetched)
++# hide_resolved_review_requests = ["merged", "closed", "approved"]
++
+ # ==============================================================================
+ # THEME
+ # ==============================================================================
+diff --git a/src/config.rs b/src/config.rs
+index 48ccbc8..56cf0a8 100644
+--- a/src/config.rs
++++ b/src/config.rs
+@@ -40,6 +40,27 @@ impl MergeMethod {
+     }
+ }
+ 
++/// Pull request states at which a review request counts as resolved.
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
++#[serde(rename_all = "snake_case")]
++pub enum ResolvedReviewState {
++    Merged,
++    Closed,
++    /// Open, with the reviews its branch protection requires.
++    Approved,
++}
++
++impl ResolvedReviewState {
++    /// The notification context the state is recorded as.
++    pub fn context(self) -> &'static str {
++        match self {
++            ResolvedReviewState::Merged => "merged",
++            ResolvedReviewState::Closed => "closed",
++            ResolvedReviewState::Approved => "approved",
++        }
++    }
++}
++
+ /// Layout mode for the notification list.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+ #[serde(rename_all = "snake_case")]
+@@ -229,6 +250,10 @@ pub struct Config {
+     /// Exclude notifications whose title matches any of these regex patterns.
+     #[serde(default)]
+     pub exclude_subjects: Vec<String>,
++    /// Hide review requests on pull requests in any of these states. Empty
++    /// turns it off, and the states are then not fetched.
++    #[serde(default)]
++    pub hide_resolved_review_requests: Vec<ResolvedReviewState>,
+ 
+     // GitHub Actions workflow run notifications (opt-in)
+     /// Enable GitHub Actions workflow run notifications.
+@@ -304,6 +329,7 @@ impl Default for Config {
+             exclude_reasons: Vec::new(),
+             exclude_repos: Vec::new(),
+             exclude_subjects: Vec::new(),
++            hide_resolved_review_requests: Vec::new(),
+             enable_actions: false,
+             actions_failed_only: true,
+             actions_repos: Vec::new(),
+@@ -543,6 +569,21 @@ priority = 1
+         assert_eq!(config.actions[0].priority, Some(1));
+     }
+ 
++    #[test]
++    fn test_parse_hide_resolved_review_requests() {
++        assert!(toml::from_str::<Config>("")
++            .unwrap()
++            .hide_resolved_review_requests
++            .is_empty());
++        let config: Config =
++            toml::from_str(r#"hide_resolved_review_requests = ["merged", "approved"]"#).unwrap();
++        assert_eq!(
++            config.hide_resolved_review_requests,
++            [ResolvedReviewState::Merged, ResolvedReviewState::Approved]
++        );
++        assert!(toml::from_str::<Config>(r#"hide_resolved_review_requests = ["mreged"]"#).is_err());
++    }
++
+     #[test]
+     fn test_parse_sessions_from_toml() {
+         let toml_str = r#"
 diff --git a/src/models/notification.rs b/src/models/notification.rs
-index 9e71bc3..c072c61 100644
+index 9e71bc3..5bce485 100644
 --- a/src/models/notification.rs
 +++ b/src/models/notification.rs
-@@ -37,6 +37,17 @@ impl Notification {
+@@ -1,3 +1,4 @@
++use crate::config::ResolvedReviewState;
+ use crate::models::{NotificationReason, NotificationType};
+ use chrono::{DateTime, Utc};
+ use serde::{Deserialize, Serialize};
+@@ -37,6 +38,17 @@ impl Notification {
          self.unread
      }
  
-+    /// A review request on a pull request that no longer needs this
-+    /// review: merged, closed, or approved by the reviews it requires.
-+    pub fn is_resolved_review_request(&self) -> bool {
++    /// A review request on a pull request that has reached one of `states`,
++    /// so it no longer needs this review.
++    pub fn is_resolved_review_request(&self, states: &[ResolvedReviewState]) -> bool {
 +        self.reason_enum() == NotificationReason::ReviewRequested
 +            && self.notification_type() == NotificationType::PullRequest
-+            && matches!(
-+                self.context.as_deref(),
-+                Some("merged" | "closed" | "approved")
-+            )
++            && self
++                .context
++                .as_deref()
++                .is_some_and(|ctx| states.iter().any(|s| s.context() == ctx))
 +    }
 +
      pub fn notification_type(&self) -> NotificationType {
          // If the type is Unknown but we have a security_alert reason, infer it's a RepositoryVulnerabilityAlert
          if matches!(self.subject.subject_type, NotificationType::Unknown)
-@@ -608,6 +619,32 @@ mod tests {
+@@ -608,6 +620,37 @@ mod tests {
          n
      }
  
 +    #[test]
-+    fn resolved_review_request_needs_a_merged_closed_or_approved_pr() {
++    fn resolved_review_request_needs_a_pr_in_a_listed_state() {
++        use ResolvedReviewState::*;
++        let all = [Merged, Closed, Approved];
 +        let pr = NotificationType::PullRequest;
++        let n = make_reason_notification("review_requested", pr, None, Some("approved"));
++        assert!(!n.is_resolved_review_request(&[Merged, Closed]));
++        assert!(!n.is_resolved_review_request(&[]));
 +        for (reason, ntype, context, resolved) in [
 +            ("review_requested", pr, Some("merged"), true),
 +            ("review_requested", pr, Some("closed"), true),
@@ -58,7 +164,7 @@ index 9e71bc3..c072c61 100644
 +        ] {
 +            let n = make_reason_notification(reason, ntype, None, context);
 +            assert_eq!(
-+                n.is_resolved_review_request(),
++                n.is_resolved_review_request(&all),
 +                resolved,
 +                "{reason} {context:?}"
 +            );
@@ -69,40 +175,79 @@ index 9e71bc3..c072c61 100644
      fn display_reason_state_change_merged_with_author() {
          let n = make_reason_notification(
 diff --git a/src/state/mod.rs b/src/state/mod.rs
-index 972d81a..81f6b03 100644
+index 972d81a..f8c4bd1 100644
 --- a/src/state/mod.rs
 +++ b/src/state/mod.rs
-@@ -300,7 +300,7 @@ impl AppState {
+@@ -46,6 +46,7 @@ pub struct AppState {
+     pub expanded_repos: HashMap<String, bool>, // Track which repos are expanded
+     pub expanded_orgs: HashMap<String, bool>, // Track which orgs are expanded
+     pub org_grouping: OrgGroupingMode,
++    pub hidden_review_states: Vec<crate::config::ResolvedReviewState>,
+     pub selected_index: usize,
+     pub filter: Option<Filter>,
+     pub preview_mode: PreviewMode,
+@@ -185,6 +186,7 @@ impl AppState {
+             expanded_repos: HashMap::new(),
+             expanded_orgs: HashMap::new(),
+             org_grouping: OrgGroupingMode::default(),
++            hidden_review_states: Vec::new(),
+             selected_index: 0,
+             filter: None,
+             preview_mode: PreviewMode::Vertical, // Preview open by default
+@@ -300,7 +302,9 @@ impl AppState {
                  .iter()
                  .enumerate()
                  .filter_map(|(i, n)| {
 -                    if self.snoozed_ids.contains_key(&n.id) {
-+                    if self.snoozed_ids.contains_key(&n.id) || n.is_resolved_review_request() {
++                    if self.snoozed_ids.contains_key(&n.id)
++                        || n.is_resolved_review_request(&self.hidden_review_states)
++                    {
                          return None;
                      }
                      if filter.matches(n) {
-@@ -316,7 +316,7 @@ impl AppState {
+@@ -316,7 +320,9 @@ impl AppState {
                  .iter()
                  .enumerate()
                  .filter_map(|(i, n)| {
 -                    if self.snoozed_ids.contains_key(&n.id) {
-+                    if self.snoozed_ids.contains_key(&n.id) || n.is_resolved_review_request() {
++                    if self.snoozed_ids.contains_key(&n.id)
++                        || n.is_resolved_review_request(&self.hidden_review_states)
++                    {
                          None
                      } else {
                          Some(i)
 diff --git a/src/ui/app.rs b/src/ui/app.rs
-index fae1f46..c09cc10 100644
+index fae1f46..37245d7 100644
 --- a/src/ui/app.rs
 +++ b/src/ui/app.rs
-@@ -726,6 +726,7 @@ impl App {
+@@ -187,6 +187,7 @@ impl App {
+         let palette = config.color_palette();
+         let mut state = AppState::new();
+         state.org_grouping = org_grouping;
++        state.hidden_review_states = config.hide_resolved_review_requests.clone();
+         Self {
+             state,
+             config,
+@@ -357,6 +358,7 @@ impl App {
+ 
+         let mut app_state = AppState::new();
+         app_state.org_grouping = self.config.org_grouping;
++        app_state.hidden_review_states = self.config.hide_resolved_review_requests.clone();
+         app_state.views = crate::builtin_views::builtin_views()
+             .into_iter()
+             .chain(self.config.views.iter().cloned())
+@@ -726,16 +728,29 @@ impl App {
              comment_url: Option<String>,
              subject_url: Option<String>,
              is_pr: bool,
-+            review_request: bool,
++            check_approval: bool,
          }
  
++        let hidden = &self.config.hide_resolved_review_requests;
++        let approval_hides = hidden.contains(&crate::config::ResolvedReviewState::Approved);
          let to_fetch: Vec<FetchItem> = self
-@@ -734,8 +735,16 @@ impl App {
+             .state
+             .notifications
              .iter()
              .filter_map(|n| {
                  let needs_author = n.author.is_none() && n.latest_comment_url().is_some();
@@ -111,8 +256,10 @@ index fae1f46..c09cc10 100644
 +                // A review request is checked again on every refresh until
 +                // its pull request is merged or closed: others may approve
 +                // it, or a new push may dismiss their approvals.
++                // Nothing is fetched for them when no state hides them.
 +                let review_request = n.reason_enum() == NotificationReason::ReviewRequested
-+                    && n.notification_type() == NotificationType::PullRequest;
++                    && n.notification_type() == NotificationType::PullRequest
++                    && !hidden.is_empty();
 +                let needs_review_state =
 +                    review_request && !matches!(n.context.as_deref(), Some("merged" | "closed"));
 +                let needs_context = (n.reason_enum() == NotificationReason::StateChange
@@ -121,15 +268,15 @@ index fae1f46..c09cc10 100644
  
                  if !needs_author && !needs_context {
                      return None;
-@@ -756,6 +765,7 @@ impl App {
+@@ -756,6 +771,7 @@ impl App {
                          None
                      },
                      is_pr,
-+                    review_request,
++                    check_approval: review_request && approval_hides,
                  })
              })
              .collect();
-@@ -791,7 +801,7 @@ impl App {
+@@ -791,7 +807,7 @@ impl App {
                              }
                          }
  
@@ -138,7 +285,7 @@ index fae1f46..c09cc10 100644
                          if let Some(url) = &item.subject_url {
                              if let Ok(value) = client.get_json_by_url(url) {
                                  let context = if item.is_pr {
-@@ -816,11 +826,37 @@ impl App {
+@@ -816,11 +832,37 @@ impl App {
                                          }
                                          "merged".to_string()
                                      } else {
@@ -151,7 +298,7 @@ index fae1f46..c09cc10 100644
 +                                            .to_lowercase();
 +                                        // The REST pull request has no review
 +                                        // decision; only GraphQL does.
-+                                        let approved = item.review_request
++                                        let approved = item.check_approval
 +                                            && state == "open"
 +                                            && value
 +                                                .get("node_id")

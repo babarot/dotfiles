@@ -8,6 +8,9 @@ groups_collapsed = true
 # there is no setting for the view to start in
 exclude_reasons = ["subscribed", "ci_activity"]
 
+# Hide review requests once nobody needs my review (a local patch)
+hide_resolved_review_requests = ["merged", "closed", "approved"]
+
 # x then 1 approves; merge with the built-in m, which refuses drafts and
 # stale previews and asks first. show_output so a failed approve is seen
 [[actions]]

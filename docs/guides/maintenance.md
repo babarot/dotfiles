@@ -32,7 +32,7 @@ Each fork is cloned at `~/src/github.com/babarot/<name>`, with `origin` the fork
 nix eval --raw "$HOME/src/github.com/babarot/dotfiles#darwinConfigurations.pro23.config.home-manager.users.babarot.my.forkPatches.<name>.check.tag"
 ```
 
-Development stays in the fork and distribution in dotfiles: a change is made, tested and pushed on the `patches` branch, and dotfiles only exports the patches and builds. dotfiles could instead take the `patches` branch itself as the source (a flake input or `fetchFromGitHub` pointing at it), so that shipping a change is only `nix flake update`. The patches are kept here anyway, so that what is added to each package can be read in this repo and every patched package is handled the same way. The export is two commands; if it becomes tedious, wrap it in a script rather than dropping the patch files.
+Development stays in the fork and distribution in dotfiles: a change is made, tested and pushed on the `patches` branch, and dotfiles only exports the patches and builds. dotfiles could instead take the `patches` branch itself as the source (a flake input or `fetchFromGitHub` pointing at it), so that shipping a change is only `nix flake update`. The patches are kept here anyway, so that what is added to each package can be read in this repo and every patched package is handled the same way. The export is one command (below).
 
 Change a patch or add one:
 
@@ -50,15 +50,13 @@ Check it as the package's .nix file says, in a comment by the package or its `my
 git push --force-with-lease origin patches
 ```
 
-Then export the patches over the old ones and `git add` them. The Nix file picks up whatever the directory holds, so it needs no change:
+Then export the patches in dotfiles. This writes the pushed branch over the package's patch files with `git format-patch` and stages them; the Nix file picks up whatever the directory holds, so it needs no change:
 
 ```bash
-dir=~/src/github.com/babarot/dotfiles/nix/home-manager/tools/<name>
-rm "${dir:?}"/*.patch
-git format-patch --no-numbered --zero-commit --no-signature -o "$dir" <tag>
+.githooks/check-patches --write --only <name>
 ```
 
-`--no-numbered`, `--zero-commit` and `--no-signature` keep a file unchanged when only the number of patches, commit hashes or the git version change.
+It exports with `--no-numbered`, `--zero-commit` and `--no-signature`, which keep a file unchanged when only the number of patches, commit hashes or the git version change.
 
 Follow a new release (for a package from nixpkgs, when a nixpkgs bump moves its version and the build log names a patch that failed to apply):
 

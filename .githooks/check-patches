@@ -4,19 +4,56 @@
 # built from, so they are never edited by hand and never come from a branch
 # that was not pushed (docs/guides/maintenance.md). The packages, forks and
 # tags come from my.forkPatches (nix/home-manager/fork-patches.nix) on every
-# Mac, so a new patched package needs no change here. Compares the staged
-# files, so pre-commit sees what it commits and CI sees the checkout.
+# Mac, so a new patched package needs no change here.
 #
-# Usage: .githooks/check-patches [<nix eval args>...]
-#   e.g. --override-input agent-skills <stub> where that input is private
+# Usage: .githooks/check-patches [--write] [--rev <commit>] [--only <name>] [<nix eval args>...]
+#   (none)          compare with the staged files (pre-commit; CI's checkout)
+#   --rev <commit>  compare with that commit instead (pre-push)
+#   --write         export the patches of a package that differs again from
+#                   its branch, over its patch files, and stage them
+#   --only <name>   check one package
+#   nix eval args, e.g. --override-input agent-skills <stub> where that
+#   input is private
 set -eu
 
-cd "$(git rev-parse --show-toplevel)"
+top=$(git rev-parse --show-toplevel)
+cd "$top"
+
+write=
+rev=
+only=
+while [ $# -gt 0 ]; do
+  case $1 in
+  --write) write=1 ;;
+  --rev) rev=$2 && shift ;;
+  --only) only=$2 && shift ;;
+  *) break ;;
+  esac
+  shift
+done
+[ -z "$write" ] || [ -z "$rev" ] || {
+  echo "check-patches: --write writes the working tree; it cannot go with --rev" >&2
+  exit 2
+}
+
+# The flake as staged or at the commit
+flake=.
+[ -z "$rev" ] || flake="git+file://$top?rev=$(git rev-parse "$rev^{commit}")"
+
+# Where the compared patch files are read: the index, or the commit
+ls_patches() {
+  if [ -n "$rev" ]; then
+    git ls-tree -r --name-only "$rev" -- "$1" | grep '\.patch$' || true
+  else
+    git ls-files "$1/*.patch"
+  fi
+}
+show_patch() { git show "$rev:$1"; }
 
 # One line per package: name fork upstream tag dir. A package declared on
 # several Macs appears once.
 # shellcheck disable=SC2016 # ${...} is Nix, not the shell
-entries=$(nix --no-warn-dirty eval --raw "$@" .#darwinConfigurations --apply '
+entries=$(nix --no-warn-dirty eval --raw "$@" "$flake#darwinConfigurations" --apply '
   hosts:
   let
     entries = builtins.listToAttrs (builtins.concatMap (host:
@@ -32,28 +69,47 @@ entries=$(nix --no-warn-dirty eval --raw "$@" .#darwinConfigurations --apply '
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
+strip_index() { grep -v '^index [0-9a-f]*\.\.[0-9a-f]*' "$@"; }
+
 status=0
+found=
 while read -r name fork upstream tag dir; do
+  [ -n "$name" ] || continue
+  [ -z "$only" ] || [ "$only" = "$name" ] || continue
+  found=1
   work="$tmp/$name"
   mkdir -p "$work/raw" "$work/want" "$work/have"
   git init -q --bare "$work/repo"
-  # Shallow fetches keep this quick: the tag's commit, and the branch deep
-  # enough to reach it when it holds exactly the committed patches. A branch
-  # with more or fewer commits, or on another tag, does not match.
-  # The forks do not carry upstream's tags.
-  count=$(git ls-files "$dir/*.patch" | wc -l | tr -d ' ')
+  # Shallow fetches keep the check quick: the tag's commit, and the branch
+  # deep enough to reach it when it holds exactly the committed patches.
+  # --write needs the branch's whole history instead, since it may have
+  # grown. The forks do not carry upstream's tags.
+  count=$(ls_patches "$dir" | wc -l | tr -d ' ')
+  if [ -n "$write" ]; then
+    depth=--filter=blob:none
+  else
+    depth=--depth=$((count + 1))
+  fi
   if ! git -C "$work/repo" fetch -q --no-tags --depth=1 \
     "https://github.com/$upstream.git" "+refs/tags/$tag:refs/tags/$tag" ||
-    ! git -C "$work/repo" fetch -q --no-tags --depth=$((count + 1)) \
+    ! git -C "$work/repo" fetch -q --no-tags "$depth" \
       "https://github.com/$fork.git" "+refs/heads/patches:refs/heads/patches"; then
     echo "check-patches: $name: cannot fetch $upstream's tag $tag or $fork's patches branch" >&2
     status=1
     continue
   fi
-  if [ "$(git -C "$work/repo" rev-parse -q --verify "patches~$count^{commit}" || true)" != \
+
+  if [ -n "$write" ]; then
+    if ! git -C "$work/repo" merge-base --is-ancestor "$tag" patches 2>/dev/null; then
+      echo "check-patches: $name: $fork's patches branch is not on $tag, the release the package is built from." >&2
+      echo "  Rebase the branch onto $tag, or move the package to the branch's release (docs/guides/maintenance.md)." >&2
+      status=1
+      continue
+    fi
+  elif [ "$(git -C "$work/repo" rev-parse -q --verify "patches~$count^{commit}" || true)" != \
     "$(git -C "$work/repo" rev-parse "$tag^{commit}")" ]; then
     echo "check-patches: $dir/ has $count patches, but $fork's patches branch is not $count commits on $tag." >&2
-    echo "  Rebase the branch onto $tag or export the patches again (docs/guides/maintenance.md)." >&2
+    echo "  Export the patches again (--write), or rebase the branch onto $tag (docs/guides/maintenance.md)." >&2
     status=1
     continue
   fi
@@ -64,19 +120,32 @@ while read -r name fork upstream tag dir; do
   # how many objects the exporting clone has; the diffs are compared in full.
   for f in "$work/raw"/*.patch; do
     [ -e "$f" ] || continue
-    grep -v '^index [0-9a-f]*\.\.[0-9a-f]*' "$f" >"$work/want/${f##*/}"
+    strip_index "$f" >"$work/want/${f##*/}"
   done
-  git ls-files "$dir/*.patch" | while read -r f; do
-    git show ":$f" | grep -v '^index [0-9a-f]*\.\.[0-9a-f]*' >"$work/have/${f##*/}"
+  ls_patches "$dir" | while read -r f; do
+    show_patch "$f" | strip_index >"$work/have/${f##*/}"
   done
 
-  if ! (cd "$work" && diff -r want have) >"$work/diff"; then
-    echo "check-patches: $dir/ does not match $fork's patches branch on $tag." >&2
-    echo "  Change the branch (based on $tag), push it, then export the patches again (docs/guides/maintenance.md):" >&2
-    sed 's/^/  /' "$work/diff" | head -40 >&2
-    status=1
+  (cd "$work" && diff -r want have) >"$work/diff" && continue
+  if [ -n "$write" ]; then
+    git rm -q --cached --ignore-unmatch -- "$dir/*.patch"
+    rm -f "${dir:?}"/*.patch
+    cp "$work/raw"/*.patch "$dir"/
+    git add -- "$dir"
+    echo "check-patches: $name: exported $fork's patches branch on $tag into $dir/ and staged it" >&2
+    git -c color.status=never status --short -- "$dir" | sed 's/^/  /' >&2
+    continue
   fi
+  echo "check-patches: $dir/ does not match $fork's patches branch on $tag." >&2
+  echo "  Export the patches again (--write) after pushing the branch (docs/guides/maintenance.md):" >&2
+  sed 's/^/  /' "$work/diff" | head -40 >&2
+  status=1
 done <<EOF
 $entries
 EOF
+
+if [ -n "$only" ] && [ -z "$found" ]; then
+  echo "check-patches: no package $only in my.forkPatches" >&2
+  exit 2
+fi
 exit "$status"

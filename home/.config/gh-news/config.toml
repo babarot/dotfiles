@@ -6,9 +6,6 @@ theme = "tokyo_night"
 # there is no setting for the view to start in
 exclude_reasons = ["subscribed", "ci_activity"]
 
-# Run without a shell (split on whitespace), so neither ~ nor $HOME expands
-on_new_notification_command = "/Users/babarot/.config/gh-news/notify.sh"
-
 # x then 1 approves; merge with the built-in m, which refuses drafts and
 # stale previews and asks first. show_output so a failed approve is seen
 [[actions]]

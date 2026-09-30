@@ -36,7 +36,7 @@ home/                  # files linked into ~ under the same names (nix/home-mana
 docs/                  # guides/, concepts/, reference/ and images (docs/README.md)
 .githooks/             # git hooks for this repo (pre-commit: gitleaks, nix fmt, check-patches; pre-push: builds every Mac)
 .github/workflows/     # CI: nix flake check and evaluating every Mac; check-patches when patch files change
-.claude/skills/        # repo skills for this repo (e.g. nvim-plugin-audit); not linked into ~
+.claude/skills/        # repo skills for this repo (e.g. nvim-plugin-audit, import-fork-patches); not linked into ~
 ```
 
 ## Packages

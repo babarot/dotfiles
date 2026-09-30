@@ -32,7 +32,7 @@ Each fork is cloned at `~/src/github.com/babarot/<name>`, with `origin` the fork
 nix eval --raw "$HOME/src/github.com/babarot/dotfiles#darwinConfigurations.pro23.config.home-manager.users.babarot.my.forkPatches.<name>.check.tag"
 ```
 
-Development stays in the fork and distribution in dotfiles: a change is made, tested and pushed on the `patches` branch, and dotfiles only exports the patches and builds. dotfiles could instead take the `patches` branch itself as the source (a flake input or `fetchFromGitHub` pointing at it), so that shipping a change is only `nix flake update`. The patches are kept here anyway, so that what is added to each package can be read in this repo and every patched package is handled the same way. The export is one command (below).
+Development stays in the fork and distribution in dotfiles: a change is made, tested and pushed on the `patches` branch, and dotfiles only exports the patches and builds. Two skills follow these steps: [fork-patches](../../home/skills/fork-patches/SKILL.md) in the fork, and [import-fork-patches](../../.claude/skills/import-fork-patches/SKILL.md) in this repo. dotfiles could instead take the `patches` branch itself as the source (a flake input or `fetchFromGitHub` pointing at it), so that shipping a change is only `nix flake update`. The patches are kept here anyway, so that what is added to each package can be read in this repo and every patched package is handled the same way. The export is one command (below).
 
 Change a patch or add one:
 

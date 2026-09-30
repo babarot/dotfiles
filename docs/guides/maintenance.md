@@ -32,6 +32,8 @@ Three packages carry local patches, each applied from a directory in name order:
 
 The patch files are not edited by hand. Each one is a commit on the fork's `patches` branch, exported with `git format-patch`, so git does the rebasing onto a new release and every file carries its commit message. Each fork is cloned at `~/src/github.com/babarot/<name>`, with `origin` the fork. The examples below run there, with `<name>` the package and `<version>` the release the branch sits on: for herdr the version nixpkgs builds (`nix eval --raw .#darwinConfigurations.pro23.pkgs.herdr.version` in dotfiles), for gh-news and mo the `version` in gh.nix and mo.nix.
 
+Development stays in the fork and distribution in dotfiles: a change is made, tested and pushed on the `patches` branch, and dotfiles only exports the patches and builds. dotfiles could instead take the `patches` branch itself as the source (a flake input or `fetchFromGitHub` pointing at it), so that shipping a change is only `nix flake update`. The patches are kept here anyway, so that what is added to each package can be read in this repo and all three packages are handled the same way. The export is two commands; if it becomes tedious, wrap it in a script rather than dropping the patch files.
+
 Change a patch or add one:
 
 ```bash

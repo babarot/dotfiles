@@ -1,0 +1,103 @@
+diff --git a/src/models/notification.rs b/src/models/notification.rs
+index 9e71bc3..adc2fbf 100644
+--- a/src/models/notification.rs
++++ b/src/models/notification.rs
+@@ -37,6 +37,14 @@ impl Notification {
+         self.unread
+     }
+ 
++    /// A review request on a pull request that has since been merged or
++    /// closed, so there is nothing left to review.
++    pub fn is_resolved_review_request(&self) -> bool {
++        self.reason_enum() == NotificationReason::ReviewRequested
++            && self.notification_type() == NotificationType::PullRequest
++            && matches!(self.context.as_deref(), Some("merged" | "closed"))
++    }
++
+     pub fn notification_type(&self) -> NotificationType {
+         // If the type is Unknown but we have a security_alert reason, infer it's a RepositoryVulnerabilityAlert
+         if matches!(self.subject.subject_type, NotificationType::Unknown)
+@@ -608,6 +616,31 @@ mod tests {
+         n
+     }
+ 
++    #[test]
++    fn resolved_review_request_needs_a_merged_or_closed_pr() {
++        let pr = NotificationType::PullRequest;
++        for (reason, ntype, context, resolved) in [
++            ("review_requested", pr.clone(), Some("merged"), true),
++            ("review_requested", pr.clone(), Some("closed"), true),
++            ("review_requested", pr.clone(), Some("open"), false),
++            ("review_requested", pr.clone(), None, false),
++            ("author", pr.clone(), Some("merged"), false),
++            (
++                "review_requested",
++                NotificationType::Issue,
++                Some("closed"),
++                false,
++            ),
++        ] {
++            let n = make_reason_notification(reason, ntype, None, context);
++            assert_eq!(
++                n.is_resolved_review_request(),
++                resolved,
++                "{reason} {context:?}"
++            );
++        }
++    }
++
+     #[test]
+     fn display_reason_state_change_merged_with_author() {
+         let n = make_reason_notification(
+diff --git a/src/state/mod.rs b/src/state/mod.rs
+index 2e817d7..5c374e2 100644
+--- a/src/state/mod.rs
++++ b/src/state/mod.rs
+@@ -300,7 +300,7 @@ impl AppState {
+                 .iter()
+                 .enumerate()
+                 .filter_map(|(i, n)| {
+-                    if self.snoozed_ids.contains_key(&n.id) {
++                    if self.snoozed_ids.contains_key(&n.id) || n.is_resolved_review_request() {
+                         return None;
+                     }
+                     if filter.matches(n) {
+@@ -316,7 +316,7 @@ impl AppState {
+                 .iter()
+                 .enumerate()
+                 .filter_map(|(i, n)| {
+-                    if self.snoozed_ids.contains_key(&n.id) {
++                    if self.snoozed_ids.contains_key(&n.id) || n.is_resolved_review_request() {
+                         None
+                     } else {
+                         Some(i)
+diff --git a/src/ui/app.rs b/src/ui/app.rs
+index dfc935d..221c5b8 100644
+--- a/src/ui/app.rs
++++ b/src/ui/app.rs
+@@ -734,8 +734,14 @@ impl App {
+             .iter()
+             .filter_map(|n| {
+                 let needs_author = n.author.is_none() && n.latest_comment_url().is_some();
+-                let needs_context =
+-                    n.reason_enum() == NotificationReason::StateChange && n.subject_url().is_some();
++                // An open review request is checked again on every refresh,
++                // since someone else may merge or close the pull request.
++                let needs_review_state = n.reason_enum() == NotificationReason::ReviewRequested
++                    && n.notification_type() == NotificationType::PullRequest
++                    && !n.is_resolved_review_request();
++                let needs_context = (n.reason_enum() == NotificationReason::StateChange
++                    || needs_review_state)
++                    && n.subject_url().is_some();
+ 
+                 if !needs_author && !needs_context {
+                     return None;
+@@ -791,7 +797,7 @@ impl App {
+                             }
+                         }
+ 
+-                        // Fetch subject state for state_change notifications
++                        // Fetch subject state for state changes and review requests
+                         if let Some(url) = &item.subject_url {
+                             if let Ok(value) = client.get_json_by_url(url) {
+                                 let context = if item.is_pr {

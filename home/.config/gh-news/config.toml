@@ -1,0 +1,22 @@
+auto_refresh_interval = 60
+show_read = false
+theme = "tokyo_night"
+
+# What the built-in Participating view hides, applied by default since
+# there is no setting for the view to start in
+exclude_reasons = ["subscribed", "ci_activity"]
+
+# Run without a shell (split on whitespace), so neither ~ nor $HOME expands
+on_new_notification_command = "/Users/babarot/.config/gh-news/notify.sh"
+
+# x then 1 approves; merge with the built-in m, which refuses drafts and
+# stale previews and asks first. show_output so a failed approve is seen
+[[actions]]
+name = "Approve"
+command = "gh pr review {number} -R {full_name} --approve"
+priority = 1
+show_output = true
+
+[[actions]]
+name = "Copy URL"
+command = "echo {url} | pbcopy"

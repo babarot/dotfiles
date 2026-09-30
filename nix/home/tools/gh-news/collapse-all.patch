@@ -1,0 +1,53 @@
+diff --git a/src/state/mod.rs b/src/state/mod.rs
+index 2e817d7..a30e136 100644
+--- a/src/state/mod.rs
++++ b/src/state/mod.rs
+@@ -403,6 +403,20 @@ impl AppState {
+         }
+     }
+ 
++    /// Collapse or expand every repository and organisation at once.
++    pub fn set_all_expanded(&mut self, expanded: bool) {
++        if expanded {
++            self.expanded_repos.clear();
++            self.expanded_orgs.clear();
++        } else {
++            self.collapse_all_repos();
++        }
++        self.build_tree();
++        if !self.tree_items.is_empty() {
++            self.selected_index = self.selected_index.min(self.tree_items.len() - 1);
++        }
++    }
++
+     pub fn selected_notification(&self) -> Option<&Notification> {
+         self.tree_items
+             .get(self.selected_index)
+diff --git a/src/ui/app.rs b/src/ui/app.rs
+index dfc935d..fae1f46 100644
+--- a/src/ui/app.rs
++++ b/src/ui/app.rs
+@@ -3134,6 +3134,8 @@ impl App {
+                     self.state.toggle_repo_expansion(&repo_name);
+                 }
+             }
++            KeyCode::Char('H') => self.state.set_all_expanded(false),
++            KeyCode::Char('L') => self.state.set_all_expanded(true),
+             KeyCode::Left | KeyCode::Char('h') => {
+                 // Collapse org if on an org header
+                 if let Some(org_name) = self.state.selected_org() {
+diff --git a/src/ui/components/help.rs b/src/ui/components/help.rs
+index 797090f..8b05b86 100644
+--- a/src/ui/components/help.rs
++++ b/src/ui/components/help.rs
+@@ -159,6 +159,10 @@ impl HelpWidget {
+                         key: "h",
+                         desc: "Collapse current repository",
+                     },
++                    HelpLine {
++                        key: "H/L",
++                        desc: "Collapse/expand all repositories",
++                    },
+                     HelpLine {
+                         key: "x",
+                         desc: "Run custom action on notification(s)",

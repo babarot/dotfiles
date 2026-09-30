@@ -36,20 +36,9 @@ docs/                  # setup guide, this file and images
 .claude/skills/        # repo skills for this repo (e.g. nvim-plugin-audit); not linked into ~
 ```
 
-## One file per tool
-
-Each file in `nix/home/tools/` is imported automatically. It installs a tool and puts its human-only settings in `my.human`, which is rendered into `~/.config/zsh/human.zsh` and sourced after the `is_human` guard. Deleting the file removes both the tool and its settings.
-
-```nix
-# nix/home/tools/eza.nix
-{ pkgs, ... }:
-{
-  home.packages = [ pkgs.eza ];
-  my.human.aliases.ls = "eza --group-directories-first";
-}
-```
-
 ## Packages
+
+How a tool file is written is in the [README](../README.md#one-file-per-tool).
 
 Everything is declared in the flake and installed by `darwin-rebuild switch`:
 

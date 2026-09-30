@@ -19,13 +19,54 @@ AI agents (Claude Code, Codex, ...) now run more commands in this shell than I d
 
 Export `AI_AGENT=1` to force the agent side.
 
+## One file per tool
+
+A tool is installed and configured in the same place. Each file under `nix/home/tools/` holds a tool's package together with its environment variables, aliases, functions and zsh plugins, and is imported automatically. Adding a tool means adding a file; deleting the file removes the tool and everything it set, so no alias or variable outlives the tool it was for.
+
+Settings for humans go in `my.human`, rendered into `~/.config/zsh/human.zsh` and sourced after the `is_human` guard, so agents never see them. Variables agents also need (`GOPATH`, ...) go in `my.env`.
+
+```nix
+# nix/home/tools/bat.nix
+{ pkgs, ... }:
+{
+  home.packages = [ pkgs.bat ];
+
+  my.human.env = {
+    BAT_PAGER = "less -RF";
+    BAT_STYLE = "numbers,changes";
+    BAT_THEME = "DarkNeon";
+  };
+
+  my.human.init = ''
+    bat-theme() {
+      local file=$1
+      if [[ -z $file ]]; then
+        file=$(fzf)
+      fi
+      bat --list-themes | fzf --preview="bat --theme={} --color=always ''${file}"
+    }
+  '';
+}
+```
+
 ## Layout
 
 ```ini
-flake.nix   # one configuration per Mac
-nix/        # Nix modules: system, macOS settings, Homebrew, per-Mac hosts, one file per tool
-home/       # hand-written dotfiles, linked into ~ under the same names
-docs/       # setup guide, structure and images
+flake.nix                # one configuration per Mac
+nix/
+  darwin.nix, macos.nix  # system settings and macOS System Settings for every Mac
+  homebrew.nix           # vendor apps installed by Homebrew casks
+  hosts/                 # per-Mac packages, casks and App Store apps
+  home/                  # home-manager: dotfile links, shell env, one file per tool in tools/
+  ...
+home/                    # hand-written dotfiles, linked into ~ under the same names
+  .zshenv, .zshrc, .zsh/ # zsh
+  .config/               # linked to ~/.config as a whole
+  .claude/               # Claude Code user settings
+  bin/                   # my scripts
+  skills/                # my own Agent Skills on trial
+  ...
+docs/                    # setup guide (setup-mac.md), the full tree (structure.md), ...
 ```
 
 The full tree is in [docs/structure.md](./docs/structure.md#layout).

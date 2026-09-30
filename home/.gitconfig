@@ -42,27 +42,29 @@
   delete-merged-branches = !git fetch -p && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs git branch -D
   branch-log = log --oneline HEAD --not main
   blog = log --oneline HEAD --not origin/main
-  ; From a worktree, bring this branch into main without a PR: rebase onto
+  ; From a worktree, land this branch in main without a PR: rebase onto
   ; main and fast-forward main in the main worktree (git will not move a
-  ; branch checked out elsewhere). Shell aliases get this worktree's GIT_DIR,
-  ; which would win over -C, so drop it first
-  ff-main = "!f() { \
+  ; branch checked out elsewhere). Local only unless --push (-p) is given.
+  ; Shell aliases get this worktree's GIT_DIR, which would win over -C, so
+  ; drop it first
+  land = "!f() { \
     unset GIT_DIR GIT_WORK_TREE; \
+    push=; \
+    case ${1-} in \
+      '') ;; \
+      -p|--push) push=1 ;; \
+      *) echo \"usage: git land [--push]\" >&2; return 2 ;; \
+    esac; \
     m=$(git symbolic-ref -q --short refs/remotes/origin/HEAD); m=${m#origin/}; m=${m:-main}; \
     b=$(git branch --show-current); \
     root=$(git worktree list --porcelain | sed -n '1s/^worktree //p'); \
-    [ -n \"$b\" ] && [ \"$b\" != \"$m\" ] || { echo \"ff-main: not on a branch other than $m\" >&2; return 1; }; \
-    [ \"$(git -C \"$root\" branch --show-current)\" = \"$m\" ] || { echo \"ff-main: $root is not on $m\" >&2; return 1; }; \
+    [ -n \"$b\" ] && [ \"$b\" != \"$m\" ] || { echo \"land: not on a branch other than $m\" >&2; return 1; }; \
+    [ \"$(git -C \"$root\" branch --show-current)\" = \"$m\" ] || { echo \"land: $root is not on $m\" >&2; return 1; }; \
     git -C \"$root\" pull -q --ff-only origin \"$m\" && \
     git rebase \"$m\" && \
     git -C \"$root\" merge -q --ff-only \"$b\" && \
-    git -C \"$root\" log --oneline -1; \
-  }; f"
-  ; ff-main, then push main
-  land = "!f() { \
-    unset GIT_DIR GIT_WORK_TREE; \
-    root=$(git worktree list --porcelain | sed -n '1s/^worktree //p'); \
-    git ff-main && git -C \"$root\" push -q origin HEAD; \
+    git -C \"$root\" log --oneline -1 && \
+    if [ -n \"$push\" ]; then git -C \"$root\" push -q origin \"$m\"; fi; \
   }; f"
   df = diff --no-ext-diff
   dft = difft --syntax-highlight=off

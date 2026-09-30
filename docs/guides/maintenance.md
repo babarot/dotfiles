@@ -56,7 +56,7 @@ Then export the patches in dotfiles. This writes the pushed branch over the pack
 .githooks/check-patches --write --only <name>
 ```
 
-It exports with `--no-numbered`, `--zero-commit` and `--no-signature`, which keep a file unchanged when only the number of patches, commit hashes or the git version change.
+It exports with `--no-numbered`, `--zero-commit` and `--no-signature`, which keep a file unchanged when only the number of patches, commit hashes or the git version change, and with the histogram diff algorithm and no user git config, so every Mac and CI split the hunks the same way.
 
 Follow a new release (for a package from nixpkgs, when a nixpkgs bump moves its version and the build log names a patch that failed to apply):
 

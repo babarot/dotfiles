@@ -114,8 +114,13 @@ while read -r name fork upstream tag dir; do
     continue
   fi
 
-  git -C "$work/repo" format-patch -q --no-numbered --zero-commit --no-signature \
-    -o "$work/raw" "$tag..patches"
+  # The export must not depend on who runs it: without the user's git
+  # config, and with the diff algorithm fixed (histogram, which the patches
+  # have always been exported with), a hunk is split the same way on every
+  # Mac and in CI.
+  GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 \
+    git -C "$work/repo" format-patch -q --no-numbered --zero-commit --no-signature \
+    --diff-algorithm=histogram -o "$work/raw" "$tag..patches"
   # The index lines carry abbreviated blob hashes, whose length depends on
   # how many objects the exporting clone has; the diffs are compared in full.
   for f in "$work/raw"/*.patch; do

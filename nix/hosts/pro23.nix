@@ -17,6 +17,9 @@
     {
       home.packages = [ pkgs.agent-browser ];
 
+      # minitube's devstacks run only here (nix/home-manager/tools/herdr-devstack.nix)
+      my.herdrDevstack.enable = true;
+
       # The shipped skill tells agents to prefer agent-browser over any other
       # browser tool; claude-in-chrome stays the default, so rewrite its
       # description to trigger only when agent-browser is asked for by name.

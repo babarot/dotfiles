@@ -57,9 +57,12 @@ claude = [
 # which follows every checkout, then its worktree dir, which other sessions go
 # by. `worktree`, the name field and the branch on named worktree spaces come
 # from the patches in nix/home-manager/tools/herdr.
+# $devstack is a mark after the name while that space's folder has a
+# minitube devstack running, reported by nix/home-manager/tools/herdr-devstack.nix
+# (private Mac only; elsewhere it is never reported and does not show).
 [ui.sidebar.spaces]
 rows = [
-  ["state_icon", "workspace"],
+  ["state_icon", "workspace", { token = "$devstack", fg = "#9ece6a" }],
   ["branch", "git_status"],
   [{ token = "worktree", dim = true }],
 ]

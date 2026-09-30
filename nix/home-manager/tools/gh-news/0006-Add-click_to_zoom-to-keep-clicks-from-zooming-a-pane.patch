@@ -1,0 +1,124 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 30 Sep 2026 18:56:57 +0900
+Subject: [PATCH] Add click_to_zoom to keep clicks from zooming a pane
+
+A click on the preview, or on the list outside its rows, zoomed that
+pane to full screen, which got in the way of clicking around in it.
+click_to_zoom = false turns that off; 1, 2 and Esc still zoom.
+---
+ config.example.toml |  6 ++++++
+ src/config.rs       |  9 +++++++++
+ src/ui/app.rs       | 33 ++++++++++++++++-----------------
+ 3 files changed, 31 insertions(+), 17 deletions(-)
+
+diff --git a/config.example.toml b/config.example.toml
+index 4116e70..4595ad1 100644
+--- a/config.example.toml
++++ b/config.example.toml
+@@ -175,6 +175,12 @@ org_grouping = "auto"
+ # Default: "right_aligned"
+ # list_layout = "right_aligned"
+ 
++# Clicking the preview, or the list outside its rows, zooms that pane to
++# full screen and clicking again restores the split view. Set to false to
++# keep clicks from zooming; 1, 2 and Esc still do.
++# Default: true
++# click_to_zoom = true
++
+ # ==============================================================================
+ # BEHAVIOR
+ # ==============================================================================
+diff --git a/src/config.rs b/src/config.rs
+index 6e9beee..8142d8d 100644
+--- a/src/config.rs
++++ b/src/config.rs
+@@ -211,6 +211,7 @@ pub struct Config {
+     pub groups_collapsed: bool,
+     pub org_grouping: OrgGroupingMode,
+     pub list_layout: ListLayout,
++    pub click_to_zoom: bool,
+ 
+     // Behaviour
+     pub auto_mark_read: bool,
+@@ -316,6 +317,7 @@ impl Default for Config {
+             groups_collapsed: false,
+             org_grouping: OrgGroupingMode::default(),
+             list_layout: ListLayout::default(),
++            click_to_zoom: true,
+             auto_mark_read: false,
+             auto_mark_read_delay_ms: 400,
+             auto_archive: false,
+@@ -586,6 +588,13 @@ priority = 1
+         assert!(toml::from_str::<Config>(r#"hide_resolved_review_requests = ["mreged"]"#).is_err());
+     }
+ 
++    #[test]
++    fn test_click_to_zoom_defaults_on() {
++        assert!(toml::from_str::<Config>("").unwrap().click_to_zoom);
++        let config: Config = toml::from_str("click_to_zoom = false").unwrap();
++        assert!(!config.click_to_zoom);
++    }
++
+     #[test]
+     fn test_groups_collapsed_defaults_off() {
+         assert!(!toml::from_str::<Config>("").unwrap().groups_collapsed);
+diff --git a/src/ui/app.rs b/src/ui/app.rs
+index c0a2e7d..c6b4065 100644
+--- a/src/ui/app.rs
++++ b/src/ui/app.rs
+@@ -4072,31 +4072,17 @@ impl App {
+                             }
+                         } else {
+                             // Clicked outside list items (on borders/padding) - toggle zoom
+-                            if self.state.focused_pane == PaneFocus::Pane1 {
+-                                self.state.focused_pane = PaneFocus::None;
+-                            } else {
+-                                self.state.focused_pane = PaneFocus::Pane1;
+-                            }
++                            self.toggle_zoom_on_click(PaneFocus::Pane1);
+                         }
+                     } else {
+                         // Clicked outside list area or on borders - toggle zoom
+-                        if self.state.focused_pane == PaneFocus::Pane1 {
+-                            self.state.focused_pane = PaneFocus::None;
+-                        } else {
+-                            self.state.focused_pane = PaneFocus::Pane1;
+-                        }
++                        self.toggle_zoom_on_click(PaneFocus::Pane1);
+                     }
+                 }
+                 PaneFocus::Pane2 => {
+                     // Only allow focusing Pane2 if preview is enabled
+                     if self.state.show_preview() {
+-                        if self.state.focused_pane == PaneFocus::Pane2 {
+-                            // Already focused, zoom out
+-                            self.state.focused_pane = PaneFocus::None;
+-                        } else {
+-                            // Focus Pane2
+-                            self.state.focused_pane = PaneFocus::Pane2;
+-                        }
++                        self.toggle_zoom_on_click(PaneFocus::Pane2);
+                     }
+                 }
+                 PaneFocus::None => {
+@@ -4107,6 +4093,19 @@ impl App {
+         Ok(())
+     }
+ 
++    /// Zoom a pane to full screen, or back to the split view when it already
++    /// is; clicks do nothing when `click_to_zoom` is off (1/2 still work).
++    fn toggle_zoom_on_click(&mut self, pane: PaneFocus) {
++        if !self.config.click_to_zoom {
++            return;
++        }
++        self.state.focused_pane = if self.state.focused_pane == pane {
++            PaneFocus::None
++        } else {
++            pane
++        };
++    }
++
+     fn handle_mouse_scroll(
+         &mut self,
+         column: u16,

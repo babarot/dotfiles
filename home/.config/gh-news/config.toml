@@ -3,6 +3,8 @@ show_read = false
 theme = "tokyo_night"
 # Start with every group folded, as after H (a local patch)
 groups_collapsed = true
+# Clicks select and open; zoom a pane with 1/2 only (a local patch)
+click_to_zoom = false
 
 # What the built-in Participating view hides, applied by default since
 # there is no setting for the view to start in

@@ -10,7 +10,7 @@ let
   # (doCheck = false) because they change between releases and depend on the
   # host; to run the ones the patches touch, add these below and nix build:
   #   doCheck = true;
-  #   checkFlags = [ "client::shell::tests" "ui::sidebar" ];
+  #   checkFlags = [ "client::shell::tests" "client::shell::endpoint_agent_state" "ui::sidebar" ];
   herdr = pkgs.herdr.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ [
       # A worktree space renamed after its feature keeps its branch and
@@ -24,9 +24,10 @@ let
       # leaves the generated branch and checkout alone, like renaming the
       # space afterwards does
       ./herdr/worktree-label.patch
-      # "Mark as unread" in the menu of a space other than the focused one:
-      # its seen idle agents show Done again until they are viewed. herdr
-      # keeps Done for unviewed completions only (herdrdev/herdr#4622)
+      # "Mark as unread" in a space's menu: its seen idle agents show Done
+      # again until they are viewed, which in the focused space means after
+      # leaving it. herdr keeps Done for unviewed completions only
+      # (herdrdev/herdr#4622)
       ./herdr/mark-workspace-unread.patch
     ];
   });

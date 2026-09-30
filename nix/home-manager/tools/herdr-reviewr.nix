@@ -30,5 +30,8 @@ in
 {
   home.packages = [ herdr-reviewr ];
 
+  # The CLI outside herdr, under the name the plugin goes by
+  my.human.aliases.reviewr = "herdr-reviewr";
+
   my.herdrPlugins."persiyanov.reviewr" = herdr-reviewr;
 }

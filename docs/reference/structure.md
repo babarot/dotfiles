@@ -18,6 +18,7 @@ nix/
   hosts/<host>.nix     # per-Mac packages, casks and App Store apps
   home-manager/
     default.nix        # imports every file in nix/home-manager/tools
+    ai.nix             # my.ai: agent-only zsh settings, rendered to ~/.config/zsh/ai.zsh
     dotfiles.nix       # links the files in home/ (.zshrc, .gitconfig, bin, .config, ...) into ~
     env.nix            # my.env: variables for every shell, rendered to ~/.config/zsh/env.zsh
     fork-patches.nix   # my.forkPatches: packages patched from a fork's patches branch

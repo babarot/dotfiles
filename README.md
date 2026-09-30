@@ -14,7 +14,8 @@ My macOS environment for two Macs, declared in one Nix flake ([nix-darwin](https
 AI agents (Claude Code, Codex, ...) now run more commands in this shell than I do, so the shell is plain by default and human UX is opt-in.
 
 - `.zshenv` defines `is_human`: true only when stdin/stdout are a TTY and no agent marker (`CLAUDECODE`, `AI_AGENT`, ...) is set
-- Agents get plain zsh: no aliases (`cp -i`, `rm` → trash, `ls` → eza), no fzf-driven `cd`, `EDITOR=true` and `PAGER=cat`, so nothing waits for input
+- Agents get plain zsh: no aliases (`cp -i`, `ls` → eza), no fzf-driven `cd`, `EDITOR=true` and `PAGER=cat`, so nothing waits for input
+- One alias is theirs too: `rm` is [gomi](https://github.com/babarot/gomi), which takes rm's flags, so agents use it as the rm they know and a mistaken delete goes to the trash
 - `.zshrc` returns early unless `is_human`; below that line come aliases, plugins, prompt, keybinds and setopts
 
 Export `AI_AGENT=1` to force the agent side.
@@ -23,7 +24,7 @@ Export `AI_AGENT=1` to force the agent side.
 
 A tool is installed and configured in the same place. Each file under `nix/home-manager/tools/` holds a tool's package together with its environment variables, aliases, functions and zsh plugins, and is imported automatically. Adding a tool means adding a file; deleting the file removes the tool and everything it set, so no alias or variable outlives the tool it was for.
 
-Settings for humans go in `my.human`, rendered into `~/.config/zsh/human.zsh` and sourced after the `is_human` guard, so agents never see them. Variables agents also need (`GOPATH`, ...) go in `my.env`.
+Settings for humans go in `my.human`, rendered into `~/.config/zsh/human.zsh` and sourced after the `is_human` guard, so agents never see them. Variables agents also need (`GOPATH`, ...) go in `my.env`, and settings only agents get go in `my.ai`, sourced by `.zshenv` for agents only.
 
 ```nix
 # nix/home-manager/tools/bat.nix

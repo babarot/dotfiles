@@ -26,6 +26,24 @@ Plugins are sorted by an `order`. Two entries are landmarks the others are place
 
 Abbreviations are declared with `abbr --session`, so none is saved to zsh-abbr's user file and one removed from Nix does not live on.
 
+## my.ai
+
+[ai.nix](../../nix/home-manager/ai.nix). The counterpart of `my.human`: environment variables and aliases for AI agents only. It is rendered into `~/.config/zsh/ai.zsh`, which [.zshenv](../../home/.zshenv) sources when `is_human` is false, so humans never load it.
+
+Each setting then has one of three places, by who gets it:
+
+| Who gets it | Option | Loaded by |
+|---|---|---|
+| humans only | `my.human` | `.zshrc`, after the `is_human` guard |
+| agents only | `my.ai` | `.zshenv`, when `is_human` is false |
+| both | `my.env` | `.zshenv`, before the `is_human` branch |
+
+A setting both need but in different forms is written twice, once in `my.human` and once in `my.ai`, next to each other in the tool's file, rather than in a shared option that one side overrides. `BAT_PAGER` is `less -RF` for humans and `cat` for agents; `rm` is `gomi` in both, written twice on purpose so that agents getting it too reads as a decision.
+
+An alias in `my.ai` has to behave like the command agents know, for every flag they write, without asking for input or changing output. Agents then use it as that command and never notice the difference. `rm` → gomi is the case this was made for: gomi takes rm's flags and exits like rm, and a mistaken `rm -rf` goes to the trash, where `gomi -b` brings it back. Anything that changes behavior an agent can see belongs in `my.human`.
+
+An alias only reaches commands zsh runs itself. `xargs rm`, `find -exec rm` and scripts in other shells still get `/bin/rm`; that is accepted, since an `rm` on PATH would send every script's deletes to the trash too.
+
 ## my.skills
 
 [skills.nix](../../nix/home-manager/skills.nix). Agent Skill directories (each holding a `SKILL.md`) by skill name. Each one is linked into both `~/.claude/skills/<name>` and `~/.agents/skills/<name>`, so Claude Code and Codex know how to use a tool as soon as it is installed. A tool file sets it next to the package, pointing at the skill the package ships.

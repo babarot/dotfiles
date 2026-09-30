@@ -60,6 +60,10 @@ else
     # Nobody can answer an editor, pager or password prompt: fail fast
     # instead of hanging
     export EDITOR=true VISUAL=true GIT_EDITOR=true GIT_SEQUENCE_EDITOR=true
-    export PAGER=cat GIT_PAGER=cat BAT_PAGER=cat MANPAGER=cat
+    export PAGER=cat GIT_PAGER=cat MANPAGER=cat
     export GIT_TERMINAL_PROMPT=0
+
+    # Tool settings for agents from nix/home-manager/tools/*.nix (my.ai),
+    # e.g. rm -> gomi; missing until the first darwin-rebuild switch
+    [[ -r ~/.config/zsh/ai.zsh ]] && source ~/.config/zsh/ai.zsh
 fi

@@ -8,6 +8,7 @@
     ./env.nix
     ./fork-patches.nix
     ./human.nix
+    ./ai.nix
     ./skills.nix
     ./herdr-plugins.nix
     ./mas.nix

@@ -8,6 +8,9 @@
     BAT_THEME = "DarkNeon";
   };
 
+  # Agents read bat's output, not scroll it
+  my.ai.env.BAT_PAGER = "cat";
+
   my.human.init = ''
     bat-theme() {
       local file=$1

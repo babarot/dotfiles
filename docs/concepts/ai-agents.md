@@ -53,7 +53,7 @@ Herdr is where the agents run. [herdr.nix](../../nix/home-manager/tools/herdr.ni
 
 ## Shell
 
-Agents run commands in the same zsh as I do, so the shell is plain by default. `.zshenv` decides whether a human is at the shell, and `.zshrc` stops there for agents. Every PATH entry agents need is set in `.zshenv`, since Claude Code restores the PATH it captured at start. Details are in the [README](../../README.md#shell-for-humans-and-ai-agents).
+Agents run commands in the same zsh as I do, so the shell is plain by default. `.zshenv` decides whether a human is at the shell, and `.zshrc` stops there for agents. Every PATH entry agents need is set in `.zshenv`, since Claude Code restores the PATH it captured at start. One alias reaches agents on purpose: `rm` is gomi for them too, through `my.ai` ([modules.md](./modules.md#myai)), so a mistaken delete can be restored. Details are in the [README](../../README.md#shell-for-humans-and-ai-agents).
 
 ## AGENTS.md
 

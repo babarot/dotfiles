@@ -48,6 +48,7 @@ Do not add a directory at the repository root without a strong reason; put new f
 | Tool or app for one Mac only | `nix/hosts/<host>.nix` |
 | zsh plugin | `my.human.plugins.<name>` with `src`, `file`, `order` (hand-written `~/.zsh` loads at 5000, zsh-abbr at 6000) |
 | Variable agents also need (GOPATH, ...) | `my.env` in the tool's `nix/home-manager/tools/<tool>.nix`; rendered to `~/.config/zsh/env.zsh`, which `.zshenv` sources |
+| Setting only agents get (e.g. `BAT_PAGER=cat`, or an alias an agent takes for the command it knows, like `rm` → gomi) | `my.ai` in the tool's `nix/home-manager/tools/<tool>.nix`; rendered to `~/.config/zsh/ai.zsh`, which `.zshenv` sources unless `is_human` |
 | PATH entries, and env not tied to a tool (EDITOR, locale) | `.zshenv`, before or outside the `is_human` branch |
 | GUI app that does not self-update and passes `codesign --verify --deep --strict` | `nix/home-manager/tools/apps.nix` |
 | GUI app that self-updates, needs `/Applications` or system components, or fails codesign in nixpkgs | a cask in `nix/homebrew.nix` (or the host file) |
@@ -71,8 +72,8 @@ Before adding a nixpkgs package, check it is the same tool: several names belong
 ## Shell: AI agents by default, human UX opt-in
 
 - `.zshenv` defines `is_human`: stdin/stdout are a TTY and no agent marker (`CLAUDECODE`, `AI_AGENT`, ...) is set. Agents get `EDITOR=true`, `PAGER=cat`, `GIT_TERMINAL_PROMPT=0`, so nothing blocks on input.
-- `.zshrc` returns early unless `is_human`. Aliases (`cp -i`, `rm` → gomi, `ls` → eza), enhancd's `cd`, prompt, keybinds and setopts exist only for humans.
-- Never put aliases, prompts or interactive behavior where agents run (`.zshenv`, non-interactive paths).
+- `.zshrc` returns early unless `is_human`. Aliases (`cp -i`, `ls` → eza), enhancd's `cd`, prompt, keybinds and setopts exist only for humans.
+- Never put aliases, prompts or interactive behavior where agents run (`.zshenv`, non-interactive paths). The one exception is `my.ai`: an alias there must behave like the command agents know for every flag they write, as `rm` → gomi does ([docs/concepts/modules.md](./docs/concepts/modules.md#myai)).
 - Keep macOS's BSD userland on PATH; agents write BSD syntax (`sed -i ''`, `stat -f`). GNU tools only under other names (`timeout`, `gsed`).
 - Login shells read only `.zshenv` and `.zshrc`; there is no `.zprofile` on purpose.
 

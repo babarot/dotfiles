@@ -67,7 +67,16 @@ keybindings:
     - key: ctrl+g
       name: lazygit
       command: cd {{.RepoPath}} && lazygit
+  # Enter opens in the browser, like o. A custom command, since rebinding
+  # the openGithub builtin to enter would take it off o
   prs:
+    - key: enter
+      name: open in browser
+      command: open https://github.com/{{.RepoName}}/pull/{{.PrNumber}}
     - key: O
       name: open in nvim
       command: cd {{.RepoPath}} && gh pr checkout {{.PrNumber}} && nvim .
+  issues:
+    - key: enter
+      name: open in browser
+      command: open https://github.com/{{.RepoName}}/issues/{{.IssueNumber}}

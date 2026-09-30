@@ -24,7 +24,7 @@ The bindings, including the ones for the review plugins, are in [config.toml](..
 
 All of them show an agent's changes and send line comments back to it.
 
-- [reviewr](../../nix/home-manager/tools/herdr-reviewr.nix): the pane the layout opens beside the agent. It shows everything on the branch against main, not only uncommitted edits.
+- [reviewr](../../nix/home-manager/tools/herdr-reviewr.nix): the pane the layout opens beside the agent. It opens on the uncommitted edits; `b` switches to everything on the branch against main.
 - [hunk-diff](../../nix/home-manager/tools/herdr-hunk-diff.nix): opens hunk on the focused agent's worktree and sends the comments to that agent. An agent can also drive hunk itself with its skill.
 - [tuicr](../../nix/home-manager/tools/tuicr.nix): a review TUI the agent opens in a herdr pane through its skill, then reads the comments from.
 - [crit](../../nix/home-manager/tools/crit.nix): `/crit` makes the agent start crit itself and wait for Finish Review, so every round's comments reach it directly. It also reviews plans and pages, not only code.

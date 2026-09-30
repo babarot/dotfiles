@@ -34,7 +34,7 @@ home/                  # files linked into ~ under the same names (nix/home-mana
   skills/              # my own Agent Skills on trial, linked into ~/.claude/skills and ~/.agents/skills
   .config/             # linked to ~/.config as a whole (by activation, see dotfiles.nix)
 docs/                  # guides/, concepts/, reference/ and images (docs/README.md)
-.githooks/             # git hooks for this repo (pre-commit: gitleaks, nix fmt, check-patches; pre-push: builds every Mac)
+.githooks/             # git hooks for this repo (pre-commit: gitleaks, nix fmt, check-patches; pre-push: builds every Mac, warns about unimported patches)
 .github/workflows/     # CI: nix flake check and evaluating every Mac; check-patches when patch files change
 .claude/skills/        # repo skills for this repo (e.g. nvim-plugin-audit, import-fork-patches); not linked into ~
 ```

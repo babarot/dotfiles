@@ -4,14 +4,26 @@
 # it. CI only evaluates them (.github/workflows/nix.yaml); building here
 # reuses the local store and sees the real agent-skills. It builds the
 # pushed commit, not the working tree.
+#
+# It also warns, without stopping the push, when a fork's patches branch
+# has moved ahead of the patch files in the pushed commit, so a change made
+# in the fork is not left out of this repo.
 set -eu
 
 zero=0000000000000000000000000000000000000000
 top=$(git rev-parse --show-toplevel)
 
 # stdin: <local ref> <local sha> <remote ref> <remote sha>, one per ref
-while read -r _ local_sha _ remote_sha; do
+while read -r local_ref local_sha _ remote_sha; do
   [ "$local_sha" = "$zero" ] && continue # deleting a ref
+  if [ "$local_ref" = refs/heads/main ]; then
+    log=$(mktemp)
+    if ! "$top/.githooks/check-patches" --rev "$local_sha" 2>"$log"; then
+      echo "pre-push: warning: patch files differ from a fork's patches branch; import them with the import-fork-patches skill:" >&2
+      sed 's/^/  /' "$log" >&2
+    fi
+    rm -f "$log"
+  fi
   if [ "$remote_sha" = "$zero" ]; then
     # A new branch: compare with where it left main
     base=$(git merge-base "$local_sha" origin/main 2>/dev/null || true)

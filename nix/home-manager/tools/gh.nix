@@ -18,11 +18,9 @@ let
       hash = "sha256-FzOcusIiwo2FNxfeXjj1rY13jXZq9j3snI2NYmUQxaI=";
     };
     cargoHash = "sha256-rCIpKXfwin0p1zT+N3ZfPdNhzPIa2112rEJs7pZc4XE=";
-    # Local changes, one patch per feature, applied in name order. They are
-    # made as commits on the patches branch of babarot/gh-news, which is
-    # rebased onto each release, and exported with
-    #   git format-patch --zero-commit --no-signature -o <this dir>/gh-news v<version>
-    # after removing the old files; each patch's message says what it does.
+    # Local changes, one patch per feature, applied in name order; each
+    # patch's message says what it does. They are exported from a fork
+    # branch, not edited here (docs/guides/maintenance.md)
     patches = lib.filter (lib.hasSuffix ".patch") (lib.filesystem.listFilesRecursive ./gh-news);
   };
 in

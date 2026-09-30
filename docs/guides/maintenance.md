@@ -37,6 +37,46 @@ Then list it in `patches` and `git add` the file so Nix can see it.
 
 When a herdr bump breaks a patch, the build log names the patch that failed to apply. Remake that one patch against the new tag, or drop it if upstream took the change. The other patches stay as they are.
 
+## Patch a package from a fork branch
+
+gh-news is the example: [gh.nix](../../nix/home-manager/tools/gh.nix) builds it from its release tag and applies every patch in [tools/gh-news/](../../nix/home-manager/tools/gh-news/) in name order. The patch files are not edited by hand. Each one is a commit on the `patches` branch of the fork [babarot/gh-news](https://github.com/babarot/gh-news), exported with `git format-patch`, so git does the rebasing onto a new release and every file carries its commit message.
+
+The fork is cloned at `~/src/github.com/babarot/gh-news`, with `origin` the fork and `upstream` chmouel/gh-news. The examples below run there, with `<version>` the release the branch sits on (the `version` in gh.nix).
+
+Change a patch or add one:
+
+```bash
+git switch patches
+# edit, then commit: one commit per feature
+git commit                        # a new feature
+git commit --fixup=<its commit>   # a fix to an existing one, then fold it in:
+git rebase --autosquash v<version>
+```
+
+Check it with a throwaway Rust toolchain, then push the branch. It is rebased, so the push rewrites it:
+
+```bash
+nix shell 'nixpkgs#cargo' 'nixpkgs#rustc' 'nixpkgs#clippy' 'nixpkgs#rustfmt' \
+  -c sh -c 'cargo fmt --check && cargo clippy --all-targets && cargo test'
+git push --force-with-lease origin patches
+```
+
+Then export the patches over the old ones and `git add` them. gh.nix picks up whatever the directory holds, so it needs no change:
+
+```bash
+dir=~/src/github.com/babarot/dotfiles/nix/home-manager/tools/gh-news
+rm "$dir"/*.patch
+git format-patch --zero-commit --no-signature -o "$dir" v<version>
+```
+
+`--zero-commit` and `--no-signature` keep a file unchanged when only commit hashes or the git version change.
+
+Follow a new release:
+
+1. `git fetch upstream --tags`, then `git rebase v<new>`. If a commit conflicts, resolve it; if upstream took the change, drop the commit.
+2. Check, push and export as above, with `v<new>`.
+3. In gh.nix, set `version` to the new release and both hashes to `lib.fakeHash`, then build: each failure prints the right hash to put back.
+
 ## Bump a flake input pinned to a tag
 
 Tools that are not in nixpkgs but ship a flake, like crit, are inputs pinned to a release tag in [flake.nix](../../flake.nix). Change the tag in the input's `url`, then relock it:

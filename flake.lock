@@ -3,11 +3,11 @@
     "agent-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1790515461,
-        "narHash": "sha256-/G1NsdY8zqwmQOp05iDwNZ1kdAfOR2N/6aX83RgJoRs=",
+        "lastModified": 1790778919,
+        "narHash": "sha256-pT27evAK8PZ7RTIGGHnSW+ahcEFn5MYs0o3k7qwxG74=",
         "ref": "refs/heads/main",
-        "rev": "a76c49a1267fd5cc028588a72b29008ba017c7c9",
-        "revCount": 142,
+        "rev": "50c3fcf252bcdd5308398a9ed941f5280ef62e44",
+        "revCount": 165,
         "type": "git",
         "url": "ssh://git@github.com/babarot/agent-skills"
       },

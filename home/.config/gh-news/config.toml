@@ -1,4 +1,4 @@
-auto_refresh_interval = 30
+auto_refresh_interval = 120
 show_read = false
 theme = "tokyo_night"
 # Start with every group folded, as after H (a local patch)

@@ -32,14 +32,8 @@ return {
     opts = {
       -- Formatters by filetype
       formatters_by_ft = {
-        -- Lua
-        lua = { 'stylua' },
-
         -- Go
         go = { 'gofmt', 'goimports' },
-
-        -- Python
-        python = { 'isort', 'black' },
 
         -- JavaScript/TypeScript
         javascript = { 'prettier' },
@@ -62,10 +56,6 @@ return {
         -- Shell
         sh = { 'shfmt' },
         bash = { 'shfmt' },
-        zsh = { 'shfmt' },
-
-        -- Rust
-        rust = { 'rustfmt' },
 
         -- Terraform/HCL
         terraform = { 'terraform_fmt' },

@@ -16,7 +16,9 @@ The home-manager modules in [nix/home-manager/](../../nix/home-manager/) define 
 
 [env.nix](../../nix/home-manager/env.nix). Plain variables every zsh gets, AI agents included. Values are literal strings. They are rendered as `export` lines into `~/.config/zsh/env.zsh`, which [.zshenv](../../home/.zshenv) sources before the `is_human` branch.
 
-Put a variable here when agents need it too and it belongs to one tool. `PATH` stays hand-written in `.zshenv`, because its order is global and not any one tool's. Other variables not tied to a tool (locale, `EDITOR`) are in `.zshenv` as well.
+Put a variable here when agents need it too and it belongs to one tool. Other variables not tied to a tool (locale, `EDITOR`) are in `.zshenv`.
+
+`PATH` itself is hand-written in `.zshenv`, because its order is global and not any one tool's. A directory that one tool needs on PATH (krew's plugins in `~/.krew/bin`) goes in `my.path` next to the tool instead: env.zsh appends it to the end, when it exists, so it never reorders the hand-written list.
 
 ## my.human
 

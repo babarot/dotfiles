@@ -28,6 +28,9 @@
       # (gitignored). gh-dash fails to start if the file is missing
       my.env.GH_DASH_CONFIG = "${config.home.homeDirectory}/.config/gh-dash/work.yml";
 
+      # krew (below) installs kubectl plugins here as kubectl-* commands
+      my.path = [ "${config.home.homeDirectory}/.krew/bin" ];
+
       my.agentSkills.scopes = [
         "core"
         "work"

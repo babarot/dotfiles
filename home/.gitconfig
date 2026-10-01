@@ -38,7 +38,7 @@
   review = diff origin/HEAD...
   rvf = diff origin/HEAD... --name-only
   rvc = log --oneline ...origin/HEAD
-  typechange = status -s | awk '$1=="T"{print $2}' | xargs git checkout
+  typechange = !git status -s | awk '$1==\"T\"{print $2}' | xargs git checkout
   delete-merged-branches = !git fetch -p && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs git branch -D
   branch-log = log --oneline HEAD --not main
   blog = log --oneline HEAD --not origin/main
@@ -182,8 +182,3 @@
   editor = nvim
 [url "https://github.com/"]
 	insteadOf = git://github.com/
-[filter "lfs"]
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
-	clean = git-lfs clean -- %f

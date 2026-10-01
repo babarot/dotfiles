@@ -7,6 +7,7 @@
     "acreom"
     "claude"
     "codex-app"
+    "docker-desktop" # the private Mac uses OrbStack
     "github-copilot-app"
     "inkdrop"
     "path-finder"

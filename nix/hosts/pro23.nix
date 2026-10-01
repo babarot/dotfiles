@@ -8,14 +8,20 @@
     "discord"
     "google-drive"
     "logi-options+"
+    "orbstack" # Docker and Linux VMs; the work Mac has Docker Desktop
     "parallels"
     "postman"
   ];
 
   home-manager.users.babarot =
-    { pkgs, ... }:
+    { config, pkgs, ... }:
     {
       home.packages = [ pkgs.agent-browser ];
+
+      # OrbStack's CLIs (orb, orbctl; docker is also linked into
+      # /usr/local/bin). OrbStack's own way is a ~/.zprofile it writes once,
+      # which only login shells read and this repo does not keep
+      my.path = [ "${config.home.homeDirectory}/.orbstack/bin" ];
 
       # $devstack in herdr's sidebar: the worktree has its minitube devstack
       # running, a compose project started from its compose.devstack.yaml.

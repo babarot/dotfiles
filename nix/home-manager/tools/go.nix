@@ -1,5 +1,10 @@
-# GOPATH=$HOME, so `go install` puts binaries in ~/bin (on PATH in .zshenv)
+# `go install` writes to GOBIN (~/go/bin), at the end of PATH via my.path,
+# so tools installed there (go.nvim's included) never shadow the Nix ones.
+# GOPATH stays $HOME for the module cache and sources.
 { config, pkgs, ... }:
+let
+  gobin = "${config.home.homeDirectory}/go/bin";
+in
 {
   home.packages = [
     pkgs.go
@@ -12,4 +17,6 @@
   ];
 
   my.env.GOPATH = config.home.homeDirectory;
+  my.env.GOBIN = gobin;
+  my.path = [ gobin ];
 }

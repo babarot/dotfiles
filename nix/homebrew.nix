@@ -30,7 +30,6 @@
     casks = [
       "1password" # browser integration requires /Applications
       "cleanshot"
-      "docker-desktop"
       "google-chrome"
       "numi"
       "obsidian"

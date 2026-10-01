@@ -22,12 +22,14 @@
 
   my.human.globalAliases.F = "$(fzf)";
 
-  # Kill processes picked with fzf (enter kills, ctrl-r reloads)
+  # Kill processes picked with fzf (tab selects several, enter kills them,
+  # ctrl-r reloads); an argument is the initial query: `pskill astro`
   my.human.init = ''
     pskill() {
-      ps -ef | fzf \
-        --bind 'ctrl-r:reload(ps -ef),enter:execute(kill {2})+reload(ps -ef)' \
-        --header 'Press CTRL-R to reload' \
+      ps -ef | fzf -m \
+        --query="''${1:-}" \
+        --bind 'ctrl-r:reload(ps -ef),enter:execute(kill {+2})+clear-selection+reload(ps -ef)' \
+        --header 'TAB: select, ENTER: kill, CTRL-R: reload' \
         --header-lines=1 \
         --height=50
     }

@@ -76,6 +76,25 @@ prefix = "ctrl+s"
 # more, as it did in tmux
 cycle_pane_next = "prefix+o"
 open_notification_target = "prefix+a"
+# prefix+H/J/K/L resize the pane by a step as in tmux, without its repeat;
+# prefix+r's resize mode (h/j/k/l until esc) is for longer moves. They take
+# the place of herdr's directional swaps, which I never used in tmux.
+resize_pane_left = "prefix+shift+h"
+resize_pane_down = "prefix+shift+j"
+resize_pane_up = "prefix+shift+k"
+resize_pane_right = "prefix+shift+l"
+# prefix+shift+r is the hunk review below; reload with tmux's prefix+C-r
+reload_config = "prefix+ctrl+r"
+# tmux's split keys: | side by side, - stacked (herdr's default prefix+minus)
+split_vertical = ["prefix+v", "prefix+|"]
+# prefix+q closes the pane as it did in tmux, so detach moves to tmux's prefix+d
+close_pane = ["prefix+x", "prefix+q"]
+detach = "prefix+d"
+# tmux's prefix+C-h/C-l for the previous and next tab (window there), and
+# prefix+; for the last pane
+previous_tab = ["prefix+p", "prefix+ctrl+h"]
+next_tab = ["prefix+n", "prefix+ctrl+l"]
+last_pane = "prefix+semicolon"
 
 # A scratch shell in a popup over the layout, in the focused pane's directory;
 # exiting the shell closes it
@@ -96,7 +115,7 @@ command = "persiyanov.reviewr.toggle"
 description = "reviewr: toggle pane"
 
 [[keys.command]]
-key = "prefix+shift+h"
+key = "prefix+shift+r"
 type = "plugin_action"
 command = "jhochenbaum.hunkdiff.review"
 description = "hunk: review changes"

@@ -42,24 +42,15 @@
     "command": "\"$HOME/.claude/c-c-statusline\""
   },
   "enabledPlugins": {
-    "commit-commands@claude-code-plugins": true,
     "commit-commands@claude-plugins-official": true,
     "core@babarot-skills": true,
-    "frontend-design@claude-code-plugins": true,
     "frontend-design@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": true,
     "lua-lsp@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
     "slack@claude-plugins-official": true,
     "work@babarot-skills": true
   },
   "extraKnownMarketplaces": {
-    "claude-code-plugins": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/claude-code"
-      }
-    },
     "babarot-skills": {
       "source": {
         "source": "github",

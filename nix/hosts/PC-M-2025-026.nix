@@ -36,7 +36,6 @@
       home.packages = with pkgs; [
         ctop
         dart
-        delta
         diff-so-fancy
         gcalcli
         github-copilot-cli
@@ -53,7 +52,6 @@
         kubetail
         kubeval
         kustomize
-        lazygit
         litecli
         lua-language-server
         luarocks

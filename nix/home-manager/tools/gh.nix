@@ -22,7 +22,12 @@ let
   };
 in
 {
-  home.packages = [ pkgs.gh ];
+  home.packages = [
+    pkgs.gh
+    # Used by gh-dash's config: delta as its diff pager, lazygit on ctrl+g
+    pkgs.delta
+    pkgs.lazygit
+  ];
 
   # Local changes, one patch per feature; each patch's message says what it
   # does. They are exported from a fork branch, not edited here

@@ -3,28 +3,23 @@ bindkey -v
 # Vim-like escaping jj keybind
 bindkey -M viins 'jj' vi-cmd-mode
 
-# Add emacs-like keybind to viins mode
+# Add emacs-like keybind to both vi modes
+for m in viins vicmd; do
+  bindkey -M $m '^A'  beginning-of-line
+  bindkey -M $m '^E'  end-of-line
+  bindkey -M $m '^K'  kill-line
+  bindkey -M $m '^P'  up-line-or-history
+  bindkey -M $m '^N'  down-line-or-history
+  bindkey -M $m '^Y'  yank
+  bindkey -M $m '^W'  backward-kill-word
+  bindkey -M $m '^U'  backward-kill-line
+done
+unset m
 bindkey -M viins '^F'  forward-char
 bindkey -M viins '^B'  backward-char
-bindkey -M viins '^P'  up-line-or-history
-bindkey -M viins '^N'  down-line-or-history
-bindkey -M viins '^A'  beginning-of-line
-bindkey -M viins '^E'  end-of-line
-bindkey -M viins '^K'  kill-line
-bindkey -M viins '^Y'  yank
-bindkey -M viins '^W'  backward-kill-word
-bindkey -M viins '^U'  backward-kill-line
 bindkey -M viins '^H'  backward-delete-char
 bindkey -M viins '^?'  backward-delete-char
 
-bindkey -M vicmd '^A'  beginning-of-line
-bindkey -M vicmd '^E'  end-of-line
-bindkey -M vicmd '^K'  kill-line
-bindkey -M vicmd '^P'  up-line-or-history
-bindkey -M vicmd '^N'  down-line-or-history
-bindkey -M vicmd '^Y'  yank
-bindkey -M vicmd '^W'  backward-kill-word
-bindkey -M vicmd '^U'  backward-kill-line
 bindkey -M vicmd '/'   vi-history-search-forward
 bindkey -M vicmd '?'   vi-history-search-backward
 
@@ -32,9 +27,12 @@ bindkey -M vicmd 'gg' beginning-of-line
 bindkey -M vicmd 'G'  end-of-line
 
 # Insert a last word
+autoload -Uz smart-insert-last-word
 zle -N insert-last-word smart-insert-last-word
 zstyle :insert-last-word match '*([^[:space:]][[:alpha:]/\\]|[[:alpha:]/\\][^[:space:]])*'
 bindkey -M viins '^]' insert-last-word
+
+autoload -Uz modify-current-argument
 
 # Surround a forward word by single quote
 quote-previous-word-in-single() {
@@ -52,7 +50,9 @@ quote-previous-word-in-double() {
 zle -N quote-previous-word-in-double
 bindkey -M viins '^Xq' quote-previous-word-in-double
 
-bindkey -M viins "$terminfo[kcbt]" reverse-menu-complete
+# Automatically escape URLs when pasting
+autoload -Uz url-quote-magic
+zle -N self-insert url-quote-magic
 
 #
 # functions

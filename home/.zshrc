@@ -14,7 +14,6 @@
 # AI agents get plain zsh; what they need (PATH, env) lives in .zshenv.
 is_human || return 0
 
-autoload -Uz run-help
 autoload -Uz add-zsh-hook
 autoload -Uz is-at-least
 autoload -Uz compinit && compinit -u

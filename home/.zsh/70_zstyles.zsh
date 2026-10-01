@@ -17,12 +17,3 @@ zstyle ':completion:*:cd:*' ignore-parents parent pwd
 # default: --
 zstyle ':completion:*' list-separator '-->'
 zstyle ':completion:*:manuals' separate-sections true
-
-autoload -Uz modify-current-argument
-autoload -Uz smart-insert-last-word
-autoload -Uz zcalc
-autoload -Uz run-help-git
-
-# Automaticall escape URL when copy and paste
-autoload -Uz url-quote-magic
-zle -N self-insert url-quote-magic

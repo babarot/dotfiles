@@ -1,9 +1,9 @@
-autoload -Uz zmv
+autoload -Uz zmv zcalc
 alias zmv='noglob zmv -W'
 
-alias cp="${ZSH_VERSION:+nocorrect} cp -i"
-alias mv="${ZSH_VERSION:+nocorrect} mv -i"
-alias mkdir="${ZSH_VERSION:+nocorrect} mkdir"
+alias cp='nocorrect cp -i'
+alias mv='nocorrect mv -i'
+alias mkdir='nocorrect mkdir'
 
 alias du='du -h'
 alias job='jobs -l'
@@ -48,8 +48,8 @@ awk_alias2() {
 }
 alias -g A="| awk_alias2"
 
-# list galias
-alias galias="alias | command grep -E '^[A-Z]'"
+# List global aliases
+alias galias='alias -g'
 alias yy="fc -ln -1 | tr -d '\n' | pbcopy"
 
 alias -g ESC='| sed -r "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'

@@ -44,7 +44,8 @@ Do not add a directory at the repository root without a strong reason; put new f
 |---|---|
 | New hand-written dotfile | put it in `home/` under its name in ~ and list it in `nix/home-manager/dotfiles.nix` (a tool's own dotfile is linked from its `nix/home-manager/tools/<tool>.nix`, like `.tmux.conf`) |
 | CLI tool with no shell settings | `nix/home-manager/tools/packages.nix` (alphabetical) |
-| CLI tool with aliases, env or a zsh hook | its own `nix/home-manager/tools/<tool>.nix`, settings under `my.human` |
+| CLI tool with aliases, shell functions, env or a zsh hook | its own `nix/home-manager/tools/<tool>.nix`, settings under `my.human`; a function built around a tool (e.g. a picker using fzf) goes in that tool's file |
+| Alias or function not tied to any one tool | `home/.zsh/` (hand-written, humans only; loaded through `my.human` at order 5000) |
 | Tool or app for one Mac only | `nix/hosts/<host>.nix` |
 | zsh plugin | `my.human.plugins.<name>` with `src`, `file`, `order` (hand-written `~/.zsh` loads at 5000, zsh-abbr at 6000) |
 | Variable agents also need (GOPATH, ...) | `my.env` in the tool's `nix/home-manager/tools/<tool>.nix`; rendered to `~/.config/zsh/env.zsh`, which `.zshenv` sources |
@@ -82,6 +83,7 @@ Before adding a nixpkgs package, check it is the same tool: several names belong
 - English for comments, commit messages and docs; this repo is public.
 - Commit messages: an imperative summary line, then a short body explaining why. No Claude session links or attribution trailers.
 - One file per tool; keep lists alphabetical; say in a comment why anything unusual is there.
+- Before adding an alias or shell function, grep the tool's `.nix` file and `home/.zsh/` for one that already does it; extend that instead of adding a second.
 - `~/.config` links into this repo, so tools write their state here; ignore it in `home/.config/.gitignore` (never commit tokens, e.g. wrangler's).
 - `home/.claude/settings.json` is edited by Claude Code itself (`/config`); those edits show up as git diffs and are expected.
 

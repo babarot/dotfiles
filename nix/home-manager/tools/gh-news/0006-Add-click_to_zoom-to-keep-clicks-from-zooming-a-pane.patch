@@ -64,10 +64,10 @@ index 6e9beee..8142d8d 100644
      fn test_groups_collapsed_defaults_off() {
          assert!(!toml::from_str::<Config>("").unwrap().groups_collapsed);
 diff --git a/src/ui/app.rs b/src/ui/app.rs
-index c0a2e7d..c6b4065 100644
+index 94b1b53..1233256 100644
 --- a/src/ui/app.rs
 +++ b/src/ui/app.rs
-@@ -4072,31 +4072,17 @@ impl App {
+@@ -4112,31 +4112,17 @@ impl App {
                              }
                          } else {
                              // Clicked outside list items (on borders/padding) - toggle zoom
@@ -102,7 +102,7 @@ index c0a2e7d..c6b4065 100644
                      }
                  }
                  PaneFocus::None => {
-@@ -4107,6 +4093,19 @@ impl App {
+@@ -4147,6 +4133,19 @@ impl App {
          Ok(())
      }
  

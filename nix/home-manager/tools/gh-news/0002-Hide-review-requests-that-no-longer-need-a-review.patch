@@ -6,17 +6,18 @@ Subject: [PATCH] Hide review requests that no longer need a review
 A review request stayed listed after someone else merged, closed or
 approved the pull request, and gh-news filters cannot see a pull
 request's state. hide_resolved_review_requests lists the states that
-hide one ("merged", "closed", "approved"); while it is set, the state is
-checked on every refresh (REST for the state, GraphQL for the review
-decision, only when "approved" is listed). Empty, the default, fetches
+hide one ("merged", "closed", "approved"). While it is set, open review
+requests are checked on every refresh, batched into one GraphQL query
+per 50 pull requests: a REST and a GraphQL call each went over GitHub's
+hourly limit with a few dozen of them. Empty, the default, fetches
 nothing.
 ---
- config.example.toml        |  7 +++++
- src/config.rs              | 41 ++++++++++++++++++++++++++++++
- src/models/notification.rs | 43 +++++++++++++++++++++++++++++++
- src/state/mod.rs           | 10 ++++++--
- src/ui/app.rs              | 52 ++++++++++++++++++++++++++++++++++----
- 5 files changed, 146 insertions(+), 7 deletions(-)
+ config.example.toml        |   7 ++
+ src/config.rs              |  41 ++++++++++++
+ src/models/notification.rs |  43 +++++++++++++
+ src/state/mod.rs           |  10 ++-
+ src/ui/app.rs              | 129 ++++++++++++++++++++++++++++++++++++-
+ 5 files changed, 226 insertions(+), 4 deletions(-)
 
 diff --git a/config.example.toml b/config.example.toml
 index 0b58b92..ec134ce 100644
@@ -217,10 +218,55 @@ index 972d81a..f8c4bd1 100644
                      } else {
                          Some(i)
 diff --git a/src/ui/app.rs b/src/ui/app.rs
-index fae1f46..37245d7 100644
+index fae1f46..ce7db9c 100644
 --- a/src/ui/app.rs
 +++ b/src/ui/app.rs
-@@ -187,6 +187,7 @@ impl App {
+@@ -171,6 +171,44 @@ fn collect_successful_batch_result(
+     }
+ }
+ 
++/// A review request whose pull request state decides whether it is hidden.
++struct ReviewRequestItem {
++    id: String,
++    owner: String,
++    repo: String,
++    number: u64,
++}
++
++/// One GraphQL query for the state and review decision of many pull
++/// requests, aliased p0, p1, ... in the order given.
++fn review_states_query(items: &[ReviewRequestItem]) -> String {
++    let mut query = String::from("query {");
++    for (i, item) in items.iter().enumerate() {
++        query.push_str(&format!(
++            " p{i}: repository(owner: {}, name: {}) {{ pullRequest(number: {}) {{ state reviewDecision }} }}",
++            serde_json::Value::from(item.owner.as_str()),
++            serde_json::Value::from(item.repo.as_str()),
++            item.number,
++        ));
++    }
++    query.push_str(" }");
++    query
++}
++
++/// The context recorded for a pull request from `review_states_query`.
++fn review_state_context(pr: &serde_json::Value, approval_hides: bool) -> Option<&'static str> {
++    Some(match pr.get("state")?.as_str()? {
++        "MERGED" => "merged",
++        "CLOSED" => "closed",
++        _ if approval_hides
++            && pr.get("reviewDecision").and_then(|d| d.as_str()) == Some("APPROVED") =>
++        {
++            "approved"
++        }
++        _ => "open",
++    })
++}
++
+ /// Results from the background enrichment thread that resolves author logins
+ /// and subject state context for notifications.
+ struct EnrichmentResult {
+@@ -187,6 +225,7 @@ impl App {
          let palette = config.color_palette();
          let mut state = AppState::new();
          state.org_grouping = org_grouping;
@@ -228,7 +274,7 @@ index fae1f46..37245d7 100644
          Self {
              state,
              config,
-@@ -357,6 +358,7 @@ impl App {
+@@ -357,6 +396,7 @@ impl App {
  
          let mut app_state = AppState::new();
          app_state.org_grouping = self.config.org_grouping;
@@ -236,47 +282,50 @@ index fae1f46..37245d7 100644
          app_state.views = crate::builtin_views::builtin_views()
              .into_iter()
              .chain(self.config.views.iter().cloned())
-@@ -726,16 +728,29 @@ impl App {
-             comment_url: Option<String>,
-             subject_url: Option<String>,
+@@ -728,6 +768,33 @@ impl App {
              is_pr: bool,
-+            check_approval: bool,
          }
  
 +        let hidden = &self.config.hide_resolved_review_requests;
 +        let approval_hides = hidden.contains(&crate::config::ResolvedReviewState::Approved);
++        // A review request is checked again on every refresh until its pull
++        // request is merged or closed: others may approve it, or a new push
++        // may dismiss their approvals. They are batched into one GraphQL
++        // query per 50, since a call each would exceed the rate limit. Nothing
++        // is fetched when no state hides them.
++        let review_items: Vec<ReviewRequestItem> = self
++            .state
++            .notifications
++            .iter()
++            .filter(|n| {
++                !hidden.is_empty()
++                    && n.reason_enum() == NotificationReason::ReviewRequested
++                    && n.notification_type() == NotificationType::PullRequest
++                    && !matches!(n.context.as_deref(), Some("merged" | "closed"))
++            })
++            .filter_map(|n| {
++                let (owner, repo) = n.repo_full_name().split_once('/')?;
++                Some(ReviewRequestItem {
++                    id: n.id.clone(),
++                    owner: owner.to_string(),
++                    repo: repo.to_string(),
++                    number: n.subject_number()?.parse().ok()?,
++                })
++            })
++            .collect();
          let to_fetch: Vec<FetchItem> = self
              .state
              .notifications
-             .iter()
-             .filter_map(|n| {
-                 let needs_author = n.author.is_none() && n.latest_comment_url().is_some();
--                let needs_context =
--                    n.reason_enum() == NotificationReason::StateChange && n.subject_url().is_some();
-+                // A review request is checked again on every refresh until
-+                // its pull request is merged or closed: others may approve
-+                // it, or a new push may dismiss their approvals.
-+                // Nothing is fetched for them when no state hides them.
-+                let review_request = n.reason_enum() == NotificationReason::ReviewRequested
-+                    && n.notification_type() == NotificationType::PullRequest
-+                    && !hidden.is_empty();
-+                let needs_review_state =
-+                    review_request && !matches!(n.context.as_deref(), Some("merged" | "closed"));
-+                let needs_context = (n.reason_enum() == NotificationReason::StateChange
-+                    || needs_review_state)
-+                    && n.subject_url().is_some();
- 
-                 if !needs_author && !needs_context {
-                     return None;
-@@ -756,6 +771,7 @@ impl App {
-                         None
-                     },
-                     is_pr,
-+                    check_approval: review_request && approval_hides,
-                 })
+@@ -760,7 +827,7 @@ impl App {
              })
              .collect();
-@@ -791,7 +807,7 @@ impl App {
+ 
+-        if to_fetch.is_empty() {
++        if to_fetch.is_empty() && review_items.is_empty() {
+             return;
+         }
+ 
+@@ -791,7 +858,7 @@ impl App {
                              }
                          }
  
@@ -285,43 +334,75 @@ index fae1f46..37245d7 100644
                          if let Some(url) = &item.subject_url {
                              if let Ok(value) = client.get_json_by_url(url) {
                                  let context = if item.is_pr {
-@@ -816,11 +832,37 @@ impl App {
-                                         }
-                                         "merged".to_string()
-                                     } else {
--                                        value
-+                                        let state = value
-                                             .get("state")
-                                             .and_then(|v| v.as_str())
-                                             .unwrap_or("open")
--                                            .to_lowercase()
-+                                            .to_lowercase();
-+                                        // The REST pull request has no review
-+                                        // decision; only GraphQL does.
-+                                        let approved = item.check_approval
-+                                            && state == "open"
-+                                            && value
-+                                                .get("node_id")
-+                                                .and_then(|v| v.as_str())
-+                                                .and_then(|id| {
-+                                                    client
-+                                                        .graphql(
-+                                                            "query($id: ID!) { node(id: $id) { ... on PullRequest { reviewDecision } } }",
-+                                                            serde_json::json!({ "id": id }),
-+                                                        )
-+                                                        .ok()
-+                                                })
-+                                                .and_then(|v| {
-+                                                    v.pointer("/data/node/reviewDecision")
-+                                                        .and_then(|d| d.as_str())
-+                                                        .map(|d| d == "APPROVED")
-+                                                })
-+                                                .unwrap_or(false);
-+                                        if approved {
-+                                            "approved".to_string()
-+                                        } else {
-+                                            state
-+                                        }
-                                     }
-                                 } else {
-                                     let state = value
+@@ -846,6 +913,21 @@ impl App {
+                     }
+                 }));
+             }
++
++            for chunk in review_items.chunks(50) {
++                let Ok(data) = client.graphql(&review_states_query(chunk), serde_json::json!({}))
++                else {
++                    continue;
++                };
++                for (i, item) in chunk.iter().enumerate() {
++                    if let Some(context) = data
++                        .pointer(&format!("/data/p{i}/pullRequest"))
++                        .and_then(|pr| review_state_context(pr, approval_hides))
++                    {
++                        let _ = inner_tx.send((item.id.clone(), "context", context.to_string()));
++                    }
++                }
++            }
+             drop(inner_tx);
+ 
+             for worker in workers {
+@@ -4514,6 +4596,49 @@ mod tests {
+         assert_eq!(app.state.loading_progress, Some((6, 6)));
+     }
+ 
++    #[test]
++    fn review_states_query_aliases_each_pull_request() {
++        let item = |owner: &str, number: u64| ReviewRequestItem {
++            id: number.to_string(),
++            owner: owner.to_string(),
++            repo: "repo".to_string(),
++            number,
++        };
++        let query = review_states_query(&[item("a", 1), item("b", 2)]);
++        assert!(
++            query.contains(r#"p0: repository(owner: "a", name: "repo") { pullRequest(number: 1)"#)
++        );
++        assert!(
++            query.contains(r#"p1: repository(owner: "b", name: "repo") { pullRequest(number: 2)"#)
++        );
++    }
++
++    #[test]
++    fn review_state_context_maps_state_and_approval() {
++        let pr = |state: &str, decision: &str| serde_json::json!({ "state": state, "reviewDecision": decision });
++        assert_eq!(
++            review_state_context(&pr("MERGED", "APPROVED"), true),
++            Some("merged")
++        );
++        assert_eq!(
++            review_state_context(&pr("CLOSED", ""), true),
++            Some("closed")
++        );
++        assert_eq!(
++            review_state_context(&pr("OPEN", "APPROVED"), true),
++            Some("approved")
++        );
++        assert_eq!(
++            review_state_context(&pr("OPEN", "APPROVED"), false),
++            Some("open")
++        );
++        assert_eq!(
++            review_state_context(&pr("OPEN", "REVIEW_REQUIRED"), true),
++            Some("open")
++        );
++        assert_eq!(review_state_context(&serde_json::Value::Null, true), None);
++    }
++
+     #[test]
+     fn author_enrichment_worker_count_is_bounded() {
+         assert_eq!(App::author_enrichment_worker_count(0), 0);

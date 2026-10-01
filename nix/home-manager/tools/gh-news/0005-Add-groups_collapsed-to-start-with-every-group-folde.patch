@@ -110,7 +110,7 @@ index 3dc1216..f5fdcde 100644
          self.build_tree();
          if !self.tree_items.is_empty() {
 diff --git a/src/ui/app.rs b/src/ui/app.rs
-index 30f2a69..c0a2e7d 100644
+index 9bd3a4c..94b1b53 100644
 --- a/src/ui/app.rs
 +++ b/src/ui/app.rs
 @@ -47,6 +47,7 @@ pub struct PendingStateSettings {
@@ -121,7 +121,7 @@ index 30f2a69..c0a2e7d 100644
      pub preview_mode: PreviewMode,
  }
  
-@@ -351,6 +352,7 @@ impl App {
+@@ -389,6 +390,7 @@ impl App {
                  filter_pattern: None,
                  show_all: false,
                  repos_collapsed: self.config.repos_collapsed,
@@ -129,7 +129,7 @@ index 30f2a69..c0a2e7d 100644
                  preview_mode: self.config.get_default_preview_mode(),
              });
  
-@@ -381,7 +383,9 @@ impl App {
+@@ -419,7 +421,9 @@ impl App {
              app_state.set_pinned_notifications(data.pinned_notifications);
          }
  

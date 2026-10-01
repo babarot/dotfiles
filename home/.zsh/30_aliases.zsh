@@ -8,8 +8,6 @@ alias mkdir="${ZSH_VERSION:+nocorrect} mkdir"
 alias du='du -h'
 alias job='jobs -l'
 alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
 
 # Use plain vim.
 alias suvim='vim -N -u NONE -i NONE'
@@ -60,4 +58,3 @@ alias galias="alias | command grep -E '^[A-Z]'"
 alias yy="fc -ln -1 | tr -d '\n' | pbcopy"
 
 alias -g ESC='| sed -r "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
-alias -g ANSI='| sed -r "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'

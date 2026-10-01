@@ -11,8 +11,6 @@ bindkey -M viins '^N'  down-line-or-history
 bindkey -M viins '^A'  beginning-of-line
 bindkey -M viins '^E'  end-of-line
 bindkey -M viins '^K'  kill-line
-# bindkey -M viins '^R'  history-incremental-pattern-search-backward
-# bindkey -M viins '\er' history-incremental-pattern-search-forward
 bindkey -M viins '^Y'  yank
 bindkey -M viins '^W'  backward-kill-word
 bindkey -M viins '^U'  backward-kill-line
@@ -32,38 +30,6 @@ bindkey -M vicmd '?'   vi-history-search-backward
 
 bindkey -M vicmd 'gg' beginning-of-line
 bindkey -M vicmd 'G'  end-of-line
-
-# if is-at-least 5.0.8; then
-#   autoload -Uz surround
-#   zle -N delete-surround surround
-#   zle -N change-surround surround
-#   zle -N add-surround surround
-#   bindkey -a cs change-surround
-#   bindkey -a ds delete-surround
-#   bindkey -a ys add-surround
-#   bindkey -a S add-surround
-# fi
-
-# bind P and N for EMACS mode
-type 'history-substring-search-up' &>/dev/null &&
-  bindkey -M emacs '^P' history-substring-search-up
-
-type 'history-substring-search-down' &>/dev/null &&
-  bindkey -M emacs '^N' history-substring-search-down
-
-# bind k and j for VI mode
-type 'history-substring-search-up' &>/dev/null &&
-  bindkey -M vicmd 'k' history-substring-search-up
-
-type 'history-substring-search-down' &>/dev/null &&
-  bindkey -M vicmd 'j' history-substring-search-down
-
-# bind P and N keys
-type 'history-substring-search-up' &>/dev/null &&
-  bindkey '^P' history-substring-search-up
-
-type 'history-substring-search-down' &>/dev/null &&
-  bindkey '^N' history-substring-search-down
 
 # Insert a last word
 zle -N insert-last-word smart-insert-last-word
@@ -87,9 +53,6 @@ zle -N quote-previous-word-in-double
 bindkey -M viins '^Xq' quote-previous-word-in-double
 
 bindkey -M viins "$terminfo[kcbt]" reverse-menu-complete
-
-#bindkey -s 'vv' "!vi\n"
-#bindkey -s ':q' "^A^Kexit\n"
 
 #
 # functions

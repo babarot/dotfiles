@@ -13,8 +13,6 @@ LISTMAX=50
 CORRECT_IGNORE='_*'
 CORRECT_IGNORE_FILE='.*'
 
-#setopt ignore_eof
-#setopt xtrace
 setopt always_last_prompt
 setopt append_history
 setopt auto_cd
@@ -47,14 +45,12 @@ setopt interactive_comments
 setopt list_types
 setopt long_list_jobs
 setopt magic_equal_subst
-setopt mail_warning
 setopt mark_dirs
 setopt multios
 setopt no_beep
 setopt no_case_glob
 setopt no_clobber
 setopt no_flow_control
-setopt no_global_rcs
 setopt no_hist_beep
 setopt no_list_beep
 setopt no_prompt_cr

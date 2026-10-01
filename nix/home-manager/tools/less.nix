@@ -7,6 +7,8 @@
     LESSCHARSET = "utf-8";
   };
 
+  my.human.globalAliases.L = "| less";
+
   # Man page colors. $'...' is needed for the escape sequences, which
   # my.human.env would quote literally.
   my.human.init = ''

@@ -33,5 +33,25 @@
         --header-lines=1 \
         --height=50
     }
+
+    # ^G^A: pick changed files with fzf and git add them
+    fzf-git-add() {
+      local files
+      files="$(
+        git status --porcelain \
+          | perl -pe 's/^( ?.{1,2} )(.*)$/\033[31m$1\033[m$2/' \
+          | fzf --ansi --exit-0 \
+          | awk -F ' ' '{print $NF}' \
+          | tr "\n" " "
+      )"
+      if [ -n "$files" ]; then
+        BUFFER="git add $files"
+        CURSOR=$#BUFFER
+        zle accept-line
+      fi
+      zle reset-prompt
+    }
+    zle -N fzf-git-add
+    bindkey '^g^a' fzf-git-add
   '';
 }

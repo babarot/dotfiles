@@ -9,17 +9,12 @@ alias du='du -h'
 alias job='jobs -l'
 alias grep='grep --color=auto'
 
-# Use plain vim.
-alias suvim='vim -N -u NONE -i NONE'
-
 # Global aliases
-alias -g L='| less'
 alias -g G='| grep'
 alias -g X='| xargs'
 alias -g N=" >/dev/null 2>&1"
 alias -g N1=" >/dev/null"
 alias -g N2=" 2>/dev/null"
-alias -g VI='| xargs -o vim'
 alias -g CSV="| sed 's/,,/, ,/g;s/,,/, ,/g' | column -s, -t"
 alias -g H='| head'
 alias -g T='| tail'

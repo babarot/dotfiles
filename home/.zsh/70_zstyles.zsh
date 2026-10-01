@@ -1,6 +1,3 @@
-# Important
-zstyle ':completion:*:default' menu select=2
-
 # Completing Groping
 zstyle ':completion:*:options' description 'yes'
 zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'
@@ -21,14 +18,6 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # default: --
 zstyle ':completion:*' list-separator '-->'
 zstyle ':completion:*:manuals' separate-sections true
-
-# Menu select
-zmodload -i zsh/complist
-bindkey -M menuselect '^h' vi-backward-char
-bindkey -M menuselect '^j' vi-down-line-or-history
-bindkey -M menuselect '^k' vi-up-line-or-history
-bindkey -M menuselect '^l' vi-forward-char
-#bindkey -M menuselect '^k' accept-and-infer-next-history
 
 autoload -Uz cdr
 autoload -Uz history-search-end

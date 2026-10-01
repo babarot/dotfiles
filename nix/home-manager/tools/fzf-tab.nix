@@ -12,7 +12,8 @@
       zstyle ':fzf-tab:*' popup-min-size 50 8
       zstyle ':fzf-tab:*' fzf-min-height 8
       zstyle ':fzf-tab:*' fzf-pad 4
-      zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+      # fzf-tab replaces zsh's completion menu
+      zstyle ':completion:*' menu no
     '';
   };
 }

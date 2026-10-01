@@ -18,8 +18,6 @@ bindkey -M viins '^W'  backward-kill-word
 bindkey -M viins '^U'  backward-kill-line
 bindkey -M viins '^H'  backward-delete-char
 bindkey -M viins '^?'  backward-delete-char
-bindkey -M viins '^G'  send-break
-bindkey -M viins '^D'  delete-char-or-list
 
 bindkey -M vicmd '^A'  beginning-of-line
 bindkey -M vicmd '^E'  end-of-line
@@ -129,5 +127,3 @@ bindkey '^g^a' peco-select-gitadd
 autoload -Uz edit-command-line
 zle -N edit-command-line
 bindkey '^G' edit-command-line
-
-bindkey '^I' expand-or-complete

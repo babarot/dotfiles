@@ -61,3 +61,12 @@ alias yy="fc -ln -1 | tr -d '\n' | pbcopy"
 
 alias -g ESC='| sed -r "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
 alias -g ANSI='| sed -r "s/\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"'
+
+# Pick processes with fzf (TAB for several) and kill them.
+# fk [query] [kill options], e.g. `fk astro` or `fk astro -9`.
+fk() {
+  ps -eo pid,ppid,user,command \
+    | fzf -m --header-lines=1 --query="${1:-}" --header='TAB: select, Enter: kill' \
+    | awk '{print $1}' \
+    | xargs kill "${@:2}"
+}

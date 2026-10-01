@@ -66,7 +66,6 @@ in
   home.file.".local/share/nvim/site/parser".source = "${treesitter}/parser";
   home.file.".local/share/nvim/site/queries".source = "${treesitter}/queries";
 
-  my.human.env.EDITOR = "nvim";
   my.human.aliases = {
     vim = "nvim";
     vi = "command vim";

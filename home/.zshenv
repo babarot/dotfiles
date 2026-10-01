@@ -48,11 +48,8 @@ export LC_ALL="${LANGUAGE}"
 export LC_CTYPE="${LANGUAGE}"
 
 if is_human; then
-    # Editor
-    export EDITOR=vim
-    export CVSEDITOR="${EDITOR}"
-    export SVN_EDITOR="${EDITOR}"
-    export GIT_EDITOR="${EDITOR}"
+    # git takes core.editor from .gitconfig; GIT_EDITOR would override it
+    export EDITOR=nvim
 
     # Pager
     export PAGER=less

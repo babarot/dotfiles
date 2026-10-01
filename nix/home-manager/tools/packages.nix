@@ -10,6 +10,7 @@
     d2
     deno
     difftastic
+    duckdb
     exiftool
     ffmpeg
     ghalint
@@ -18,6 +19,7 @@
     gotools # goimports and friends
     gum
     hcl2json
+    hyperfine
     imagemagick
     jsonfmt
     just
@@ -29,6 +31,9 @@
     pnpm # follows each project's packageManager version
     postgresql # for psql
     ripgrep
+    scc
+    shellcheck
+    shfmt
     supabase-cli
     tree
     turso-cli

@@ -128,7 +128,7 @@ Apply the configuration for the first time. `darwin-rebuild` is not installed ye
 sudo /nix/var/nix/profiles/default/bin/nix run 'nix-darwin/master#darwin-rebuild' -- switch --flake ~/src/github.com/babarot/dotfiles
 ```
 
-From the next time, open a new shell and run (after `nix flake update agent-skills`, build as yourself first again):
+From the next time, open a new shell and run (after updating `agent-skills`, build as yourself first; see [maintenance.md](./maintenance.md#update-flake-inputs)):
 
 ```bash
 sudo darwin-rebuild switch --flake ~/src/github.com/babarot/dotfiles

@@ -81,7 +81,7 @@ The full tree is in [docs/reference/structure.md](./docs/reference/structure.md#
 sudo darwin-rebuild switch --flake ~/src/github.com/babarot/dotfiles
 ```
 
-New files must be tracked by git (`git add`) before Nix can see them. To update packages, run `nix flake update` (everything) or `nix flake update babarot` (only my own tools) before switching.
+New files must be tracked by git (`git add`) before Nix can see them. Updating packages is in [maintenance.md](./docs/guides/maintenance.md#update-flake-inputs).
 
 ## Docs
 

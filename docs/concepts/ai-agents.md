@@ -39,6 +39,8 @@ Skills reach the agents from four sources:
 | My own skills on trial | [home/skills/](../../home/skills) | `~/.claude/skills` and `~/.agents/skills`, pointing at the repo |
 | agent-recall's plugin | [agent-recall.nix](../../nix/home-manager/tools/agent-recall.nix) | `~/.claude/skills` (plugin), `~/.agents/skills` (skill only) |
 
+`home/skills/` is a proving ground for new skills of my own: a skill there can be tried without releasing babarot/agent-skills, and moves there once it settles ([maintenance.md](../guides/maintenance.md#retire-a-trial-skill)).
+
 babarot/agent-skills is split into plugins, and each Mac picks which ones it links ([modules.md](./modules.md#myagentskillsscopes)). Updating it needs a build as yourself first; see [maintenance.md](../guides/maintenance.md#update-flake-inputs).
 
 Tool skills are taken from the pinned package or source, so a skill always matches the binary it describes. A host can adjust one, as [pro23.nix](../../nix/hosts/pro23.nix) does for agent-browser so it does not take over from the Chrome extension.

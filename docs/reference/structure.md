@@ -58,23 +58,8 @@ Herdr, mo and gh-news are built with small patches, one per change, exported fro
 
 ## Agent Skills
 
-Agent Skills for Codex and other agents come from [babarot/agent-skills](https://github.com/babarot/agent-skills) (private, fetched over SSH) and are linked into `~/.agents/skills`. Claude Code gets the same skills from the plugin marketplace.
+Where the skills come from and where each is linked is in [ai-agents.md](../concepts/ai-agents.md#skills).
 
-`home/skills/` is a proving ground for new skills of my own. Each directory there is linked into both `~/.claude/skills` and `~/.agents/skills`, pointing at this repo, so a skill can be tried without releasing babarot/agent-skills. Once a skill settles, it moves to babarot/agent-skills.
+## Apply and update
 
-## Apply changes
-
-```bash
-sudo darwin-rebuild switch --flake ~/src/github.com/babarot/dotfiles
-```
-
-New files must be tracked by git (`git add`) before Nix can see them.
-
-## Update packages
-
-```bash
-nix flake update           # everything
-nix flake update babarot   # only my own tools
-```
-
-After `nix flake update agent-skills`, run `nix build ".#darwinConfigurations.$(scutil --get LocalHostName).system" --no-link` as yourself before `sudo darwin-rebuild`, since root has no SSH key for the private repo.
+Applying a change is in the [README](../../README.md#apply-changes); updating inputs is in [maintenance.md](../guides/maintenance.md#update-flake-inputs).

@@ -50,7 +50,7 @@ An alias only reaches commands zsh runs itself. `xargs rm`, `find -exec rm` and 
 
 [skills.nix](../../nix/home-manager/skills.nix). Agent Skill directories (each holding a `SKILL.md`) by skill name. Each one is linked into both `~/.claude/skills/<name>` and `~/.agents/skills/<name>`, so Claude Code and Codex know how to use a tool as soon as it is installed. A tool file sets it next to the package, pointing at the skill the package ships.
 
-The same module adds every directory in [home/skills/](../../home/skills/), my own skills on trial. Those links point at the main checkout, not the store, so edits apply without a switch once they are in it (a worktree edit applies when landed); a new skill needs a switch. Why the directory exists is in [structure.md](../reference/structure.md#agent-skills).
+The same module adds every directory in [home/skills/](../../home/skills/), my own skills on trial. Those links point at the main checkout, not the store, so edits apply without a switch once they are in it (a worktree edit applies when landed); a new skill needs a switch. Why the directory exists is in [ai-agents.md](./ai-agents.md#skills).
 
 ## my.agentSkills.scopes
 

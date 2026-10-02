@@ -1,6 +1,7 @@
 # Completing Groping
 zstyle ':completion:*:options' description 'yes'
-zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'
+# fzf-tab shows this as the group header verbatim, so no prompt escapes
+zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' group-name ''
 
 # Completing misc

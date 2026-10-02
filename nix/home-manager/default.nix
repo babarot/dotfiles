@@ -1,6 +1,6 @@
 # Every .nix file in ./tools is one tool: its package and its shell settings
 # live together, so deleting the file removes both. Other files there are
-# the tools' own scripts, read by their .nix file.
+# the tools' own scripts and patch directories, read by their .nix file.
 { ... }:
 {
   imports = [

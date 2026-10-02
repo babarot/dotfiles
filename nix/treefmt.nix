@@ -14,5 +14,7 @@ _: {
     # *.sh and *.bash only; zsh files are not shfmt's language
     shfmt.enable = true;
   };
+  # The hooks have no extension, so shfmt would skip them
+  settings.formatter.shfmt.includes = [ ".githooks/*" ];
   settings.global.excludes = [ "*.lock" ];
 }

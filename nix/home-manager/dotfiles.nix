@@ -21,7 +21,6 @@ in
     ".gitconfig"
     ".gitignore" # git's core.excludesfile
     ".gitmessage" # git's commit.template
-    ".vimrc"
     ".zsh"
     ".zshenv"
     ".zshrc"

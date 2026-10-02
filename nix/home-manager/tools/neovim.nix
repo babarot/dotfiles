@@ -87,9 +87,7 @@ in
 
   my.human.aliases = {
     vim = "nvim";
-    vi = "command vim";
     # Neovim with no config, plugins or shada
     suvim = "nvim -u NONE -i NONE";
   };
-  my.human.globalAliases.VI = "| xargs -o vim";
 }

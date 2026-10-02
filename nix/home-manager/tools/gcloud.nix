@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
+let
+  # Used inside gchange and ohayo only, by store path
+  fzf = lib.getExe pkgs.fzf;
+  gum = lib.getExe pkgs.gum;
+in
 {
   home.packages = [
     # gke-gcloud-auth-plugin lets kubectl authenticate to GKE clusters
@@ -16,17 +21,17 @@
   # the logins run bare because they print the URL and may ask for a code.
   my.human.init = ''
     gchange() {
-      gcloud config configurations activate "$(gcloud config configurations list | fzf --reverse --header-lines=1 | awk '{print $1}')"
+      gcloud config configurations activate "$(gcloud config configurations list | ${fzf} --reverse --header-lines=1 | awk '{print $1}')"
     }
 
     ohayo() {
-      if gum spin --title "gcloud: checking..." -- gcloud auth print-access-token </dev/null; then
+      if ${gum} spin --title "gcloud: checking..." -- gcloud auth print-access-token </dev/null; then
         echo "gcloud: ok"
       else
         echo "gcloud: expired, logging in (browser)..."
         gcloud auth login || return
       fi
-      if gum spin --title "adc: checking..." -- gcloud auth application-default print-access-token </dev/null; then
+      if ${gum} spin --title "adc: checking..." -- gcloud auth application-default print-access-token </dev/null; then
         echo "adc: ok"
       else
         echo "adc: expired, logging in (browser)..."

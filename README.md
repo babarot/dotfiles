@@ -22,13 +22,17 @@ Export `AI_AGENT=1` to force the agent side.
 
 ## One file per tool
 
-A tool is installed and configured in the same place. Each file under `nix/home-manager/tools/` holds a tool's package together with its environment variables, aliases, functions and zsh plugins, and is imported automatically. Adding a tool means adding a file; deleting the file removes the tool and everything it set, so no alias or variable outlives the tool it was for.
+A tool is installed and configured in the same place. Each file under `nix/home-manager/tools/` holds a tool's package together with its environment variables, aliases, functions and zsh plugins, and is imported automatically. Adding a tool means adding a file; deleting the file removes the tool and everything it set, so no alias or variable outlives the tool it was for. A tool used inside another's settings is referenced by its store path, not through PATH: in the example below, `bat-theme` keeps working if `fzf.nix`, and with it `fzf` on PATH, is deleted.
 
 Settings for humans go in `my.human`, rendered into `~/.config/zsh/human.zsh` and sourced after the `is_human` guard, so agents never see them. Variables agents also need (`GOPATH`, ...) go in `my.env`, and settings only agents get go in `my.ai`, sourced by `.zshenv` for agents only.
 
 ```nix
 # nix/home-manager/tools/bat.nix
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
+let
+  # Used inside bat-theme only; fzf on PATH is fzf.nix's
+  fzf = lib.getExe pkgs.fzf;
+in
 {
   home.packages = [ pkgs.bat ];
 
@@ -45,9 +49,9 @@ Settings for humans go in `my.human`, rendered into `~/.config/zsh/human.zsh` an
     bat-theme() {
       local file=$1
       if [[ -z $file ]]; then
-        file=$(fzf)
+        file=$(${fzf})
       fi
-      bat --list-themes | fzf --preview="bat --theme={} --color=always ''${file}"
+      bat --list-themes | ${fzf} --preview="bat --theme={} --color=always ''${file}"
     }
   '';
 }

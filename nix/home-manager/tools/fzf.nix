@@ -3,7 +3,7 @@
   home.packages = [ pkgs.fzf ];
 
   my.human.env = {
-    FZF_DEFAULT_COMMAND = "fd --type f";
+    FZF_DEFAULT_COMMAND = "${lib.getExe pkgs.fd} --type f";
     FZF_DEFAULT_OPTS = lib.concatStringsSep " " [
       "--height 75% --multi --layout=reverse --margin=0,1"
       "--bind ctrl-f:page-down,ctrl-b:page-up,ctrl-/:toggle-preview"

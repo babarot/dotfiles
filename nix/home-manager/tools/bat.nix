@@ -1,4 +1,8 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
+let
+  # Used inside bat-theme only; fzf on PATH is fzf.nix's
+  fzf = lib.getExe pkgs.fzf;
+in
 {
   home.packages = [ pkgs.bat ];
 
@@ -15,9 +19,9 @@
     bat-theme() {
       local file=$1
       if [[ -z $file ]]; then
-        file=$(fzf)
+        file=$(${fzf})
       fi
-      bat --list-themes | fzf --preview="bat --theme={} --color=always ''${file}"
+      bat --list-themes | ${fzf} --preview="bat --theme={} --color=always ''${file}"
     }
   '';
 }

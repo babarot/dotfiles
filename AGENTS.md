@@ -45,6 +45,7 @@ Do not add a directory at the repository root without a strong reason; put new f
 | New hand-written dotfile | put it in `home/` under its name in ~ and list it in `nix/home-manager/dotfiles.nix` (a tool's own dotfile is linked from its `nix/home-manager/tools/<tool>.nix`, like Claude Code's in `claude-code.nix`) |
 | CLI tool with no shell settings | `nix/home-manager/tools/packages.nix` (alphabetical) |
 | CLI tool with aliases, shell functions, env or a zsh hook | its own `nix/home-manager/tools/<tool>.nix`, settings under `my.human`; a function built around a tool (e.g. a picker using fzf) goes in that tool's file |
+| Another tool used inside a tool's settings (fzf in `bat-theme`, eza in enhancd's filter) | refer to it by store path (`lib.getExe pkgs.<tool>`), not through PATH: a file puts only its own tool on PATH, so deleting `fzf.nix` removes `fzf` but not bat's use of it. Exceptions: macOS's userland and git, hand-written config files that cannot hold a store path (they put the tool on PATH from the file that uses it, as `gh.nix` does for gh-dash), and optional uses guarded by `$+commands[...]` |
 | Alias or function not tied to any one tool | an existing `home/.zsh/NN_*.zsh`, or a new one with a numeric prefix (only `[0-9]*.zsh` is loaded; hand-written, humans only; loaded through `my.human` at order 5000) |
 | Tool or app for one Mac only | `nix/hosts/<host>.nix` |
 | zsh plugin | `my.human.plugins.<name>` with `src`, `file`, `order` (hand-written `~/.zsh` loads at 5000, zsh-abbr at 6000) |

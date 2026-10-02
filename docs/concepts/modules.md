@@ -20,6 +20,10 @@ Put a variable here when agents need it too and it belongs to one tool. Other va
 
 `PATH` itself is hand-written in `.zshenv`, because its order is global and not any one tool's. A directory that one tool needs on PATH (krew's plugins in `~/.krew/bin`) goes in `my.path` next to the tool instead: env.zsh appends it to the end, when it exists, so it never reorders the hand-written list.
 
+## my.gitConfig
+
+[git.nix](../../nix/home-manager/git.nix). git settings that belong to a tool, by section: ov as the pager for `git log` and `git show`, the `dft` alias that runs difftastic. A tool's file writes them next to its package, with the store path of the command, and they are rendered into `~/.config/git/tools.gitconfig`. The hand-written [.gitconfig](../../home/.gitconfig) includes that file last, so it never names those tools; deleting a tool's file drops its git settings, and git falls back to its defaults.
+
 ## my.human
 
 [human.nix](../../nix/home-manager/human.nix). Shell UX for humans only: environment variables, aliases, zsh plugins and free-form zsh. It is rendered into `~/.config/zsh/human.zsh`, which [.zshrc](../../home/.zshrc) sources after the `is_human` guard, so agents never load any of it. The options and the order they are written in are in human.nix.

@@ -25,6 +25,7 @@ herdr/plugins/config/persiyanov.reviewr/*
 zsh/ai.zsh
 zsh/env.zsh
 zsh/human.zsh
+git/tools.gitconfig
 direnv/lib/hm-nix-direnv.sh
 mise/config.toml
 

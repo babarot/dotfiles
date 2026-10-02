@@ -10,7 +10,6 @@
     conftest
     d2
     deno
-    difftastic
     duckdb
     exiftool
     ffmpeg

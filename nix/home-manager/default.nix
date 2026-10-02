@@ -6,6 +6,7 @@
   imports = [
     ./dotfiles.nix
     ./env.nix
+    ./git.nix
     ./fork-patches.nix
     ./human.nix
     ./ai.nix

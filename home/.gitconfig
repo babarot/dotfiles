@@ -102,7 +102,6 @@
   }; f"
 
   df = diff --no-ext-diff
-  dft = difft --syntax-highlight=off
 
 [help]
   autocorrect = 1
@@ -113,19 +112,11 @@
 	signingkey = /Users/babarot/.ssh/id_rsa.pub
 
 [pager]
-  log = "ov -F --section-delimiter '^commit' --section-header-num 3"
-  show = "ov -F --header 3"
   branch = less -X
 
 [diff]
   tool                = nvimdiff
   algorithm           = histogram
-  # https://difftastic.wilfred.me.uk/
-  # https://difftastic.wilfred.me.uk/git.html
-  # to DISABLE external diff, these options are available
-  #   1. GIT_EXTERNAL_DIFF= git diff
-  #   2. git diff --no-ext-diff
-  ; external            = difft --syntax-highlight=off
 
 [init]
   defaultBranch = main
@@ -167,3 +158,9 @@
 
 [sequence]
   editor = nvim
+
+# Settings that belong to a tool (ov as the pager, the dft alias), written
+# with store paths in its nix/home-manager/tools/<tool>.nix (my.gitConfig).
+# Last, so they win over anything above
+[include]
+  path = ~/.config/git/tools.gitconfig

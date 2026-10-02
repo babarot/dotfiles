@@ -20,7 +20,8 @@ nix/
     default.nix        # imports every file in nix/home-manager/tools
     ai.nix             # my.ai: agent-only zsh settings, rendered to ~/.config/zsh/ai.zsh
     dotfiles.nix       # links the files in home/ (.zshrc, .gitconfig, bin, .config, ...) into ~
-    env.nix            # my.env: variables for every shell, rendered to ~/.config/zsh/env.zsh
+    env.nix            # my.env, my.path: variables and PATH entries for every shell, rendered to ~/.config/zsh/env.zsh
+    git.nix            # my.gitConfig: tools' git settings, rendered to ~/.config/git/tools.gitconfig
     fork-patches.nix   # my.forkPatches: packages patched from a fork's patches branch
     herdr-plugins.nix  # my.herdrPlugins: herdr plugins linked on every switch
     human.nix          # my.human: human-only zsh UX, rendered to ~/.config/zsh/human.zsh

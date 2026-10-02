@@ -25,7 +25,7 @@ A summary, not a transcript: enough for the next agent to start working, with th
 - Decisions: what the user chose or ruled out, with the reason, so the next agent does not reopen them.
 - Next: the remaining steps, in order, starting with the very next one.
 - Open questions and pitfalls: unresolved points, dead ends already tried, anything the user must do by hand (e.g. commands that need sudo).
-- Source: the session ID, the agent it ran in, and the transcript path. Tell the next agent it may look up details there only when the summary is not enough: with the agent-recall MCP (`recall_search`, `recall_export`) if it has it, or by reading the transcript file directly.
+- Source: the session ID, the agent it ran in, and the transcript path. Tell the next agent it may look up details there only when the summary is not enough: with the claude-recall MCP (`recall_search`, `recall_export`) if it has it, or by reading the transcript file directly.
 
 Leave out secrets and tokens even if they appeared in the session.
 

@@ -18,9 +18,9 @@ User settings live in [home/.claude/](../../home/.claude), linked into `~/.claud
 
 Claude Code gets my skills through babarot/agent-skills added as a plugin marketplace in `settings.json`. It also connects to Neovim on start (claudecode.nvim), since it runs in a herdr pane and would not find an IDE by itself.
 
-### agent-recall
+### claude-recall
 
-[agent-recall.nix](../../nix/home-manager/tools/agent-recall.nix) installs agent-recall, which archives and searches past agent sessions. Its package ships a Claude Code plugin, linked into `~/.claude/skills` where it loads in place, so the plugin always matches the binary and needs no marketplace or hook in `settings.json`. Codex gets only the `recall` skill, in `~/.agents/skills`.
+[claude-recall.nix](../../nix/home-manager/tools/claude-recall.nix) installs claude-recall (`recall`), which archives past agent sessions and finds them again from a TUI, the CLI or MCP. Its package ships a Claude Code plugin, linked into `~/.claude/skills` where it loads in place, so the plugin always matches the binary and needs no marketplace or hook in `settings.json`. Codex gets only the `recall` skill, in `~/.agents/skills`.
 
 ## Codex
 
@@ -37,7 +37,7 @@ Skills reach the agents from four sources:
 | [babarot/agent-skills](https://github.com/babarot/agent-skills) (private, flake input over SSH) | [agent-skills.nix](../../nix/home-manager/tools/agent-skills.nix) | `~/.agents/skills`; Claude Code uses the marketplace instead |
 | Skills that ship with a tool (crit, herdr, hunk, tuicr, ...) | `my.skills` in the tool's file | `~/.claude/skills` and `~/.agents/skills` |
 | My own skills on trial | [home/skills/](../../home/skills) | `~/.claude/skills` and `~/.agents/skills`, pointing at the repo |
-| agent-recall's plugin | [agent-recall.nix](../../nix/home-manager/tools/agent-recall.nix) | `~/.claude/skills` (plugin), `~/.agents/skills` (skill only) |
+| claude-recall's plugin | [claude-recall.nix](../../nix/home-manager/tools/claude-recall.nix) | `~/.claude/skills` (plugin), `~/.agents/skills` (skill only) |
 
 `home/skills/` is a proving ground for new skills of my own: a skill there can be tried without releasing babarot/agent-skills, and moves there once it settles ([maintenance.md](../guides/maintenance.md#retire-a-trial-skill)).
 

@@ -14,10 +14,6 @@
       "--color border:#303030,info:#cfcfb0,header:#80a0ff,spinner:#36c692"
       "--color prompt:#87afff,pointer:#ff5189,marker:#f09479"
     ];
-    FZF_CTRL_T_COMMAND = ''rg --files --hidden --follow --glob "!.git/*"'';
-    FZF_CTRL_T_OPTS = ''--preview "bat --color=always --style=header,grid --line-range :100 {}"'';
-    FZF_ALT_C_COMMAND = "fd --type d";
-    FZF_ALT_C_OPTS = ''--preview "tree -C {} | head -100"'';
   };
 
   my.human.globalAliases.F = "$(fzf)";
@@ -33,25 +29,5 @@
         --header-lines=1 \
         --height=50
     }
-
-    # ^G^A: pick changed files with fzf and git add them
-    fzf-git-add() {
-      local files
-      files="$(
-        git status --porcelain \
-          | perl -pe 's/^( ?.{1,2} )(.*)$/\033[31m$1\033[m$2/' \
-          | fzf --ansi --exit-0 \
-          | awk -F ' ' '{print $NF}' \
-          | tr "\n" " "
-      )"
-      if [ -n "$files" ]; then
-        BUFFER="git add $files"
-        CURSOR=$#BUFFER
-        zle accept-line
-      fi
-      zle reset-prompt
-    }
-    zle -N fzf-git-add
-    bindkey '^g^a' fzf-git-add
   '';
 }

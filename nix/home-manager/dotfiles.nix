@@ -1,6 +1,5 @@
 # Hand-written dotfiles in home/ of this repo, linked into ~. The links
 # point at the repo, not the Nix store, so edits apply without a switch.
-# tmux's files are in tools/tmux.nix.
 { config, lib, ... }:
 let
   repo = "${config.home.homeDirectory}/src/github.com/babarot/dotfiles";

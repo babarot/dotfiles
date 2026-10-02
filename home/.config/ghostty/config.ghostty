@@ -1,6 +1,5 @@
 # Config generator https://ghostty.zerebos.com/
 
-#command = /opt/homebrew/bin/tmux
 # command = zsh
 clipboard-read = allow
 clipboard-write = allow

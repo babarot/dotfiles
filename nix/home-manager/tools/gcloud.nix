@@ -16,7 +16,7 @@
   # the logins run bare because they print the URL and may ask for a code.
   my.human.init = ''
     gchange() {
-      gcloud config configurations activate "$(gcloud config configurations list | fzf-tmux --reverse --header-lines=1 | awk '{print $1}')"
+      gcloud config configurations activate "$(gcloud config configurations list | fzf --reverse --header-lines=1 | awk '{print $1}')"
     }
 
     ohayo() {

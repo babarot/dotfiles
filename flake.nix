@@ -42,10 +42,6 @@
       url = "github:babarot/za-prompt";
       flake = false;
     };
-    tpm = {
-      url = "github:tmux-plugins/tpm";
-      flake = false;
-    };
 
     # Formatters and linters behind `nix fmt` (see nix/treefmt.nix)
     treefmt-nix = {

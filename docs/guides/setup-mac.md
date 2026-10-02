@@ -154,10 +154,6 @@ References:
 - My tools list: [nix/home-manager/tools](https://github.com/babarot/dotfiles/tree/HEAD/nix/home-manager/tools)
 - How the shell switches between humans and AI agents: [README](https://github.com/babarot/dotfiles#shell-for-humans-and-ai-agents)
 
-## Tmux
-
-[tmux](https://github.com/tmux/tmux) is not installed at the moment; `.tmux.conf` and [tpm](https://github.com/tmux-plugins/tpm) (placed at `~/.tmux/plugins/tpm` by Nix) are kept for reference. To use it again, add `pkgs.tmux` to `nix/home-manager/tools/tmux.nix`, run `tmux` and press `prefix` + <kbd>I</kbd> to install plugins.
-
 ## Some migrations
 
 ### History (Z shell)

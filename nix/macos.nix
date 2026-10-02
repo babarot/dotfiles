@@ -72,7 +72,7 @@
     remapCapsLockToControl = true;
   };
 
-  # Touch ID for sudo; reattach makes it work inside herdr and tmux
+  # Touch ID for sudo; reattach makes it work inside herdr
   security.pam.services.sudo_local = {
     touchIdAuth = true;
     reattach = true;

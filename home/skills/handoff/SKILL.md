@@ -10,7 +10,7 @@ The user wants another agent (a new Claude Code or Codex session, maybe on anoth
 
 ## 1. Find this session's ID and transcript
 
-- Claude Code: the ID is in `$CLAUDE_CODE_SESSION_ID` (this session: `${CLAUDE_SESSION_ID}`). The transcript is `~/.claude/projects/<cwd with every / and . replaced by ->/<id>.jsonl`; confirm the path with `ls`.
+- Claude Code: the ID is in `$CLAUDE_CODE_SESSION_ID` (this session: `${CLAUDE_SESSION_ID}`). The transcript is `~/.claude/projects/<cwd with every non-alphanumeric character replaced by ->/<id>.jsonl`; confirm the path with `ls`.
 - Codex: use `$CODEX_THREAD_ID` if it is set. Otherwise take the newest `~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl` whose first line (`session_meta`) has this session's `cwd`; the ID is its `payload.id`.
 
 If neither works, say so in the prompt instead of guessing an ID.

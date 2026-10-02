@@ -1,7 +1,8 @@
 # Neovim, and what its config expects from outside: LSP servers (found on
-# PATH by vim.lsp.enable) and treesitter parsers with their queries. Both
-# come from here instead of mason and nvim-treesitter's :TSInstall, so the
-# two Macs get the same versions, pinned by flake.lock.
+# PATH by vim.lsp.enable), conform's formatters, and treesitter parsers
+# with their queries. They come from here instead of mason and
+# nvim-treesitter's :TSInstall, so the two Macs get the same versions,
+# pinned by flake.lock.
 { lib, pkgs, ... }:
 let
   # Neovim ships c, lua, markdown, markdown_inline, query, vim and vimdoc;
@@ -54,14 +55,31 @@ let
       ]) languages
       ++ map (lang: ts.queries.${lang}) sharedQueries;
   };
-in
-{
-  home.packages = with pkgs; [
-    neovim
+  # Tools only Neovim runs: LSP servers and conform's formatters. They go
+  # on nvim's own PATH, not the user's, so deleting jq.nix or go.nix does
+  # not break formatting in nvim. Appended, so a version a project pins
+  # with mise still wins.
+  tools = with pkgs; [
     gopls
     lua-language-server
     terraform-ls
+    go # gofmt
+    gotools # goimports
+    jq
+    shfmt
+    terraform
   ];
+  neovim = pkgs.symlinkJoin {
+    name = "neovim-with-tools";
+    paths = [ pkgs.neovim ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/nvim --suffix PATH : ${lib.makeBinPath tools}
+    '';
+  };
+in
+{
+  home.packages = [ neovim ];
 
   # lazy.nvim keeps stdpath('data')/site on the runtimepath
   home.file.".local/share/nvim/site/parser".source = "${treesitter}/parser";

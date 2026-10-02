@@ -4,7 +4,6 @@
   home.packages = with pkgs; [
     actionlint
     ast-grep
-    bashInteractive
     btop
     ccusage
     conftest

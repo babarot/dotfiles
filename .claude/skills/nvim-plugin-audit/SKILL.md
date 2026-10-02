@@ -1,19 +1,29 @@
 ---
 name: nvim-plugin-audit
-description: Audit the Neovim plugins in this dotfiles repo one by one. Researches what current Neovim already covers and each plugin's maintenance status and news, asks the user to keep, replace or remove each one with AskUserQuestion, then applies the decisions (keymaps rerouted, :Lazy clean, README), verifies with headless Neovim and commits. Use for "audit my Neovim plugins", "棚卸しして", "Neovim のプラグインを整理したい".
-allowed-tools: Read, Edit, Write, Grep, Glob, AskUserQuestion, WebSearch, WebFetch, Bash(nvim:*), Bash(gh api:*), Bash(gh repo view:*), Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git rm:*), Bash(git commit:*), Bash(git pull:*), Bash(git push:*), Bash(ls:*), Bash(grep:*), Bash(sed:*), Bash(cat:*)
+description: Audit the Neovim plugins in this dotfiles repo one by one. Researches what current Neovim already covers and each plugin's maintenance status and news, asks the user to keep, replace or remove each one with AskUserQuestion, then applies the decisions (keymaps rerouted, :Lazy clean, README), verifies with headless Neovim and commits in the worktree. Use for "audit my Neovim plugins", "棚卸しして", "Neovim のプラグインを整理したい".
+allowed-tools: Read, Edit, Write, Grep, Glob, AskUserQuestion, WebSearch, WebFetch, Bash(nvim:*), Bash(gh api:*), Bash(gh repo view:*), Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git rm:*), Bash(git commit:*), Bash(ls:*), Bash(grep:*), Bash(sed:*), Bash(cat:*)
 ---
 
 Audit the Neovim plugins in this repository together with the user: build the facts for every plugin, let the user decide one by one, then apply and verify the decisions. Claude Code only (it relies on AskUserQuestion).
 
 ## Where things are
 
-- Neovim config: `home/.config/nvim/` in this repo (`~/.config` links to `home/.config`)
+- Neovim config: `home/.config/nvim/` in this repo
   - Plugin specs: `lua/plugins/*.lua` (lazy.nvim, one file per area)
   - Lockfile: `lazy-lock.json`; plugin list with sections and counts: `lua/plugins/README.md`
   - Options, keymaps, autocmds: `lua/config/{options,keymaps,autocmds}.lua`
 - Neovim itself, LSP servers and treesitter parsers come from Nix: `nix/home-manager/tools/neovim.nix`. Never install servers or parsers from inside Neovim (no mason, no `:TSInstall`).
 - The work Mac applies changes made here after pulling; see AGENTS.md.
+
+## Run Neovim against the worktree
+
+Work happens in a git worktree, but `~/.config` links to `home/.config` of the main checkout. A plain `nvim` therefore reads the main checkout's config, and `:Lazy clean` writes its `lazy-lock.json`. From the worktree root, run every Neovim command in this skill as
+
+```sh
+XDG_CONFIG_HOME="$PWD/home/.config" nvim --headless ...
+```
+
+so it reads the worktree's edits and updates the worktree's lockfile. Plugins themselves are shared in `~/.local/share/nvim/lazy`: a `Lazy! clean` also removes them from the Neovim the user runs until the change lands. Say so before running it.
 
 ## Step 1: Establish the baseline
 
@@ -52,12 +62,12 @@ For each removal or replacement:
 - Delete the spec (or the block inside a shared file) and any `dependencies` entries pointing at it
 - Reroute keymaps the user relies on to the replacement (usually in `lua/config/keymaps.lua`), keeping the same keys when possible
 - Update `lua/plugins/README.md`: remove the entry, fix the section counts, and note replacements under "Replaced by Neovim itself"
-- Run `nvim --headless '+Lazy! clean' +qa` so the plugin is removed and `lazy-lock.json` is updated
+- Run `XDG_CONFIG_HOME="$PWD/home/.config" nvim --headless '+Lazy! clean' +qa` so the plugin is removed and the worktree's `lazy-lock.json` is updated
 - If the change needs something outside Neovim (a server, a parser), add it to `nix/home-manager/tools/neovim.nix`, build both hosts as AGENTS.md describes, and ask the user to run darwin-rebuild
 
 ## Step 5: Verify
 
-With headless Neovim (`nvim --headless -c 'lua ...'`), check:
+With headless Neovim against the worktree (`XDG_CONFIG_HOME="$PWD/home/.config" nvim --headless -c 'lua ...'`), check:
 
 - No messages after startup (`vim.api.nvim_exec2('messages', { output = true })`) with a real file open
 - Every rerouted keymap exists (`vim.fn.maparg(...)`) and does what it should (e.g. feed the keys and inspect the buffer)
@@ -67,6 +77,7 @@ Say plainly what could not be checked headless (rendering, popups) and ask the u
 
 ## Step 6: Commit and report
 
-- Other sessions work in this repo at the same time: `git pull --ff-only`, then `git status` and `git diff --cached`, and stage only the files this audit changed
-- Commit in English: an imperative summary, then a short body with the reasons (see AGENTS.md; no session links or attribution trailers)
-- Report: a table of decisions, keymaps that changed, what was verified and what the user should check by eye, and the steps for the work Mac (pull, `nvim --headless '+Lazy! restore' '+Lazy! clean' +qa`, and darwin-rebuild when Nix changed)
+- Other sessions work in this repo at the same time: check `git status` and `git diff --cached`, and stage only the files this audit changed
+- Commit in the worktree, in English: an imperative summary, then a short body with the reasons (see AGENTS.md; no session links or attribution trailers)
+- Land in main only when the user asks, with the land skill (`git land`); push only when asked
+- Report: a table of decisions, keymaps that changed, what was verified and what the user should check by eye, and the steps once it lands, on this Mac (run `nvim --headless '+Lazy! restore' +qa` so the shared plugins match main's lockfile) and on the work Mac (pull, `nvim --headless '+Lazy! restore' '+Lazy! clean' +qa`, and darwin-rebuild when Nix changed)

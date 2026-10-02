@@ -8,7 +8,7 @@
 # Once a skill settles, move it to babarot/agent-skills.
 { config, lib, ... }:
 let
-  repo = "${config.home.homeDirectory}/src/github.com/babarot/dotfiles";
+  inherit (config.my) repo;
   trial = ../../home/skills;
 in
 {

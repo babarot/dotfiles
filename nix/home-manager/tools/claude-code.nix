@@ -14,7 +14,7 @@
   ...
 }:
 let
-  dir = "${config.home.homeDirectory}/src/github.com/babarot/dotfiles/home/.claude";
+  dir = "${config.my.repo}/home/.claude";
   link = file: config.lib.file.mkOutOfStoreSymlink "${dir}/${file}";
   babarot = inputs.babarot.packages.${pkgs.stdenv.hostPlatform.system};
 in

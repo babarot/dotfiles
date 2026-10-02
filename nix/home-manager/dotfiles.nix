@@ -2,11 +2,20 @@
 # point at the repo, not the Nix store, so edits apply without a switch.
 { config, lib, ... }:
 let
-  repo = "${config.home.homeDirectory}/src/github.com/babarot/dotfiles";
+  repo = config.my.repo;
   link = name: { source = config.lib.file.mkOutOfStoreSymlink "${repo}/home/${name}"; };
 in
 {
-  home.file = lib.genAttrs [
+  # Where this repo is checked out. Links that point at the repo rather
+  # than the Nix store (dotfiles, ~/.config, trial skills, Claude Code's
+  # settings) all use it.
+  options.my.repo = lib.mkOption {
+    type = lib.types.str;
+    default = "${config.home.homeDirectory}/src/github.com/babarot/dotfiles";
+    description = "Path of this repo's main checkout.";
+  };
+
+  config.home.file = lib.genAttrs [
     ".bashrc"
     ".curlrc"
     ".gitconfig"
@@ -24,7 +33,7 @@ in
   # inside it (zsh/env.zsh, zsh/human.zsh, ...), which then land in the
   # repo, ignored by home/.config/.gitignore. Linked before home-manager checks
   # its targets, so those files go through the link.
-  home.activation.dotfilesConfigLink = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
+  config.home.activation.dotfilesConfigLink = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
     if [[ -L ~/.config && "$(/usr/bin/readlink ~/.config)" == "${repo}/home/.config" ]]; then
       :
     elif [[ ! -e ~/.config && ! -L ~/.config ]]; then

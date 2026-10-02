@@ -55,10 +55,10 @@ let
       ]) languages
       ++ map (lang: ts.queries.${lang}) sharedQueries;
   };
-  # Tools only Neovim runs: LSP servers and conform's formatters. They go
-  # on nvim's own PATH, not the user's, so deleting jq.nix or go.nix does
-  # not break formatting in nvim. Appended, so a version a project pins
-  # with mise still wins.
+  # Tools Neovim runs by name: LSP servers, conform's formatters and what
+  # snacks.nvim's pickers call. They go on nvim's own PATH, not the user's,
+  # so deleting jq.nix, fd.nix or the ripgrep line in packages.nix does not
+  # break nvim. Appended, so a version a project pins with mise still wins.
   tools = with pkgs; [
     gopls
     lua-language-server
@@ -68,6 +68,11 @@ let
     jq
     shfmt
     terraform
+    # snacks.nvim: files (fd, else a find that ignores .gitignore), grep (rg)
+    # and its gh integration
+    fd
+    ripgrep
+    gh
   ];
   neovim = pkgs.symlinkJoin {
     name = "neovim-with-tools";

@@ -1,15 +1,9 @@
-coc
-configstore
-yarn
 gcloud
 gh
-hub
-raycast
-iterm2
+lazygit
 
 # Tool state and credentials (wrangler keeps OAuth tokens here)
 .wrangler
-.copilot
 1Password
 homebrew
 notion

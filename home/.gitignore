@@ -1,9 +1,5 @@
 *~
-.tmux/plugins
 .DS_Store
-.zsh/history
-.config/tfenv
-.config/lazygit
 
 # Claude Code per-machine settings (also used as the global excludesfile)
 **/.claude/settings.local.json

@@ -103,8 +103,6 @@
 
   df = diff --no-ext-diff
   dft = difft --syntax-highlight=off
-  ; mylog = log --oneline HEAD --not main
-  ; mylog = log --oneline HEAD --not main | fzf | awk '{print $1}'
 
 [help]
   autocorrect = 1
@@ -115,12 +113,6 @@
 	signingkey = /Users/babarot/.ssh/id_rsa.pub
 
 [pager]
-  ; log  = diff-highlight | less -RX
-  ; show = diff-highlight | less -RX
-  ; diff = less
-  ; diff = diff-so-fancy | less --tabs=4 -RFX
-  ; diff = delta --dark --plus-color="#012800" --minus-color="#340001"
-  ; diff = "ov --section-delimiter ' --- ' --section-header"
   log = "ov -F --section-delimiter '^commit' --section-header-num 3"
   show = "ov -F --header 3"
   branch = less -X
@@ -128,7 +120,6 @@
 [diff]
   tool                = vimdiff
   algorithm           = histogram
-  compactionHeuristic = true
   # https://difftastic.wilfred.me.uk/
   # https://difftastic.wilfred.me.uk/git.html
   # to DISABLE external diff, these options are available
@@ -147,9 +138,6 @@
   template = ~/.gitmessage
 
 [push]
-  # Use the Git 1.x.x default to avoid errors on machines with old Git
-  # installations. To use `simple` instead, add this to your `~/.extra` file:
-  # `git config --global push.default simple`. See http://git.io/mMah-w.
 	default = current
 	autoSetupRemote = true
 
@@ -157,7 +145,6 @@
   gpgsign = false
 
 [gpg]
-  program = gpg
 	format = ssh
 
 [url "https://"]
@@ -180,5 +167,3 @@
 
 [sequence]
   editor = nvim
-[url "https://github.com/"]
-	insteadOf = git://github.com/

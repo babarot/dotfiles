@@ -27,7 +27,7 @@ return {
         },
       })
 
-      vim.lsp.enable({ 'gopls', 'lua_ls' })
+      vim.lsp.enable({ 'gopls', 'lua_ls', 'terraformls' })
 
       -- [d / ]d are Neovim's defaults; show the diagnostic jumped to in a
       -- float, as Lspsaga's diagnostic_jump_* did

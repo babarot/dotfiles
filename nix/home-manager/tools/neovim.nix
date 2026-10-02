@@ -60,6 +60,7 @@ in
     neovim
     gopls
     lua-language-server
+    terraform-ls
   ];
 
   # lazy.nvim keeps stdpath('data')/site on the runtimepath

@@ -3,7 +3,7 @@
   home.packages = [ pkgs.sd ];
 
   # replace <pattern> [<replacement> [<pathspec>...]]: git grep, then sd
-  # over the matching files (same as home/bin/git-replace)
+  # over the matching files
   my.human.init = ''
     replace() {
       case "''${#}" in
@@ -12,7 +12,7 @@
         *)
           local from="''${1}" to="''${2}"
           shift 2
-          git grep -l "$from" -- "$@" | xargs -I% sd "$from" "$to" %
+          git grep -lz "$from" -- "$@" | xargs -0 sd "$from" "$to"
           ;;
       esac
     }

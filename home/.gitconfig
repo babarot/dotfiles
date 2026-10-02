@@ -118,7 +118,7 @@
   branch = less -X
 
 [diff]
-  tool                = vimdiff
+  tool                = nvimdiff
   algorithm           = histogram
   # https://difftastic.wilfred.me.uk/
   # https://difftastic.wilfred.me.uk/git.html
@@ -131,7 +131,7 @@
   defaultBranch = main
 
 [merge]
-  tool = vimdiff
+  tool = nvimdiff
 
 [commit]
 	gpgsign = true

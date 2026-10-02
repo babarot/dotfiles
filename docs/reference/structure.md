@@ -16,6 +16,7 @@ nix/
   homebrew.nix         # vendor apps installed by Homebrew casks (install only)
   treefmt.nix          # formatters and linters behind `nix fmt`
   hosts/<host>.nix     # per-Mac packages, casks and App Store apps
+  hosts/<host>/*.nix   # per-Mac tool files with settings (e.g. kubernetes.group.nix), imported for that Mac only
   home-manager/
     default.nix        # imports every file in nix/home-manager/tools
     ai.nix             # my.ai: agent-only zsh settings, rendered to ~/.config/zsh/ai.zsh
@@ -27,7 +28,7 @@ nix/
     human.nix          # my.human: human-only zsh UX, rendered to ~/.config/zsh/human.zsh
     mas.nix            # my.masApps: Mac App Store apps installed with mas
     skills.nix         # my.skills: Agent Skills shipped with tools or on trial in home/skills
-    tools/<tool>.nix   # one file per tool: its package and its shell settings
+    tools/<tool>.nix   # one unit per file: a tool, a tool with companions, or a <subject>.group.nix (AGENTS.md, "One file, one unit")
     tools/<other>      # a tool's scripts and patches beside it (only *.nix is imported)
 home/                  # files linked into ~ under the same names (nix/home-manager/dotfiles.nix)
   .zshenv, .zshrc, .zsh/ # hand-written zsh

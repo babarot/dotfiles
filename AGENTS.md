@@ -38,16 +38,54 @@ Do not add a directory at the repository root without a strong reason; put new f
 - Update inputs with `nix flake update` (all) or `nix flake update babarot` (own tools).
 - After `nix flake update agent-skills`, run `nix build` as yourself before `sudo darwin-rebuild`: the input is a private repo fetched with your SSH key, which root does not have.
 
+## One file, one unit
+
+A tool file (a `*.nix` in `nix/home-manager/tools/` or `nix/hosts/<host>/`) is one unit of adding and removing: adding the file installs and sets up everything in it, and deleting the file removes all of that and nothing that is still wanted. Every file is one of four kinds:
+
+| Kind | File name | Holds | Examples |
+|---|---|---|---|
+| Tool | `<tool>.nix` | one tool and its settings | `eza.nix`, `gomi.nix` |
+| Tool with companions | `<main tool>.nix` | a main tool, plus tools that exist only to serve it | `gh.nix` (delta and lazygit, used by gh-dash), `neovim.nix` (LSP servers and formatters), `go.nix` (goimports) |
+| Group | `<subject>.group.nix` | peer tools with no main one, all used for one subject outside the tools: a system or platform you work with | `nix/hosts/PC-M-2025-026/kubernetes.group.nix` |
+| Catalog | a fixed name | tools or apps with no settings of their own, listed alphabetically | `packages.nix`, `apps.nix`, `app-store.nix` |
+
+To decide where a tool goes:
+
+1. Does a group for its subject exist? List them with `ls nix/home-manager/tools/*.group.nix nix/hosts/*/*.group.nix`. If the tool is for that subject, add it to the group. Do not make a file of its own next to a group (no `stern.nix` beside `kubernetes.group.nix`).
+2. Does it exist only to serve one main tool? Ask: "if the main tool were removed, would I keep this one?" If not, it is a companion and goes in the main tool's file.
+3. Otherwise it is a tool of its own: its own file if it has settings, a line in `packages.nix` if it has none.
+
+A group is only for tools tied to one subject, where the test is: "if I stopped working with <subject>, would every one of these go at the same time?" Tools that merely share a kind are never a group, however many there are: linters, formatters, JSON/YAML tools, "Go tools", git helpers, cloud CLIs. Each of those is added and dropped on its own, so a file holding them would make deleting it remove tools still in use, and would hide each tool's settings under a name that is not the tool's. They stay one file each, or lines in `packages.nix`.
+
+Rules for groups:
+
+- Name: the subject, then `.group` before `.nix`: `kubernetes.group.nix`, never `kubernetes.nix`. Without the marker, a listing reads the file as a tool of that name (nixpkgs even has a `kubernetes` package). The marker is a suffix so files still sort by subject.
+- The file opens with a comment saying what the group is for, which Macs get it, and that new tools for the subject go in it.
+- A group is one file, never a directory of per-tool files. Settings the group shares (an abbreviation, wrapper links, `my.path`) sit in it next to the packages. Scripts it reads go in a `<subject>/` directory beside it, as tools/ does for tools; only `*.nix` directly in the directory is imported.
+- A tool is in exactly one file. A tool also used for another subject, or on its own, gets its own file.
+- A tool-with-companions file has no marker: the main tool's name already says what it holds.
+
+Where the file lives depends on which Macs get it:
+
+| Which Macs | Where | Loaded by |
+|---|---|---|
+| Both | `nix/home-manager/tools/<name>.nix` | `nix/home-manager/default.nix`, every `*.nix` in that directory |
+| One, and the tool or group has settings (`my.*`, wrapper links) or more than one package | `nix/hosts/<host>/<name>.nix`, a home-manager module of the same shape as a tools/ file | `mkHost` in `flake.nix`, every `*.nix` directly in that directory, for that Mac only |
+| One, a single package with no settings | a line in `home.packages` in `nix/hosts/<host>.nix` | the host file itself |
+
+Casks, brews and App Store apps for one Mac stay in `nix/hosts/<host>.nix`: it is a nix-darwin module, while the files in `nix/hosts/<host>/` are home-manager modules and cannot hold them.
+
 ## Where things go
 
 | What | Where |
 |---|---|
 | New hand-written dotfile | put it in `home/` under its name in ~ and list it in `nix/home-manager/dotfiles.nix` (a tool's own dotfile is linked from its `nix/home-manager/tools/<tool>.nix`, like Claude Code's in `claude-code.nix`) |
 | CLI tool with no shell settings | `nix/home-manager/tools/packages.nix` (alphabetical) |
-| CLI tool with aliases, shell functions, env or a zsh hook | its own `nix/home-manager/tools/<tool>.nix`, settings under `my.human`; a function built around a tool (e.g. a picker using fzf) goes in that tool's file |
+| CLI tool with aliases, shell functions, env or a zsh hook | its own `nix/home-manager/tools/<tool>.nix`, settings under `my.human`; a function built around a tool (e.g. a picker using fzf) goes in that tool's file. A companion goes in its main tool's file, and a tool for a subject that has a group goes in the group ([One file, one unit](#one-file-one-unit)) |
 | Another tool used inside a tool's settings (fzf in `bat-theme`, eza in enhancd's filter) | refer to it by store path (`lib.getExe pkgs.<tool>`), not through PATH: a file puts only its own tool on PATH, so deleting `fzf.nix` removes `fzf` but not bat's use of it. Exceptions: macOS's userland and git, hand-written config files that cannot hold a store path (they put the tool on PATH from the file that uses it, as `gh.nix` does for gh-dash), and optional uses guarded by `$+commands[...]` |
 | Alias or function not tied to any one tool | an existing `home/.zsh/NN_*.zsh`, or a new one with a numeric prefix (only `[0-9]*.zsh` is loaded; hand-written, humans only; loaded through `my.human` at order 5000) |
-| Tool or app for one Mac only | `nix/hosts/<host>.nix` |
+| Tool for one Mac only | `nix/hosts/<host>/<name>.nix` when it has settings or more than one package (a group included), else a line in `nix/hosts/<host>.nix` ([One file, one unit](#one-file-one-unit)) |
+| App, cask or brew for one Mac only | `nix/hosts/<host>.nix` |
 | zsh plugin | `my.human.plugins.<name>` with `src`, `file`, `order` (hand-written `~/.zsh` loads at 5000, zsh-abbr at 6000) |
 | Variable agents also need (GOPATH, ...) | `my.env` in the tool's `nix/home-manager/tools/<tool>.nix`; rendered to `~/.config/zsh/env.zsh`, which `.zshenv` sources |
 | git setting that runs a tool (a pager, a diff alias) | `my.gitConfig` in the tool's file, with the store path (`ov.nix`, `difftastic.nix`); rendered to `~/.config/git/tools.gitconfig`, which `home/.gitconfig` includes |

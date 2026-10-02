@@ -63,8 +63,19 @@
       system = "aarch64-darwin";
       treefmt = treefmt-nix.lib.evalModule nixpkgs.legacyPackages.${system} ./nix/treefmt.nix;
 
+      # nix/hosts/<host>.nix is the Mac's darwin module; every *.nix directly
+      # in nix/hosts/<host>/ is a home-manager module only that Mac imports,
+      # as nix/home-manager/tools/ is for both
       mkHost =
         host:
+        let
+          dir = ./nix/hosts + "/${host}";
+          hostTools = nixpkgs.lib.optionals (builtins.pathExists dir) (
+            map (f: dir + "/${f}") (
+              builtins.filter (f: builtins.match ".*\\.nix" f != null) (builtins.attrNames (builtins.readDir dir))
+            )
+          );
+        in
         nix-darwin.lib.darwinSystem {
           specialArgs = { inherit inputs; };
           modules = [
@@ -72,7 +83,7 @@
             ./nix/macos.nix
             nix-homebrew.darwinModules.nix-homebrew
             ./nix/homebrew.nix
-            host
+            (./nix/hosts + "/${host}.nix")
             home-manager.darwinModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
@@ -80,7 +91,7 @@
               # Move files in the way (e.g. old afx links) aside instead of failing
               home-manager.backupFileExtension = "before-hm";
               home-manager.extraSpecialArgs = { inherit inputs; };
-              home-manager.users.babarot = import ./nix/home-manager;
+              home-manager.users.babarot.imports = [ ./nix/home-manager ] ++ hostTools;
             }
           ];
         };
@@ -92,8 +103,8 @@
 
       # darwin-rebuild picks the entry matching `scutil --get LocalHostName`
       darwinConfigurations = {
-        "pro23" = mkHost ./nix/hosts/pro23.nix;
-        "PC-M-2025-026" = mkHost ./nix/hosts/PC-M-2025-026.nix;
+        "pro23" = mkHost "pro23";
+        "PC-M-2025-026" = mkHost "PC-M-2025-026";
       };
     };
 }

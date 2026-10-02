@@ -5,6 +5,7 @@
     actionlint
     ast-grep
     bashInteractive
+    btop
     ccusage
     conftest
     d2

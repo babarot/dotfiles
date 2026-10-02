@@ -10,7 +10,7 @@
   ...
 }:
 let
-  herdr = "${pkgs.herdr}/bin/herdr";
+  herdr = lib.getExe config.my.herdr;
   jq = "${pkgs.jq}/bin/jq";
   plugins = config.my.herdrPlugins;
 in

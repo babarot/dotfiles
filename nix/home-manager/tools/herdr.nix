@@ -23,14 +23,24 @@ let
   });
 in
 {
-  home.packages = [ herdr ];
+  # Everything that runs herdr (plugins, launchd agents) takes it from here,
+  # so it is the patched build the user runs, not a second, unpatched one
+  options.my.herdr = lib.mkOption {
+    type = lib.types.package;
+    readOnly = true;
+    description = "herdr with this repo's patches.";
+  };
 
-  my.forkPatches.herdr = {
+  config.my.herdr = herdr;
+
+  config.home.packages = [ herdr ];
+
+  config.my.forkPatches.herdr = {
     inherit (pkgs.herdr) src;
     dir = ./herdr;
   };
 
-  my.skills.herdr = "${herdr}/share/skills/herdr/herdr";
+  config.my.skills.herdr = "${herdr}/share/skills/herdr/herdr";
 
   # The integrations let herdr resume Claude Code and Codex conversations
   # after its server restarts (e.g. a reboot). The hook scripts come from
@@ -39,7 +49,7 @@ in
   # ~/.claude/settings.json (this repo's home/.claude/settings.json) and
   # ~/.codex/hooks.json, plus `[features] hooks = true` in
   # ~/.codex/config.toml. The hooks do nothing outside herdr.
-  home.activation.herdrIntegrations = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  config.home.activation.herdrIntegrations = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     for agent in claude codex; do
       run ${herdr}/bin/herdr integration install "$agent" >/dev/null \
         || warnEcho "herdr: installing the $agent integration failed"

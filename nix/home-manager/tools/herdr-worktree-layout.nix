@@ -2,12 +2,17 @@
 # opens (prefix+shift+g, the sidebar, `herdr worktree create`): Claude Code
 # top left, reviewr top right, a zsh across the bottom. The script is
 # herdr-worktree-layout.sh; reviewr's own auto_open is off so it opens once.
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   layout = pkgs.writeShellApplication {
     name = "herdr-worktree-layout";
     runtimeInputs = [
-      pkgs.herdr
+      config.my.herdr
       pkgs.jq
     ];
     text = builtins.readFile ./herdr-worktree-layout.sh;

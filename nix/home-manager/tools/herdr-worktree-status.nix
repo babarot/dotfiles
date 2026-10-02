@@ -22,7 +22,7 @@ let
     name = "herdr-worktree-status";
     runtimeInputs = [
       pkgs.coreutils
-      pkgs.herdr
+      config.my.herdr
       pkgs.jq
     ];
     text = builtins.readFile ./herdr-worktree-status.sh;

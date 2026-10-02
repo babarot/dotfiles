@@ -62,9 +62,12 @@ catch
   colorscheme habamax
 endtry
 
-" Search with git grep, results in the quickfix list
+" Search with git grep, results in the quickfix list. :Grep runs it
+" silently, so git grep's output does not flash by with a Press ENTER
 set grepprg=git\ grep\ -n\ --no-color
 set grepformat=%f:%l:%m
+set shellpipe=>
+command! -nargs=+ Grep execute 'silent grep! ' . <q-args> | redraw! | cwindow
 
 " Keys (nvim's keymaps.lua)
 inoremap jj <Esc>
@@ -129,14 +132,10 @@ nnoremap <expr> ss winnr('$') == 1 ? ':<C-u>vsplit<CR>' : ':<C-u>wincmd w<CR>'
 nnoremap <Space>f :<C-u>find<Space>
 nnoremap <Space>j :<C-u>browse oldfiles<CR>
 nnoremap <leader>fb :<C-u>ls<CR>:b<Space>
-nnoremap <leader>/ :<C-u>grep!<Space>
-nnoremap <Space>G :<C-u>grep!<Space>
-nnoremap <silent> <leader>fw :<C-u>grep! -w <C-r><C-w><CR>:copen<CR>
+nnoremap <leader>/ :<C-u>Grep<Space>
+nnoremap <Space>G :<C-u>Grep<Space>
+nnoremap <silent> <leader>fw :<C-u>Grep -w <C-r><C-w><CR>
 nnoremap <silent> - :<C-u>Explore<CR>
-augroup vimrc-quickfix
-  autocmd!
-  autocmd QuickFixCmdPost grep cwindow
-augroup END
 
 " Visual K toggles comments, as in nvim; only with vim-commentary
 augroup vimrc-plugins

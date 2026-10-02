@@ -1,6 +1,6 @@
 theme = "tokyo-night"
 default_scope = "uncommitted"
-navigator_position = "left"
+navigator_position = "bottom"
 toggle_placement = "overlay"
 toggle_direction = "down"
 # The worktree layout plugin (nix/home-manager/tools/herdr-worktree-layout.nix) opens it

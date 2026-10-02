@@ -92,7 +92,7 @@ crit's Claude Code skills come from the same pinned source ([crit.nix](../../nix
 2. Copy an existing host file to `nix/hosts/<hostname>.nix` and keep only what that Mac needs.
 3. Add `"<hostname>" = mkHost ./nix/hosts/<hostname>.nix;` to `darwinConfigurations` in [flake.nix](../../flake.nix).
 4. `git add` the new host file.
-5. Add the Mac to the host tables in [AGENTS.md](../../AGENTS.md) and [structure.md](../reference/structure.md#two-macs-one-flake).
+5. Add the Mac to the host table in [AGENTS.md](../../AGENTS.md) and to the hosts named in [structure.md](../reference/structure.md#two-macs-one-flake) and [setup-mac.md](./setup-mac.md#nixzsh).
 
 CI and the pre-push hook read the hosts from `darwinConfigurations`, so neither needs a change. Setting up the machine itself is in [setup-mac.md](./setup-mac.md#nixzsh).
 

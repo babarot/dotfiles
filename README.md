@@ -38,6 +38,9 @@ Settings for humans go in `my.human`, rendered into `~/.config/zsh/human.zsh` an
     BAT_THEME = "DarkNeon";
   };
 
+  # Agents read bat's output, not scroll it
+  my.ai.env.BAT_PAGER = "cat";
+
   my.human.init = ''
     bat-theme() {
       local file=$1
@@ -70,7 +73,7 @@ home/                    # hand-written dotfiles, linked into ~ under the same n
 docs/                    # guides, concepts and reference (see docs/README.md)
 ```
 
-The full tree is in [docs/structure.md](./docs/reference/structure.md#layout).
+The full tree is in [docs/reference/structure.md](./docs/reference/structure.md#layout).
 
 ## Apply changes
 

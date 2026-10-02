@@ -91,7 +91,7 @@ Clone this repo into `~/src/github.com/babarot/dotfiles`. Keep this exact path: 
 git clone git@github.com:babarot/dotfiles.git ~/src/github.com/babarot/dotfiles
 ```
 
-The first `darwin-rebuild switch` (see [Nix/Zsh](#nixzsh)) links the dotfiles (`.zshrc`, `.gitconfig`, `.config`, `bin`, ...) into `$HOME`, as listed in [nix/home-manager/dotfiles.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home-manager/dotfiles.nix). The links point at the repo, so edits apply without a switch. Until then, the shell is plain macOS zsh. The linked `.gitconfig` also turns on this repo's pre-commit hook (`.githooks`), which stops commits that leak a secret or skip `nix fmt`.
+The first `darwin-rebuild switch` (see [Nix/Zsh](#nixzsh)) links the dotfiles (`.zshrc`, `.gitconfig`, `.config`, `bin`, ...) into `$HOME`, as listed in [nix/home-manager/dotfiles.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home-manager/dotfiles.nix). The links point at the repo, so edits apply without a switch. Until then, the shell is plain macOS zsh. The linked `.gitconfig` also turns on this repo's hooks in `.githooks`: pre-commit stops commits that leak a secret or skip `nix fmt`, and pre-push builds every Mac.
 
 ## Homebrew
 
@@ -190,7 +190,7 @@ pbpaste >| ~/.enhancd/enhancd.log
 
 # 4. Configure Apps
 
-`darwin-rebuild switch` installs these apps (see [Packages](https://github.com/babarot/dotfiles#packages)); what is left is signing in and settings. Apps listed in `nix/hosts/<hostname>.nix` are only on that Mac.
+`darwin-rebuild switch` installs these apps (see [Packages](../reference/structure.md#packages)); what is left is signing in and settings. Apps listed in `nix/hosts/<hostname>.nix` are only on that Mac.
 
 ## 1Password
 

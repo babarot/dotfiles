@@ -36,7 +36,7 @@ done
   exit 2
 }
 
-# The flake as staged or at the commit
+# The flake in the working tree, or at the commit
 flake=.
 [ -z "$rev" ] || flake="git+file://$top?rev=$(git rev-parse "$rev^{commit}")"
 

@@ -24,7 +24,7 @@ Put a variable here when agents need it too and it belongs to one tool. Other va
 
 [human.nix](../../nix/home-manager/human.nix). Shell UX for humans only: environment variables, aliases, zsh plugins and free-form zsh. It is rendered into `~/.config/zsh/human.zsh`, which [.zshrc](../../home/.zshrc) sources after the `is_human` guard, so agents never load any of it. The options and the order they are written in are in human.nix.
 
-Plugins are sorted by an `order`. Two entries are landmarks the others are placed around: the hand-written `~/.zsh/*.zsh` (bindkeys, setopts, zstyles), and zsh-abbr after it. A plugin that binds keys has to come before the hand-written files, since they switch to vi mode; zsh-abbr has to come after them, since it binds space in that keymap. Their values are in human.nix and [zsh-abbr.nix](../../nix/home-manager/tools/zsh-abbr.nix).
+Plugins are sorted by an `order`. Two entries are landmarks the others are placed around: the hand-written `~/.zsh/[0-9]*.zsh` (bindkeys, aliases and functions, setopts, zstyles; a file without a numeric prefix is not loaded), and zsh-abbr after it. A plugin that binds keys has to come before the hand-written files, since they switch to vi mode; zsh-abbr has to come after them, since it binds space in that keymap. Their values are in human.nix and [zsh-abbr.nix](../../nix/home-manager/tools/zsh-abbr.nix).
 
 Abbreviations are declared with `abbr --session`, so none is saved to zsh-abbr's user file and one removed from Nix does not live on.
 
@@ -50,7 +50,7 @@ An alias only reaches commands zsh runs itself. `xargs rm`, `find -exec rm` and 
 
 [skills.nix](../../nix/home-manager/skills.nix). Agent Skill directories (each holding a `SKILL.md`) by skill name. Each one is linked into both `~/.claude/skills/<name>` and `~/.agents/skills/<name>`, so Claude Code and Codex know how to use a tool as soon as it is installed. A tool file sets it next to the package, pointing at the skill the package ships.
 
-The same module adds every directory in [home/skills/](../../home/skills/), my own skills on trial. Those links point at the repo, not the store, so edits apply without a switch; a new skill needs one. Why the directory exists is in [structure.md](../reference/structure.md#agent-skills).
+The same module adds every directory in [home/skills/](../../home/skills/), my own skills on trial. Those links point at the main checkout, not the store, so edits apply without a switch once they are in it (a worktree edit applies when landed); a new skill needs a switch. Why the directory exists is in [structure.md](../reference/structure.md#agent-skills).
 
 ## my.agentSkills.scopes
 
@@ -61,6 +61,14 @@ The same module adds every directory in [home/skills/](../../home/skills/), my o
 [herdr-plugins.nix](../../nix/home-manager/herdr-plugins.nix). herdr plugins built by Nix, by plugin id.
 
 On every switch, an activation script runs `herdr plugin link` on each store path. Linking never writes into the plugin directory, so a read-only store path works, and linking an id again replaces its old store path in `~/.config/herdr/plugins.json`. It then runs `herdr plugin unlink` on every registered plugin whose root is in `/nix/store` but whose id is no longer in `my.herdrPlugins`. Plugins installed or linked by hand are left alone. A failed link or unlink warns and does not stop the switch.
+
+## my.forkPatches
+
+[fork-patches.nix](../../nix/home-manager/fork-patches.nix). Packages built with local patches, by package name: the upstream source, the directory of patch files and the fork they are exported from. A tool's file declares its entry next to the package and applies the entry's `patches`; [.githooks/check-patches](../../.githooks/check-patches) reads the same entries to check the files against the fork's `patches` branch. How the patches are made and imported is in [maintenance.md](../guides/maintenance.md#patch-a-package-from-a-fork-branch).
+
+## my.herdrWorktreeStatus
+
+[tools/herdr-worktree-status.nix](../../nix/home-manager/tools/herdr-worktree-status.nix). Marks in herdr's sidebar for worktree workspaces, by token name: a shell condition, the repos it runs in and the mark it puts. Set per Mac in the host file; what the marks are for is in [workflow.md](./workflow.md#naming-a-workspace).
 
 ## my.masApps
 

@@ -6,17 +6,17 @@ Subject: [PATCH] Add a name field to the new worktree dialog
 It names the space and leaves the generated branch and checkout alone,
 like renaming the space afterwards does.
 ---
- src/client/shell/state.rs                     |  3 ++
- .../tests/agents_worktrees_notifications.rs   | 41 ++++++++++++++
+ src/client/shell/state.rs                     |  3 +
+ .../tests/agents_worktrees_notifications.rs   | 41 ++++++++++++
  src/client/shell/tests/graphics.rs            |  2 +
  .../shell/tests/popup_focus_projection.rs     |  2 +
  src/client/shell/tests/text_editing.rs        |  2 +
- src/client/shell/worktree_overlays.rs         | 53 +++++++++++--------
- src/client/shell/worktrees.rs                 | 22 ++++++--
- 7 files changed, 100 insertions(+), 25 deletions(-)
+ src/client/shell/worktree_overlays.rs         | 63 ++++++++++++-------
+ src/client/shell/worktrees.rs                 | 22 ++++++-
+ 7 files changed, 110 insertions(+), 25 deletions(-)
 
 diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
-index 901c5a28..b7f1118b 100644
+index 901c5a2..b7f1118 100644
 --- a/src/client/shell/state.rs
 +++ b/src/client/shell/state.rs
 @@ -424,6 +424,9 @@ pub(super) struct ClientSettingsOverlay {
@@ -30,7 +30,7 @@ index 901c5a28..b7f1118b 100644
      pub(super) checkout_path: String,
      pub(super) error: Option<String>,
 diff --git a/src/client/shell/tests/agents_worktrees_notifications.rs b/src/client/shell/tests/agents_worktrees_notifications.rs
-index 8d27b801..90ff1eb8 100644
+index 8d27b80..90ff1eb 100644
 --- a/src/client/shell/tests/agents_worktrees_notifications.rs
 +++ b/src/client/shell/tests/agents_worktrees_notifications.rs
 @@ -1037,6 +1037,7 @@ fn worktree_create_previews_the_endpoint_owned_checkout_path() {
@@ -100,7 +100,7 @@ index 8d27b801..90ff1eb8 100644
  
      let submit = state.handle_input_bytes(b"\r");
 diff --git a/src/client/shell/tests/graphics.rs b/src/client/shell/tests/graphics.rs
-index c5fa1f4a..4140788a 100644
+index c5fa1f4..4140788 100644
 --- a/src/client/shell/tests/graphics.rs
 +++ b/src/client/shell/tests/graphics.rs
 @@ -235,6 +235,8 @@ fn every_dialog_and_menu_occludes_its_panel_not_the_whole_screen() {
@@ -113,7 +113,7 @@ index c5fa1f4a..4140788a 100644
              checkout_path: "path".into(),
              error: None,
 diff --git a/src/client/shell/tests/popup_focus_projection.rs b/src/client/shell/tests/popup_focus_projection.rs
-index 25d3b334..0ef9e4da 100644
+index 25d3b33..0ef9e4d 100644
 --- a/src/client/shell/tests/popup_focus_projection.rs
 +++ b/src/client/shell/tests/popup_focus_projection.rs
 @@ -48,6 +48,8 @@ fn modal_paste_target_requires_a_focused_editable_client_field() {
@@ -126,7 +126,7 @@ index 25d3b334..0ef9e4da 100644
              checkout_path: String::new(),
              error: None,
 diff --git a/src/client/shell/tests/text_editing.rs b/src/client/shell/tests/text_editing.rs
-index b63ce9f6..b2fecd8c 100644
+index b63ce9f..b2fecd8 100644
 --- a/src/client/shell/tests/text_editing.rs
 +++ b/src/client/shell/tests/text_editing.rs
 @@ -26,6 +26,8 @@ fn shell(field: usize) -> ClientShellState {
@@ -139,7 +139,7 @@ index b63ce9f6..b2fecd8c 100644
          6 => {
              state.open_navigator_overlay();
 diff --git a/src/client/shell/worktree_overlays.rs b/src/client/shell/worktree_overlays.rs
-index 318c4019..c32308af 100644
+index 318c401..cb8097d 100644
 --- a/src/client/shell/worktree_overlays.rs
 +++ b/src/client/shell/worktree_overlays.rs
 @@ -5,7 +5,7 @@ pub(super) fn render_worktree_create_overlay(
@@ -151,14 +151,24 @@ index 318c4019..c32308af 100644
      let inner = panel(b, popup, p.accent, p.panel_bg)?;
      put_text(
          b,
-@@ -18,26 +18,35 @@ pub(super) fn render_worktree_create_overlay(
+@@ -18,26 +18,45 @@ pub(super) fn render_worktree_create_overlay(
              .bg(p.panel_bg)
              .add_modifier(Modifier::BOLD),
      );
 +    let mut cursor = None;
 +    for (y, title, editor, focused) in [
-+        (inner.y + 2, " name (optional, tab to switch)", &create.label, create.label_focused),
-+        (inner.y + 5, " branch", &create.branch, !create.label_focused),
++        (
++            inner.y + 2,
++            " name (optional, tab to switch)",
++            &create.label,
++            create.label_focused,
++        ),
++        (
++            inner.y + 5,
++            " branch",
++            &create.branch,
++            !create.label_focused,
++        ),
 +    ] {
 +        put_text(
 +            b,
@@ -204,7 +214,7 @@ index 318c4019..c32308af 100644
          inner.width,
          " checkout",
          Style::default().fg(p.overlay0).bg(p.panel_bg),
-@@ -45,7 +54,7 @@ pub(super) fn render_worktree_create_overlay(
+@@ -45,7 +64,7 @@ pub(super) fn render_worktree_create_overlay(
      put_text(
          b,
          inner.x,
@@ -213,7 +223,7 @@ index 318c4019..c32308af 100644
          inner.width,
          &format!(" {}", create.checkout_path),
          Style::default().fg(p.subtext0).bg(p.panel_bg),
-@@ -54,7 +63,7 @@ pub(super) fn render_worktree_create_overlay(
+@@ -54,7 +73,7 @@ pub(super) fn render_worktree_create_overlay(
          put_text(
              b,
              inner.x,
@@ -222,7 +232,7 @@ index 318c4019..c32308af 100644
              inner.width,
              " creating…",
              Style::default().fg(p.accent).bg(p.panel_bg),
-@@ -63,13 +72,13 @@ pub(super) fn render_worktree_create_overlay(
+@@ -63,13 +82,13 @@ pub(super) fn render_worktree_create_overlay(
          put_text(
              b,
              inner.x,
@@ -239,7 +249,7 @@ index 318c4019..c32308af 100644
          return None;
      };
 diff --git a/src/client/shell/worktrees.rs b/src/client/shell/worktrees.rs
-index 56c554c8..5bc2cefd 100644
+index 56c554c..5bc2cef 100644
 --- a/src/client/shell/worktrees.rs
 +++ b/src/client/shell/worktrees.rs
 @@ -24,7 +24,9 @@ impl ClientShellState {

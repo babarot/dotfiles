@@ -10,15 +10,15 @@ show Done again until they are viewed. In the focused space, whose
 agents are acknowledged on every frame, the marked panes stay unread
 until they leave the screen or their agent moves on.
 ---
- src/client/shell/context_menu.rs         | 18 ++++-
+ src/client/shell/context_menu.rs         | 19 +++++-
  src/client/shell/endpoint_agent_state.rs | 66 ++++++++++++++++++
  src/client/shell/endpoints.rs            | 23 +++++++
  src/client/shell/state.rs                |  4 ++
  src/client/shell/tests/chrome_context.rs | 87 ++++++++++++++++++++++++
- 5 files changed, 197 insertions(+), 1 deletion(-)
+ 5 files changed, 198 insertions(+), 1 deletion(-)
 
 diff --git a/src/client/shell/context_menu.rs b/src/client/shell/context_menu.rs
-index 96f57178..c261e036 100644
+index 96f5717..7db176e 100644
 --- a/src/client/shell/context_menu.rs
 +++ b/src/client/shell/context_menu.rs
 @@ -5,7 +5,7 @@ impl ClientContextMenuOverlay {
@@ -30,7 +30,7 @@ index 96f57178..c261e036 100644
              ClientContextMenuTarget::Workspace { is_git: false, .. } => {
                  vec![item("Rename", Action::Rename), item("Close", Action::Close)]
              }
-@@ -75,7 +75,15 @@ impl ClientContextMenuOverlay {
+@@ -75,7 +75,16 @@ impl ClientContextMenuOverlay {
                  ]);
                  items
              }
@@ -40,13 +40,14 @@ index 96f57178..c261e036 100644
 +            ..
 +        } = &self.target
 +        {
-+            items.push(item("Mark as unread", Action::MarkUnread));
++            // Next to Rename, ahead of Close and the worktree actions
++            items.insert(1, item("Mark as unread", Action::MarkUnread));
          }
 +        items
      }
  }
  
-@@ -109,6 +117,10 @@ impl ClientShellState {
+@@ -109,6 +118,10 @@ impl ClientShellState {
          let collapsed = worktree.is_some_and(|worktree| {
              self.group_is_collapsed(&self.active_endpoint_id, &worktree.key)
          });
@@ -57,7 +58,7 @@ index 96f57178..c261e036 100644
          self.overlay = Some(ClientShellOverlay::ContextMenu(ClientContextMenuOverlay {
              target: ClientContextMenuTarget::Workspace {
                  workspace_id,
-@@ -116,6 +128,7 @@ impl ClientShellState {
+@@ -116,6 +129,7 @@ impl ClientShellState {
                  is_linked_worktree: worktree.is_some_and(|worktree| worktree.is_linked_worktree),
                  has_worktree_children,
                  collapsed,
@@ -65,7 +66,7 @@ index 96f57178..c261e036 100644
              },
              x,
              y,
-@@ -284,6 +297,9 @@ impl ClientShellState {
+@@ -284,6 +298,9 @@ impl ClientShellState {
                      self.persist_chrome_preferences(outcome);
                  }
              }
@@ -76,7 +77,7 @@ index 96f57178..c261e036 100644
          }
      }
 diff --git a/src/client/shell/endpoint_agent_state.rs b/src/client/shell/endpoint_agent_state.rs
-index f8ba7a9b..a4924899 100644
+index f8ba7a9..a492489 100644
 --- a/src/client/shell/endpoint_agent_state.rs
 +++ b/src/client/shell/endpoint_agent_state.rs
 @@ -7,6 +7,10 @@ use crate::protocol::{ClientShellAgent, ClientShellSnapshot, PaneSurfaceFrame};
@@ -188,7 +189,7 @@ index f8ba7a9b..a4924899 100644
      fn stale_or_unfocused_surface_does_not_acknowledge_completion() {
          let mut presentation = EndpointAgentPresentation::default();
 diff --git a/src/client/shell/endpoints.rs b/src/client/shell/endpoints.rs
-index c27358e5..01b34c3e 100644
+index c27358e..01b34c3 100644
 --- a/src/client/shell/endpoints.rs
 +++ b/src/client/shell/endpoints.rs
 @@ -610,6 +610,29 @@ impl ClientShellState {
@@ -222,7 +223,7 @@ index c27358e5..01b34c3e 100644
          let Some(index) = self
              .endpoints
 diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
-index b7f1118b..e903e439 100644
+index b7f1118..e903e43 100644
 --- a/src/client/shell/state.rs
 +++ b/src/client/shell/state.rs
 @@ -517,6 +517,7 @@ pub(super) enum ClientContextMenuAction {
@@ -244,7 +245,7 @@ index b7f1118b..e903e439 100644
      Tab {
          tab_id: String,
 diff --git a/src/client/shell/tests/chrome_context.rs b/src/client/shell/tests/chrome_context.rs
-index ed21bc8a..ad963272 100644
+index ed21bc8..4b4202c 100644
 --- a/src/client/shell/tests/chrome_context.rs
 +++ b/src/client/shell/tests/chrome_context.rs
 @@ -377,6 +377,93 @@ fn context_menus_capture_stable_targets_and_route_actions() {
@@ -315,7 +316,7 @@ index ed21bc8a..ad963272 100644
 +    };
 +
 +    state.open_workspace_context_menu("ws_1".into(), 0, 0);
-+    assert!(mark_unread_index(&state).is_some());
++    assert_eq!(mark_unread_index(&state), Some(1));
 +
 +    state.open_workspace_context_menu("ws_2".into(), 0, 0);
 +    let index = mark_unread_index(&state).expect("mark as unread item");

@@ -11,7 +11,7 @@ ahead/behind in the sidebar; herdr hides them on every grouped worktree
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/src/client/shell/sidebar.rs b/src/client/shell/sidebar.rs
-index 161aecd5..89a1377e 100644
+index 161aecd..89a1377 100644
 --- a/src/client/shell/sidebar.rs
 +++ b/src/client/shell/sidebar.rs
 @@ -631,7 +631,9 @@ pub(in crate::client::shell) fn workspace_rows(

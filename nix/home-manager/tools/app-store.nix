@@ -10,7 +10,7 @@
     "Magnet" = 441258766;
     "MenubarX" = 1575588022;
     "Paste" = 967805235;
-    "Spark" = 1176895641;
+    "Spark Desktop" = 6445813049;
     "Tailscale" = 1475387142;
     "Things" = 904280696;
     "Yoink" = 457622435;

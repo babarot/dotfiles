@@ -1,5 +1,5 @@
 # herdr plugin event (worktree.created, worktree.opened): lay out a new git
-# worktree workspace as Claude Code top left, gh-news top right and reviewr
+# worktree workspace as Claude Code top left, reviewr top right and a zsh
 # across the bottom, all in the worktree, and start Claude. Reopening a
 # worktree Claude already worked in continues that conversation.
 #
@@ -17,17 +17,14 @@ dir=$(jq -r '.data.worktree.path // empty' <<<"$event")
 workspace=$(jq -r '.data.workspace.workspace_id' <<<"$event")
 claude_pane=$HERDR_PANE_ID
 
-# reviewr first, so that it spans the whole width below Claude and gh-news
-herdr plugin pane open --plugin persiyanov.reviewr --entrypoint pane --placement split \
-  --target-pane "$claude_pane" --direction down --cwd "$dir" --no-focus >/dev/null || true
-# A plugin pane opens at half the height and has no --ratio; --amount moves
-# the split's ratio, so this leaves reviewr a third
-herdr pane resize --pane "$claude_pane" --direction down --amount 0.1667 >/dev/null || true
-news_pane=$(herdr pane split "$claude_pane" --direction right --cwd "$dir" --no-focus |
+# The shell first, so that it spans the whole width below Claude and reviewr;
+# --amount moves the split's ratio from half to leave the shell a third
+shell_pane=$(herdr pane split "$claude_pane" --direction down --cwd "$dir" --no-focus |
   jq -r '.result.pane.pane_id')
-herdr pane rename "$news_pane" news >/dev/null || true
-# The typed command waits in the terminal until the new shell reads it
-herdr pane run "$news_pane" 'gh news' >/dev/null || true
+herdr pane rename "$shell_pane" zsh >/dev/null || true
+herdr pane resize --pane "$claude_pane" --direction down --amount 0.1667 >/dev/null || true
+herdr plugin pane open --plugin persiyanov.reviewr --entrypoint pane --placement split \
+  --target-pane "$claude_pane" --direction right --cwd "$dir" --no-focus >/dev/null || true
 
 # Claude keeps a directory's conversations under projects/<path with every
 # non-alphanumeric character turned into ->

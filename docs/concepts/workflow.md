@@ -6,7 +6,7 @@ How work gets done day to day: each change gets its own git worktree and herdr w
 
 A worktree stays open for a whole feature, and each one gets its own herdr workspace. herdr creates the worktrees itself.
 
-When herdr creates or opens a worktree workspace, a plugin ([herdr-worktree-layout.nix](../../nix/home-manager/tools/herdr-worktree-layout.nix)) lays it out with Claude Code, gh-news beside it and a reviewr pane below them, all in the worktree. Reopening a worktree picks up Claude's conversation where it left off, and a workspace someone already arranged is left alone.
+When herdr creates or opens a worktree workspace, a plugin ([herdr-worktree-layout.nix](../../nix/home-manager/tools/herdr-worktree-layout.nix)) lays it out with Claude Code, a reviewr pane beside it and a shell below them, all in the worktree. Reopening a worktree picks up Claude's conversation where it left off, and a workspace someone already arranged is left alone.
 
 herdr's integrations for Claude Code and Codex are installed on every switch, so herdr resumes their conversations after its server restarts.
 

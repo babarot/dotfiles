@@ -79,7 +79,9 @@ while read -r name fork upstream tag dir; do
   found=1
   work="$tmp/$name"
   mkdir -p "$work/raw" "$work/want" "$work/have"
-  git init -q --bare "$work/repo"
+  # --git-dir, not -C: in a linked worktree git hands hooks GIT_DIR, which
+  # wins over -C and would fetch the forks shallow into this repository.
+  git --git-dir="$work/repo" init -q --bare
   # Shallow fetches keep the check quick: the tag's commit, and the branch
   # deep enough to reach it when it holds exactly the committed patches.
   # --write needs the branch's whole history instead, since it may have
@@ -90,9 +92,9 @@ while read -r name fork upstream tag dir; do
   else
     depth=--depth=$((count + 1))
   fi
-  if ! git -C "$work/repo" fetch -q --no-tags --depth=1 \
+  if ! git --git-dir="$work/repo" fetch -q --no-tags --depth=1 \
     "https://github.com/$upstream.git" "+refs/tags/$tag:refs/tags/$tag" ||
-    ! git -C "$work/repo" fetch -q --no-tags "$depth" \
+    ! git --git-dir="$work/repo" fetch -q --no-tags "$depth" \
       "https://github.com/$fork.git" "+refs/heads/patches:refs/heads/patches"; then
     echo "check-patches: $name: cannot fetch $upstream's tag $tag or $fork's patches branch" >&2
     status=1
@@ -100,14 +102,14 @@ while read -r name fork upstream tag dir; do
   fi
 
   if [ -n "$write" ]; then
-    if ! git -C "$work/repo" merge-base --is-ancestor "$tag" patches 2>/dev/null; then
+    if ! git --git-dir="$work/repo" merge-base --is-ancestor "$tag" patches 2>/dev/null; then
       echo "check-patches: $name: $fork's patches branch is not on $tag, the release the package is built from." >&2
       echo "  Rebase the branch onto $tag, or move the package to the branch's release (docs/guides/maintenance.md)." >&2
       status=1
       continue
     fi
-  elif [ "$(git -C "$work/repo" rev-parse -q --verify "patches~$count^{commit}" || true)" != \
-    "$(git -C "$work/repo" rev-parse "$tag^{commit}")" ]; then
+  elif [ "$(git --git-dir="$work/repo" rev-parse -q --verify "patches~$count^{commit}" || true)" != \
+    "$(git --git-dir="$work/repo" rev-parse "$tag^{commit}")" ]; then
     echo "check-patches: $dir/ has $count patches, but $fork's patches branch is not $count commits on $tag." >&2
     echo "  Export the patches again (--write), or rebase the branch onto $tag (docs/guides/maintenance.md)." >&2
     status=1
@@ -119,7 +121,7 @@ while read -r name fork upstream tag dir; do
   # have always been exported with), a hunk is split the same way on every
   # Mac and in CI.
   GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 \
-    git -C "$work/repo" format-patch -q --no-numbered --zero-commit --no-signature \
+    git --git-dir="$work/repo" format-patch -q --no-numbered --zero-commit --no-signature \
     --diff-algorithm=histogram -o "$work/raw" "$tag..patches"
   # The index lines carry abbreviated blob hashes, whose length depends on
   # how many objects the exporting clone has; the diffs are compared in full.

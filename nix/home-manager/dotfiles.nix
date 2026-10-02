@@ -9,11 +9,9 @@ in
   home.file = lib.genAttrs [
     ".bashrc"
     ".curlrc"
-    ".fdignore"
     ".gitconfig"
     ".gitignore" # git's core.excludesfile
     ".gitmessage" # git's commit.template
-    ".obsidian.vimrc"
     ".vimrc"
     ".zsh"
     ".zshenv"

@@ -227,7 +227,7 @@ Run sync.
 Enable [Vimrc Support](https://github.com/esm7/obsidian-vimrc-support) plugin
 
 ```
-cp /path/to/.obsidian.vimrc ~/Documents/(Obsidian Vault)
+cp ~/src/github.com/babarot/dotfiles/home/.obsidian.vimrc ~/Documents/(Obsidian Vault)
 ```
 
 ## Things 3

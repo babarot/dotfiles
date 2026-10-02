@@ -57,7 +57,6 @@
         kubeval
         kustomize
         litecli
-        lua-language-server
         luarocks
         mysql84
         nerd-fonts.monaspace

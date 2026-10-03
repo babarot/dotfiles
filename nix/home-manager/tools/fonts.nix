@@ -1,8 +1,17 @@
 # home-manager links fonts in home.packages into ~/Library/Fonts
 { pkgs, ... }:
 {
-  home.packages = with pkgs.nerd-fonts; [
-    hack
-    jetbrains-mono
-  ];
+  home.packages =
+    (with pkgs.nerd-fonts; [
+      hack
+      jetbrains-mono
+    ])
+    ++ [
+      (pkgs.ibm-plex.override {
+        families = [
+          "mono"
+          "sans-jp"
+        ];
+      })
+    ];
 }

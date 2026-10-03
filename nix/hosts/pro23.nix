@@ -11,6 +11,7 @@
     "orbstack" # Docker and Linux VMs; the work Mac has Docker Desktop
     "parallels"
     "postman"
+    "tabularis" # SQL client; updates itself
   ];
 
   home-manager.users.babarot =

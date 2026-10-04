@@ -1,6 +1,6 @@
 # Where things go
 
-Where each kind of thing is declared, for adding or moving it. Why a file holds what it holds is in [AGENTS.md](../../AGENTS.md#one-file-one-lifecycle); how one tool uses another is in [AGENTS.md](../../AGENTS.md#dependencies-between-tools).
+Where each kind of thing is declared, for adding or moving it. Why a file holds what it holds is in [AGENTS.md](../../AGENTS.md#cohesion-one-file-one-lifecycle); how one tool uses another is in [AGENTS.md](../../AGENTS.md#loose-coupling-dependencies-between-tools).
 
 ## By kind
 
@@ -8,11 +8,11 @@ Where each kind of thing is declared, for adding or moving it. Why a file holds 
 |---|---|
 | New hand-written dotfile | put it in `home/` under its name in ~ and list it in `nix/home-manager/dotfiles.nix` (a tool's own dotfile is linked from its `nix/home-manager/tools/<tool>.nix`, like Claude Code's in `claude-code.nix`) |
 | CLI tool with no shell settings | `nix/home-manager/tools/packages.nix`, a list (alphabetical) |
-| CLI tool with aliases, shell functions, env or a zsh hook | its own `nix/home-manager/tools/<tool>.nix`, settings under `my.human`; a function built around a tool (e.g. a picker using fzf) goes in that tool's file. A function that does not change the shell (no `cd`, `export`, zle) can instead be a command, `pkgs.writeShellApplication` in `home.packages` with what it runs in `runtimeInputs` (`gchange` and `ohayo` in `gcloud.nix`); keep a human-only or same-named wrapper (`codex` in `codex.nix`) a function. A companion goes in its main tool's file, and a tool for a subject that has a set goes in the set ([One file, one lifecycle](../../AGENTS.md#one-file-one-lifecycle)) |
+| CLI tool with aliases, shell functions, env or a zsh hook | its own `nix/home-manager/tools/<tool>.nix`, settings under `my.human`; a function built around a tool (e.g. a picker using fzf) goes in that tool's file. A function that does not change the shell (no `cd`, `export`, zle) can instead be a command, `pkgs.writeShellApplication` in `home.packages` with what it runs in `runtimeInputs` (`gchange` and `ohayo` in `gcloud.nix`); keep a human-only or same-named wrapper (`codex` in `codex.nix`) a function. A companion goes in its main tool's file, and a tool for a subject that has a set goes in the set ([One file, one lifecycle](../../AGENTS.md#cohesion-one-file-one-lifecycle)) |
 | Script of my own | settled: `pkgs.writeShellApplication` in `home.packages` of the file of the tool it belongs to (`git-url` in `git.nix`, `tovim` in `vim.nix`), with what it runs in `runtimeInputs`, or its own `<script>.nix` when it belongs to none (`deadlink.nix`). `home/bin` (`~/bin`, on PATH) is only for a script still being shaped; move it into Nix once it settles |
-| Another tool used inside a tool's settings (fzf in `bat-theme`, eza in enhancd's filter) | by store path, never through PATH ([Dependencies between tools](../../AGENTS.md#dependencies-between-tools)) |
+| Another tool used inside a tool's settings (fzf in `bat-theme`, eza in enhancd's filter) | by store path, never through PATH ([Dependencies between tools](../../AGENTS.md#loose-coupling-dependencies-between-tools)) |
 | Alias or function not tied to any one tool | an existing `home/.zsh/NN_*.zsh`, or a new one with a numeric prefix (only `[0-9]*.zsh` is loaded; hand-written, humans only; loaded through `my.human` as the plugin `zsh-local`) |
-| Tool for one Mac only | `nix/hosts/<host>/<name>.nix` when it has settings or more than one package (a set included), else a line in `nix/hosts/<host>.nix` ([One file, one lifecycle](../../AGENTS.md#one-file-one-lifecycle)) |
+| Tool for one Mac only | `nix/hosts/<host>/<name>.nix` when it has settings or more than one package (a set included), else a line in `nix/hosts/<host>.nix` ([One file, one lifecycle](../../AGENTS.md#cohesion-one-file-one-lifecycle)) |
 | App, cask or brew for one Mac only | `nix/hosts/<host>.nix` |
 | zsh plugin | `my.human.plugins.<name>` with `src`, `file`, and `after`/`before` naming other plugins (the hand-written `~/.zsh` is `zsh-local`), only where the order has a reason, written in a comment next to it |
 | Variable agents also need (GOPATH, ...) | `my.env` in the tool's `nix/home-manager/tools/<tool>.nix`; rendered to `~/.config/zsh/env.zsh`, which `.zshenv` sources |

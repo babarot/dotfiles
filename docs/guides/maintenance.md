@@ -1,6 +1,6 @@
 # Maintenance
 
-Short recipes for keeping this flake up to date: updating inputs, patching and pinning packages, adding a Mac, and moving tools and skills in and out. Rules that live in a file's own comments are not repeated here. Checking a change and applying it follow the steps in [AGENTS.md](../../AGENTS.md#applying-and-checking-changes); they are not repeated here.
+Short recipes for keeping this flake up to date: updating inputs, patching and pinning packages, adding a Mac, and moving tools and skills in and out. Rules that live in a file's own comments are not repeated here. Checking a change and applying it follow the steps in [AGENTS.md](../../AGENTS.md#checking-and-applying-changes); they are not repeated here.
 
 ## Update flake inputs
 

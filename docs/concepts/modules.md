@@ -1,6 +1,6 @@
 # Modules
 
-The home-manager modules in [nix/home-manager/](../../nix/home-manager/) define a few options of their own under `my.*`. They are what lets a tool file in `tools/` set its shell variables, aliases, plugins, skills and apps next to its package, as the [README](../../README.md#one-file-per-tool) describes. This page lists each option and how it reaches the Mac.
+The home-manager modules in [nix/home-manager/](../../nix/home-manager/) define a few options of their own under `my.*`. They are what lets a tool file in `tools/` set its shell variables, aliases, plugins, skills and apps next to its package, as the [README](../../README.md#one-file-per-lifecycle) describes. This page lists each option and how it reaches the Mac.
 
 ## Importing tools
 

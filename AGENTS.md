@@ -1,7 +1,5 @@
 # AGENTS.md
 
-Instructions for AI coding agents (Claude Code, Codex, ...) working in this repository. Claude Code reads this file because there is no CLAUDE.md here. See README.md for the overview, docs/reference/structure.md for the layout and docs/guides/setup-mac.md for setting up a Mac.
-
 ## What this repo is
 
 babarot's macOS environment, shared by two Macs through one Nix flake (nix-darwin + home-manager):
@@ -11,7 +9,7 @@ babarot's macOS environment, shared by two Macs through one Nix flake (nix-darwi
 | `pro23` | private Mac | `nix/hosts/pro23.nix` |
 | `PC-M-2025-026` | work Mac | `nix/hosts/PC-M-2025-026.nix` |
 
-`darwin-rebuild` picks the configuration by `scutil --get LocalHostName`. Anything not in a host file applies to both Macs. The work Mac is operated by a separate agent session on that machine; changes for it are made here, pushed, then pulled and applied there.
+Both Macs read this file; `scutil --get LocalHostName` tells which one you are on, and is also how `darwin-rebuild` picks the configuration. Anything not in a host file applies to both Macs. A change for the other Mac is made and pushed from where you are, then pulled and applied on that Mac by an agent session there.
 
 This repository takes no PRs: work is done in a git worktree and landed in main with `git land` (`--push` to push), which the `/land` skill wraps. Land or push only when the user asks.
 

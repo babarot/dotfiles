@@ -1,6 +1,6 @@
 # Decisions
 
-Why things are the way they are, and what was tried and dropped. Each entry is one decision, the reason for it as the commits give it, and the commits in parentheses. The layout itself is in [structure.md](./structure.md).
+Why things are the way they are, and what was tried and dropped. Each entry is one decision, the reason for it as the commits give it, and the commits in parentheses.
 
 ## Packages
 
@@ -83,7 +83,7 @@ Why things are the way they are, and what was tried and dropped. Each entry is o
 - The repo root holds only `nix/`, `home/` and `docs/`; files linked into `~` moved under `home/`. ([a31cf20](https://github.com/babarot/dotfiles/commit/a31cf20), [1feb641](https://github.com/babarot/dotfiles/commit/1feb641))
 - `nix/home` became `nix/home-manager`, since it and the root `home/` both said "home" for different things. ([f498323](https://github.com/babarot/dotfiles/commit/f498323))
 - macOS System Settings are declared in [macos.nix](../../nix/macos.nix) from the Mac's current values, replacing screenshots in the setup guide that had drifted. ([50b7b6d](https://github.com/babarot/dotfiles/commit/50b7b6d))
-- The README says what the repo is and why; details live in [structure.md](./structure.md), and AGENTS.md links there instead of keeping its own tree. ([e859585](https://github.com/babarot/dotfiles/commit/e859585), [4fe4271](https://github.com/babarot/dotfiles/commit/4fe4271))
+- The README says what the repo is and why. No file keeps the full tree, since `ls` shows it and each file's opening comment says what it is for; AGENTS.md's Layout says only what a listing does not show. A structure.md with the whole tree was dropped for that reason. ([e859585](https://github.com/babarot/dotfiles/commit/e859585), [4fe4271](https://github.com/babarot/dotfiles/commit/4fe4271))
 
 ## Tried and dropped
 

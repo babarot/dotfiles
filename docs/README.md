@@ -29,5 +29,4 @@ Rules for adding a page:
 
 ## Reference
 
-- [structure.md](./reference/structure.md): the directory tree, packages, applying and updating
 - [decisions.md](./reference/decisions.md): why things are the way they are, and what was tried and dropped

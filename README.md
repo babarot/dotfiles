@@ -77,7 +77,7 @@ home/                    # hand-written dotfiles, linked into ~ under the same n
 docs/                    # guides, concepts and reference (see docs/README.md)
 ```
 
-The full tree is in [docs/reference/structure.md](./docs/reference/structure.md#layout).
+What a listing does not show is in [AGENTS.md](./AGENTS.md#layout).
 
 ## Apply changes
 

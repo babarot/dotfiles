@@ -14,8 +14,7 @@ My macOS environment for two Macs, declared in one Nix flake ([nix-darwin](https
 AI agents (Claude Code, Codex, ...) now run more commands in this shell than I do, so the shell is plain by default and human UX is opt-in.
 
 - `.zshenv` defines `is_human`: true only when stdin/stdout are a TTY and no agent marker (`CLAUDECODE`, `AI_AGENT`, ...) is set
-- Agents get plain zsh: no aliases (`cp -i`, `ls` → eza), no fzf-driven `cd`, `EDITOR=true` and `PAGER=cat`, so nothing waits for input
-- One alias is theirs too: `rm` is [gomi](https://github.com/babarot/gomi), which takes rm's flags, so agents use it as the rm they know and a mistaken delete goes to the trash
+- Agents get plain zsh: none of the human aliases (`cp -i`, `ls` → eza), no fzf-driven `cd`, `EDITOR=true` and `PAGER=cat`, so nothing waits for input
 - `.zshrc` returns early unless `is_human`; below that line come aliases, plugins, prompt, keybinds and setopts
 
 Export `AI_AGENT=1` to force the agent side.
@@ -35,8 +34,8 @@ What is added and removed together is installed and configured in one file under
 A tool's settings sit next to its package, by who they are for:
 
 - `my.human`: humans only, rendered into `~/.config/zsh/human.zsh` and sourced after the `is_human` guard
-- `my.env`: variables agents need too (`GOPATH`, ...)
 - `my.ai`: settings only agents get, sourced by `.zshenv` for agents only
+- `my.env`: variables both need (`GOPATH`, ...)
 
 Files for one Mac live in `nix/hosts/<host>/` and are imported only there. The rules are in [AGENTS.md](./AGENTS.md#principles), and how Nix makes the properties hold is in [docs/concepts/dependencies.md](./docs/concepts/dependencies.md).
 

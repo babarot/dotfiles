@@ -6,7 +6,7 @@ The home-manager modules in [nix/home-manager/](../../nix/home-manager/) define 
 
 [default.nix](../../nix/home-manager/default.nix) imports the modules below and every `*.nix` file in `tools/`. Only files ending in `.nix` are imported, so a tool's own scripts and patches can sit beside its file. Adding a tool means adding a file; nothing lists it.
 
-Tool files for one Mac only sit in `nix/hosts/<host>/`. `mkHost` in [flake.nix](../../flake.nix) imports every `*.nix` directly in that directory into that Mac's home-manager user, beside default.nix, so they work like files in `tools/` and set the same `my.*` options. A Mac without the directory imports nothing more. What one file may hold (a single tool, a tool with companions, a `*.set.nix` or a list) is in [AGENTS.md](../../AGENTS.md#one-file-one-unit).
+Tool files for one Mac only sit in `nix/hosts/<host>/`. `mkHost` in [flake.nix](../../flake.nix) imports every `*.nix` directly in that directory into that Mac's home-manager user, beside default.nix, so they work like files in `tools/` and set the same `my.*` options. A Mac without the directory imports nothing more. What one file may hold (a single tool, a tool with companions, a `*.set.nix` or a list) is in [AGENTS.md](../../AGENTS.md#one-file-one-lifecycle).
 
 ## Dotfile links
 

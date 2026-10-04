@@ -5,13 +5,13 @@ description: Commit this session's work in a git worktree and land it in main wi
 
 # land
 
-The user works in a git worktree of a repository that takes no PRs. Commit what this session changed, then land the branch in main with `git land` (an alias in babarot's `~/.gitconfig`: it rebases the branch onto main and fast-forwards main in the main worktree). `git land --push` also pushes main.
+The user works in a git worktree of a repository whose changes go to main without a PR. Commit what this session changed, then land the branch in main with `git land` (an alias in babarot's `~/.gitconfig`: it rebases the branch onto main and fast-forwards main in the main worktree). `git land --push` also pushes main.
 
 ## When to run it
 
 - Run it when the user asks to land the work, bring it into main, or finish the branch. Doing the task is not a request to land it.
 - Push (`--push`) only when the user asks for a push in this request. Landing locally does not imply a push, and a push earlier in the conversation does not carry over.
-- If the repository takes PRs (a PR template, branch protection, or AGENTS.md says so), do not land; say so instead.
+- If the repository takes changes through PRs (a PR template, branch protection, or AGENTS.md says so), or the user asked for a PR, do not land; say so instead.
 
 ## 1. Commit
 

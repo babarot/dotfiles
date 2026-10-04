@@ -35,7 +35,7 @@ All of these are built by Nix; herdr plugins are registered with `herdr plugin l
 
 ## Landing
 
-This repo takes no PRs. A worktree branch lands in main with `git land`, an alias in [.gitconfig](../../home/.gitconfig): it rebases the branch onto main and fast-forwards main in the main worktree, since git will not move a branch checked out elsewhere. It stays local unless given `--push` (`-p`).
+Changes here usually go to main without a PR. A worktree branch lands in main with `git land`, an alias in [.gitconfig](../../home/.gitconfig): it rebases the branch onto main and fast-forwards main in the main worktree, since git will not move a branch checked out elsewhere. It stays local unless given `--push` (`-p`).
 
 The [/land](../../home/skills/land/SKILL.md) skill has the agent commit its session's work and run `git land`, pushing only when a push is asked for in that request. The repo's pre-commit and pre-push hooks run as usual; the skill never skips them with `--no-verify`.
 

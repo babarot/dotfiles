@@ -48,7 +48,8 @@
   ; land and sync run from a linked worktree and move main in the main
   ; worktree for it (git will not move a branch checked out elsewhere).
   ;
-  ; land: in a repo that takes no PRs, put this branch's commits in main.
+  ; land: in a repo whose changes go to main without a PR, put this
+  ; branch's commits in main.
   ; Local only unless --push (-p) is given. It is the same as:
   ;   1. git pull --ff-only origin main    (in the main worktree)
   ;   2. git rebase main                   (in this worktree)

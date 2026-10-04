@@ -1,7 +1,5 @@
 # AGENTS.md
 
-## What this repo is
-
 babarot's macOS environment, shared by two Macs through one Nix flake (nix-darwin + home-manager):
 
 | Hostname | Machine | Host file |
@@ -11,7 +9,7 @@ babarot's macOS environment, shared by two Macs through one Nix flake (nix-darwi
 
 Both Macs read this file; `scutil --get LocalHostName` tells which one you are on, and is also how `darwin-rebuild` picks the configuration. Anything not in a host file applies to both Macs. A change for the other Mac is made and pushed from where you are, then pulled and applied on that Mac by an agent session there.
 
-This repository takes no PRs: work is done in a git worktree and landed in main with `git land` (`--push` to push), which the `/land` skill wraps. Land or push only when the user asks.
+Changes go to main directly, not through a PR: work is done in a git worktree and landed in main with `git land` (`--push` to push), which the `/land` skill wraps. Open a PR only when the user asks for one. Land or push only when the user asks.
 
 This repository is public. Never commit credentials, tokens, or internal names from work (company, org, internal hosts or repos).
 
@@ -21,7 +19,7 @@ Everything here serves one goal: what deleting a tool's file does can be told fr
 
 | Property | Means | Kept by |
 |---|---|---|
-| Cohesion | Deleting a tool's file removes everything that was for the tool: its package, aliases, variables, PATH entries, git settings, plugins and skills. | [One file, one unit](#one-file-one-unit). Shared files (`human.zsh`, `env.zsh`, `tools.gitconfig`, ...) are assembled from what each tool's file contributes through `my.*`, never written by hand for one tool. |
+| Cohesion | Deleting a tool's file removes everything that was for the tool: its package, aliases, variables, PATH entries, git settings, plugins and skills. | [One file, one lifecycle](#one-file-one-lifecycle). Shared files (`human.zsh`, `env.zsh`, `tools.gitconfig`, ...) are assembled from what each tool's file contributes through `my.*`, never written by hand for one tool. |
 | Loose coupling | Deleting a tool's file breaks nothing else. | A file puts only its own tool and its companions on PATH; any other tool it runs, it runs by store path ([Dependencies between tools](#dependencies-between-tools)). |
 | Reproducibility | A new Mac gets the same thing. | Everything is declared in this repo: in Nix where it can be, pinned by `flake.lock`; otherwise as a declared exception, with its reason, in the file of what it is for ([Declared, never installed by hand](#declared-never-installed-by-hand)). |
 
@@ -51,9 +49,9 @@ Do not add a directory at the repository root without a strong reason; put new f
 - Update inputs with `nix flake update` (all) or `nix flake update babarot` (own tools).
 - After `nix flake update agent-skills`, run `nix build` as yourself before `sudo darwin-rebuild`: the input is a private repo fetched with your SSH key, which root does not have.
 
-## One file, one unit
+## One file, one lifecycle
 
-A tool file (a `*.nix` in `nix/home-manager/tools/` or `nix/hosts/<host>/`) is one unit of adding and removing: adding the file installs and sets up everything in it, and deleting the file removes all of that and nothing that is still wanted. Every file is one of four kinds:
+A tool file (a `*.nix` in `nix/home-manager/tools/` or `nix/hosts/<host>/`) holds one lifecycle, what is added and removed together: adding the file installs and sets up everything in it, and deleting the file removes all of that and nothing that is still wanted. Every file is one of four kinds:
 
 | Kind | File name | Holds | Examples |
 |---|---|---|---|
@@ -120,11 +118,11 @@ Casks, brews and App Store apps for one Mac stay in `nix/hosts/<host>.nix`: it i
 |---|---|
 | New hand-written dotfile | put it in `home/` under its name in ~ and list it in `nix/home-manager/dotfiles.nix` (a tool's own dotfile is linked from its `nix/home-manager/tools/<tool>.nix`, like Claude Code's in `claude-code.nix`) |
 | CLI tool with no shell settings | `nix/home-manager/tools/packages.nix`, a list (alphabetical) |
-| CLI tool with aliases, shell functions, env or a zsh hook | its own `nix/home-manager/tools/<tool>.nix`, settings under `my.human`; a function built around a tool (e.g. a picker using fzf) goes in that tool's file. A function that does not change the shell (no `cd`, `export`, zle) can instead be a command, `pkgs.writeShellApplication` in `home.packages` with what it runs in `runtimeInputs` (`gchange` and `ohayo` in `gcloud.nix`); keep a human-only or same-named wrapper (`codex` in `codex.nix`) a function. A companion goes in its main tool's file, and a tool for a subject that has a set goes in the set ([One file, one unit](#one-file-one-unit)) |
+| CLI tool with aliases, shell functions, env or a zsh hook | its own `nix/home-manager/tools/<tool>.nix`, settings under `my.human`; a function built around a tool (e.g. a picker using fzf) goes in that tool's file. A function that does not change the shell (no `cd`, `export`, zle) can instead be a command, `pkgs.writeShellApplication` in `home.packages` with what it runs in `runtimeInputs` (`gchange` and `ohayo` in `gcloud.nix`); keep a human-only or same-named wrapper (`codex` in `codex.nix`) a function. A companion goes in its main tool's file, and a tool for a subject that has a set goes in the set ([One file, one lifecycle](#one-file-one-lifecycle)) |
 | Script of my own | settled: `pkgs.writeShellApplication` in `home.packages` of the file of the tool it belongs to (`git-url` in `git.nix`, `tovim` in `vim.nix`), with what it runs in `runtimeInputs`, or its own `<script>.nix` when it belongs to none (`deadlink.nix`). `home/bin` (`~/bin`, on PATH) is only for a script still being shaped; move it into Nix once it settles |
 | Another tool used inside a tool's settings (fzf in `bat-theme`, eza in enhancd's filter) | by store path, never through PATH ([Dependencies between tools](#dependencies-between-tools)) |
 | Alias or function not tied to any one tool | an existing `home/.zsh/NN_*.zsh`, or a new one with a numeric prefix (only `[0-9]*.zsh` is loaded; hand-written, humans only; loaded through `my.human` as the plugin `zsh-local`) |
-| Tool for one Mac only | `nix/hosts/<host>/<name>.nix` when it has settings or more than one package (a set included), else a line in `nix/hosts/<host>.nix` ([One file, one unit](#one-file-one-unit)) |
+| Tool for one Mac only | `nix/hosts/<host>/<name>.nix` when it has settings or more than one package (a set included), else a line in `nix/hosts/<host>.nix` ([One file, one lifecycle](#one-file-one-lifecycle)) |
 | App, cask or brew for one Mac only | `nix/hosts/<host>.nix` |
 | zsh plugin | `my.human.plugins.<name>` with `src`, `file`, and `after`/`before` naming other plugins (the hand-written `~/.zsh` is `zsh-local`), only where the order has a reason, written in a comment next to it |
 | Variable agents also need (GOPATH, ...) | `my.env` in the tool's `nix/home-manager/tools/<tool>.nix`; rendered to `~/.config/zsh/env.zsh`, which `.zshenv` sources |

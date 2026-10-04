@@ -1,4 +1,0 @@
-#!/bin/bash
-# git-undo undos your last commit
-
-git reset --soft HEAD^

@@ -25,7 +25,9 @@
     onActivation = {
       autoUpdate = false;
       upgrade = false;
-      cleanup = "none";
+      # Uninstall what no file declares, so a cask or brew tried by hand
+      # goes away on the next switch, as removing a line here does
+      cleanup = "uninstall";
     };
     casks = [
       "1password" # browser integration requires /Applications

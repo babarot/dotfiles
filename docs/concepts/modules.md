@@ -79,3 +79,9 @@ On every switch, an activation script runs `herdr plugin link` on each store pat
 ## my.masApps
 
 [mas.nix](../../nix/home-manager/mas.nix). Mac App Store apps, shared in [tools/app-store.nix](../../nix/home-manager/tools/app-store.nix) or per host. Each switch installs the missing ones with `mas`. It only installs: versions and updates are left to the App Store, and an app dropped from the list is not removed. If an install fails (usually because nobody is signed in to the App Store), the switch warns and goes on.
+
+## my.knownBins
+
+[stray-bins.nix](../../nix/home-manager/stray-bins.nix). Commands that something outside Nix puts in a directory on PATH on purpose, by directory under `~`: `claude` in `.local/bin` (the official installer, from [tools/claude-code.nix](../../nix/home-manager/tools/claude-code.nix)), and in `go/bin` what go.nvim may `go install` (from [tools/neovim.nix](../../nix/home-manager/tools/neovim.nix)). Naming a directory, even with an empty list, has it checked.
+
+Each switch warns about every other command in those directories: a `curl | sh` installer or `npm install -g` writes to `~/.local/bin`, and `go install` to `~/go/bin`, and nothing in this repo would show them. It removes nothing, unlike Homebrew's cleanup, since such a command cannot be declared without packaging it: move it into Nix, delete it, or, if it is meant to be there, add it to the list in the file of what puts it there.

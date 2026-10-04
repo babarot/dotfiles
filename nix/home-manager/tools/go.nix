@@ -19,4 +19,7 @@ in
   my.env.GOPATH = config.home.homeDirectory;
   my.env.GOBIN = gobin;
   my.path = [ gobin ];
+  # Checked for commands nothing declares; files that go install on purpose
+  # add their names
+  my.knownBins."go/bin" = [ ];
 }

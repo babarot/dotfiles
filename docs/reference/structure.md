@@ -28,6 +28,7 @@ nix/
     human.nix          # my.human: human-only zsh UX, rendered to ~/.config/zsh/human.zsh
     mas.nix            # my.masApps: Mac App Store apps installed with mas
     skills.nix         # my.skills: Agent Skills shipped with tools or on trial in home/skills
+    stray-bins.nix     # my.knownBins: warns on switch about commands nothing declares in ~/.local/bin, ~/go/bin
     tools/<tool>.nix   # one unit per file: a single tool, a tool with companions, a <subject>.set.nix or a list (AGENTS.md, "One file, one unit")
     tools/<other>      # a tool's scripts and patches beside it (only *.nix is imported)
 home/                  # files linked into ~ under the same names (nix/home-manager/dotfiles.nix)

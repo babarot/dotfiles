@@ -17,6 +17,7 @@
     ./skills.nix
     ./herdr-plugins.nix
     ./mas.nix
+    ./stray-bins.nix
   ]
   ++ map (f: ./tools + "/${f}") (
     builtins.filter (f: builtins.match ".*\\.nix" f != null) (

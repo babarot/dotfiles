@@ -93,6 +93,26 @@ in
 {
   home.packages = [ neovim ];
 
+  # What go.nvim may go install on first use (url in its lua/go/install.lua),
+  # less the ones in tools above
+  my.knownBins."go/bin" = [
+    "callgraph"
+    "dlv"
+    "fillswitch"
+    "ginkgo"
+    "go-enum"
+    "gofumpt"
+    "gojsonstruct"
+    "golangci-lint"
+    "gomvp"
+    "gonew"
+    "gotestsum"
+    "govulncheck"
+    "json-to-struct"
+    "mockgen"
+    "richgo"
+  ];
+
   # lazy.nvim keeps stdpath('data')/site on the runtimepath
   home.file.".local/share/nvim/site/parser".source = "${treesitter}/parser";
   home.file.".local/share/nvim/site/queries".source = "${treesitter}/queries";

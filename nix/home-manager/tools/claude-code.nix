@@ -30,6 +30,9 @@ in
     ".claude/CLAUDE.md".source = link "CLAUDE.md";
   };
 
+  # The official installer's link, which Claude Code repoints as it updates
+  my.knownBins.".local/bin" = [ "claude" ];
+
   home.activation.claudeCode = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [[ ! -e "$HOME/.local/bin/claude" ]]; then
       # Activation has a minimal PATH; the installer needs curl, shasum, sed

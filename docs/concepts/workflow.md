@@ -41,9 +41,15 @@ The [/land](../../home/skills/land/SKILL.md) skill has the agent commit its sess
 
 To continue the work in another session, [/handoff](../../home/skills/handoff/SKILL.md) writes a prompt for the next agent. It runs only when invoked.
 
-## The work Mac
+## The other Mac
 
-Changes for the work Mac are made here too. After they are pushed, the agent session on that Mac pulls and switches.
+Both Macs work on this repo. A change for the other Mac is made and pushed from either one; the agent session on that Mac pulls and switches.
+
+## Checks
+
+- `.githooks/pre-commit` (turned on for this repo and its worktrees by an `includeIf` in [.gitconfig](../../home/.gitconfig)) runs gitleaks on the staged changes and checks `nix fmt`; when patch files are staged, `.githooks/check-patches` checks they are exported from the fork's pushed `patches` branch. When it stops a commit, remove the secret or stage the reformatted files; never bypass it with `--no-verify`. A reviewed false positive goes in `.gitleaksignore`.
+- `.githooks/pre-push` builds every Mac at the pushed commit when the push changes Nix files, and warns (without stopping the push) when a fork's `patches` branch has moved ahead of the patch files; import it with the import-fork-patches skill. It uses the local store and the real `agent-skills`, so it is quick unless nixpkgs moved. When it fails, fix the build; do not push with `--no-verify`.
+- CI (`.github/workflows/nix.yaml`) runs `nix flake check` and evaluates every Mac's system derivation on pushes to main and PRs that touch Nix files. It does not build them: a fresh runner rebuilds everything (~15 min), which the pre-push hook does locally from a warm store. It cannot fetch the private `agent-skills` input, so it overrides it with an empty stub made in the job; a change that only breaks with the real skills passes CI.
 
 ## mise in worktrees
 

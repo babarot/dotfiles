@@ -13,7 +13,7 @@ Rules for adding a page:
 - Pick the folder with the test above. A page that needs two folders is two pages.
 - One task per guide, so the file names read as a table of contents.
 - Do not repeat what the code or its comments already say; link to the file instead. A copy has to be kept in sync and turns into a lie when it is not.
-- Keep it one level deep. Rules for agents belong in [AGENTS.md](../AGENTS.md), not here.
+- Keep it one level deep. [AGENTS.md](../AGENTS.md) holds the rules every task needs; a table or procedure only one kind of task needs lives here, linked from AGENTS.md where that task starts.
 
 ## Guides
 
@@ -29,4 +29,5 @@ Rules for adding a page:
 
 ## Reference
 
+- [where-things-go.md](./reference/where-things-go.md): where each kind of thing is declared (tools, sets, apps, settings, skills, patches)
 - [decisions.md](./reference/decisions.md): what was tried or used and dropped, and why, so it is not brought back

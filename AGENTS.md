@@ -42,15 +42,12 @@ Do not add a directory at the repository root without a strong reason; put new f
   `nix build .#darwinConfigurations.pro23.system --no-link` and the same for `PC-M-2025-026`.
 - Nix only sees files tracked by git: `git add` (or `git add -N`) new files first.
 - When a change makes one tool run another, check loose coupling: delete the other tool's file in the worktree, build, read the generated files for the tool's bare name (`home-files/.config/zsh/human.zsh` and any generated config in the home-manager generation), then restore the file.
-- Run `nix fmt` before committing: nixfmt, deadnix, statix and shfmt, configured in `nix/treefmt.nix`. `nix flake check` fails on unformatted files.
-- `.githooks/pre-commit` (turned on for this repo and its worktrees by an `includeIf` in `home/.gitconfig`) runs gitleaks on the staged changes and checks `nix fmt`; when patch files are staged, `.githooks/check-patches` checks they are exported from the fork's pushed `patches` branch. When it stops a commit, remove the secret or stage the reformatted files; never bypass it with `--no-verify`. A reviewed false positive goes in `.gitleaksignore`.
-- `.githooks/pre-push` builds every Mac at the pushed commit when the push changes Nix files, and warns (without stopping the push) when a fork's `patches` branch has moved ahead of the patch files; import it with the import-fork-patches skill. It uses the local store and the real `agent-skills`, so it is quick unless nixpkgs moved. When it fails, fix the build; do not push with `--no-verify`.
-- CI (`.github/workflows/nix.yaml`) runs `nix flake check` and evaluates every Mac's system derivation on pushes to main and PRs that touch Nix files. It does not build them: a fresh runner rebuilds everything (~15 min), which the pre-push hook does locally from a warm store. It cannot fetch the private `agent-skills` input, so it overrides it with an empty stub made in the job; a change that only breaks with the real skills passes CI.
+- Run `nix fmt` before committing. `nix flake check` fails on unformatted files.
+- The pre-commit hook (gitleaks, `nix fmt`, patch files) and the pre-push hook (builds every Mac) stop a bad commit or push: fix what they report, never bypass them with `--no-verify`. A reviewed gitleaks false positive goes in `.gitleaksignore`. What the hooks and CI check is in [docs/concepts/workflow.md](./docs/concepts/workflow.md#checks).
 - Applying needs sudo, so the user runs it:
   `sudo darwin-rebuild switch --flake ~/src/github.com/babarot/dotfiles` (always the absolute path).
 - Quote flake references in zsh (`'nixpkgs#foo'`); `#` is a glob with extended_glob.
-- Update inputs with `nix flake update` (all) or `nix flake update babarot` (own tools).
-- After `nix flake update agent-skills`, run `nix build` as yourself before `sudo darwin-rebuild`: the input is a private repo fetched with your SSH key, which root does not have.
+- Updating inputs, including the private `agent-skills`, is in [docs/guides/maintenance.md](./docs/guides/maintenance.md#update-flake-inputs).
 
 ## One file, one lifecycle
 
@@ -71,23 +68,7 @@ To decide where a tool goes:
 
 A set is only for tools tied to one subject, where the test is: "if I stopped working with <subject>, would every one of these go at the same time?" Tools that merely share a kind are never a set, however many there are: linters, formatters, JSON/YAML tools, "Go tools", git helpers, cloud CLIs. Each of those is added and dropped on its own, so a file holding them would make deleting it remove tools still in use, and would hide each tool's settings under a name that is not the tool's. They stay one file each, or lines in `packages.nix`.
 
-Rules for sets:
-
-- Name: the subject, then `.set` before `.nix`: `kubernetes.set.nix`, never `kubernetes.nix`. Without the marker, a listing reads the file as a tool of that name (nixpkgs even has a `kubernetes` package). The marker is a suffix so files still sort by subject.
-- The file opens with a comment saying what the set is for, which Macs get it, and that new tools for the subject go in it.
-- A set is one file, never a directory of per-tool files. Settings the set shares (an abbreviation, wrapper links, `my.path`) sit in it next to the packages. Scripts it reads go in a `<subject>/` directory beside it, as tools/ does for tools; only `*.nix` directly in the directory is imported.
-- A tool is in exactly one file. A tool also used for another subject, or on its own, gets its own file.
-- A tool-with-companions file has no marker: the main tool's name already says what it holds.
-
-Where the file lives depends on which Macs get it:
-
-| Which Macs | Where | Loaded by |
-|---|---|---|
-| Both | `nix/home-manager/tools/<name>.nix` | `nix/home-manager/default.nix`, every `*.nix` in that directory |
-| One, and the tool or set has settings (`my.*`, wrapper links) or more than one package | `nix/hosts/<host>/<name>.nix`, a home-manager module of the same shape as a tools/ file | `mkHost` in `flake.nix`, every `*.nix` directly in that directory, for that Mac only |
-| One, a single package with no settings | a line in `home.packages` in `nix/hosts/<host>.nix` | the host file itself |
-
-Casks, brews and App Store apps for one Mac stay in `nix/hosts/<host>.nix`: it is a nix-darwin module, while the files in `nix/hosts/<host>/` are home-manager modules and cannot hold them.
+The rules for naming and writing a set, and where a file for one Mac lives, are in [docs/reference/where-things-go.md](./docs/reference/where-things-go.md#sets).
 
 ## Dependencies between tools
 
@@ -105,12 +86,12 @@ Casks, brews and App Store apps for one Mac stay in `nix/hosts/<host>.nix`: it i
 - Hand-written or generated: a config you keep trying things in (keybinds, colors) stays hand-written in `home/`, linked from the repo so an edit applies without a switch; it cannot hold store paths. A config that rarely changes and runs other tools is generated in its tool's file.
 - Run by name only: macOS's userland and git, which nothing here removes; a companion named in a hand-written config, put on PATH by its main tool's file (`gh.nix` for gh-dash's delta and lazygit); optional uses guarded by `$+commands[...]` or `executable()` (rm.nvim with gomi).
 - Put on PATH only the commands you mean to. Before adding a package, list its `bin/` (`ls "$(nix build --no-link --print-out-paths '.#darwinConfigurations.pro23.pkgs.<pkg>^out')/bin"`). When it brings names that shadow something (gawk's `awk`, bashInteractive's `sh`, gotools' `bundle`), link only the wanted commands with `runCommand` (`gawk.nix`, `bash.nix`, `go.nix`).
-- Load order between zsh plugins is declared with `after` and `before` ([Where things go](#where-things-go)), never inferred. A name that is not a plugin is ignored, so deleting a plugin's file breaks no one.
+- Load order between zsh plugins is declared with `after` and `before` ([where-things-go.md](./docs/reference/where-things-go.md)), never inferred. A name that is not a plugin is ignored, so deleting a plugin's file breaks no one.
 
 ## Declared, never installed by hand
 
 - Do not install a tool with `brew install`, `npm install -g`, `curl ... | sh`, `go install`, `pipx install`, `cargo install` or `mise use -g`. It would be on one Mac only, at whatever version it was that day, and nothing would remove it.
-- Add it to Nix ([Where things go](#where-things-go)). When Nix cannot hold it, declare it where its kind is declared, with the reason in a comment: a cask or brew in `nix/homebrew.nix` or the host file, an App Store app in `my.masApps`, an official installer run by activation (`claude-code.nix`), or `my.knownBins` next to the tool that puts commands in a directory on PATH (claude, go.nvim's `go install`, reviewr's link).
+- Add it to Nix ([where-things-go.md](./docs/reference/where-things-go.md)). When Nix cannot hold it, declare it where its kind is declared, with the reason in a comment: a cask or brew in `nix/homebrew.nix` or the host file, an App Store app in `my.masApps`, an official installer run by activation (`claude-code.nix`), or `my.knownBins` next to the tool that puts commands in a directory on PATH (claude, go.nvim's `go install`, reviewr's link).
 - The exceptions that exist are intended. Do not move them into Nix or remove them without asking.
 - To try a tool, run it with `nix shell 'nixpkgs#<pkg>'` or `nix run 'nixpkgs#<pkg>'`; nothing stays behind.
 - Each switch uninstalls Homebrew casks and brews no file declares, and warns about commands in `~/.local/bin` and `~/go/bin` that no `my.knownBins` lists. Per-project versions in a project's `mise.toml` belong to that project, not to this repo.
@@ -125,50 +106,23 @@ A patch has to be carried onto every upstream release, and it costs the binary c
 4. Other combinations: can it be done by wrapping the program, generating its config, combining it with another tool, or accepting the behavior and declaring it (`my.knownBins` for reviewr's link)?
 5. Only then, propose a patch to the user, saying what 1-4 found and why each fell short, and offer an upstream issue or pull request as the alternative. Do not start a patch before the user agrees.
 
-Once agreed, the patch is made in the fork and imported here ([Where things go](#where-things-go), "Local patches on a package").
+Once agreed, the patch is made in the fork and imported here ([where-things-go.md](./docs/reference/where-things-go.md), "Local patches on a package").
 
 ## Where things go
 
-| What | Where |
-|---|---|
-| New hand-written dotfile | put it in `home/` under its name in ~ and list it in `nix/home-manager/dotfiles.nix` (a tool's own dotfile is linked from its `nix/home-manager/tools/<tool>.nix`, like Claude Code's in `claude-code.nix`) |
-| CLI tool with no shell settings | `nix/home-manager/tools/packages.nix`, a list (alphabetical) |
-| CLI tool with aliases, shell functions, env or a zsh hook | its own `nix/home-manager/tools/<tool>.nix`, settings under `my.human`; a function built around a tool (e.g. a picker using fzf) goes in that tool's file. A function that does not change the shell (no `cd`, `export`, zle) can instead be a command, `pkgs.writeShellApplication` in `home.packages` with what it runs in `runtimeInputs` (`gchange` and `ohayo` in `gcloud.nix`); keep a human-only or same-named wrapper (`codex` in `codex.nix`) a function. A companion goes in its main tool's file, and a tool for a subject that has a set goes in the set ([One file, one lifecycle](#one-file-one-lifecycle)) |
-| Script of my own | settled: `pkgs.writeShellApplication` in `home.packages` of the file of the tool it belongs to (`git-url` in `git.nix`, `tovim` in `vim.nix`), with what it runs in `runtimeInputs`, or its own `<script>.nix` when it belongs to none (`deadlink.nix`). `home/bin` (`~/bin`, on PATH) is only for a script still being shaped; move it into Nix once it settles |
-| Another tool used inside a tool's settings (fzf in `bat-theme`, eza in enhancd's filter) | by store path, never through PATH ([Dependencies between tools](#dependencies-between-tools)) |
-| Alias or function not tied to any one tool | an existing `home/.zsh/NN_*.zsh`, or a new one with a numeric prefix (only `[0-9]*.zsh` is loaded; hand-written, humans only; loaded through `my.human` as the plugin `zsh-local`) |
-| Tool for one Mac only | `nix/hosts/<host>/<name>.nix` when it has settings or more than one package (a set included), else a line in `nix/hosts/<host>.nix` ([One file, one lifecycle](#one-file-one-lifecycle)) |
-| App, cask or brew for one Mac only | `nix/hosts/<host>.nix` |
-| zsh plugin | `my.human.plugins.<name>` with `src`, `file`, and `after`/`before` naming other plugins (the hand-written `~/.zsh` is `zsh-local`), only where the order has a reason, written in a comment next to it |
-| Variable agents also need (GOPATH, ...) | `my.env` in the tool's `nix/home-manager/tools/<tool>.nix`; rendered to `~/.config/zsh/env.zsh`, which `.zshenv` sources |
-| git setting that runs a tool (a pager, a diff alias) | `my.gitConfig` in the tool's file, with the store path (`ov.nix`, `difftastic.nix`); rendered to `~/.config/git/tools.gitconfig`, which `home/.gitconfig` includes |
-| Directory one tool needs on PATH (e.g. `~/.krew/bin`) | `my.path` next to the tool; appended to the end of PATH in `env.zsh`, only if it exists |
-| Setting only agents get (e.g. `BAT_PAGER=cat`, or an alias an agent takes for the command it knows, like `rm` → gomi) | `my.ai` in the tool's `nix/home-manager/tools/<tool>.nix`; rendered to `~/.config/zsh/ai.zsh`, which `.zshenv` sources unless `is_human` |
-| PATH order, and env not tied to a tool (EDITOR, locale) | `.zshenv`, before or outside the `is_human` branch |
-| GUI app that does not self-update and passes `codesign --verify --deep --strict` | `nix/home-manager/tools/apps.nix`, a list |
-| GUI app that self-updates, needs `/Applications` or system components, or fails codesign in nixpkgs | a cask in `nix/homebrew.nix` (or the host file) |
-| macOS System Settings (Dock, Finder, trackpad, ...) | `nix/macos.nix`, only values that differ from the macOS default; check the key with `defaults read` first |
-| Mac App Store app | `my.masApps` in `nix/home-manager/tools/app-store.nix`, a list, or in the host file; IDs from `mas list` |
-| babarot's own tools | released with GoReleaser's `nix` publisher (or c-c-statusline's workflow) to babarot/nur-packages, then `inputs.babarot.packages.<system>.<name>` |
-| Third-party tool not in nixpkgs that ships a flake | a flake input pinned to a release tag (see `crit`) |
-| zsh plugin or source not in nixpkgs | a flake input with `flake = false` |
-| Third-party Homebrew tap | `homebrew.brews` / `homebrew.casks` with the full `owner/tap/name`; nix-darwin marks each entry `trusted: true` |
-| A new doc | `docs/guides/`, `docs/concepts/` or `docs/reference/` by what the reader wants (see [docs/README.md](./docs/README.md)); never duplicate what the code or its comments already say |
-| Per-project language or tool versions | the project's `mise.toml`, not this repo |
-| Claude Code | not from nixpkgs: it updates itself, so `nix/home-manager/tools/claude-code.nix` runs the official installer only when `~/.local/bin/claude` is missing |
-| Neovim LSP servers, formatters, tools its plugins call (fd, rg for snacks.nvim) and treesitter parsers | `nix/home-manager/tools/neovim.nix` (servers, formatters and tools in its `tools` list, on nvim's own PATH; languages in its `languages` list); not mason or `:TSInstall` |
-| Local patches on a package | only after [Patches are the last resort](#patches-are-the-last-resort); commits on the `patches` branch of a fork `babarot/<name>`, exported into `nix/home-manager/tools/<name>/` and declared with `my.forkPatches.<name>` next to the package; never edit the patch files (docs/guides/maintenance.md) |
-| Agent Skill that ships with a tool | `my.skills.<name> = <dir with SKILL.md>` next to the package (`nix/home-manager/skills.nix` links it into `~/.claude/skills` and `~/.agents/skills`) |
-| My own Agent Skill on trial | `home/skills/<name>/SKILL.md` (`nix/home-manager/skills.nix` links each directory into `~/.claude/skills` and `~/.agents/skills`). A proving ground, not the main home: it skips the release flow of babarot/agent-skills, so edits apply as soon as they are in the main checkout (the links point there, so a worktree edit applies once landed). Keep it public-safe (nothing from work); once a skill settles, move it to babarot/agent-skills and delete it here |
-| Agent Skills for Codex and other agents | babarot/agent-skills (private, fetched over SSH) linked into `~/.agents/skills` by `nix/home-manager/tools/agent-skills.nix`; `my.agentSkills.scopes` picks the plugins (`work` only on the work Mac). Claude Code uses the plugin marketplace instead, with the work plugin on both Macs (`home/.claude/settings.json` is shared) |
+Before adding or moving anything, look up where it goes in [docs/reference/where-things-go.md](./docs/reference/where-things-go.md): a table by kind (dotfile, CLI tool, script, zsh plugin, variable, git setting, GUI app, cask, App Store app, macOS setting, skill, patch, ...), the rules for sets, and where a file for one Mac lives. The common cases:
+
+- A CLI tool with no settings: a line in `nix/home-manager/tools/packages.nix`, alphabetically.
+- A tool with settings (aliases, functions, variables, a zsh hook): its own `nix/home-manager/tools/<tool>.nix`, settings under `my.*` next to the package.
+- A tool for one Mac only: `nix/hosts/<host>/<name>.nix`, or a line in `nix/hosts/<host>.nix` when it is a single package with no settings.
 
 Before adding a nixpkgs package, check it is the same tool: several names belong to something else (`yq` is Python's, use `yq-go`; `mmv` is not itchyny's, use `mmv-go`; `pup`, `ktop`, `kubesec`, `gist` differ too).
 
 ## Shell: AI agents by default, human UX opt-in
 
-- `.zshenv` defines `is_human`: stdin/stdout are a TTY and no agent marker (`CLAUDECODE`, `AI_AGENT`, ...) is set. Agents get `EDITOR=true`, `PAGER=cat`, `GIT_TERMINAL_PROMPT=0`, so nothing blocks on input.
-- `.zshrc` returns early unless `is_human`. Aliases (`cp -i`, `ls` → eza), enhancd's `cd`, prompt, keybinds and setopts exist only for humans.
-- Never put aliases, prompts or interactive behavior where agents run (`.zshenv`, non-interactive paths). The one exception is `my.ai`: an alias there must behave like the command agents know for every flag they write, as `rm` → gomi does ([docs/concepts/modules.md](./docs/concepts/modules.md#myai)).
+Agents get a plain zsh; human UX loads only when `is_human` (README, "Shell for humans and AI agents").
+
+- Never put aliases, prompts or interactive behavior where agents run (`.zshenv`, non-interactive paths); they go in `my.human`. The one exception is `my.ai`: an alias there must behave like the command agents know for every flag they write, as `rm` → gomi does ([docs/concepts/modules.md](./docs/concepts/modules.md#myai)).
 - Keep macOS's BSD userland on PATH; agents write BSD syntax (`sed -i ''`, `stat -f`). GNU tools only under other names (`timeout`, `gsed`).
 - Login shells read only `.zshenv` and `.zshrc`; there is no `.zprofile` on purpose.
 

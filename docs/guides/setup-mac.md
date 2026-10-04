@@ -186,7 +186,7 @@ pbpaste >| ~/.enhancd/enhancd.log
 
 # 4. Configure Apps
 
-`darwin-rebuild switch` installs these apps (where each kind comes from is in [AGENTS.md](../../AGENTS.md#where-things-go)); what is left is signing in and settings. Apps listed in `nix/hosts/<hostname>.nix` are only on that Mac.
+`darwin-rebuild switch` installs these apps (where each kind comes from is in [where-things-go.md](../reference/where-things-go.md)); what is left is signing in and settings. Apps listed in `nix/hosts/<hostname>.nix` are only on that Mac.
 
 ## 1Password
 

@@ -100,7 +100,7 @@ CI and the pre-push hook read the hosts from `darwinConfigurations`, so neither 
 
 ## Add a tool
 
-Where a tool goes depends on what it is: the table under "Where things go" in [AGENTS.md](../../AGENTS.md#where-things-go) picks the file. Usually it is a new `nix/home-manager/tools/<tool>.nix`, imported automatically; remember to `git add` it.
+Where a tool goes depends on what it is: [where-things-go.md](../reference/where-things-go.md) picks the file. Usually it is a new `nix/home-manager/tools/<tool>.nix`, imported automatically; remember to `git add` it.
 
 ## Retire a trial skill
 

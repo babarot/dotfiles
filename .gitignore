@@ -1,2 +1,5 @@
 # Scratch notes, kept out of git
 docs/tmp/*.md
+
+# Japanese copies of the docs, for reviewing them; the English is the source
+*.ja.md

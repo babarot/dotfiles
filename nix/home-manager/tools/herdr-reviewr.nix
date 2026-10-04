@@ -34,4 +34,10 @@ in
   my.human.aliases.reviewr = "herdr-reviewr";
 
   my.herdrPlugins."persiyanov.reviewr" = herdr-reviewr;
+
+  # The plugin's pane.sh links its binary into ~/.local/bin on every action
+  # (a "stable launch path" for layouts), re-pointing it at the plugin root
+  # herdr has now. It duplicates the one above, so it is harmless; once this
+  # file is gone, the stray-bins warning names the leftover link to delete.
+  my.knownBins.".local/bin" = [ "herdr-reviewr" ];
 }

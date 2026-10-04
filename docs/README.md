@@ -29,4 +29,4 @@ Rules for adding a page:
 
 ## Reference
 
-- [decisions.md](./reference/decisions.md): why things are the way they are, and what was tried and dropped
+- [decisions.md](./reference/decisions.md): what was tried or used and dropped, and why, so it is not brought back

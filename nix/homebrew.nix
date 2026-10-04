@@ -1,7 +1,7 @@
 # Homebrew only installs vendor apps on a new Mac. These apps update
 # themselves, install system components, or have a broken code signature
-# in nixpkgs, so Nix is a poor fit. Nothing is updated, upgraded or
-# removed here; apps not listed are left alone.
+# in nixpkgs, so Nix is a poor fit. Nothing is updated or upgraded here,
+# but casks and brews no file declares are uninstalled (cleanup below).
 #
 # Homebrew itself is installed by nix-homebrew, which pins its version
 # (update with `nix flake update nix-homebrew`). Mac App Store apps are

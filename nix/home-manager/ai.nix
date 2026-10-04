@@ -5,7 +5,9 @@
 # Keep it to what an agent cannot tell from the command it knows. An alias
 # here must behave like the command it replaces for every flag an agent
 # writes (rm -> gomi); anything that changes output or asks for input
-# belongs in my.human, where only a human meets it.
+# belongs in my.human, where only a human meets it. A setting both sides
+# need in different forms is written in both, next to each other in the
+# tool's file (BAT_PAGER in bat.nix), not in a shared option one overrides.
 { config, lib, ... }:
 let
   inherit (lib) mkOption types;

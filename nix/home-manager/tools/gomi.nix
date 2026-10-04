@@ -1,6 +1,8 @@
 # gomi: rm that moves files to the trash, for humans and AI agents alike.
 # Agents take it for the rm they know: the flags are rm's, and a mistaken
 # `rm -rf` can be restored with `gomi -b`. See my.ai in nix/home-manager/ai.nix.
+# It is an alias, not an rm on PATH, so xargs, find -exec and scripts keep
+# /bin/rm.
 { lib, pkgs, ... }:
 let
   # v1.6.5 lets files in $TMPDIR (/var/folders/.../T on macOS) be removed,

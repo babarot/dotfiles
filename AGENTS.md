@@ -7,11 +7,15 @@ babarot's macOS environment, shared by two Macs through one Nix flake (nix-darwi
 | `pro23` | private Mac | `nix/hosts/pro23.nix` |
 | `PC-M-2025-026` | work Mac | `nix/hosts/PC-M-2025-026.nix` |
 
-Both Macs read this file; `scutil --get LocalHostName` tells which one you are on, and is also how `darwin-rebuild` picks the configuration. Anything not in a host file applies to both Macs. A change for the other Mac is made and pushed from where you are, then pulled and applied on that Mac by an agent session there.
-
-Changes go to main directly, not through a PR: work is done in a git worktree and landed in main with `git land` (`--push` to push), which the `/land` skill wraps. Open a PR only when the user asks for one. Land or push only when the user asks.
-
-This repository is public. Never commit credentials, tokens, or internal names from work (company, org, internal hosts or repos).
+- Both Macs read this file.
+  - `scutil --get LocalHostName` tells which one you are on; it is also how `darwin-rebuild` picks the configuration.
+  - Anything not in a host file applies to both Macs.
+  - A change for the other Mac is made and pushed from where you are, then pulled and applied on that Mac by an agent session there.
+- Changes go to main directly, not through a PR.
+  - Work is done in a git worktree and landed in main with `git land` (`--push` to push), which the `/land` skill wraps.
+  - Open a PR only when the user asks for one. Land or push only when the user asks.
+- This repository is public.
+  - Never commit credentials, tokens, or internal names from work (company, org, internal hosts or repos).
 
 ## Principles
 

@@ -4,8 +4,8 @@
     src = pkgs.zsh-fzf-tab;
     file = "share/fzf-tab/fzf-tab.plugin.zsh";
     # After compinit (in .zshrc, before human.zsh) and before plugins that
-    # wrap widgets, as fzf-tab's README asks: fast-syntax-highlighting is 500
-    order = 450;
+    # wrap widgets, as fzf-tab's README asks
+    before = [ "fast-syntax-highlighting" ];
     init = ''
       zstyle ':fzf-tab:complete:vim:*' query-string input
       # fzf from the store, so it does not depend on fzf.nix putting fzf on PATH

@@ -6,6 +6,25 @@ let
   inherit (lib) mkOption types;
   cfg = config.my.human;
   sh = lib.escapeShellArg;
+
+  # Plugins in load order: a DAG of their `after`/`before`, sorted by
+  # home-manager's topoSort. Plugins with no constraint between them keep
+  # topoSort's order (by name). A name that is not a plugin is ignored, so
+  # removing a plugin's file never breaks the files that load around it;
+  # a cycle fails the build.
+  sortedPlugins =
+    let
+      known = lib.filter (dep: cfg.plugins ? ${dep});
+      sorted = lib.hm.dag.topoSort (
+        lib.mapAttrs (_: p: lib.hm.dag.entryBetween (known p.before) (known p.after) p) cfg.plugins
+      );
+    in
+    if sorted ? result then
+      map (e: e.data) sorted.result
+    else
+      throw "my.human.plugins: load order has a cycle: ${
+        lib.concatMapStringsSep " -> " (e: e.name) sorted.cycle
+      }";
 in
 {
   options.my.human = {
@@ -48,10 +67,15 @@ in
               default = "";
               description = "zsh run right after sourcing.";
             };
-            order = mkOption {
-              type = types.int;
-              default = 1000;
-              description = "Lower is sourced earlier. Hand-written ~/.zsh/*.zsh load at 5000.";
+            after = mkOption {
+              type = types.listOf types.str;
+              default = [ ];
+              description = "Plugins (by name) this one is sourced after. Hand-written ~/.zsh/[0-9]*.zsh is `zsh-local`.";
+            };
+            before = mkOption {
+              type = types.listOf types.str;
+              default = [ ];
+              description = "Plugins (by name) this one is sourced before.";
             };
           };
         }
@@ -66,10 +90,10 @@ in
 
   config = {
     # Hand-written zsh (bindkeys, setopts, zstyles...) stays editable in the
-    # repo; it must load after plugins that bind keys before `bindkey -v`
-    # and before zsh-abbr, which binds space in the resulting keymap.
+    # repo. Plugins place themselves around it by this name: zsh-abbr after
+    # it, since it binds space in the keymap `bindkey -v` selects, and
+    # fast-syntax-highlighting after it, since it defines widgets.
     my.human.plugins.zsh-local = {
-      order = 5000;
       init = ''
         for f in ~/.zsh/[0-9]*.zsh(N); do source "$f"; done
         unset f
@@ -81,7 +105,7 @@ in
       ++ lib.mapAttrsToList (k: v: "export ${k}=${sh v}") cfg.env
       ++ lib.concatMap (
         p: [ p.preInit ] ++ lib.optional (p.src != null) "source ${p.src}/${p.file}" ++ [ p.init ]
-      ) (lib.sortOn (p: p.order) (lib.attrValues cfg.plugins))
+      ) sortedPlugins
       ++ lib.mapAttrsToList (k: v: "alias ${k}=${sh v}") cfg.aliases
       ++ lib.mapAttrsToList (k: v: "alias -g ${k}=${sh v}") cfg.globalAliases
       ++ [ cfg.init ]

@@ -20,7 +20,7 @@ in
   my.human.plugins.enhancd = {
     src = inputs.enhancd;
     file = "init.sh";
-    order = 400;
+    # No after/before: it binds no keys and defines no widgets
   };
 
   my.human.env.ENHANCD_FILTER = lib.concatStringsSep " " [

@@ -3,7 +3,9 @@
   my.human.plugins.za-prompt = {
     src = inputs.za-prompt;
     file = "za-prompt.zsh-theme";
-    order = 300;
+    # Defines zle-line-init (its vi mode sign) for fast-syntax-highlighting
+    # to wrap; loaded after it, it would replace the wrapper
+    before = [ "fast-syntax-highlighting" ];
     preInit = ''
       zstyle ':prompt:za:path' style 'minimal'
       zstyle ':prompt:za:right' template '%exitcode% %path%'

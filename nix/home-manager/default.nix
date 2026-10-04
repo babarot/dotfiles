@@ -1,9 +1,10 @@
-# Every .nix file in ./tools is one unit of adding and removing: a tool, a
-# tool with its companions, or a <subject>.group.nix ("One file, one unit"
-# in AGENTS.md). Packages and shell settings live together, so deleting the
-# file removes both. Other files there are the tools' own scripts and patch
-# directories, read by their .nix file. Tool files for one Mac only are in
-# nix/hosts/<host>/, imported by mkHost in flake.nix.
+# Every .nix file in ./tools is one unit of adding and removing: a single
+# tool, a tool with companions, a <subject>.set.nix or a list ("One file,
+# one unit" in AGENTS.md). Packages and shell settings live together, so
+# deleting the file removes both.
+# Other files there are the tools' own scripts and patch directories, read
+# by their .nix file. Tool files for one Mac only are in nix/hosts/<host>/,
+# imported by mkHost in flake.nix.
 { ... }:
 {
   imports = [

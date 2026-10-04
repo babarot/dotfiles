@@ -20,7 +20,7 @@ AI agents (Claude Code, Codex, ...) now run more commands in this shell than I d
 
 Export `AI_AGENT=1` to force the agent side.
 
-## One file per lifecycle
+## One file, one lifecycle
 
 What is added and removed together is installed and configured in one file under `nix/home-manager/tools/`, imported automatically: usually one tool, sometimes a tool with its companions or a set. Adding a tool is adding a file, and deleting the file is all it takes to remove it. Three properties make that safe:
 
@@ -79,7 +79,7 @@ nix/
   darwin.nix, macos.nix  # system settings and macOS System Settings for every Mac
   homebrew.nix           # vendor apps installed by Homebrew casks
   hosts/                 # per-Mac packages, casks and App Store apps
-  home-manager/          # dotfile links, shell env, one file per lifecycle in tools/
+  home-manager/          # dotfile links, shell env, one file, one lifecycle in tools/
   ...
 home/                    # hand-written dotfiles, linked into ~ under the same names
   .zshenv, .zshrc, .zsh/ # zsh

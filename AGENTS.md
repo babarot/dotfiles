@@ -132,7 +132,7 @@ Do not add a directory at the repository root without a strong reason; put new f
 
 - English for comments, commit messages and docs; this repo is public.
 - Commit messages: an imperative summary line, then a short body explaining why. No Claude session links or attribution trailers.
-- One file per lifecycle; keep lists alphabetical; say in a comment why anything unusual is there.
+- One file, one lifecycle; keep lists alphabetical; say in a comment why anything unusual is there.
 - Before adding an alias or shell function, grep the tool's `.nix` file and `home/.zsh/` for one that already does it; extend that instead of adding a second.
 - `~/.config` links into this repo, so tools write their state here; ignore it in `home/.config/.gitignore` (never commit tokens, e.g. wrangler's).
 - `home/.claude/settings.json` is edited by Claude Code itself (`/config`); those edits show up as git diffs and are expected.

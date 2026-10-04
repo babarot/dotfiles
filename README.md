@@ -71,7 +71,7 @@ home/                    # hand-written dotfiles, linked into ~ under the same n
   .zshenv, .zshrc, .zsh/ # zsh
   .config/               # linked to ~/.config as a whole
   .claude/               # Claude Code user settings
-  bin/                   # my scripts
+  bin/                   # scripts still being shaped (settled ones are in Nix)
   skills/                # my own Agent Skills on trial
   ...
 docs/                    # guides, concepts and reference (see docs/README.md)

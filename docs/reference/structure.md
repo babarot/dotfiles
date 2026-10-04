@@ -32,7 +32,7 @@ nix/
     tools/<other>      # a tool's scripts and patches beside it (only *.nix is imported)
 home/                  # files linked into ~ under the same names (nix/home-manager/dotfiles.nix)
   .zshenv, .zshrc, .zsh/ # hand-written zsh
-  .gitconfig, bin/, ...
+  .gitconfig, bin/, ...  # bin/: scripts still being shaped; settled ones are in tools/
   .claude/             # Claude Code user settings, linked into ~/.claude
   skills/              # my own Agent Skills on trial, linked into ~/.claude/skills and ~/.agents/skills
   .config/             # linked to ~/.config as a whole (by activation, see dotfiles.nix)

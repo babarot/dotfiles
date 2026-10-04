@@ -22,9 +22,23 @@ Export `AI_AGENT=1` to force the agent side.
 
 ## One file per tool
 
-A tool is installed and configured in the same place. Each file under `nix/home-manager/tools/` holds a tool's package together with its environment variables, aliases, functions and zsh plugins, and is imported automatically. Adding a tool means adding a file; deleting the file removes the tool and everything it set, so no alias or variable outlives the tool it was for. What is removed together shares a file: tools that exist only for a main tool sit in its file (`gh.nix` has delta and lazygit for gh-dash), and tools used together for one subject share a set, named `<subject>.set.nix` so it is not mistaken for a tool. Tools that merely share a kind, such as linters, are never put in a set. Files for one Mac only live in `nix/hosts/<host>/` and are imported only there. The rules are in [AGENTS.md](./AGENTS.md#cohesion-one-file-one-lifecycle). A tool used inside another's settings is referenced by its store path, not through PATH: in the example below, `bat-theme` keeps working if `fzf.nix`, and with it `fzf` on PATH, is deleted. Together these give three properties: deleting a tool's file removes all of it (cohesion), breaks nothing else (loose coupling), and a new Mac gets the same thing (reproducibility); [docs/concepts/dependencies.md](./docs/concepts/dependencies.md) explains how.
+Each tool is installed and configured in one file under `nix/home-manager/tools/`, imported automatically. Adding a tool is adding a file, and deleting the file is all it takes to remove it. Three properties make that safe:
 
-Settings for humans go in `my.human`, rendered into `~/.config/zsh/human.zsh` and sourced after the `is_human` guard, so agents never see them. Variables agents also need (`GOPATH`, ...) go in `my.env`, and settings only agents get go in `my.ai`, sourced by `.zshenv` for agents only.
+- Cohesion: deleting a tool's file removes everything that was for it (package, aliases, variables, plugins), so nothing outlives the tool. What is removed together shares a file:
+  - a tool and its own settings: `eza.nix`
+  - a main tool and the companions that exist only for it: `gh.nix`, with delta and lazygit for gh-dash
+  - tools used together for one subject: `kubernetes.set.nix`
+  - tools with no settings, one per line: `packages.nix`
+- Loose coupling: deleting a tool's file breaks nothing else. A tool used inside another's settings is referenced by its store path, not through PATH. In the example below, `bat-theme` keeps working after `fzf.nix`, and `fzf` on PATH with it, is deleted.
+- Reproducibility: a new Mac gets the same thing. Everything is declared here and pinned by `flake.lock`; what Nix cannot hold (self-updating apps, Claude Code) is declared as an exception, and a switch removes or flags what was installed by hand.
+
+A tool's settings sit next to its package, by who they are for:
+
+- `my.human`: humans only, rendered into `~/.config/zsh/human.zsh` and sourced after the `is_human` guard
+- `my.env`: variables agents need too (`GOPATH`, ...)
+- `my.ai`: settings only agents get, sourced by `.zshenv` for agents only
+
+Files for one Mac live in `nix/hosts/<host>/` and are imported only there. The rules are in [AGENTS.md](./AGENTS.md#principles), and how Nix makes the properties hold is in [docs/concepts/dependencies.md](./docs/concepts/dependencies.md).
 
 ```nix
 # nix/home-manager/tools/bat.nix

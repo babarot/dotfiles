@@ -17,6 +17,20 @@ This repository takes no PRs: work is done in a git worktree and landed in main 
 
 This repository is public. Never commit credentials, tokens, or internal names from work (company, org, internal hosts or repos).
 
+## Principles
+
+Everything here serves one goal: what deleting a tool's file does can be told from that file alone. Three properties make that true. Every rule below follows from them; where no rule fits, choose what keeps all three.
+
+| Property | Means | Kept by |
+|---|---|---|
+| Cohesion | Deleting a tool's file removes everything that was for the tool: its package, aliases, variables, PATH entries, git settings, plugins and skills. | [One file, one unit](#one-file-one-unit). Shared files (`human.zsh`, `env.zsh`, `tools.gitconfig`, ...) are assembled from what each tool's file contributes through `my.*`, never written by hand for one tool. |
+| Loose coupling | Deleting a tool's file breaks nothing else. | A file puts only its own tool and its companions on PATH; any other tool it runs, it runs by store path ([Dependencies between tools](#dependencies-between-tools)). |
+| Reproducibility | A new Mac gets the same thing. | Everything is declared in this repo: in Nix where it can be, pinned by `flake.lock`; otherwise as a declared exception, with its reason, in the file of what it is for ([Declared, never installed by hand](#declared-never-installed-by-hand)). |
+
+The first two pull against each other. Adding a tool another file uses to your own `home.packages` keeps it from breaking but stops its file from removing it; calling it by name lets its file remove it but breaks you when it does. A store path keeps both.
+
+Before finishing a change, ask of each file it touches: if this file were deleted, what would be left over, and what would break? Both answers must be "nothing". Why Nix makes this possible is in [docs/concepts/dependencies.md](./docs/concepts/dependencies.md).
+
 ## Layout
 
 The directory tree, with what each file is for, is in [docs/reference/structure.md](./docs/reference/structure.md#layout). Read it before adding or moving files.
@@ -28,6 +42,7 @@ Do not add a directory at the repository root without a strong reason; put new f
 - Check without sudo, for both Macs, before asking the user to apply:
   `nix build .#darwinConfigurations.pro23.system --no-link` and the same for `PC-M-2025-026`.
 - Nix only sees files tracked by git: `git add` (or `git add -N`) new files first.
+- When a change makes one tool run another, check loose coupling: delete the other tool's file in the worktree, build, read the generated files for the tool's bare name (`home-files/.config/zsh/human.zsh` and any generated config in the home-manager generation), then restore the file.
 - Run `nix fmt` before committing: nixfmt, deadnix, statix and shfmt, configured in `nix/treefmt.nix`. `nix flake check` fails on unformatted files.
 - `.githooks/pre-commit` (turned on for this repo and its worktrees by an `includeIf` in `home/.gitconfig`) runs gitleaks on the staged changes and checks `nix fmt`; when patch files are staged, `.githooks/check-patches` checks they are exported from the fork's pushed `patches` branch. When it stops a commit, remove the secret or stage the reformatted files; never bypass it with `--no-verify`. A reviewed false positive goes in `.gitleaksignore`.
 - `.githooks/pre-push` builds every Mac at the pushed commit when the push changes Nix files, and warns (without stopping the push) when a fork's `patches` branch has moved ahead of the patch files; import it with the import-fork-patches skill. It uses the local store and the real `agent-skills`, so it is quick unless nixpkgs moved. When it fails, fix the build; do not push with `--no-verify`.
@@ -75,6 +90,32 @@ Where the file lives depends on which Macs get it:
 
 Casks, brews and App Store apps for one Mac stay in `nix/hosts/<host>.nix`: it is a nix-darwin module, while the files in `nix/hosts/<host>/` are home-manager modules and cannot hold them.
 
+## Dependencies between tools
+
+- A file's `home.packages` holds its own tool and its companions, nothing else. Any other tool it runs, it runs by store path.
+- How depends on where the tool is run:
+
+| Where it runs | How | Examples |
+|---|---|---|
+| Settings Nix renders: `my.human.init`, `my.env`, `my.gitConfig`, a generated config | embed `lib.getExe pkgs.<tool>` | `bat.nix` (fzf in bat-theme), `enhancd.nix`, `fzf-tab.nix`, `ov.nix` |
+| A shell function that does not change the shell (no `cd`, `export`, zle) | make it a command: `pkgs.writeShellApplication` with the tool in `runtimeInputs` | `gchange` in `gcloud.nix` |
+| A program that runs other tools by name (an editor, a plugin host) | wrap it: `symlinkJoin` + `wrapProgram --suffix PATH : ${lib.makeBinPath [ ... ]}`, suffix so a version a project pins with mise still wins | `neovim.nix` |
+| A hand-written config naming a tool that is not a companion | generate the config in the tool's file with store paths when it is rarely edited; wrap the program when it is edited often | `gomi.nix`, `enter.nix` |
+
+- Never fix a dependency by calling the tool by bare name (it breaks when the tool's file is deleted) or by adding the tool to your own `home.packages` (its file no longer removes it).
+- Hand-written or generated: a config you keep trying things in (keybinds, colors) stays hand-written in `home/`, linked from the repo so an edit applies without a switch; it cannot hold store paths. A config that rarely changes and runs other tools is generated in its tool's file.
+- Run by name only: macOS's userland and git, which nothing here removes; a companion named in a hand-written config, put on PATH by its main tool's file (`gh.nix` for gh-dash's delta and lazygit); optional uses guarded by `$+commands[...]` or `executable()` (rm.nvim with gomi).
+- Put on PATH only the commands you mean to. Before adding a package, list its `bin/` (`ls "$(nix build --no-link --print-out-paths '.#darwinConfigurations.pro23.pkgs.<pkg>^out')/bin"`). When it brings names that shadow something (gawk's `awk`, bashInteractive's `sh`, gotools' `bundle`), link only the wanted commands with `runCommand` (`gawk.nix`, `bash.nix`, `go.nix`).
+- Load order between zsh plugins is declared with `after` and `before` ([Where things go](#where-things-go)), never inferred. A name that is not a plugin is ignored, so deleting a plugin's file breaks no one.
+
+## Declared, never installed by hand
+
+- Do not install a tool with `brew install`, `npm install -g`, `curl ... | sh`, `go install`, `pipx install`, `cargo install` or `mise use -g`. It would be on one Mac only, at whatever version it was that day, and nothing would remove it.
+- Add it to Nix ([Where things go](#where-things-go)). When Nix cannot hold it, declare it where its kind is declared, with the reason in a comment: a cask or brew in `nix/homebrew.nix` or the host file, an App Store app in `my.masApps`, an official installer run by activation (`claude-code.nix`), or `my.knownBins` next to the tool that puts commands in a directory on PATH (claude, go.nvim's `go install`, reviewr's link).
+- The exceptions that exist are intended. Do not move them into Nix or remove them without asking.
+- To try a tool, run it with `nix shell 'nixpkgs#<pkg>'` or `nix run 'nixpkgs#<pkg>'`; nothing stays behind.
+- Each switch uninstalls Homebrew casks and brews no file declares, and warns about commands in `~/.local/bin` and `~/go/bin` that no `my.knownBins` lists. Per-project versions in a project's `mise.toml` belong to that project, not to this repo.
+
 ## Where things go
 
 | What | Where |
@@ -83,7 +124,7 @@ Casks, brews and App Store apps for one Mac stay in `nix/hosts/<host>.nix`: it i
 | CLI tool with no shell settings | `nix/home-manager/tools/packages.nix`, a list (alphabetical) |
 | CLI tool with aliases, shell functions, env or a zsh hook | its own `nix/home-manager/tools/<tool>.nix`, settings under `my.human`; a function built around a tool (e.g. a picker using fzf) goes in that tool's file. A function that does not change the shell (no `cd`, `export`, zle) can instead be a command, `pkgs.writeShellApplication` in `home.packages` with what it runs in `runtimeInputs` (`gchange` and `ohayo` in `gcloud.nix`); keep a human-only or same-named wrapper (`codex` in `codex.nix`) a function. A companion goes in its main tool's file, and a tool for a subject that has a set goes in the set ([One file, one unit](#one-file-one-unit)) |
 | Script of my own | settled: `pkgs.writeShellApplication` in `home.packages` of the file of the tool it belongs to (`git-url` in `git.nix`, `tovim` in `vim.nix`), with what it runs in `runtimeInputs`, or its own `<script>.nix` when it belongs to none (`deadlink.nix`). `home/bin` (`~/bin`, on PATH) is only for a script still being shaped; move it into Nix once it settles |
-| Another tool used inside a tool's settings (fzf in `bat-theme`, eza in enhancd's filter) | refer to it by store path (`lib.getExe pkgs.<tool>`, or `runtimeInputs` of a `writeShellApplication`), not through PATH: a file puts only its own tool on PATH, so deleting `fzf.nix` removes `fzf` but not bat's use of it. Exceptions: macOS's userland and git, hand-written config files that cannot hold a store path (they put the tool on PATH from the file that uses it, as `gh.nix` does for gh-dash), and optional uses guarded by `$+commands[...]` |
+| Another tool used inside a tool's settings (fzf in `bat-theme`, eza in enhancd's filter) | by store path, never through PATH ([Dependencies between tools](#dependencies-between-tools)) |
 | Alias or function not tied to any one tool | an existing `home/.zsh/NN_*.zsh`, or a new one with a numeric prefix (only `[0-9]*.zsh` is loaded; hand-written, humans only; loaded through `my.human` as the plugin `zsh-local`) |
 | Tool for one Mac only | `nix/hosts/<host>/<name>.nix` when it has settings or more than one package (a set included), else a line in `nix/hosts/<host>.nix` ([One file, one unit](#one-file-one-unit)) |
 | App, cask or brew for one Mac only | `nix/hosts/<host>.nix` |

@@ -22,6 +22,7 @@ Rules for adding a page:
 
 ## Concepts
 
+- [dependencies.md](./concepts/dependencies.md): why deleting a tool's file removes all of it and breaks nothing else (cohesion, loose coupling, reproducibility)
 - [workflow.md](./concepts/workflow.md): worktrees, herdr workspaces, review and landing
 - [modules.md](./concepts/modules.md): the `my.*` options and how they reach the Mac
 - [ai-agents.md](./concepts/ai-agents.md): how Claude Code, Codex and their skills are wired in

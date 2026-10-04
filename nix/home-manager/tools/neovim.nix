@@ -73,6 +73,13 @@ let
     fd
     ripgrep
     gh
+    # go.nvim: GoAddTag/GoRmTag, GoIfErr, GoAddTest, GoImpl (GoFillStruct
+    # is a gopls code action). Copies in ~/go/bin (GOBIN, on the user's
+    # PATH) come first, so keep these out of it
+    gomodifytags
+    iferr
+    gotests
+    impl
   ];
   neovim = pkgs.symlinkJoin {
     name = "neovim-with-tools";

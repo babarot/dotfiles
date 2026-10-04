@@ -10,10 +10,11 @@ return {
       'neovim/nvim-lspconfig',
     },
     ft = { 'go', 'gomod' },
-    -- No build step: update_all_sync `go install`s every tool go.nvim knows.
-    -- They land in GOBIN (~/go/bin), which go.nix puts at the end of PATH,
-    -- so the Nix ones (gopls, goimports, golangci-lint) still win. A missing
-    -- tool is installed on first use.
+    -- No build step. The tools the keys below use (gomodifytags, iferr,
+    -- gotests, impl) come from neovim.nix, on nvim's own PATH. Any
+    -- other tool go.nvim runs is `go install`ed on first use into GOBIN
+    -- (~/go/bin), which go.nix puts at the end of PATH, so the Nix ones
+    -- (gopls, goimports, golangci-lint) still win.
     config = function()
       require('go').setup({
         -- Disable icons (use text instead)

@@ -117,6 +117,18 @@ Casks, brews and App Store apps for one Mac stay in `nix/hosts/<host>.nix`: it i
 - To try a tool, run it with `nix shell 'nixpkgs#<pkg>'` or `nix run 'nixpkgs#<pkg>'`; nothing stays behind.
 - Each switch uninstalls Homebrew casks and brews no file declares, and warns about commands in `~/.local/bin` and `~/go/bin` that no `my.knownBins` lists. Per-project versions in a project's `mise.toml` belong to that project, not to this repo.
 
+## Patches are the last resort
+
+A patch has to be carried onto every upstream release, and it costs the binary cache. Before proposing one, go through these in order, and stop at the first that does what is wanted:
+
+1. The latest version: does the latest upstream release, or the version in nixpkgs, already do it?
+2. The documentation: can a setting, option, environment variable or plugin do it?
+3. Precedent: do upstream's issues, pull requests or discussions have the same request, a workaround or a plan for it?
+4. Other combinations: can it be done by wrapping the program, generating its config, combining it with another tool, or accepting the behavior and declaring it (`my.knownBins` for reviewr's link)?
+5. Only then, propose a patch to the user, saying what 1-4 found and why each fell short, and offer an upstream issue or pull request as the alternative. Do not start a patch before the user agrees.
+
+Once agreed, the patch is made in the fork and imported here ([Where things go](#where-things-go), "Local patches on a package").
+
 ## Where things go
 
 | What | Where |
@@ -147,7 +159,7 @@ Casks, brews and App Store apps for one Mac stay in `nix/hosts/<host>.nix`: it i
 | Per-project language or tool versions | the project's `mise.toml`, not this repo |
 | Claude Code | not from nixpkgs: it updates itself, so `nix/home-manager/tools/claude-code.nix` runs the official installer only when `~/.local/bin/claude` is missing |
 | Neovim LSP servers, formatters, tools its plugins call (fd, rg for snacks.nvim) and treesitter parsers | `nix/home-manager/tools/neovim.nix` (servers, formatters and tools in its `tools` list, on nvim's own PATH; languages in its `languages` list); not mason or `:TSInstall` |
-| Local patches on a package | commits on the `patches` branch of a fork `babarot/<name>`, exported into `nix/home-manager/tools/<name>/` and declared with `my.forkPatches.<name>` next to the package; never edit the patch files (docs/guides/maintenance.md) |
+| Local patches on a package | only after [Patches are the last resort](#patches-are-the-last-resort); commits on the `patches` branch of a fork `babarot/<name>`, exported into `nix/home-manager/tools/<name>/` and declared with `my.forkPatches.<name>` next to the package; never edit the patch files (docs/guides/maintenance.md) |
 | Agent Skill that ships with a tool | `my.skills.<name> = <dir with SKILL.md>` next to the package (`nix/home-manager/skills.nix` links it into `~/.claude/skills` and `~/.agents/skills`) |
 | My own Agent Skill on trial | `home/skills/<name>/SKILL.md` (`nix/home-manager/skills.nix` links each directory into `~/.claude/skills` and `~/.agents/skills`). A proving ground, not the main home: it skips the release flow of babarot/agent-skills, so edits apply as soon as they are in the main checkout (the links point there, so a worktree edit applies once landed). Keep it public-safe (nothing from work); once a skill settles, move it to babarot/agent-skills and delete it here |
 | Agent Skills for Codex and other agents | babarot/agent-skills (private, fetched over SSH) linked into `~/.agents/skills` by `nix/home-manager/tools/agent-skills.nix`; `my.agentSkills.scopes` picks the plugins (`work` only on the work Mac). Claude Code uses the plugin marketplace instead, with the work plugin on both Macs (`home/.claude/settings.json` is shared) |

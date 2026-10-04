@@ -7,6 +7,8 @@ description: Develop a change for a tool that babarot's dotfiles builds with pat
 
 Some tools in babarot's dotfiles are built from an upstream release with local patches. The patches are the commits of the `patches` branch of a fork `babarot/<name>`, exported with `git format-patch` into dotfiles. Development stays in the fork; dotfiles only imports what is pushed. The full guide is `~/src/github.com/babarot/dotfiles/docs/guides/maintenance.md` ("Patch a package from a fork branch").
 
+A new feature is made a patch only after the user agreed to it, having gone through "Patches are the last resort" in `~/src/github.com/babarot/dotfiles/AGENTS.md` (latest version, documentation, precedent upstream, other combinations). If that has not happened, do it first and stop at what it finds. Fixing an existing patch or following a new release needs no such step.
+
 ## Where things are
 
 - The fork is cloned at `~/src/github.com/babarot/<name>`: `origin` is the fork, `upstream` the original project.

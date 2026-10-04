@@ -22,6 +22,8 @@ nix build ".#darwinConfigurations.$(scutil --get LocalHostName).system" --no-lin
 
 ## Patch a package from a fork branch
 
+A patch is the last resort; what to try before one is in [AGENTS.md](../../AGENTS.md#patches-are-the-last-resort).
+
 Some packages carry local patches, applied from a directory in name order. Each declares its entry in `my.forkPatches` ([fork-patches.nix](../../nix/home-manager/fork-patches.nix)) next to the package, which names the fork, the upstream source and the patch directory; `git grep my.forkPatches` lists them.
 
 The patch files are not edited by hand. Each one is a commit on the fork's `patches` branch, exported with `git format-patch`, so git does the rebasing onto a new release and every file carries its commit message. [.githooks/check-patches](../../.githooks/check-patches) holds this: it exports each package's patches again from the branch on GitHub, on the tag the package is built from, and fails when the committed files differ. pre-commit runs it when patch files are staged, and [patches.yaml](../../.github/workflows/patches.yaml) in CI when they change. It compares with the pushed branch, so push the branch before exporting. pre-push runs it too on the pushed main and warns, without stopping the push, when a fork's branch has moved ahead of the patch files, so a change made in the fork is not left out.

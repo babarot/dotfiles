@@ -8,6 +8,7 @@
       zstyle ':prompt:za:right' template '%exitcode% %F{242}%git%%f %path%'
       zstyle ':prompt:za:left' template '%sign% '
       zstyle ':prompt:za:sign' color-on-error true
+      zstyle ':prompt:za:sign' vimode-indicator true
       zstyle ':prompt:za:vimode' enable true
       zstyle ':prompt:za:git' format '(%s)'
       zstyle ':prompt:za:git' show-dirty true

@@ -33,6 +33,7 @@
       "1password" # browser integration requires /Applications
       "cleanshot"
       "google-chrome"
+      "google-japanese-ime" # an input method installs system components
       "numi"
       "obsidian"
       "spotify"

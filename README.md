@@ -4,10 +4,9 @@
 
 My macOS environment for two Macs, declared in one Nix flake ([nix-darwin](https://github.com/nix-darwin/nix-darwin) + [home-manager](https://github.com/nix-community/home-manager)).
 
-- Shell: zsh, plain for AI agents with opt-in UX for humans (see below)
 - Terminal: [Ghostty](https://ghostty.org/) + [Herdr](https://herdr.dev/), one workspace per git worktree for Claude Code and Codex
 - Editor: [Neovim](https://github.com/neovim/neovim)
-- Packages: [Nix](https://nixos.org/); Homebrew casks and mas only for apps Nix can't handle well
+- Packages: [Nix](https://nixos.org/)
 
 ## Shell for humans and AI agents
 
@@ -21,51 +20,43 @@ Export `AI_AGENT=1` to force the agent side.
 
 ## One file, one lifecycle
 
-What is added and removed together is installed and configured in one file under `nix/home-manager/tools/`, imported automatically: usually one tool, sometimes a tool with its companions or a set. Adding a tool is adding a file, and deleting the file is all it takes to remove it. Three properties make that safe:
+What is added and removed together is installed and configured in one file under `nix/home-manager/tools/` (or `nix/hosts/<host>/` for one Mac), imported automatically: usually one tool, sometimes a tool with its companions or a set, like the Kubernetes tools below. Adding a tool is adding a file, and deleting the file is all it takes to remove it. Three properties make that safe:
 
-- Cohesion: deleting a tool's file removes everything that was for it (package, aliases, variables, plugins), so nothing outlives the tool. What is removed together shares a file:
-  - a tool and its own settings: `eza.nix`
-  - a main tool and the companions that exist only for it: `gh.nix`, with delta and lazygit for gh-dash
-  - tools used together for one subject: `kubernetes.set.nix`
-  - tools with no settings, one per line: `packages.nix`
-- Loose coupling: deleting a tool's file breaks nothing else. A tool used inside another's settings is referenced by its store path, not through PATH. In the example below, `bat-theme` keeps working after `fzf.nix`, and `fzf` on PATH with it, is deleted.
-- Reproducibility: a new Mac gets the same thing. Everything is declared here and pinned by `flake.lock`; what Nix cannot hold (self-updating apps, Claude Code) is declared as an exception, and a switch removes or flags what was installed by hand.
+- Cohesion: deleting a tool's file removes everything that was for it (package, aliases, variables, plugins), so nothing outlives the tool.
+- Loose coupling: deleting a tool's file breaks nothing else. A tool used inside another's settings is referenced by its store path, not through PATH. In the example below, kubectx's picker keeps working after `fzf.nix`, and `fzf` on PATH with it, is deleted.
+- Reproducibility: a new Mac gets the same thing. Everything is declared here and pinned by `flake.lock`; what Nix cannot hold (self-updating apps through Homebrew casks, Claude Code) is declared as an exception.
 
-A tool's settings sit next to its package, by who they are for:
-
-- `my.human`: humans only, rendered into `~/.config/zsh/human.zsh` and sourced after the `is_human` guard
-- `my.ai`: settings only agents get, sourced by `.zshenv` for agents only
-- `my.env`: variables both need (`GOPATH`, ...)
-
-Files for one Mac live in `nix/hosts/<host>/` and are imported only there. The rules are in [AGENTS.md](./AGENTS.md#principles), and how Nix makes the properties hold is in [docs/concepts/dependencies.md](./docs/concepts/dependencies.md).
+A tool's settings sit next to its package, by who they are for: `my.human` for humans only, `my.ai` for agents only, `my.env` for both. The rules are in [AGENTS.md](./AGENTS.md#principles), and how Nix makes the properties hold is in [docs/concepts/dependencies.md](./docs/concepts/dependencies.md).
 
 ```nix
-# nix/home-manager/tools/bat.nix
+# nix/hosts/PC-M-2025-026/kubernetes.set.nix (abridged)
+# A set: the Kubernetes tools, added and removed together with this file
 { lib, pkgs, ... }:
 let
-  # Used inside bat-theme only; fzf on PATH is fzf.nix's
-  fzf = lib.getExe pkgs.fzf;
+  # kubectx runs fzf for its picker, looking it up on PATH by name. This wraps
+  # kubectx so it finds fzf by its path in the Nix store instead: deleting
+  # fzf.nix takes fzf off PATH, but not away from kubectx.
+  kubectx = pkgs.symlinkJoin {
+    name = "kubectx-with-fzf";
+    paths = [ pkgs.kubectx ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/kubectx --suffix PATH : ${lib.makeBinPath [ pkgs.fzf ]}
+    '';
+  };
 in
 {
-  home.packages = [ pkgs.bat ];
+  # Installed by this file, and uninstalled when it is deleted
+  home.packages = with pkgs; [
+    helmfile
+    kubectl
+    kubectx # the wrapped one above
+    kustomize
+  ];
 
-  my.human.env = {
-    BAT_PAGER = "less -RF";
-    BAT_STYLE = "numbers,changes";
-    BAT_THEME = "DarkNeon";
-  };
-
-  # Agents read bat's output, not scroll it
-  my.ai.env.BAT_PAGER = "cat";
-
-  my.human.init = ''
-    bat-theme() {
-      local file=$1
-      if [[ -z $file ]]; then
-        file=$(${fzf})
-      fi
-      bat --list-themes | ${fzf} --preview="bat --theme={} --color=always ''${file}"
-    }
+  # For humans only: agents never get this abbreviation
+  my.human.plugins.zsh-abbr.init = ''
+    abbr --session --quiet k=kubectl
   '';
 }
 ```
@@ -78,19 +69,17 @@ nix/
   darwin.nix, macos.nix  # system settings and macOS System Settings for every Mac
   homebrew.nix           # vendor apps installed by Homebrew casks
   hosts/                 # per-Mac packages, casks and App Store apps
-  home-manager/          # dotfile links, shell env, one file, one lifecycle in tools/
+  home-manager/          # dotfile links, shell env, tool files in tools/
   ...
 home/                    # hand-written dotfiles, linked into ~ under the same names
   .zshenv, .zshrc, .zsh/ # zsh
   .config/               # linked to ~/.config as a whole
   .claude/               # Claude Code user settings
-  bin/                   # scripts still being shaped (settled ones are in Nix)
+  bin/                   # scripts still being shaped
   skills/                # my own Agent Skills on trial
   ...
 docs/                    # guides, concepts and reference (see docs/README.md)
 ```
-
-What a listing does not show is in [AGENTS.md](./AGENTS.md#layout).
 
 ## Apply changes
 
@@ -98,7 +87,7 @@ What a listing does not show is in [AGENTS.md](./AGENTS.md#layout).
 sudo darwin-rebuild switch --flake ~/src/github.com/babarot/dotfiles
 ```
 
-New files must be tracked by git (`git add`) before Nix can see them. Updating packages is in [maintenance.md](./docs/guides/maintenance.md#update-flake-inputs).
+Updating packages is in [maintenance.md](./docs/guides/maintenance.md#update-flake-inputs).
 
 ## Docs
 

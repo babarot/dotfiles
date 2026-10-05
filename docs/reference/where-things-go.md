@@ -26,7 +26,7 @@ Where each kind of thing is declared, for adding or moving it. Why a file holds 
 | Mac App Store app | `my.masApps` in `nix/home-manager/tools/app-store.nix`, a list, or in the host file; IDs from `mas list` |
 | babarot's own tools | released with GoReleaser's `nix` publisher (or c-c-statusline's workflow) to babarot/nur-packages, then `inputs.babarot.packages.<system>.<name>` |
 | Third-party tool not in nixpkgs that ships a flake | a flake input pinned to a release tag (see `crit`) |
-| zsh plugin or source not in nixpkgs | a flake input with `flake = false` |
+| zsh plugin or source not in nixpkgs | a flake input with `flake = false` ([install-from-git.md](../guides/install-from-git.md)) |
 | Third-party Homebrew tap | `homebrew.brews` / `homebrew.casks` with the full `owner/tap/name`; nix-darwin marks each entry `trusted: true` |
 | A new doc | `docs/guides/`, `docs/concepts/` or `docs/reference/` by what the reader wants (see [docs/README.md](../README.md)); never duplicate what the code or its comments already say |
 | Per-project language or tool versions | the project's `mise.toml`, not this repo |

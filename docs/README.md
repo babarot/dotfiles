@@ -18,6 +18,7 @@ Rules for adding a page:
 ## Guides
 
 - [setup-mac.md](./guides/setup-mac.md): set up a new Mac, or move an existing one to this flake
+- [install-from-git.md](./guides/install-from-git.md): install a zsh plugin or a script from a git repository or gist
 - [maintenance.md](./guides/maintenance.md): update inputs, patch a package, add a Mac, retire a skill
 
 ## Concepts

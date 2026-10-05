@@ -8,6 +8,7 @@
 { ... }:
 {
   imports = [
+    ./activation-colors.nix
     ./dotfiles.nix
     ./env.nix
     ./git.nix

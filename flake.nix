@@ -43,6 +43,13 @@
       flake = false;
     };
 
+    # Scripts of my own kept in gists, out of this repo's history; each is
+    # its own input, so updating one moves no other
+    deadlink = {
+      url = "git+https://gist.github.com/babarot/5a253e61a992d99a5a5834d092dd25cd.git";
+      flake = false;
+    };
+
     # Formatters and linters behind `nix fmt` (see nix/treefmt.nix)
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";

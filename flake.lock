@@ -74,6 +74,22 @@
         "type": "github"
       }
     },
+    "deadlink": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791167842,
+        "narHash": "sha256-x/6IPWYyV/eR/TLpxIXkXVqe56DZEik2QCPoGhfsn1I=",
+        "ref": "refs/heads/main",
+        "rev": "7f500e4b907b1aa1f1aee0922fef51af8feb0858",
+        "revCount": 1,
+        "type": "git",
+        "url": "https://gist.github.com/babarot/5a253e61a992d99a5a5834d092dd25cd.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://gist.github.com/babarot/5a253e61a992d99a5a5834d092dd25cd.git"
+      }
+    },
     "enhancd": {
       "flake": false,
       "locked": {
@@ -170,6 +186,7 @@
         "agent-skills": "agent-skills",
         "babarot": "babarot",
         "crit": "crit",
+        "deadlink": "deadlink",
         "enhancd": "enhancd",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",

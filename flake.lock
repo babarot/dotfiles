@@ -193,7 +193,7 @@
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs",
         "treefmt-nix": "treefmt-nix",
-        "za-prompt": "za-prompt"
+        "zsh-mini-prompt": "zsh-mini-prompt"
       }
     },
     "treefmt-nix": {
@@ -216,19 +216,19 @@
         "type": "github"
       }
     },
-    "za-prompt": {
+    "zsh-mini-prompt": {
       "flake": false,
       "locked": {
-        "lastModified": 1791184666,
-        "narHash": "sha256-u5OBZzU5pY46mvhvBLLOrpcdXqYFwH0gGxFvBTvcPUI=",
+        "lastModified": 1791186750,
+        "narHash": "sha256-AgW2PRXcZZv2bZSM41cP9M+MA8g2llQKZCynde9ge2Y=",
         "owner": "babarot",
-        "repo": "za-prompt",
-        "rev": "7067b5af7fe2734ecdeedc10c3423c4d2f9f4011",
+        "repo": "zsh-mini-prompt",
+        "rev": "b45fe484f82c3257e8e73b42959a7b6a98a71501",
         "type": "github"
       },
       "original": {
         "owner": "babarot",
-        "repo": "za-prompt",
+        "repo": "zsh-mini-prompt",
         "type": "github"
       }
     }

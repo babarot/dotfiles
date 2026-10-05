@@ -38,8 +38,8 @@
       url = "github:babarot/enhancd";
       flake = false;
     };
-    za-prompt = {
-      url = "github:babarot/za-prompt";
+    zsh-mini-prompt = {
+      url = "github:babarot/zsh-mini-prompt";
       flake = false;
     };
 

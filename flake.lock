@@ -219,11 +219,11 @@
     "za-prompt": {
       "flake": false,
       "locked": {
-        "lastModified": 1765646056,
-        "narHash": "sha256-6wDe1mwFGBE5Trr8ZseWSW0uDRm2mxC2evEntfakb8k=",
+        "lastModified": 1791184666,
+        "narHash": "sha256-u5OBZzU5pY46mvhvBLLOrpcdXqYFwH0gGxFvBTvcPUI=",
         "owner": "babarot",
         "repo": "za-prompt",
-        "rev": "67def409b2d99133efd8ee90bf85fe54effaa942",
+        "rev": "7067b5af7fe2734ecdeedc10c3423c4d2f9f4011",
         "type": "github"
       },
       "original": {

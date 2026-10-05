@@ -73,8 +73,13 @@
       # nix/hosts/<host>.nix is the Mac's darwin module; every *.nix directly
       # in nix/hosts/<host>/ is a home-manager module only that Mac imports,
       # as nix/home-manager/tools/ is for both
+      # user is the macOS account on that Mac; the home directory and
+      # everything under it follow from it
       mkHost =
-        host:
+        {
+          host,
+          user ? "babarot",
+        }:
         let
           dir = ./nix/hosts + "/${host}";
           hostTools = nixpkgs.lib.optionals (builtins.pathExists dir) (
@@ -84,7 +89,7 @@
           );
         in
         nix-darwin.lib.darwinSystem {
-          specialArgs = { inherit inputs; };
+          specialArgs = { inherit inputs user; };
           modules = [
             ./nix/darwin.nix
             ./nix/macos.nix
@@ -98,7 +103,7 @@
               # Move files in the way (e.g. old afx links) aside instead of failing
               home-manager.backupFileExtension = "before-hm";
               home-manager.extraSpecialArgs = { inherit inputs; };
-              home-manager.users.babarot.imports = [ ./nix/home-manager ] ++ hostTools;
+              home-manager.users.${user}.imports = [ ./nix/home-manager ] ++ hostTools;
             }
           ];
         };
@@ -110,8 +115,8 @@
 
       # darwin-rebuild picks the entry matching `scutil --get LocalHostName`
       darwinConfigurations = {
-        "pro23" = mkHost "pro23";
-        "PC-M-2025-026" = mkHost "PC-M-2025-026";
+        "pro23" = mkHost { host = "pro23"; };
+        "PC-M-2025-026" = mkHost { host = "PC-M-2025-026"; };
       };
     };
 }

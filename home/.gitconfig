@@ -110,7 +110,7 @@
 [user]
   name = babarot
   email = b4b4r07@gmail.com
-	signingkey = /Users/babarot/.ssh/id_rsa.pub
+	signingkey = ~/.ssh/id_rsa.pub
 
 [pager]
   branch = less -X

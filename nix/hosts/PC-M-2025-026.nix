@@ -1,6 +1,6 @@
 # Work Mac. Put settings that only this machine needs here.
 # MDM-managed apps (Self Service, Microsoft Defender) are out of scope.
-{ ... }:
+{ user, ... }:
 {
   # Vendor apps only for this Mac (see nix/homebrew.nix)
   homebrew.casks = [
@@ -21,7 +21,7 @@
     "datadog-labs/pack/pup" # Datadog CLI; `pup` in nixpkgs is a different tool
   ];
 
-  home-manager.users.babarot =
+  home-manager.users.${user} =
     { config, pkgs, ... }:
     {
       # gh-dash reads ~/.config/gh-dash/config.yml, then this file on top:

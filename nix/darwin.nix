@@ -1,5 +1,5 @@
 # System-level settings shared by all Macs
-{ inputs, ... }:
+{ inputs, user, ... }:
 {
   # Nix itself is installed and managed by the Determinate installer
   nix.enable = false;
@@ -10,8 +10,9 @@
   # Set here because home-manager uses this pkgs (useGlobalPkgs).
   nixpkgs.config.allowUnfree = true;
 
-  system.primaryUser = "babarot";
-  users.users.babarot.home = "/Users/babarot";
+  system.primaryUser = user;
+  # home-manager takes home.username and home.homeDirectory from here
+  users.users.${user}.home = "/Users/${user}";
 
   system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
   system.stateVersion = 6;

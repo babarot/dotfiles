@@ -1,5 +1,5 @@
 # Private Mac. Put settings that only this machine needs here.
-{ ... }:
+{ user, ... }:
 {
   # Vendor apps only for this Mac (see nix/homebrew.nix)
   homebrew.casks = [
@@ -14,7 +14,7 @@
     "tabularis" # SQL client; updates itself
   ];
 
-  home-manager.users.babarot =
+  home-manager.users.${user} =
     { config, pkgs, ... }:
     {
       home.packages = [ pkgs.agent-browser ];

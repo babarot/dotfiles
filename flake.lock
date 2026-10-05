@@ -181,6 +181,22 @@
         "type": "github"
       }
     },
+    "repo-cleanup": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791207384,
+        "narHash": "sha256-LoeSdGJogt/qqUe80exW/UKPULmrhbDNBoI6axIdL1k=",
+        "ref": "refs/heads/main",
+        "rev": "5fbed61bfa378f823df86e55c05af762c98a435a",
+        "revCount": 1,
+        "type": "git",
+        "url": "https://gist.github.com/babarot/c2c3436e248b21ee3c542dc3b8ead46a.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://gist.github.com/babarot/c2c3436e248b21ee3c542dc3b8ead46a.git"
+      }
+    },
     "root": {
       "inputs": {
         "agent-skills": "agent-skills",
@@ -192,6 +208,7 @@
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs",
+        "repo-cleanup": "repo-cleanup",
         "treefmt-nix": "treefmt-nix",
         "zsh-mini-prompt": "zsh-mini-prompt"
       }

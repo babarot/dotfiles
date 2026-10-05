@@ -49,6 +49,10 @@
       url = "git+https://gist.github.com/babarot/5a253e61a992d99a5a5834d092dd25cd.git";
       flake = false;
     };
+    repo-cleanup = {
+      url = "git+https://gist.github.com/babarot/c2c3436e248b21ee3c542dc3b8ead46a.git";
+      flake = false;
+    };
 
     # Formatters and linters behind `nix fmt` (see nix/treefmt.nix)
     treefmt-nix = {

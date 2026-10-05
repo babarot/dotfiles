@@ -1,7 +1,27 @@
 # Set: tools for working with Kubernetes clusters, on the work Mac only.
 # A new Kubernetes tool goes in this file, not in a file of its own; see
 # "Cohesion: one file, one lifecycle" in AGENTS.md for what makes a set.
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  # kubectx and kubens look up fzf on PATH for their interactive picker.
+  # Wrapped so the picker does not depend on fzf.nix putting fzf there;
+  # suffix, so an fzf earlier on PATH still wins.
+  kubectx = pkgs.symlinkJoin {
+    name = "kubectx-with-fzf";
+    paths = [ pkgs.kubectx ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      for bin in kubectx kubens; do
+        wrapProgram $out/bin/$bin --suffix PATH : ${lib.makeBinPath [ pkgs.fzf ]}
+      done
+    '';
+  };
+in
 {
   home.packages = with pkgs; [
     helmfile

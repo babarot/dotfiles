@@ -106,6 +106,22 @@
         "type": "github"
       }
     },
+    "gist-ctl": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791211631,
+        "narHash": "sha256-Q9LbouL5Om5P9huyUilCnIuLK177L7mDqN9kIzAf5lw=",
+        "ref": "refs/heads/main",
+        "rev": "cf4a392920cfb582709037b96fa52705d4c86bb5",
+        "revCount": 1,
+        "type": "git",
+        "url": "https://gist.github.com/babarot/0bf79c7778a99d6ac5298ae61ab4b953.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://gist.github.com/babarot/0bf79c7778a99d6ac5298ae61ab4b953.git"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -204,6 +220,7 @@
         "crit": "crit",
         "deadlink": "deadlink",
         "enhancd": "enhancd",
+        "gist-ctl": "gist-ctl",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",

@@ -204,7 +204,7 @@ Configure the appearance.
 
 https://www.google.co.jp/ime/
 
-Not installed by `darwin-rebuild`; install it from the site.
+Installed by `darwin-rebuild` (cask in `nix/homebrew.nix`), but it only works after a restart. After the first switch, restart the Mac, then add it under System Settings > Keyboard > Input Sources and allow it when asked. Do not enable it with `defaults write` or the TIS API: macOS records the consent only when the source is added in System Settings, so a source enabled another way asks for consent again on every switch.
 
 <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/e208b204-1f0b-4bfc-8020-23a9d6bb1761"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c8b7ae19-744d-462a-8acd-92cb72472e3d"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/f57a6418-8265-4e33-ade5-c68998ce40e1"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/f3fe14cf-6d5b-4d13-a7dc-933740ba49c3"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/86d09068-5b07-4a25-be97-ea912df2901e">
 

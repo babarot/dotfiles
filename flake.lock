@@ -69,6 +69,22 @@
         "type": "github"
       }
     },
+    "claude-linkify": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791260008,
+        "narHash": "sha256-wDHqNQp3pfvG8Z6mpv4Vwtn+jXfO58RJIUexydUnzeY=",
+        "owner": "babarot",
+        "repo": "claude-linkify",
+        "rev": "87e99cd81a93b1c21f8ee072715eedc0116ac850",
+        "type": "github"
+      },
+      "original": {
+        "owner": "babarot",
+        "repo": "claude-linkify",
+        "type": "github"
+      }
+    },
     "crit": {
       "inputs": {
         "nixpkgs": [
@@ -250,6 +266,7 @@
         "agent-skills": "agent-skills",
         "babarot": "babarot",
         "claude-image-view": "claude-image-view",
+        "claude-linkify": "claude-linkify",
         "crit": "crit",
         "deadlink": "deadlink",
         "enhancd": "enhancd",

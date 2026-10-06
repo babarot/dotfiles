@@ -38,6 +38,10 @@
       url = "github:jarrodwatts/claude-image-view";
       flake = false;
     };
+    claude-linkify = {
+      url = "github:babarot/claude-linkify";
+      flake = false;
+    };
     leitstand = {
       url = "github:dominikmartn/leitstand";
       flake = false;

@@ -72,15 +72,16 @@
     "claude-linkify": {
       "flake": false,
       "locked": {
-        "lastModified": 1791260008,
-        "narHash": "sha256-wDHqNQp3pfvG8Z6mpv4Vwtn+jXfO58RJIUexydUnzeY=",
+        "lastModified": 1791262222,
+        "narHash": "sha256-evQaylbPohRZSQyb2GQ2V+Y+xiaJMX9rVbeJ/E3FtFo=",
         "owner": "babarot",
         "repo": "claude-linkify",
-        "rev": "87e99cd81a93b1c21f8ee072715eedc0116ac850",
+        "rev": "14dbd008ce9e46bc9ed0ef984c3a25eefabc67bb",
         "type": "github"
       },
       "original": {
         "owner": "babarot",
+        "ref": "v0.2.0",
         "repo": "claude-linkify",
         "type": "github"
       }

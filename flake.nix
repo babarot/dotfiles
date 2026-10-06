@@ -38,8 +38,9 @@
       url = "github:jarrodwatts/claude-image-view";
       flake = false;
     };
+    # Mine, released with tagpr; bump the tag to update
     claude-linkify = {
-      url = "github:babarot/claude-linkify";
+      url = "github:babarot/claude-linkify/v0.2.0";
       flake = false;
     };
     leitstand = {

@@ -38,6 +38,10 @@
       url = "github:jarrodwatts/claude-image-view";
       flake = false;
     };
+    leitstand = {
+      url = "github:dominikmartn/leitstand";
+      flake = false;
+    };
 
     # zsh plugins not in nixpkgs, sourced as-is
     enhancd = {

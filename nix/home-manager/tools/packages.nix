@@ -2,6 +2,7 @@
 { pkgs, ... }:
 {
   home.packages = with pkgs; [
+    abtop
     actionlint
     ast-grep
     btop

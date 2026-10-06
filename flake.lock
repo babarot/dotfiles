@@ -53,6 +53,22 @@
         "type": "github"
       }
     },
+    "claude-image-view": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791045118,
+        "narHash": "sha256-WCJJrInTO6iOrcrFIm2adgg+3J0L8J+KNANanYSB3Rc=",
+        "owner": "jarrodwatts",
+        "repo": "claude-image-view",
+        "rev": "b3c412bb6d167cafade79148e95f9114ee1aad7c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jarrodwatts",
+        "repo": "claude-image-view",
+        "type": "github"
+      }
+    },
     "crit": {
       "inputs": {
         "nixpkgs": [
@@ -217,6 +233,7 @@
       "inputs": {
         "agent-skills": "agent-skills",
         "babarot": "babarot",
+        "claude-image-view": "claude-image-view",
         "crit": "crit",
         "deadlink": "deadlink",
         "enhancd": "enhancd",

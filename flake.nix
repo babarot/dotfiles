@@ -33,6 +33,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Claude Code mods (plugins of hooks modules), loaded as-is
+    claude-image-view = {
+      url = "github:jarrodwatts/claude-image-view";
+      flake = false;
+    };
+
     # zsh plugins not in nixpkgs, sourced as-is
     enhancd = {
       url = "github:babarot/enhancd";

@@ -1,0 +1,136 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Tue, 6 Oct 2026 22:32:28 +0900
+Subject: [PATCH] Add o to copy mode to jump to the other end of the selection
+
+Copy mode had no way to move the start of a selection once it was made:
+the anchor stays where v, Space or V was pressed, and only the cursor
+end moves. In tmux's and Vim's vi keys, o swaps the cursor with the
+other end, so either end can be adjusted.
+
+o now swaps the cursor and the selection anchor. With a linewise
+selection (V) it swaps the rows and keeps the cursor's column. Without
+a selection it does nothing.
+---
+ src/client/shell/copy_mode.rs  | 18 +++++++++
+ src/client/shell/tests/copy.rs | 71 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 89 insertions(+)
+
+diff --git a/src/client/shell/copy_mode.rs b/src/client/shell/copy_mode.rs
+index 07dc8d1..8b9329f 100644
+--- a/src/client/shell/copy_mode.rs
++++ b/src/client/shell/copy_mode.rs
+@@ -211,6 +211,7 @@ impl ClientShellState {
+             }
+             'v' | ' ' => self.begin_copy_selection(false),
+             'V' => self.begin_copy_selection(true),
++            'o' => self.swap_copy_selection_ends(outcome),
+             'h' => self.move_copy_cursor(0, -1, outcome),
+             'j' => self.move_copy_cursor(1, 0, outcome),
+             'k' => self.move_copy_cursor(-1, 0, outcome),
+@@ -674,6 +675,23 @@ impl ClientShellState {
+         }
+     }
+ 
++    fn swap_copy_selection_ends(&mut self, outcome: &mut ClientShellInput) {
++        let Some(copy_mode) = self.copy_mode.as_mut() else {
++            return;
++        };
++        match copy_mode.selection.as_mut() {
++            Some(ClientCopySelection::Character { anchor }) => {
++                std::mem::swap(anchor, &mut copy_mode.cursor);
++            }
++            Some(ClientCopySelection::Linewise { anchor_row }) => {
++                std::mem::swap(anchor_row, &mut copy_mode.cursor.row);
++            }
++            None => return,
++        }
++        self.reveal_copy_cursor(outcome, false);
++        self.sync_copy_selection();
++    }
++
+     pub(super) fn sync_copy_selection(&mut self) {
+         let Some(copy_mode) = self.copy_mode.as_ref() else {
+             return;
+diff --git a/src/client/shell/tests/copy.rs b/src/client/shell/tests/copy.rs
+index eda4da8..12cbe64 100644
+--- a/src/client/shell/tests/copy.rs
++++ b/src/client/shell/tests/copy.rs
+@@ -521,6 +521,77 @@ fn keyboard_copy_mode_owns_cursor_selection_copy_and_scroll_restore() {
+     )));
+ }
+ 
++#[test]
++fn keyboard_copy_mode_o_swaps_cursor_and_selection_anchor() {
++    let mut state = ClientShellState::new(ClientShellConfig::from_config(&Config::default()));
++    state.config.copy_on_select = false;
++    state.set_snapshot(Box::new(snapshot()));
++    let mut pane_surface = surface();
++    pane_surface.panes[0].scroll = Some(crate::protocol::PaneSurfaceScrollMetrics {
++        offset_from_bottom: 0,
++        max_offset_from_bottom: 20,
++        viewport_rows: 2,
++    });
++    state.set_pane_surface(pane_surface);
++    state.compose(106, 20).expect("composed frame");
++
++    let mut enter = ClientShellInput::default();
++    state.record_binding(
++        crate::input::KeybindMatch::Action(crate::input::KeybindAction::CopyMode),
++        &mut enter,
++    );
++    let press = |state: &mut ClientShellState, ch: char| {
++        state.handle_raw_events(vec![RawInputEvent::Key(crate::input::TerminalKey::new(
++            KeyCode::Char(ch),
++            KeyModifiers::empty(),
++        ))]);
++    };
++    let point = |row, col| crate::api::schema::PaneTextPoint { row, col };
++    let cursor = |state: &ClientShellState| state.copy_mode.as_ref().map(|mode| mode.cursor);
++    let selection =
++        |state: &ClientShellState| state.copy_mode.as_ref().and_then(|mode| mode.selection);
++
++    let start = cursor(&state).expect("copy mode cursor");
++    let moved = point(start.row - 1, start.col + 2);
++
++    // Without a selection, o does nothing.
++    press(&mut state, 'o');
++    assert_eq!(cursor(&state), Some(start));
++
++    press(&mut state, 'v');
++    press(&mut state, 'l');
++    press(&mut state, 'l');
++    press(&mut state, 'k');
++    assert_eq!(cursor(&state), Some(moved));
++
++    press(&mut state, 'o');
++    assert_eq!(cursor(&state), Some(start));
++    assert!(matches!(
++        selection(&state),
++        Some(ClientCopySelection::Character { anchor }) if anchor == moved
++    ));
++    assert!(state
++        .selection
++        .as_ref()
++        .is_some_and(crate::selection::Selection::is_visible));
++
++    press(&mut state, 'o');
++    assert_eq!(cursor(&state), Some(moved));
++    assert!(matches!(
++        selection(&state),
++        Some(ClientCopySelection::Character { anchor }) if anchor == start
++    ));
++
++    press(&mut state, 'V');
++    press(&mut state, 'k');
++    press(&mut state, 'o');
++    assert_eq!(cursor(&state), Some(moved));
++    assert!(matches!(
++        selection(&state),
++        Some(ClientCopySelection::Linewise { anchor_row }) if anchor_row == moved.row - 1
++    ));
++}
++
+ #[test]
+ fn keyboard_selections_survive_output_and_copy_live_ranges() {
+     // Character and linewise selections have distinct anchor/range projections.

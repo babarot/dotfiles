@@ -175,22 +175,6 @@
         "type": "github"
       }
     },
-    "leitstand": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1791008477,
-        "narHash": "sha256-+055/9yJ22M+L/s1dKyhAagaO+U5dGP9smYNHU4dLng=",
-        "owner": "dominikmartn",
-        "repo": "leitstand",
-        "rev": "c2fcb1d7a0f6b4ecc177260e51d357ad44584846",
-        "type": "github"
-      },
-      "original": {
-        "owner": "dominikmartn",
-        "repo": "leitstand",
-        "type": "github"
-      }
-    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -273,7 +257,6 @@
         "enhancd": "enhancd",
         "gist-ctl": "gist-ctl",
         "home-manager": "home-manager",
-        "leitstand": "leitstand",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs",

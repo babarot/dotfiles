@@ -43,10 +43,6 @@
       url = "github:babarot/claude-linkify/v0.2.0";
       flake = false;
     };
-    leitstand = {
-      url = "github:dominikmartn/leitstand";
-      flake = false;
-    };
 
     # zsh plugins not in nixpkgs, sourced as-is
     enhancd = {

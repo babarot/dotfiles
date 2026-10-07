@@ -89,6 +89,18 @@ description = "open scratch shell"
 width = "80%"
 height = "80%"
 
+# Switch spaces from a tree of them with fzf, worktrees under their repository
+# and each checkout's git marks, as tmux's prefix+f found a window. The command
+# is put on PATH by nix/home-manager/tools/herdr/space-switch.nix; picking a
+# space or cancelling closes the popup
+[[keys.command]]
+key = "prefix+f"
+type = "popup"
+command = "herdr-space-switch --git=status"
+description = "switch space"
+width = "80%"
+height = "80%"
+
 # Review plugins from nix/home-manager/tools/herdr/reviewr.nix and hunk-diff.nix.
 # The hunk keys are the ones its setup-keys action would add.
 [[keys.command]]

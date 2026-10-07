@@ -1,0 +1,97 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 7 Oct 2026 21:12:34 +0900
+Subject: [PATCH] Unzoom instead of cycling panes while the tab is zoomed
+
+cycle_pane_next and cycle_pane_previous used to move focus to the next
+pane while keeping the tab zoomed, so the zoom jumped to a pane that was
+hidden a moment ago. While the focused tab is zoomed they now only turn
+the zoom off, leaving focus on the zoomed pane; once the panes are back
+on screen, the same key cycles them as before.
+---
+ src/client/shell/actions.rs                   |  8 +++++
+ src/client/shell/endpoints.rs                 | 11 +++++++
+ .../tests/agents_worktrees_notifications.rs   | 29 +++++++++++++++++++
+ 3 files changed, 48 insertions(+)
+
+diff --git a/src/client/shell/actions.rs b/src/client/shell/actions.rs
+index 12d8cc1..4270324 100644
+--- a/src/client/shell/actions.rs
++++ b/src/client/shell/actions.rs
+@@ -1025,6 +1025,14 @@ impl ClientShellState {
+             KeybindAction::ClosePane => Some(Method::PaneClose(PaneTarget {
+                 pane_id: focused_pane.clone()?,
+             })),
++            KeybindAction::CyclePaneNext | KeybindAction::CyclePanePrevious
++                if self.focused_tab_zoomed() =>
++            {
++                Some(Method::PaneZoom(PaneZoomParams {
++                    pane_id: focused_pane,
++                    mode: PaneZoomMode::Off,
++                }))
++            }
+             KeybindAction::CyclePaneNext | KeybindAction::CyclePanePrevious => {
+                 let focused_tab = focused_tab?;
+                 let panes = snapshot
+diff --git a/src/client/shell/endpoints.rs b/src/client/shell/endpoints.rs
+index 01b34c3..3bac45c 100644
+--- a/src/client/shell/endpoints.rs
++++ b/src/client/shell/endpoints.rs
+@@ -455,6 +455,17 @@ impl ClientShellState {
+             .is_none_or(|methods| methods.contains(crate::api::api_method_name(method)))
+     }
+ 
++    /// Whether the focused tab shows one pane zoomed. Cycling panes there
++    /// unzooms instead, since the other panes are not on screen.
++    pub(super) fn focused_tab_zoomed(&self) -> bool {
++        let Some(snapshot) = self.snapshot.as_deref() else {
++            return false;
++        };
++        snapshot.tabs.iter().any(|tab| {
++            Some(tab.tab_id.as_str()) == snapshot.focused_tab_id.as_deref() && tab.zoomed
++        })
++    }
++
+     pub(super) fn focused_tab_count(&self) -> usize {
+         let Some(snapshot) = self.snapshot.as_deref() else {
+             return 0;
+diff --git a/src/client/shell/tests/agents_worktrees_notifications.rs b/src/client/shell/tests/agents_worktrees_notifications.rs
+index f3f98e0..dfedf45 100644
+--- a/src/client/shell/tests/agents_worktrees_notifications.rs
++++ b/src/client/shell/tests/agents_worktrees_notifications.rs
+@@ -433,6 +433,35 @@ fn pane_cycle_last_and_agent_actions_resolve_to_stable_pane_ids() {
+     ));
+ }
+ 
++#[test]
++fn pane_cycle_unzooms_a_zoomed_tab_instead_of_moving_focus() {
++    let mut initial = snapshot();
++    let mut second = initial.panes[0].clone();
++    second.pane_id = "pane_2".into();
++    second.focused = false;
++    initial.panes.push(second);
++    initial.tabs[0].zoomed = true;
++    let mut state = ClientShellState::new(ClientShellConfig::from_config(&Config::default()));
++    state.set_snapshot(Box::new(initial));
++
++    for action in [
++        crate::input::KeybindAction::CyclePaneNext,
++        crate::input::KeybindAction::CyclePanePrevious,
++    ] {
++        let mut cycle = ClientShellInput::default();
++        state.record_binding(crate::input::KeybindMatch::Action(action), &mut cycle);
++        let [ClientShellAction::Endpoint { request, .. }] = &cycle.actions[..] else {
++            panic!("pane cycle should use endpoint API");
++        };
++        assert!(matches!(
++            &request.method,
++            crate::api::schema::Method::PaneZoom(params)
++                if params.pane_id.as_deref() == Some("pane_1")
++                    && params.mode == crate::api::schema::PaneZoomMode::Off
++        ));
++    }
++}
++
+ #[test]
+ fn agent_sidebar_honors_priority_symbols_tokens_and_stable_hits() {
+     let mut projected = snapshot();

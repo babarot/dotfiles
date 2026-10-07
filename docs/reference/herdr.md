@@ -36,7 +36,7 @@ The prefix is `ctrl+s`; pressing it twice sends a literal `ctrl+s`. A key marked
 | Key | Does | From |
 |---|---|---|
 | `prefix+h/j/k/l` | Go to the pane left, below, above, right | herdr |
-| `prefix+o`, `ctrl+o` | Go to the other pane, or the next with three or more; `ctrl+o` needs no prefix and so never reaches the app in the pane | config.toml |
+| `prefix+o`, `ctrl+o` | Go to the other pane, or the next with three or more; while zoomed, only unzoom (patch 0008). `ctrl+o` needs no prefix and so never reaches the app in the pane | config.toml |
 | `prefix+shift+tab` | Go to the previous pane in order | herdr |
 | `prefix+;` | Go back to the last pane | config.toml |
 | `prefix+v`, `prefix+\|` | Split side by side | config.toml |
@@ -134,6 +134,7 @@ herdr is nixpkgs' build with these patches, one per change, applied in name orde
 | [0005](../../nix/home-manager/tools/herdr/0005-Add-o-to-copy-mode-to-jump-to-the-other-end-of-the-s.patch) | `o` in copy mode goes to the other end of the selection, as in tmux and Vim |
 | [0006](../../nix/home-manager/tools/herdr/0006-Add-ui.toast.duration_seconds-to-set-how-long-a-toas.patch) | `ui.toast.duration_seconds` sets how long an in-app toast stays, for every kind; 0 keeps it until clicked |
 | [0007](../../nix/home-manager/tools/herdr/0007-Stack-in-app-toasts-instead-of-queueing-them.patch) | In-app toasts stack, up to 5, instead of waiting for the one shown to close |
+| [0008](../../nix/home-manager/tools/herdr/0008-Unzoom-instead-of-cycling-panes-while-the-tab-is-zoo.patch) | Cycling panes (`ctrl+o`, `prefix+o`) while the tab is zoomed only unzooms, instead of moving the zoom to the next pane |
 
 ## Companions
 

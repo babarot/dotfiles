@@ -1,7 +1,7 @@
 # herdr plugin that lays out every git worktree workspace herdr creates or
 # opens (prefix+shift+g, the sidebar, `herdr worktree create`): Claude Code
 # top left, reviewr top right, a zsh across the bottom. The script is
-# herdr-worktree-layout.sh; reviewr's own auto_open is off so it opens once.
+# worktree-layout.sh; reviewr's own auto_open is off so it opens once.
 {
   config,
   lib,
@@ -15,7 +15,7 @@ let
       config.my.herdr
       pkgs.jq
     ];
-    text = builtins.readFile ./herdr-worktree-layout.sh;
+    text = builtins.readFile ./worktree-layout.sh;
   };
   exe = lib.getExe layout;
 in

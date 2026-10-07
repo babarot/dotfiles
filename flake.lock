@@ -155,6 +155,22 @@
         "url": "https://gist.github.com/babarot/0bf79c7778a99d6ac5298ae61ab4b953.git"
       }
     },
+    "herdr-worktree-ctl": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791344085,
+        "narHash": "sha256-N3oTUz6wqEKBKgDM4RRJ+LO5A6xRDmAHTXILCwP3F8M=",
+        "ref": "refs/heads/main",
+        "rev": "1462617a6392fbaf53b868fdbb9524b2b8fe4990",
+        "revCount": 1,
+        "type": "git",
+        "url": "https://gist.github.com/babarot/d7b198c8e7f26189e46f80e46053ff29.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://gist.github.com/babarot/d7b198c8e7f26189e46f80e46053ff29.git"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -256,6 +272,7 @@
         "deadlink": "deadlink",
         "enhancd": "enhancd",
         "gist-ctl": "gist-ctl",
+        "herdr-worktree-ctl": "herdr-worktree-ctl",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",

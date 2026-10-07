@@ -24,20 +24,6 @@
       # which only login shells read and this repo does not keep
       my.path = [ "${config.home.homeDirectory}/.orbstack/bin" ];
 
-      # $devstack in herdr's sidebar: the worktree has its minitube devstack
-      # running, a compose project started from its compose.devstack.yaml.
-      # minitube's devstacks run only on this Mac.
-      my.herdrWorktreeStatus.devstack = {
-        repos = [ "minitube" ];
-        mark = "dev";
-        condition = ''
-          test -f compose.devstack.yaml &&
-            docker compose ls --format json | jq -e --arg d "$PWD" 'any(.[];
-              (.ConfigFiles | split(",") | index($d + "/compose.devstack.yaml"))
-              and (.Status | test("running")))'
-        '';
-      };
-
       # The shipped skill tells agents to prefer agent-browser over any other
       # browser tool; claude-in-chrome stays the default, so rewrite its
       # description to trigger only when agent-browser is asked for by name.

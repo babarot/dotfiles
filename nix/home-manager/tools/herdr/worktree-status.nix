@@ -1,6 +1,7 @@
 # herdr-worktree-status: marks on the sidebar rows of herdr's worktree
 # spaces, each put by a condition (shell) that is true in the space's folder.
-# A host file sets the conditions, since what is worth a mark differs by Mac:
+# A file in nix/hosts/<host>/ sets the conditions, since what is worth a
+# mark differs by Mac (guarded, see nix/hosts/pro23/herdr-devstack.nix):
 #
 #   my.herdrWorktreeStatus.devstack = {
 #     repos = [ "minitube" ];
@@ -8,7 +9,7 @@
 #   };
 #
 # shows ● as $devstack, placed and styled in home/.config/herdr/config.toml.
-# The script is herdr-worktree-status.sh, kept running by launchd while any
+# The script is worktree-status.sh, kept running by launchd while any
 # condition is set.
 {
   config,
@@ -25,7 +26,7 @@ let
       config.my.herdr
       pkgs.jq
     ];
-    text = builtins.readFile ./herdr-worktree-status.sh;
+    text = builtins.readFile ./worktree-status.sh;
   };
   conditions = pkgs.writeText "herdr-worktree-status.json" (
     builtins.toJSON (lib.mapAttrsToList (name: c: { inherit name; } // c) cfg)

@@ -16,7 +16,6 @@
     ./human.nix
     ./ai.nix
     ./skills.nix
-    ./herdr-plugins.nix
     ./mas.nix
     ./stray-bins.nix
   ]

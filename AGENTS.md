@@ -110,7 +110,7 @@ Agents get a plain zsh; human UX loads only when `is_human` (README, "Shell for 
 
 Do not add a directory at the repository root without a strong reason; put new files under `nix/`, `home/` or `docs/`. The README describes the root directories, so each new one means editing it too.
 
-- `nix/home-manager/*.nix` (outside `tools/`) are the modules behind the `my.*` options ([docs/concepts/modules.md](./docs/concepts/modules.md)); `tools/` holds the tool files, and only its `*.nix` are imported, so a tool's scripts and patches sit beside its file.
+- `nix/home-manager/*.nix` (outside `tools/`) are the modules behind the `my.*` options ([docs/concepts/modules.md](./docs/concepts/modules.md)); `tools/` holds the tool files, and only its `*.nix` are imported, so a tool's scripts and patches sit beside its file. When a tool's companions are big enough to want files of their own, they go in `tools/<tool>/` and the tool's file lists them in `imports` (`herdr.nix`); nothing there is imported otherwise, so deleting the tool's file still removes them.
 - `nix/hosts/<host>.nix` is a nix-darwin module (casks, brews, App Store apps, single packages for that Mac); `nix/hosts/<host>/*.nix` are home-manager modules shaped like tool files, for that Mac only.
 - `home/` is linked into `~` under the same names, pointing at the repo checkout rather than the store, so an edit applies without a switch; `home/.config` is `~/.config` as a whole.
 - `home/skills/` holds my own Agent Skills on trial, linked into `~/.claude/skills` and `~/.agents/skills`; `.claude/skills/` holds skills for working on this repo only, not linked anywhere.

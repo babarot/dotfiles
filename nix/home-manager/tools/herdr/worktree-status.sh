@@ -2,7 +2,7 @@
 # each round runs every condition of my.herdrWorktreeStatus in the folder of
 # each space, and a condition that exits 0 puts its mark in the token of its
 # name ($<name> in home/.config/herdr/config.toml). Run by launchd from
-# herdr-worktree-status.nix, with the conditions as a JSON file:
+# worktree-status.nix, with the conditions as a JSON file:
 #   [{"name": "devstack", "condition": "...", "repos": ["minitube"], "mark": "●"}]
 #
 # A condition is shell, run with bash -c. Its cwd is the space's folder, and

@@ -39,7 +39,7 @@ claude = [
 # from the patches in nix/home-manager/tools/herdr.
 # $devstack is a mark after the name while that space's folder has a
 # minitube devstack running, a condition of my.herdrWorktreeStatus
-# (nix/home-manager/tools/herdr-worktree-status.nix) set only on the private
+# (nix/home-manager/tools/herdr/worktree-status.nix) set only on the private
 # Mac; elsewhere it is never reported and does not show.
 [ui.sidebar.spaces]
 rows = [
@@ -86,7 +86,7 @@ description = "open scratch shell"
 width = "80%"
 height = "80%"
 
-# Review plugins from nix/home-manager/tools/herdr-reviewr.nix and herdr-hunk-diff.nix.
+# Review plugins from nix/home-manager/tools/herdr/reviewr.nix and hunk-diff.nix.
 # The hunk keys are the ones its setup-keys action would add.
 [[keys.command]]
 key = "prefix+shift+v"

@@ -1,7 +1,13 @@
 # herdr: terminal multiplexer for coding agents, used inside Ghostty.
 # Its settings live in home/.config/herdr/config.toml.
+#
+# Its companions, which exist only for herdr, are imported from herdr/ below,
+# so deleting this file removes them too: the plugins, the sidebar marks'
+# agent and my.herdrPlugins, the module the plugins register through.
+# herdr-worktree-ctl, a script kept in a gist, is built here.
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -21,8 +27,50 @@ let
   herdr = pkgs.herdr.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ config.my.forkPatches.herdr.patches;
   });
+
+  # herdr-worktree-ctl: list herdr's worktrees with whether a space is open
+  # on each, its uncommitted changes, commits not in the default branch,
+  # the processes working in it and its last activity, and remove the ones
+  # picked with fzf; closing a worktree space leaves the checkout behind.
+  # The Deno script and its tests live in a gist (the herdr-worktree-ctl
+  # input in flake.nix); `nix flake update herdr-worktree-ctl` takes an
+  # edit. The tests run at build time, against real git repositories and a
+  # fake herdr, lsof, fzf and trash, so an edit that breaks them does not
+  # build.
+  herdr-worktree-ctl =
+    pkgs.runCommand "herdr-worktree-ctl"
+      {
+        nativeBuildInputs = [
+          pkgs.deno
+          pkgs.git
+          pkgs.makeWrapper
+        ];
+      }
+      ''
+        export HOME=$TMPDIR DENO_DIR=$TMPDIR/deno
+        deno test --allow-all --no-lock ${inputs.herdr-worktree-ctl}/herdr-worktree-ctl_test.ts
+
+        # Prefixed, so this herdr and the fzf pinned here win; fzf runs the
+        # preview on this PATH. git, lsof and trash are macOS's own
+        makeWrapper ${lib.getExe pkgs.deno} $out/bin/herdr-worktree-ctl \
+          --add-flags "run --no-lock --allow-run=git,herdr,lsof,fzf,trash --allow-read --allow-write --allow-env ${inputs.herdr-worktree-ctl}/herdr-worktree-ctl.ts" \
+          --prefix PATH : ${
+            lib.makeBinPath [
+              herdr
+              pkgs.fzf
+            ]
+          }
+      '';
 in
 {
+  imports = [
+    ./herdr/plugins.nix
+    ./herdr/hunk-diff.nix
+    ./herdr/reviewr.nix
+    ./herdr/worktree-layout.nix
+    ./herdr/worktree-status.nix
+  ];
+
   # Everything that runs herdr (plugins, launchd agents) takes it from here,
   # so it is the patched build the user runs, not a second, unpatched one
   options.my.herdr = lib.mkOption {
@@ -33,7 +81,10 @@ in
 
   config.my.herdr = herdr;
 
-  config.home.packages = [ herdr ];
+  config.home.packages = [
+    herdr
+    herdr-worktree-ctl
+  ];
 
   config.my.forkPatches.herdr = {
     inherit (pkgs.herdr) src;

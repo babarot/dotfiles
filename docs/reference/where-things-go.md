@@ -44,6 +44,7 @@ Where each kind of thing is declared, for adding or moving it. Why a file holds 
 - A set is one file, never a directory of per-tool files. Settings the set shares (an abbreviation, wrapper links, `my.path`) sit in it next to the packages. Scripts it reads go in a `<subject>/` directory beside it, as tools/ does for tools; only `*.nix` directly in the directory is imported.
 - A tool is in exactly one file. A tool also used for another subject, or on its own, gets its own file.
 - A tool-with-companions file has no marker: the main tool's name already says what it holds.
+- Companions big enough to want files of their own (plugins built from source, a launchd agent with options) go in `tools/<tool>/`, listed in the `imports` of the tool's file (`herdr.nix`). Only the tool's file imports them, so deleting it removes them all, and a host file that sets one of their options guards it with `options.my ? <option>` (`nix/hosts/pro23/herdr-devstack.nix`).
 
 ## One Mac or both
 

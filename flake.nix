@@ -64,6 +64,10 @@
       url = "git+https://gist.github.com/babarot/0bf79c7778a99d6ac5298ae61ab4b953.git";
       flake = false;
     };
+    herdr-worktree-ctl = {
+      url = "git+https://gist.github.com/babarot/d7b198c8e7f26189e46f80e46053ff29.git";
+      flake = false;
+    };
     repo-cleanup = {
       url = "git+https://gist.github.com/babarot/c2c3436e248b21ee3c542dc3b8ead46a.git";
       flake = false;

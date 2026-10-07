@@ -4,7 +4,7 @@ The home-manager modules in [nix/home-manager/](../../nix/home-manager/) define 
 
 ## Importing tools
 
-[default.nix](../../nix/home-manager/default.nix) imports the modules below and every `*.nix` file in `tools/`. Only files ending in `.nix` are imported, so a tool's own scripts and patches can sit beside its file. Adding a tool means adding a file; nothing lists it.
+[default.nix](../../nix/home-manager/default.nix) imports the modules below and every `*.nix` file in `tools/`. Only files ending in `.nix` directly in `tools/` are imported, so a tool's own scripts and patches can sit beside its file, and a tool whose companions want files of their own lists them in its `imports` from `tools/<tool>/` (herdr.nix). Adding a tool means adding a file; nothing lists it.
 
 Tool files for one Mac only sit in `nix/hosts/<host>/`. `mkHost` in [flake.nix](../../flake.nix) imports every `*.nix` directly in that directory into that Mac's home-manager user, beside default.nix, so they work like files in `tools/` and set the same `my.*` options. A Mac without the directory imports nothing more. What one file may hold (a single tool, a tool with companions, a `*.set.nix` or a list) is in [AGENTS.md](../../AGENTS.md#cohesion-one-file-one-lifecycle).
 
@@ -64,7 +64,7 @@ The same module adds every directory in [home/skills/](../../home/skills/), my o
 
 ## my.herdrPlugins
 
-[herdr-plugins.nix](../../nix/home-manager/herdr-plugins.nix). herdr plugins built by Nix, by plugin id.
+[tools/herdr/plugins.nix](../../nix/home-manager/tools/herdr/plugins.nix), imported by herdr.nix, so the option exists only while herdr does. herdr plugins built by Nix, by plugin id.
 
 On every switch, an activation script runs `herdr plugin link` on each store path. Linking never writes into the plugin directory, so a read-only store path works, and linking an id again replaces its old store path in `~/.config/herdr/plugins.json`. It then runs `herdr plugin unlink` on every registered plugin whose root is in `/nix/store` but whose id is no longer in `my.herdrPlugins`. Plugins installed or linked by hand are left alone. A failed link or unlink warns and does not stop the switch.
 
@@ -74,7 +74,7 @@ On every switch, an activation script runs `herdr plugin link` on each store pat
 
 ## my.herdrWorktreeStatus
 
-[tools/herdr-worktree-status.nix](../../nix/home-manager/tools/herdr-worktree-status.nix). Marks in herdr's sidebar for worktree workspaces, by token name: a shell condition, the repos it runs in and the mark it puts. Set per Mac in the host file; what the marks are for is in [workflow.md](./workflow.md#naming-a-workspace).
+[tools/herdr/worktree-status.nix](../../nix/home-manager/tools/herdr/worktree-status.nix), imported by herdr.nix, so the option exists only while herdr does. Marks in herdr's sidebar for worktree workspaces, by token name: a shell condition, the repos it runs in and the mark it puts. Set per Mac in `nix/hosts/<host>/`, guarded so the Mac still builds without herdr; what the marks are for is in [workflow.md](./workflow.md#naming-a-workspace).
 
 ## my.masApps
 

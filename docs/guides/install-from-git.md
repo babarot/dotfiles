@@ -105,16 +105,7 @@ The script gets its own `<name>.nix`, or goes in the file of the tool it serves.
 
 ## Keep a script of your own in a gist
 
-A script of your own is built in its tool's file, with the bash written inline. Move it to a gist when it has settled, belongs to no tool, and is better kept out of this repo's history: it gets its own history, and it can be fetched with `curl` where there is no Nix.
-
-A gist per script keeps one file, one lifecycle: each script is one input, one entry in `flake.lock` and one tool file, so updating one moves no other. A repository collecting many small scripts is one input, and updating it moves all of them. A gist can hold several files, but no directories.
-
-A script still being edited does not belong in a gist: every edit then needs `nix flake update` and a switch before it runs. Keep it in `home/bin`, which is linked and applies on save, until it settles.
-
-To move one:
-
-1. Write it as a file that runs on its own, with a shebang (`#!/usr/bin/env bash`), and create the gist: `gh gist create --public <file>`.
-2. Add the gist as an input and read the file from it, as above; the tool file keeps only `name`, `runtimeInputs` and `text = builtins.readFile ...`.
+When a script of your own may live in a gist, and how to write, test and change one, is in [gist-cli.md](./gist-cli.md).
 
 ## Update it
 

@@ -53,8 +53,11 @@ rows = [
 [keys]
 prefix = "ctrl+s"
 # prefix+o goes to the other pane, or the next one in order with three or
-# more, as it did in tmux
-cycle_pane_next = "prefix+o"
+# more, as it did in tmux. ctrl+o does the same without the prefix, as tmux's
+# `bind -n C-o select-pane -t :.+` once did. herdr takes ctrl+o before the
+# pane, so it no longer reaches the app inside: Claude Code's ctrl+o
+# (verbose transcript) and Vim's ctrl+o (jump back) are disabled by this.
+cycle_pane_next = ["prefix+o", "ctrl+o"]
 open_notification_target = "prefix+a"
 # prefix+H/J/K/L resize the pane by a step as in tmux, without its repeat;
 # prefix+r's resize mode (h/j/k/l until esc) is for longer moves. They take

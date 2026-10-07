@@ -19,9 +19,11 @@ tab_bar_right_separator = " · "
 
 # Tell me when an agent finishes or needs input with a popup inside herdr
 # (off by default). prefix+a jumps to the notified pane (herdr's default
-# prefix+o is taken by pane cycling below).
+# prefix+o is taken by pane cycling below). Toasts stay until clicked
+# (duration_seconds = 0, from this repo's herdr patches).
 [ui.toast]
 delivery = "herdr"
+duration_seconds = 0
 
 # Show what Claude Code is working on (its terminal title) under each agent.
 # A pane named with a leading "*" or "!" (prefix+shift+p) marks an agent in use,

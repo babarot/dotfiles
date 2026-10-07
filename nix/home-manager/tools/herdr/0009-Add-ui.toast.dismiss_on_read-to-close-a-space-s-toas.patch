@@ -1,0 +1,320 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 7 Oct 2026 23:36:50 +0900
+Subject: [PATCH] Add ui.toast.dismiss_on_read to close a space's toasts once
+ it is opened
+
+An in-app toast closes only when its duration runs out or when it is
+clicked, so with ui.toast.duration_seconds = 0 a toast stays up after
+its space was opened from the sidebar and its agents were read there.
+
+ui.toast.dismiss_on_read closes the toasts of a space once that space
+is opened, from the sidebar or by keyboard, whatever the duration. Only
+that space's toasts close: a linked worktree is its own space, so
+opening it leaves the toasts of its parent and sibling worktrees, and
+of other machines, stacked. A space opened while the terminal is in the
+background is not read, so its toasts close when the terminal regains
+focus. A toast that arrives later from another tab of the open space
+stays until another space is opened and this one again. It is off by
+default, so nothing changes for existing configs.
+---
+ .../website/src/data/config-reference.json    |  6 ++
+ src/client/shell/config.rs                    |  2 +
+ src/client/shell/input.rs                     |  1 +
+ src/client/shell/notification_policy.rs       | 29 +++++++
+ src/client/shell/state.rs                     |  6 ++
+ .../tests/agents_worktrees_notifications.rs   | 80 +++++++++++++++++++
+ src/config/model.rs                           |  9 +++
+ src/main.rs                                   |  2 +
+ 8 files changed, 135 insertions(+)
+
+diff --git a/docs/next/website/src/data/config-reference.json b/docs/next/website/src/data/config-reference.json
+index afaa1f4..6deaac4 100644
+--- a/docs/next/website/src/data/config-reference.json
++++ b/docs/next/website/src/data/config-reference.json
+@@ -1114,6 +1114,12 @@
+           "default": "unset",
+           "description": "Seconds an in-app toast stays visible. Unset keeps the built-in duration for each kind of notification. 0 keeps the toast until it is clicked; valid values are 0 through 3600."
+         },
++        {
++          "key": "ui.toast.dismiss_on_read",
++          "type": "boolean",
++          "default": "false",
++          "description": "Close a space's in-app toasts once that space is opened, from the sidebar or by keyboard, whatever ui.toast.duration_seconds says. A linked worktree is its own space, so opening it closes only its own toasts."
++        },
+         {
+           "key": "ui.toast.herdr.position",
+           "type": "enum",
+diff --git a/src/client/shell/config.rs b/src/client/shell/config.rs
+index 1242452..4deb8be 100644
+--- a/src/client/shell/config.rs
++++ b/src/client/shell/config.rs
+@@ -129,6 +129,7 @@ impl ClientShellConfig {
+             toast_delivery: config.ui.toast.delivery,
+             toast_delay_seconds: config.ui.toast.delay_seconds,
+             toast_duration_seconds: config.ui.toast.duration_seconds,
++            toast_dismiss_on_read: config.ui.toast.dismiss_on_read,
+             toast_position: config.ui.toast.herdr.position,
+             copy_on_select: config.ui.copy_on_select,
+             clipboard_toast_enabled: config.ui.toast.clipboard.enabled,
+@@ -332,6 +333,7 @@ impl ClientShellConfig {
+                 self.toast_delivery = ui.toast.delivery;
+                 self.toast_delay_seconds = ui.toast.delay_seconds;
+                 self.toast_duration_seconds = ui.toast.duration_seconds;
++                self.toast_dismiss_on_read = ui.toast.dismiss_on_read;
+                 self.toast_position = ui.toast.herdr.position;
+                 self.copy_on_select = ui.copy_on_select;
+                 self.clipboard_toast_enabled = ui.toast.clipboard.enabled;
+diff --git a/src/client/shell/input.rs b/src/client/shell/input.rs
+index c6d458c..020d2f1 100644
+--- a/src/client/shell/input.rs
++++ b/src/client/shell/input.rs
+@@ -243,6 +243,7 @@ impl ClientShellState {
+                     if let Some(surface) = self.pane_surface.clone() {
+                         outcome.repaint |= self.acknowledge_active_surface_agents(&surface);
+                     }
++                    outcome.repaint |= self.dismiss_read_space_notifications();
+                     outcome
+                         .requests
+                         .push(ClientMessage::ClientShellFocus { focused: true });
+diff --git a/src/client/shell/notification_policy.rs b/src/client/shell/notification_policy.rs
+index 8d70ebb..0fc8713 100644
+--- a/src/client/shell/notification_policy.rs
++++ b/src/client/shell/notification_policy.rs
+@@ -35,6 +35,35 @@ impl ClientShellState {
+             .retain(|visible| &visible.endpoint_id != endpoint_id);
+     }
+ 
++    /// With ui.toast.dismiss_on_read, closes the toasts of the active
++    /// endpoint's focused space once it is opened while the outer terminal
++    /// has focus, the way its agents are read. A space stays opened until
++    /// another one is, so a toast that later arrives from another tab of the
++    /// same space stays up.
++    pub(super) fn dismiss_read_space_notifications(&mut self) -> bool {
++        if !self.config.toast_dismiss_on_read || self.outer_focused == Some(false) {
++            return false;
++        }
++        let Some(workspace_id) = self
++            .snapshot
++            .as_deref()
++            .and_then(|snapshot| snapshot.focused_workspace_id.clone())
++        else {
++            return false;
++        };
++        let opened = (self.active_endpoint_id.clone(), workspace_id);
++        if self.read_space.as_ref() == Some(&opened) {
++            return false;
++        }
++        let shown = self.visible_notifications.len();
++        self.visible_notifications.retain(|visible| {
++            visible.endpoint_id != opened.0
++                || visible.event.workspace_id.as_deref() != Some(opened.1.as_str())
++        });
++        self.read_space = Some(opened);
++        self.visible_notifications.len() != shown
++    }
++
+     /// Shows a toast at once, stacked on the ones already visible, each
+     /// counting its own duration from when it appears.
+     fn show_notification(
+diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
+index a46842f..801e433 100644
+--- a/src/client/shell/state.rs
++++ b/src/client/shell/state.rs
+@@ -29,6 +29,7 @@ pub(crate) struct ClientShellConfig {
+     pub(super) toast_delivery: crate::config::ToastDelivery,
+     pub(super) toast_delay_seconds: u64,
+     pub(super) toast_duration_seconds: Option<u64>,
++    pub(super) toast_dismiss_on_read: bool,
+     pub(super) toast_position: crate::config::ToastHerdrPosition,
+     pub(super) copy_on_select: bool,
+     pub(super) clipboard_toast_enabled: bool,
+@@ -923,6 +924,9 @@ pub(crate) struct ClientShellState {
+     pub(super) pending_notifications: Vec<ClientPendingNotification>,
+     /// Toasts on screen, oldest first.
+     pub(super) visible_notifications: Vec<ClientVisibleNotification>,
++    /// The endpoint and space last opened while the outer terminal had
++    /// focus; opening another closes that space's toasts.
++    pub(super) read_space: Option<(ClientEndpointId, String)>,
+     pub(super) endpoint_notice_seen: HashSet<ClientEndpointNoticeKey>,
+     pub(super) visible_endpoint_notice: Option<ClientVisibleEndpointNotice>,
+     pub(super) outer_focused: Option<bool>,
+@@ -1084,6 +1088,7 @@ impl ClientShellState {
+             pending_integration_installs: 0,
+             pending_notifications: Vec::new(),
+             visible_notifications: Vec::new(),
++            read_space: None,
+             endpoint_notice_seen: HashSet::new(),
+             visible_endpoint_notice: None,
+             outer_focused: None,
+@@ -1555,6 +1560,7 @@ impl ClientShellState {
+             }
+         }
+         self.snapshot = Some(snapshot);
++        self.dismiss_read_space_notifications();
+         let pending_surface = self.pending_pane_surface.take();
+         if let Some(surface) = pending_surface {
+             let matching = self.snapshot.as_ref().is_some_and(|snapshot| {
+diff --git a/src/client/shell/tests/agents_worktrees_notifications.rs b/src/client/shell/tests/agents_worktrees_notifications.rs
+index 36bbee9..8db75c6 100644
+--- a/src/client/shell/tests/agents_worktrees_notifications.rs
++++ b/src/client/shell/tests/agents_worktrees_notifications.rs
+@@ -1636,3 +1636,83 @@ fn clicking_one_stacked_notification_closes_only_that_one() {
+     assert_eq!(rects[0], newest);
+     assert_eq!(rects[1].y, middle.y);
+ }
++
++#[test]
++fn opening_a_space_closes_only_that_spaces_notifications() {
++    fn space_notification(title: &str, workspace_id: &str, tab_id: &str) -> SemanticNotification {
++        SemanticNotification {
++            kind: SemanticNotificationKind::Custom,
++            title: title.into(),
++            body: None,
++            sound: None,
++            agent: None,
++            workspace_id: Some(workspace_id.into()),
++            tab_id: Some(tab_id.into()),
++            pane_id: Some(format!("{title}_pane")),
++            position: None,
++        }
++    }
++    fn visible_titles(state: &ClientShellState) -> Vec<&str> {
++        state
++            .visible_notifications
++            .iter()
++            .map(|notification| notification.event.title.as_str())
++            .collect()
++    }
++    fn focus_space(state: &mut ClientShellState, workspace_id: &str) {
++        let mut next = snapshot();
++        next.revision = state
++            .snapshot
++            .as_ref()
++            .map_or(0, |current| current.revision)
++            + 1;
++        next.focused_workspace_id = Some(workspace_id.into());
++        state.set_snapshot(Box::new(next));
++    }
++
++    for dismiss_on_read in [false, true] {
++        let mut config = ClientShellConfig::from_config(&Config::default());
++        config.toast_delivery = crate::config::ToastDelivery::Herdr;
++        config.toast_duration_seconds = Some(0);
++        config.toast_dismiss_on_read = dismiss_on_read;
++        let mut state = ClientShellState::new(config);
++        state.set_snapshot(Box::new(snapshot()));
++        let now = std::time::Instant::now();
++        for (title, workspace_id, tab_id) in [
++            ("worktree a", "ws_2", "tab_2"),
++            ("worktree a other tab", "ws_2", "tab_3"),
++            ("worktree b", "ws_3", "tab_4"),
++        ] {
++            state.receive_notification(
++                &ClientEndpointId::Local,
++                space_notification(title, workspace_id, tab_id),
++                now,
++            );
++        }
++
++        focus_space(&mut state, "ws_2");
++        if !dismiss_on_read {
++            assert_eq!(visible_titles(&state).len(), 3);
++            continue;
++        }
++        assert_eq!(visible_titles(&state), vec!["worktree b"]);
++
++        // A toast from another tab of the space already open stays up.
++        state.receive_notification(
++            &ClientEndpointId::Local,
++            space_notification("later", "ws_2", "tab_3"),
++            now,
++        );
++        focus_space(&mut state, "ws_2");
++        assert_eq!(visible_titles(&state), vec!["worktree b", "later"]);
++
++        // Opened while the terminal is in the background, nothing is read
++        // until it comes back to the front.
++        state.handle_raw_events(vec![RawInputEvent::OuterFocusLost]);
++        focus_space(&mut state, "ws_3");
++        assert_eq!(visible_titles(&state), vec!["worktree b", "later"]);
++        let outcome = state.handle_raw_events(vec![RawInputEvent::OuterFocusGained]);
++        assert!(outcome.repaint);
++        assert_eq!(visible_titles(&state), vec!["later"]);
++    }
++}
+diff --git a/src/config/model.rs b/src/config/model.rs
+index eb3cc46..bd5f4fd 100644
+--- a/src/config/model.rs
++++ b/src/config/model.rs
+@@ -203,6 +203,9 @@ pub struct ToastConfig {
+     /// Seconds an in-app toast stays visible. Unset keeps each kind's own
+     /// duration; 0 keeps the toast until it is clicked.
+     pub duration_seconds: Option<u64>,
++    /// Closes a space's in-app toasts once that space is opened, however
++    /// long they would otherwise stay.
++    pub dismiss_on_read: bool,
+     pub herdr: HerdrToastConfig,
+     pub clipboard: ClipboardToastConfig,
+ }
+@@ -1216,6 +1219,7 @@ impl Default for ToastConfig {
+             delivery: ToastDelivery::Off,
+             delay_seconds: 1,
+             duration_seconds: None,
++            dismiss_on_read: false,
+             herdr: HerdrToastConfig::default(),
+             clipboard: ClipboardToastConfig::default(),
+         }
+@@ -1251,6 +1255,7 @@ impl<'de> Deserialize<'de> for ToastConfig {
+             enabled: Option<bool>,
+             delay_seconds: Option<u64>,
+             duration_seconds: Option<u64>,
++            dismiss_on_read: bool,
+             herdr: HerdrToastConfig,
+             clipboard: ClipboardToastConfig,
+         }
+@@ -1280,6 +1285,7 @@ impl<'de> Deserialize<'de> for ToastConfig {
+             delivery,
+             delay_seconds,
+             duration_seconds: raw.duration_seconds,
++            dismiss_on_read: raw.dismiss_on_read,
+             herdr: raw.herdr,
+             clipboard: raw.clipboard,
+         })
+@@ -1847,6 +1853,7 @@ mouse_scroll_lines = 0
+ delivery = "terminal"
+ delay_seconds = 2
+ duration_seconds = 0
++dismiss_on_read = true
+ 
+ [ui.toast.herdr]
+ position = "top-left"
+@@ -1859,6 +1866,7 @@ position = "top-center"
+         assert_eq!(config.ui.toast.delivery, ToastDelivery::Terminal);
+         assert_eq!(config.ui.toast.delay_seconds, 2);
+         assert_eq!(config.ui.toast.duration_seconds, Some(0));
++        assert!(config.ui.toast.dismiss_on_read);
+         assert_eq!(config.ui.toast.herdr.position, ToastHerdrPosition::TopLeft);
+         assert!(!config.ui.toast.clipboard.enabled);
+         assert_eq!(
+@@ -1873,6 +1881,7 @@ position = "top-center"
+         assert_eq!(config.ui.toast.delivery, ToastDelivery::Off);
+         assert_eq!(config.ui.toast.delay_seconds, 1);
+         assert_eq!(config.ui.toast.duration_seconds, None);
++        assert!(!config.ui.toast.dismiss_on_read);
+         assert_eq!(
+             config.ui.toast.herdr.position,
+             ToastHerdrPosition::BottomRight
+diff --git a/src/main.rs b/src/main.rs
+index 33faad0..ea91466 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -369,6 +369,8 @@ const DEFAULT_CONFIG: &str = r##"# herdr configuration
+ # delay_seconds = 1
+ # Seconds an in-app toast stays visible; unset keeps each kind's own, 0 keeps it until clicked
+ # duration_seconds = 5
++# Close a space's toasts once that space is opened, however long they would stay
++# dismiss_on_read = false
+ 
+ [ui.toast.herdr]
+ # position = "bottom-right"

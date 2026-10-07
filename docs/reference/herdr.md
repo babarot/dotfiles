@@ -135,6 +135,7 @@ herdr is nixpkgs' build with these patches, one per change, applied in name orde
 | [0006](../../nix/home-manager/tools/herdr/0006-Add-ui.toast.duration_seconds-to-set-how-long-a-toas.patch) | `ui.toast.duration_seconds` sets how long an in-app toast stays, for every kind; 0 keeps it until clicked |
 | [0007](../../nix/home-manager/tools/herdr/0007-Stack-in-app-toasts-instead-of-queueing-them.patch) | In-app toasts stack, up to 5, instead of waiting for the one shown to close |
 | [0008](../../nix/home-manager/tools/herdr/0008-Unzoom-instead-of-cycling-panes-while-the-tab-is-zoo.patch) | Cycling panes (`ctrl+o`, `prefix+o`) while the tab is zoomed only unzooms, instead of moving the zoom to the next pane |
+| [0009](../../nix/home-manager/tools/herdr/0009-Add-ui.toast.dismiss_on_read-to-close-a-space-s-toas.patch) | `ui.toast.dismiss_on_read` closes a space's in-app toasts once that space is opened, whatever their duration; a worktree's only its own |
 
 ## Companions
 

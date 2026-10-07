@@ -23,6 +23,7 @@ When it says the branch is not on the package's tag, the branch was moved to ano
 `.githooks/check-patches --write --only <name>` exports the branch over the package's patch files and stages them. Then look at what came in:
 
 - `git diff --cached --stat -- nix/home-manager/tools/<name>/` and the subjects of added, removed and changed patches (`git diff --cached --name-status`, then the `Subject:` lines).
+- Whether the package's patches are listed in docs: herdr's are in the Patches table of `docs/reference/herdr.md`. Add a row for a new patch, remove the row of a dropped one, and fix the link of each file whose name changed (the numbers move when one is dropped) and the summary of one that now does something else. The row says what changes for the user in one line; the why stays in the patch's message. It goes in the same commit as the patches.
 - Whether a patch now touches dependency files: `git diff --cached -- nix/home-manager/tools/<name>/ | grep -E '^\+\+\+ b/.*(package\.json|pnpm-lock\.yaml|go\.mod|go\.sum|Cargo\.(toml|lock))$'`.
 
 ## 3. Hashes and build

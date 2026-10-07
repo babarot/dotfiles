@@ -132,6 +132,8 @@ herdr is nixpkgs' build with these patches, one per change, applied in name orde
 | [0003](../../nix/home-manager/tools/herdr/0003-Add-a-name-field-to-the-new-worktree-dialog.patch) | The new worktree dialog (`prefix+shift+g`) takes the space's name, leaving the generated branch and checkout alone |
 | [0004](../../nix/home-manager/tools/herdr/0004-Add-Mark-as-unread-to-a-space-s-menu.patch) | "Mark as unread" in a space's menu brings back the Done mark of its agents already looked at (herdrdev/herdr#4622) |
 | [0005](../../nix/home-manager/tools/herdr/0005-Add-o-to-copy-mode-to-jump-to-the-other-end-of-the-s.patch) | `o` in copy mode goes to the other end of the selection, as in tmux and Vim |
+| [0006](../../nix/home-manager/tools/herdr/0006-Add-ui.toast.duration_seconds-to-set-how-long-a-toas.patch) | `ui.toast.duration_seconds` sets how long an in-app toast stays, for every kind; 0 keeps it until clicked |
+| [0007](../../nix/home-manager/tools/herdr/0007-Stack-in-app-toasts-instead-of-queueing-them.patch) | In-app toasts stack, up to 5, instead of waiting for the one shown to close |
 
 ## Companions
 

@@ -4,10 +4,6 @@
 - Do not use bold
 - Follow the PR template's format; do not add extra headers or sections
 
-# Git commit identity
-
-- Never set the author or committer yourself (`-c user.email=...`, `-c user.name=...`, `--author`, `GIT_AUTHOR_*`/`GIT_COMMITTER_*`). Leave it to the gitconfig, which picks the right identity per repository; the email address Claude Code gives you about the user is not the one to commit with.
-
 # Characters not to use in Markdown
 
 - Bold in running text. Minimal use for headings and the like is fine, but no bold just to make something stand out

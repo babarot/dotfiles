@@ -17,6 +17,54 @@ let
   dir = "${config.my.repo}/home/.claude";
   link = file: config.lib.file.mkOutOfStoreSymlink "${dir}/${file}";
   babarot = inputs.babarot.packages.${pkgs.stdenv.hostPlatform.system};
+
+  # Claude Code tells the model the account's email address, and agents
+  # have committed with it in place of the one the gitconfig sets. A rule
+  # in CLAUDE.md is only a request, so this PreToolUse hook refuses any
+  # Bash command that sets the commit identity itself.
+  git-identity-guard = pkgs.writeShellApplication {
+    name = "claude-git-identity-guard";
+    runtimeInputs = [ pkgs.jq ];
+    text = ''
+      cmd=$(jq -r '.tool_input.command // empty')
+      # -c user.email=..., git config user.email <value>, commit --author,
+      # GIT_AUTHOR_EMAIL=... and the like; reading the value, and --author
+      # as a filter (git log --author), stay allowed.
+      if printf '%s' "$cmd" | grep -Eq \
+        -e 'user\.(email|name)(=|[[:space:]]+[^-[:space:]&|;)])' \
+        -e 'commit[^|;&]*--author([=[:space:]]|$)' \
+        -e 'GIT_(AUTHOR|COMMITTER)_(NAME|EMAIL)='; then
+        echo "Do not set the commit author or committer; leave it to the gitconfig, which picks the identity per repository." >&2
+        exit 2
+      fi
+    '';
+  };
+  # A plugin directory under ~/.claude/skills loads in place, like
+  # claude-recall's, so the hook can run a store path without an entry in
+  # the hand-edited settings.json.
+  git-identity-plugin = pkgs.linkFarm "claude-git-identity" {
+    ".claude-plugin/plugin.json" = pkgs.writeText "plugin.json" (
+      builtins.toJSON {
+        name = "git-identity";
+        description = "Refuse Bash commands that set the git commit identity";
+      }
+    );
+    "hooks/hooks.json" = pkgs.writeText "hooks.json" (
+      builtins.toJSON {
+        hooks.PreToolUse = [
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
+                command = lib.getExe git-identity-guard;
+              }
+            ];
+          }
+        ];
+      }
+    );
+  };
 in
 {
   home.file = {
@@ -28,6 +76,7 @@ in
     ".claude/keybindings.json".source = link "keybindings.json";
     ".claude/statusline.yaml".source = link "statusline.yaml";
     ".claude/CLAUDE.md".source = link "CLAUDE.md";
+    ".claude/skills/git-identity".source = git-identity-plugin;
   };
 
   # The official installer's link, which Claude Code repoints as it updates

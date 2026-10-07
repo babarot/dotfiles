@@ -723,10 +723,10 @@ index 6c829ac..ff1ce80 100644
      } else if state.copy_feedback.is_some() {
          Some("client_surface_patch.fallback.copy_feedback")
 diff --git a/src/client/shell/tests/agents_worktrees_notifications.rs b/src/client/shell/tests/agents_worktrees_notifications.rs
-index 90ff1eb..f3f98e0 100644
+index e0b86ba..235be22 100644
 --- a/src/client/shell/tests/agents_worktrees_notifications.rs
 +++ b/src/client/shell/tests/agents_worktrees_notifications.rs
-@@ -1426,7 +1426,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+@@ -1460,7 +1460,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
      state.mode = ClientShellMode::Navigate;
      let ignored = state.handle_raw_events(vec![click()]);
      assert!(ignored.actions.is_empty());
@@ -735,7 +735,7 @@ index 90ff1eb..f3f98e0 100644
  
      state.mode = ClientShellMode::Terminal;
      let outcome = state.handle_raw_events(vec![click()]);
-@@ -1439,7 +1439,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+@@ -1473,7 +1473,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
                      if params.pane_id == "pane_2"
              )
      )));
@@ -744,7 +744,7 @@ index 90ff1eb..f3f98e0 100644
  
      state.receive_notification(
          &ClientEndpointId::Local,
-@@ -1470,7 +1470,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+@@ -1504,7 +1504,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
                      if params.pane_id == "pane_2"
              )
      )));
@@ -753,7 +753,7 @@ index 90ff1eb..f3f98e0 100644
  
      state.receive_notification(
          &ClientEndpointId::Local,
-@@ -1487,7 +1487,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+@@ -1521,7 +1521,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
          },
          now,
      );
@@ -762,7 +762,7 @@ index 90ff1eb..f3f98e0 100644
      state.config.toast_delay_seconds = 1;
      let (_, repaint) = state.receive_notification(
          &ClientEndpointId::Local,
-@@ -1505,6 +1505,71 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+@@ -1539,6 +1539,71 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
          now,
      );
      assert!(repaint);

@@ -56,10 +56,10 @@ index 01b34c3..3bac45c 100644
          let Some(snapshot) = self.snapshot.as_deref() else {
              return 0;
 diff --git a/src/client/shell/tests/agents_worktrees_notifications.rs b/src/client/shell/tests/agents_worktrees_notifications.rs
-index f3f98e0..dfedf45 100644
+index 235be22..36bbee9 100644
 --- a/src/client/shell/tests/agents_worktrees_notifications.rs
 +++ b/src/client/shell/tests/agents_worktrees_notifications.rs
-@@ -433,6 +433,35 @@ fn pane_cycle_last_and_agent_actions_resolve_to_stable_pane_ids() {
+@@ -467,6 +467,35 @@ fn pane_cycle_last_and_agent_actions_resolve_to_stable_pane_ids() {
      ));
  }
  

@@ -30,10 +30,10 @@ index 901c5a2..b7f1118 100644
      pub(super) checkout_path: String,
      pub(super) error: Option<String>,
 diff --git a/src/client/shell/tests/agents_worktrees_notifications.rs b/src/client/shell/tests/agents_worktrees_notifications.rs
-index 8d27b80..90ff1eb 100644
+index 5e30fa4..e0b86ba 100644
 --- a/src/client/shell/tests/agents_worktrees_notifications.rs
 +++ b/src/client/shell/tests/agents_worktrees_notifications.rs
-@@ -1037,6 +1037,7 @@ fn worktree_create_previews_the_endpoint_owned_checkout_path() {
+@@ -1071,6 +1071,7 @@ fn worktree_create_previews_the_endpoint_owned_checkout_path() {
      assert!(text.contains("create and open"));
      assert!(frame.cursor.as_ref().is_some_and(|cursor| cursor.visible));
  
@@ -41,7 +41,7 @@ index 8d27b80..90ff1eb 100644
      assert!(state
          .handle_input_bytes(b"feature/client-shell")
          .actions
-@@ -1057,10 +1058,49 @@ fn worktree_create_previews_the_endpoint_owned_checkout_path() {
+@@ -1091,10 +1092,49 @@ fn worktree_create_previews_the_endpoint_owned_checkout_path() {
              if params.workspace_id.as_deref() == Some("ws_1")
                  && params.branch.as_deref() == Some("feature/client-shell")
                  && params.path.is_none()
@@ -91,7 +91,7 @@ index 8d27b80..90ff1eb 100644
  #[test]
  fn unavailable_worktree_create_does_not_wedge_the_overlay() {
      let mut state = ClientShellState::new(ClientShellConfig::from_config(&Config::default()));
-@@ -1076,6 +1116,7 @@ fn unavailable_worktree_create_does_not_wedge_the_overlay() {
+@@ -1110,6 +1150,7 @@ fn unavailable_worktree_create_does_not_wedge_the_overlay() {
      };
      state.handle_endpoint_result("boot-1", &request.id, Ok(worktree_list_result(None)));
      state.set_endpoint_methods(Some(vec!["worktree.list".into()]));

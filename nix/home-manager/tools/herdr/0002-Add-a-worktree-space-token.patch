@@ -4,37 +4,87 @@ Date: Wed, 30 Sep 2026 17:25:18 +0900
 Subject: [PATCH] Add a worktree space token
 
 The token is the checkout's directory name, which other sessions go by.
+It is left out when the checkout is named after the space's branch,
+where it would only repeat the branch.
 ---
- src/client/shell/sidebar.rs                              | 4 ++++
- src/client/shell/tests/agents_worktrees_notifications.rs | 5 +++++
- src/client/shell/tests/endpoints.rs                      | 4 ++++
- src/client/shell/tests/workspace_navigation.rs           | 1 +
- src/config/sidebar.rs                                    | 3 +++
- src/protocol/wire.rs                                     | 3 +++
- src/server/client_shell.rs                               | 8 ++++++++
- src/ui/sidebar/tokens.rs                                 | 8 ++++++++
- 8 files changed, 36 insertions(+)
+ src/client/shell/sidebar.rs                   | 11 ++++++
+ .../tests/agents_worktrees_notifications.rs   | 39 +++++++++++++++++++
+ src/client/shell/tests/endpoints.rs           |  4 ++
+ .../shell/tests/workspace_navigation.rs       |  1 +
+ src/config/sidebar.rs                         |  3 ++
+ src/protocol/wire.rs                          |  3 ++
+ src/server/client_shell.rs                    |  8 ++++
+ src/ui/sidebar/tokens.rs                      |  8 ++++
+ 8 files changed, 77 insertions(+)
 
 diff --git a/src/client/shell/sidebar.rs b/src/client/shell/sidebar.rs
-index 89a1377..e4b0277 100644
+index 89a1377..53a7a2c 100644
 --- a/src/client/shell/sidebar.rs
 +++ b/src/client/shell/sidebar.rs
-@@ -630,6 +630,10 @@ pub(in crate::client::shell) fn workspace_rows(
+@@ -630,6 +630,17 @@ pub(in crate::client::shell) fn workspace_rows(
              branch: workspace.branch.as_deref(),
              state_text: status_text(status),
              ahead_behind: workspace.git_ahead_behind,
 +            worktree: workspace
 +                .worktree
 +                .as_ref()
-+                .and_then(|worktree| worktree.checkout_name.as_deref()),
++                .and_then(|worktree| worktree.checkout_name.as_deref())
++                // The checkout named after its own branch only repeats it
++                .filter(|name| {
++                    workspace
++                        .branch
++                        .as_deref()
++                        .is_none_or(|branch| crate::worktree::branch_to_path_slug(branch) != *name)
++                }),
              tokens: &token_values,
              // A renamed worktree child keeps its branch and ahead/behind; an
              // unrenamed one already shows its branch as its name.
 diff --git a/src/client/shell/tests/agents_worktrees_notifications.rs b/src/client/shell/tests/agents_worktrees_notifications.rs
-index 5b8b122..8d27b80 100644
+index 5b8b122..5e30fa4 100644
 --- a/src/client/shell/tests/agents_worktrees_notifications.rs
 +++ b/src/client/shell/tests/agents_worktrees_notifications.rs
-@@ -98,6 +98,7 @@ fn grouped_worktrees_render_parent_branch_and_indented_child() {
+@@ -89,6 +89,40 @@ fn collapsed_workspace_jitter_remains_a_click() {
+     ));
+ }
+ 
++#[test]
++fn worktree_token_shows_only_a_checkout_not_named_after_its_branch() {
++    use crate::config::{SpaceSidebarToken, SpacesSidebarConfig};
++    use crate::ui::ResolvedTokenKind;
++
++    let config = SpacesSidebarConfig {
++        rows: vec![vec![SpaceSidebarToken::Worktree]],
++        ..SpacesSidebarConfig::default()
++    };
++    let worktree_token = |branch: &str| {
++        let mut workspace = snapshot().workspaces[0].clone();
++        workspace.branch = Some(branch.into());
++        workspace.worktree = Some(ClientShellWorktree {
++            key: "repo".into(),
++            label: "repo".into(),
++            is_linked_worktree: true,
++            checkout_name: Some("worktree-silver-valley".into()),
++        });
++        super::super::sidebar::workspace_rows(&workspace, AgentStatus::Idle, true, &config)
++            .into_iter()
++            .flatten()
++            .find_map(|token| match token.kind {
++                ResolvedTokenKind::Branch(name) => Some(name),
++                _ => None,
++            })
++    };
++
++    assert_eq!(worktree_token("worktree/silver-valley"), None);
++    assert_eq!(
++        worktree_token("babarot/recall-mod").as_deref(),
++        Some("worktree-silver-valley")
++    );
++}
++
+ #[test]
+ fn grouped_worktrees_render_parent_branch_and_indented_child() {
+     let config = ClientShellConfig::from_config(&Config::default());
+@@ -98,6 +132,7 @@ fn grouped_worktrees_render_parent_branch_and_indented_child() {
          key: "repo".into(),
          label: "repo".into(),
          is_linked_worktree: false,
@@ -42,7 +92,7 @@ index 5b8b122..8d27b80 100644
      });
      snapshot.workspaces.push(ClientShellWorkspace {
          workspace_id: "ws_2".into(),
-@@ -113,6 +114,7 @@ fn grouped_worktrees_render_parent_branch_and_indented_child() {
+@@ -113,6 +148,7 @@ fn grouped_worktrees_render_parent_branch_and_indented_child() {
              key: "repo".into(),
              label: "repo".into(),
              is_linked_worktree: true,
@@ -50,7 +100,7 @@ index 5b8b122..8d27b80 100644
          }),
          focused: false,
          agent_status: AgentStatus::Idle,
-@@ -264,6 +266,7 @@ fn workspace_drag_moves_parent_worktree_as_one_block_and_rejects_child() {
+@@ -264,6 +300,7 @@ fn workspace_drag_moves_parent_worktree_as_one_block_and_rejects_child() {
          key: "repo".into(),
          label: "repo".into(),
          is_linked_worktree: false,
@@ -58,7 +108,7 @@ index 5b8b122..8d27b80 100644
      });
      let mut child = projected.workspaces[0].clone();
      child.workspace_id = "ws_child".into();
-@@ -274,6 +277,7 @@ fn workspace_drag_moves_parent_worktree_as_one_block_and_rejects_child() {
+@@ -274,6 +311,7 @@ fn workspace_drag_moves_parent_worktree_as_one_block_and_rejects_child() {
          key: "repo".into(),
          label: "repo".into(),
          is_linked_worktree: true,
@@ -66,7 +116,7 @@ index 5b8b122..8d27b80 100644
      });
      let mut other = projected.workspaces[0].clone();
      other.workspace_id = "ws_other".into();
-@@ -1215,6 +1219,7 @@ fn worktree_remove_escalates_recoverable_failure_to_force_confirmation() {
+@@ -1215,6 +1253,7 @@ fn worktree_remove_escalates_recoverable_failure_to_force_confirmation() {
              key: "repo-key".into(),
              label: "repo".into(),
              is_linked_worktree: true,

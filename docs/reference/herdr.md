@@ -128,7 +128,7 @@ herdr is nixpkgs' build with these patches, one per change, applied in name orde
 | Patch | What changes |
 |---|---|
 | [0001](../../nix/home-manager/tools/herdr/0001-Keep-a-renamed-worktree-space-s-branch-in-the-sideba.patch) | A worktree space renamed after its feature still shows its branch and ahead/behind in the sidebar (herdrdev/herdr#2952) |
-| [0002](../../nix/home-manager/tools/herdr/0002-Add-a-worktree-space-token.patch) | A `worktree` token for the sidebar's rows: the checkout's directory name, which other sessions go by |
+| [0002](../../nix/home-manager/tools/herdr/0002-Add-a-worktree-space-token.patch) | A `worktree` token for the sidebar's rows: the checkout's directory name, which other sessions go by; left out when the checkout is named after the branch |
 | [0003](../../nix/home-manager/tools/herdr/0003-Add-a-name-field-to-the-new-worktree-dialog.patch) | The new worktree dialog (`prefix+shift+g`) takes the space's name, leaving the generated branch and checkout alone |
 | [0004](../../nix/home-manager/tools/herdr/0004-Add-Mark-as-unread-to-a-space-s-menu.patch) | "Mark as unread" in a space's menu brings back the Done mark of its agents already looked at (herdrdev/herdr#4622) |
 | [0005](../../nix/home-manager/tools/herdr/0005-Add-o-to-copy-mode-to-jump-to-the-other-end-of-the-s.patch) | `o` in copy mode goes to the other end of the selection, as in tmux and Vim |

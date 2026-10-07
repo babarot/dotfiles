@@ -155,6 +155,22 @@
         "url": "https://gist.github.com/babarot/0bf79c7778a99d6ac5298ae61ab4b953.git"
       }
     },
+    "herdr-space-switch": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791363887,
+        "narHash": "sha256-s9ETMD7cMXN8E7KfB2M8Dbvh4k+vhBRWy8AD1lrEins=",
+        "ref": "refs/heads/main",
+        "rev": "a07246d9a81cf95c3372e5df0081b871ac66bf06",
+        "revCount": 1,
+        "type": "git",
+        "url": "https://gist.github.com/babarot/ce7ad05036abd1fcf3a56595757b62e0.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://gist.github.com/babarot/ce7ad05036abd1fcf3a56595757b62e0.git"
+      }
+    },
     "herdr-worktree-ctl": {
       "flake": false,
       "locked": {
@@ -272,6 +288,7 @@
         "deadlink": "deadlink",
         "enhancd": "enhancd",
         "gist-ctl": "gist-ctl",
+        "herdr-space-switch": "herdr-space-switch",
         "herdr-worktree-ctl": "herdr-worktree-ctl",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",

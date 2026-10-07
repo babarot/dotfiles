@@ -64,6 +64,10 @@
       url = "git+https://gist.github.com/babarot/0bf79c7778a99d6ac5298ae61ab4b953.git";
       flake = false;
     };
+    herdr-space-switch = {
+      url = "git+https://gist.github.com/babarot/ce7ad05036abd1fcf3a56595757b62e0.git";
+      flake = false;
+    };
     herdr-worktree-ctl = {
       url = "git+https://gist.github.com/babarot/d7b198c8e7f26189e46f80e46053ff29.git";
       flake = false;

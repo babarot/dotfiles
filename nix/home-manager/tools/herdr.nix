@@ -3,7 +3,8 @@
 #
 # Its companions, which exist only for herdr, are imported from herdr/ below,
 # so deleting this file removes them too: the plugins, the sidebar marks'
-# agent and my.herdrPlugins, the module the plugins register through.
+# agent, herdr-space-switch and my.herdrPlugins, the module the plugins
+# register through.
 # herdr-worktree-ctl, a script kept in a gist, is built here.
 {
   config,
@@ -67,6 +68,7 @@ in
     ./herdr/plugins.nix
     ./herdr/hunk-diff.nix
     ./herdr/reviewr.nix
+    ./herdr/space-switch.nix
     ./herdr/worktree-layout.nix
     ./herdr/worktree-status.nix
   ];

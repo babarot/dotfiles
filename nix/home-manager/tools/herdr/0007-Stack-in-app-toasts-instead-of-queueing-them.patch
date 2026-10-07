@@ -1,0 +1,923 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 7 Oct 2026 17:51:01 +0900
+Subject: [PATCH] Stack in-app toasts instead of queueing them
+
+Only one in-app toast is shown at a time. A notification that arrives
+while a toast is up waits in a queue until that toast closes, so when
+agents in several panes or machines finish at about the same time, the
+later ones show up only after the earlier ones are gone.
+
+Show each toast at once instead, stacked on the ones already up: the
+newest sits at the edge ui.toast.herdr.position names and older ones
+move away from it. Each toast counts its own duration from when it
+appears and closes alone, and the rest close the gap. Up to 5 are shown;
+a sixth closes the oldest, and one that no longer fits on the screen is
+left out along with the older ones. A new notification from a pane
+still replaces that pane's toast, and retiring an endpoint closes all of
+its toasts.
+
+Clicking a toast closes only that one (focusing its pane, if it has
+one); the open-notification key opens the newest. The mobile banner has
+room for one row, so it shows the newest only.
+---
+ src/client/shell/composition.rs               |  64 +++--
+ src/client/shell/mouse.rs                     |  14 +-
+ src/client/shell/notification_policy.rs       |  97 +++----
+ src/client/shell/notifications.rs             | 238 ++++++++++++++----
+ src/client/shell/state.rs                     |   9 +-
+ src/client/shell/surface_patch.rs             |   2 +-
+ .../tests/agents_worktrees_notifications.rs   |  75 +++++-
+ src/client/shell/tests/graphics.rs            |   4 +-
+ src/client/shell/tests/mobile.rs              |   4 +-
+ src/client/shell/tests/startup_overlays.rs    |  10 +-
+ 10 files changed, 366 insertions(+), 151 deletions(-)
+
+diff --git a/src/client/shell/composition.rs b/src/client/shell/composition.rs
+index e0888d0..1c33ddb 100644
+--- a/src/client/shell/composition.rs
++++ b/src/client/shell/composition.rs
+@@ -423,6 +423,7 @@ impl ClientShellState {
+         }
+         restore_mode_bar(&mut frame, mode_bar, mode_bar_cells.as_deref());
+         self.hits.notification_toast = Rect::default();
++        self.hits.notification_toasts.clear();
+         let has_config_diagnostic = self.config_diagnostic.is_some();
+         let active_lifecycle = self
+             .endpoints
+@@ -433,7 +434,7 @@ impl ClientShellState {
+         if has_config_diagnostic
+             || active_lifecycle.is_some()
+             || self.visible_endpoint_notice.is_some()
+-            || self.visible_notification.is_some()
++            || !self.visible_notifications.is_empty()
+         {
+             let cursor = frame.cursor.clone();
+             let mut composed = frame.to_ratatui_buffer()?;
+@@ -480,27 +481,39 @@ impl ClientShellState {
+                         &self.config.palette,
+                     )
+                 };
+-            } else if let Some(notification) = self.visible_notification.as_ref() {
+-                self.hits.notification_toast = if layout.mobile_header.is_empty() {
+-                    notifications::render_visible_notification(
++            } else if let Some(newest) = self.visible_notifications.len().checked_sub(1) {
++                self.hits.notification_toasts = if layout.mobile_header.is_empty() {
++                    notifications::render_visible_notifications(
+                         &mut composed,
+                         Rect::new(0, 0, cols, rows),
+-                        notification,
++                        &self.visible_notifications,
+                         self.config.toast_position,
+                         u16::from(has_config_diagnostic) + lifecycle_offset,
+                         &self.config.palette,
+                     )
+                 } else {
+-                    notifications::render_mobile_notification_banner(
+-                        &mut composed,
+-                        Rect::new(0, 0, cols, rows),
+-                        notification,
+-                        has_config_diagnostic || lifecycle_offset > 0,
+-                        &self.config.palette,
+-                    )
++                    // The mobile banner is one row wide; it shows the newest only.
++                    vec![(
++                        notifications::render_mobile_notification_banner(
++                            &mut composed,
++                            Rect::new(0, 0, cols, rows),
++                            &self.visible_notifications[newest],
++                            has_config_diagnostic || lifecycle_offset > 0,
++                            &self.config.palette,
++                        ),
++                        newest,
++                    )]
+                 };
++                self.hits.notification_toast = self
++                    .hits
++                    .notification_toasts
++                    .first()
++                    .map_or_else(Rect::default, |(rect, _)| *rect);
+             }
+             occlusion.cover(self.hits.notification_toast);
++            for (rect, _) in &self.hits.notification_toasts {
++                occlusion.cover(*rect);
++            }
+             frame.replace_from_ratatui_buffer_preserving_effects(&composed, cursor);
+         }
+         if let Some(feedback) = self.copy_feedback.as_ref() {
+@@ -512,13 +525,26 @@ impl ClientShellState {
+             } else {
+                 Rect::new(0, 0, cols, rows)
+             };
+-            let offset = crate::ui::copy_feedback_offset_for_toast(
+-                feedback_area,
+-                feedback,
+-                base_offset,
+-                self.config.clipboard_toast_position,
+-                self.hits.notification_toast,
+-            );
++            let toast_rects = if self.hits.notification_toasts.is_empty() {
++                vec![self.hits.notification_toast]
++            } else {
++                self.hits
++                    .notification_toasts
++                    .iter()
++                    .map(|(rect, _)| *rect)
++                    .collect()
++            };
++            // Stacked toasts are nearest their edge first, so each one the
++            // feedback would overlap moves it past that toast in turn.
++            let offset = toast_rects.into_iter().fold(base_offset, |offset, rect| {
++                crate::ui::copy_feedback_offset_for_toast(
++                    feedback_area,
++                    feedback,
++                    offset,
++                    self.config.clipboard_toast_position,
++                    rect,
++                )
++            });
+             occlusion.cover(crate::ui::render_copy_feedback_buffer(
+                 &mut composed,
+                 feedback_area,
+diff --git a/src/client/shell/mouse.rs b/src/client/shell/mouse.rs
+index dec0ed4..21ff827 100644
+--- a/src/client/shell/mouse.rs
++++ b/src/client/shell/mouse.rs
+@@ -977,12 +977,18 @@ impl ClientShellState {
+         }
+         if self.overlay.is_none()
+             && self.mode == ClientShellMode::Terminal
+-            && self.visible_notification.is_some()
+             && mouse.kind == MouseEventKind::Down(MouseButton::Left)
+-            && super::contains(self.hits.notification_toast, point)
+         {
+-            self.focus_visible_notification(outcome);
+-            return;
++            if let Some(index) = self
++                .hits
++                .notification_toasts
++                .iter()
++                .find(|(rect, _)| super::contains(*rect, point))
++                .map(|(_, index)| *index)
++            {
++                self.focus_visible_notification_at(index, outcome);
++                return;
++            }
+         }
+         if self.handle_mobile_mouse(mouse, outcome) {
+             return;
+diff --git a/src/client/shell/notification_policy.rs b/src/client/shell/notification_policy.rs
+index b9397d7..8d70ebb 100644
+--- a/src/client/shell/notification_policy.rs
++++ b/src/client/shell/notification_policy.rs
+@@ -1,6 +1,7 @@
+ use super::*;
+ 
+-const MAX_QUEUED_NOTIFICATIONS: usize = 8;
++/// Toasts shown at once; a new one past this closes the oldest.
++pub(super) const MAX_VISIBLE_NOTIFICATIONS: usize = 5;
+ const COMPLETION_EVIDENCE_GRACE: std::time::Duration = std::time::Duration::from_secs(1);
+ pub(super) const COMPLETION_RECHECK_INTERVAL: std::time::Duration =
+     std::time::Duration::from_millis(50);
+@@ -30,41 +31,22 @@ impl ClientShellState {
+     pub(super) fn retire_endpoint_notifications(&mut self, endpoint_id: &ClientEndpointId) {
+         self.pending_notifications
+             .retain(|pending| &pending.endpoint_id != endpoint_id);
+-        self.queued_notifications
+-            .retain(|queued| &queued.endpoint_id != endpoint_id);
+-        if self
+-            .visible_notification
+-            .as_ref()
+-            .is_some_and(|visible| &visible.endpoint_id == endpoint_id)
+-        {
+-            self.visible_notification = None;
+-            self.promote_queued_notification(std::time::Instant::now());
+-        }
++        self.visible_notifications
++            .retain(|visible| &visible.endpoint_id != endpoint_id);
+     }
+ 
+-    fn queue_visible_notification(
++    /// Shows a toast at once, stacked on the ones already visible, each
++    /// counting its own duration from when it appears.
++    fn show_notification(
+         &mut self,
+         mut notification: ClientVisibleNotification,
+         now: std::time::Instant,
+     ) {
+-        if self.visible_notification.is_none() {
+-            notification.deadline = self.notification_deadline(notification.event.kind, now);
+-            self.visible_notification = Some(notification);
+-            return;
+-        }
+-        if self.queued_notifications.len() == MAX_QUEUED_NOTIFICATIONS {
+-            self.queued_notifications.pop_front();
+-        }
+-        self.queued_notifications.push_back(notification);
+-    }
+-
+-    fn promote_queued_notification(&mut self, now: std::time::Instant) -> bool {
+-        let Some(mut notification) = self.queued_notifications.pop_front() else {
+-            return false;
+-        };
+         notification.deadline = self.notification_deadline(notification.event.kind, now);
+-        self.visible_notification = Some(notification);
+-        true
++        if self.visible_notifications.len() == MAX_VISIBLE_NOTIFICATIONS {
++            self.visible_notifications.remove(0);
++        }
++        self.visible_notifications.push(notification);
+     }
+ 
+     fn notification_deadline(
+@@ -76,8 +58,21 @@ impl ClientShellState {
+             .and_then(|duration| now.checked_add(duration))
+     }
+ 
++    /// Opens the newest toast.
+     pub(super) fn focus_visible_notification(&mut self, outcome: &mut ClientShellInput) {
+-        let Some(notification) = self.visible_notification.as_ref() else {
++        if let Some(index) = self.visible_notifications.len().checked_sub(1) {
++            self.focus_visible_notification_at(index, outcome);
++        }
++    }
++
++    /// Closes the toast at `index` in `visible_notifications` and focuses its
++    /// pane, if it has one; the other toasts stay.
++    pub(super) fn focus_visible_notification_at(
++        &mut self,
++        index: usize,
++        outcome: &mut ClientShellInput,
++    ) {
++        let Some(notification) = self.visible_notifications.get(index) else {
+             return;
+         };
+         if notification.event.pane_id.is_some()
+@@ -88,11 +83,7 @@ impl ClientShellState {
+             outcome.repaint = true;
+             return;
+         }
+-        let notification = self
+-            .visible_notification
+-            .take()
+-            .expect("checked visible notification");
+-        self.promote_queued_notification(std::time::Instant::now());
++        let notification = self.visible_notifications.remove(index);
+         outcome.repaint = true;
+         let Some(pane_id) = notification.event.pane_id else {
+             return;
+@@ -124,25 +115,18 @@ impl ClientShellState {
+         let deadline = now
+             .checked_add(std::time::Duration::from_secs(delay))
+             .unwrap_or(now);
+-        let cleared_visible = event.pane_id.as_deref().is_some_and(|pane_id| {
+-            self.visible_notification.as_ref().is_some_and(|visible| {
+-                visible.endpoint_id == *endpoint_id
+-                    && visible.event.pane_id.as_deref() == Some(pane_id)
+-            })
+-        });
++        let mut cleared_visible = false;
+         if let Some(pane_id) = event.pane_id.as_deref() {
+             self.pending_notifications.retain(|pending| {
+                 pending.endpoint_id != *endpoint_id
+                     || pending.event.pane_id.as_deref() != Some(pane_id)
+             });
+-            self.queued_notifications.retain(|queued| {
+-                queued.endpoint_id != *endpoint_id
+-                    || queued.event.pane_id.as_deref() != Some(pane_id)
++            let shown = self.visible_notifications.len();
++            self.visible_notifications.retain(|visible| {
++                visible.endpoint_id != *endpoint_id
++                    || visible.event.pane_id.as_deref() != Some(pane_id)
+             });
+-            if cleared_visible {
+-                self.visible_notification = None;
+-                self.promote_queued_notification(now);
+-            }
++            cleared_visible = self.visible_notifications.len() != shown;
+         }
+         // Completion evidence is advisory. A Finished effect is valid only while the
+         // client-projected pane remains Done, even when delivery is immediate.
+@@ -162,17 +146,10 @@ impl ClientShellState {
+         &mut self,
+         now: std::time::Instant,
+     ) -> (Vec<ClientShellNotificationEffect>, bool) {
+-        let mut repaint = false;
+-        if self
+-            .visible_notification
+-            .as_ref()
+-            .and_then(|visible| visible.deadline)
+-            .is_some_and(|deadline| now >= deadline)
+-        {
+-            self.visible_notification = None;
+-            self.promote_queued_notification(now);
+-            repaint = true;
+-        }
++        let shown = self.visible_notifications.len();
++        self.visible_notifications
++            .retain(|visible| visible.deadline.is_none_or(|deadline| now < deadline));
++        let mut repaint = self.visible_notifications.len() != shown;
+         if self
+             .visible_endpoint_notice
+             .as_ref()
+@@ -226,7 +203,7 @@ impl ClientShellState {
+             match self.config.toast_delivery {
+                 crate::config::ToastDelivery::Off => {}
+                 crate::config::ToastDelivery::Herdr if !target_active => {
+-                    self.queue_visible_notification(
++                    self.show_notification(
+                         ClientVisibleNotification {
+                             endpoint_id: pending.endpoint_id,
+                             event: pending.event,
+diff --git a/src/client/shell/notifications.rs b/src/client/shell/notifications.rs
+index f73b139..22fc586 100644
+--- a/src/client/shell/notifications.rs
++++ b/src/client/shell/notifications.rs
+@@ -1,5 +1,5 @@
+ #[cfg(test)]
+-use super::notification_policy::COMPLETION_RECHECK_INTERVAL;
++use super::notification_policy::{COMPLETION_RECHECK_INTERVAL, MAX_VISIBLE_NOTIFICATIONS};
+ use super::*;
+ use ratatui::{
+     style::Color,
+@@ -104,6 +104,14 @@ pub(super) fn render_mobile_notification_banner(
+     )
+ }
+ 
++fn notification_card_height(body: &str) -> u16 {
++    if body.is_empty() {
++        3
++    } else {
++        4
++    }
++}
++
+ pub(super) fn render_notification_card(
+     buffer: &mut Buffer,
+     area: Rect,
+@@ -123,7 +131,7 @@ pub(super) fn render_notification_card(
+     let width = u16::try_from(content_width)
+         .unwrap_or(u16::MAX)
+         .min(area.width);
+-    let height: u16 = if body.is_empty() { 3 } else { 4 }.min(area.height);
++    let height = notification_card_height(body).min(area.height);
+     let x = match position {
+         crate::config::ToastHerdrPosition::TopLeft
+         | crate::config::ToastHerdrPosition::BottomLeft => area.x,
+@@ -205,6 +213,51 @@ pub(super) fn render_visible_notification(
+     )
+ }
+ 
++/// Draws the toasts stacked from the edge their position names, the newest
++/// nearest the edge. Past the first at each position, a toast that no longer
++/// fits in the area is left out, and so are the older ones behind it. Returns
++/// each card drawn with its index in `notifications`.
++pub(super) fn render_visible_notifications(
++    buffer: &mut Buffer,
++    area: Rect,
++    notifications: &[ClientVisibleNotification],
++    default_position: crate::config::ToastHerdrPosition,
++    top_offset: u16,
++    palette: &Palette,
++) -> Vec<(Rect, usize)> {
++    let mut offsets = [Some(top_offset); 4];
++    let mut rects = Vec::new();
++    for (index, notification) in notifications.iter().enumerate().rev() {
++        let position = notification.event.position.unwrap_or(default_position);
++        let slot = &mut offsets[match position {
++            crate::config::ToastHerdrPosition::TopLeft => 0,
++            crate::config::ToastHerdrPosition::TopRight => 1,
++            crate::config::ToastHerdrPosition::BottomLeft => 2,
++            crate::config::ToastHerdrPosition::BottomRight => 3,
++        }];
++        let Some(offset) = *slot else {
++            continue;
++        };
++        let height =
++            notification_card_height(notification.event.body.as_deref().unwrap_or_default());
++        if offset > top_offset && offset.saturating_add(height) > area.height {
++            *slot = None;
++            continue;
++        }
++        let rect = render_visible_notification(
++            buffer,
++            area,
++            notification,
++            default_position,
++            offset,
++            palette,
++        );
++        *slot = Some(offset.saturating_add(rect.height));
++        rects.push((rect, index));
++    }
++    rects
++}
++
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+@@ -257,7 +310,7 @@ mod tests {
+     #[test]
+     fn unavailable_notification_target_stays_visible_and_reports_the_machine() {
+         let mut state = ClientShellState::new(ClientShellConfig::from_config(&Config::default()));
+-        state.visible_notification = Some(ClientVisibleNotification {
++        state.visible_notifications = vec![ClientVisibleNotification {
+             endpoint_id: ClientEndpointId::Local,
+             event: SemanticNotification {
+                 kind: SemanticNotificationKind::NeedsAttention,
+@@ -271,12 +324,12 @@ mod tests {
+                 position: None,
+             },
+             deadline: Some(std::time::Instant::now() + std::time::Duration::from_secs(5)),
+-        });
++        }];
+         let mut outcome = ClientShellInput::default();
+ 
+         state.focus_visible_notification(&mut outcome);
+ 
+-        assert!(state.visible_notification.is_some());
++        assert!(!state.visible_notifications.is_empty());
+         assert!(state
+             .visible_endpoint_notice
+             .as_ref()
+@@ -327,7 +380,7 @@ mod tests {
+ 
+         assert!(effects.is_empty());
+         assert!(!repaint);
+-        assert!(state.visible_notification.is_none());
++        assert!(state.visible_notifications.is_empty());
+     }
+ 
+     #[test]
+@@ -394,63 +447,150 @@ mod tests {
+         let mut remote = notification();
+         remote.endpoint_id = remote_id.clone();
+         remote.event.title = "remote".into();
+-        state.visible_notification = Some(local);
+-        state.queued_notifications.push_back(remote);
++        let mut later_local = notification();
++        later_local.event.title = "later local".into();
++        state.visible_notifications = vec![local, remote, later_local];
+ 
+         state.retire_endpoint_notifications(&ClientEndpointId::Local);
+ 
+         assert_eq!(
+             state
+-                .visible_notification
+-                .as_ref()
+-                .map(|notification| (&notification.endpoint_id, notification.event.title.as_str())),
+-            Some((&remote_id, "remote"))
++                .visible_notifications
++                .iter()
++                .map(|notification| (&notification.endpoint_id, notification.event.title.as_str()))
++                .collect::<Vec<_>>(),
++            vec![(&remote_id, "remote")]
+         );
+     }
+ 
++    fn visible_titles(state: &ClientShellState) -> Vec<&str> {
++        state
++            .visible_notifications
++            .iter()
++            .map(|notification| notification.event.title.as_str())
++            .collect()
++    }
++
+     #[test]
+-    fn concurrent_endpoint_notifications_are_queued_in_arrival_order() {
+-        let mut config = Config::default();
+-        config.ui.toast.delivery = crate::config::ToastDelivery::Herdr;
+-        let mut state = ClientShellState::new(ClientShellConfig::from_config(&config));
++    fn concurrent_notifications_are_shown_together_and_expire_on_their_own() {
++        let mut state = herdr_toast_state(None);
+         let now = std::time::Instant::now();
+-        for title in ["first", "second"] {
++        let remote_id = ClientEndpointId::Ssh(
++            crate::client::endpoint::ProfileId::parse("0123456789abcdef0123456789abcdef").unwrap(),
++        );
++        state.receive_notification(
++            &ClientEndpointId::Local,
++            custom_notification("first", Some("pane_1")),
++            now,
++        );
++        state.receive_notification(
++            &remote_id,
++            custom_notification("second", Some("pane_1")),
++            now + std::time::Duration::from_secs(2),
++        );
++
++        assert_eq!(visible_titles(&state), vec!["first", "second"]);
++
++        let (_, repaint) = state.tick_notifications(now + std::time::Duration::from_secs(5));
++        assert!(repaint);
++        assert_eq!(visible_titles(&state), vec!["second"]);
++
++        state.tick_notifications(now + std::time::Duration::from_secs(7));
++        assert!(state.visible_notifications.is_empty());
++    }
++
++    #[test]
++    fn a_new_notification_from_a_pane_replaces_that_panes_toast() {
++        let mut state = herdr_toast_state(None);
++        let now = std::time::Instant::now();
++        for (title, pane_id) in [
++            ("one", "pane_1"),
++            ("two", "pane_2"),
++            ("one again", "pane_1"),
++        ] {
+             state.receive_notification(
+                 &ClientEndpointId::Local,
+-                SemanticNotification {
+-                    kind: SemanticNotificationKind::Custom,
+-                    title: title.into(),
+-                    body: None,
+-                    sound: None,
+-                    agent: None,
+-                    workspace_id: None,
+-                    tab_id: None,
+-                    pane_id: Some(title.into()),
+-                    position: None,
+-                },
++                custom_notification(title, Some(pane_id)),
++                now,
++            );
++        }
++
++        assert_eq!(visible_titles(&state), vec!["two", "one again"]);
++    }
++
++    #[test]
++    fn notifications_past_the_limit_close_the_oldest() {
++        let mut state = herdr_toast_state(None);
++        let now = std::time::Instant::now();
++        let titles = (0..=MAX_VISIBLE_NOTIFICATIONS)
++            .map(|index| format!("toast {index}"))
++            .collect::<Vec<_>>();
++        for title in &titles {
++            state.receive_notification(
++                &ClientEndpointId::Local,
++                custom_notification(title, Some(title)),
+                 now,
+             );
+         }
+ 
+         assert_eq!(
+-            state
+-                .visible_notification
+-                .as_ref()
+-                .map(|notification| notification.event.title.as_str()),
+-            Some("first")
++            visible_titles(&state),
++            titles[1..].iter().map(String::as_str).collect::<Vec<_>>()
+         );
+-        assert_eq!(state.queued_notifications.len(), 1);
++    }
+ 
+-        state.tick_notifications(now + std::time::Duration::from_secs(5));
++    #[test]
++    fn stacked_notifications_put_the_newest_at_the_edge_and_drop_what_does_not_fit() {
++        let palette = crate::app::client_palette_from_config(&Config::default());
++        let notifications = ["oldest", "middle", "newest"]
++            .into_iter()
++            .map(|title| {
++                let mut notification = notification();
++                notification.event.title = title.into();
++                notification
++            })
++            .collect::<Vec<_>>();
++        for (position, edge_y) in [
++            (crate::config::ToastHerdrPosition::BottomRight, 17),
++            (crate::config::ToastHerdrPosition::TopLeft, 0),
++        ] {
++            let area = Rect::new(0, 0, 40, 20);
++            let mut buffer = Buffer::empty(area);
++            let rects = render_visible_notifications(
++                &mut buffer,
++                area,
++                &notifications,
++                position,
++                0,
++                &palette,
++            );
+ 
+-        assert_eq!(
+-            state
+-                .visible_notification
+-                .as_ref()
+-                .map(|notification| notification.event.title.as_str()),
+-            Some("second")
+-        );
+-        assert!(state.queued_notifications.is_empty());
++            assert_eq!(
++                rects.iter().map(|(_, index)| *index).collect::<Vec<_>>(),
++                vec![2, 1, 0]
++            );
++            assert_eq!(rects[0].0.y, edge_y);
++            for pair in rects.windows(2) {
++                let (nearer, farther) = (pair[0].0, pair[1].0);
++                assert!(nearer.bottom() <= farther.y || farther.bottom() <= nearer.y);
++            }
++
++            // Two 3-row cards fit in 7 rows; the oldest is left out.
++            let short = Rect::new(0, 0, 40, 7);
++            let mut buffer = Buffer::empty(short);
++            let rects = render_visible_notifications(
++                &mut buffer,
++                short,
++                &notifications,
++                position,
++                0,
++                &palette,
++            );
++            assert_eq!(
++                rects.iter().map(|(_, index)| *index).collect::<Vec<_>>(),
++                vec![2, 1]
++            );
++        }
+     }
+ 
+     fn custom_notification(title: &str, pane_id: Option<&str>) -> SemanticNotification {
+@@ -485,9 +625,9 @@ mod tests {
+         );
+ 
+         state.tick_notifications(now + std::time::Duration::from_millis(4999));
+-        assert!(state.visible_notification.is_some());
++        assert!(!state.visible_notifications.is_empty());
+         state.tick_notifications(now + std::time::Duration::from_secs(5));
+-        assert!(state.visible_notification.is_none());
++        assert!(state.visible_notifications.is_empty());
+     }
+ 
+     #[test]
+@@ -501,9 +641,9 @@ mod tests {
+         );
+ 
+         state.tick_notifications(now + std::time::Duration::from_millis(1999));
+-        assert!(state.visible_notification.is_some());
++        assert!(!state.visible_notifications.is_empty());
+         state.tick_notifications(now + std::time::Duration::from_secs(2));
+-        assert!(state.visible_notification.is_none());
++        assert!(state.visible_notifications.is_empty());
+     }
+ 
+     #[test]
+@@ -517,11 +657,11 @@ mod tests {
+         );
+ 
+         state.tick_notifications(now + std::time::Duration::from_secs(24 * 60 * 60));
+-        assert!(state.visible_notification.is_some());
++        assert!(!state.visible_notifications.is_empty());
+ 
+         let mut outcome = ClientShellInput::default();
+         state.focus_visible_notification(&mut outcome);
+-        assert!(state.visible_notification.is_none());
++        assert!(state.visible_notifications.is_empty());
+     }
+ 
+     #[test]
+diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
+index 7bb42da..a46842f 100644
+--- a/src/client/shell/state.rs
++++ b/src/client/shell/state.rs
+@@ -114,6 +114,8 @@ pub(super) struct ShellHitMap {
+     pub(super) mobile_max_scroll: usize,
+     pub(super) global_launcher: Rect,
+     pub(super) notification_toast: Rect,
++    /// Each toast card drawn, with its index in `visible_notifications`.
++    pub(super) notification_toasts: Vec<(Rect, usize)>,
+     pub(super) global_menu_rows: Vec<(Rect, usize)>,
+     pub(super) context_menu_rows: Vec<(Rect, usize)>,
+     pub(super) overlay_primary: Rect,
+@@ -919,8 +921,8 @@ pub(crate) struct ClientShellState {
+     pub(super) pending_requests: HashMap<String, PendingEndpointRequest>,
+     pub(super) pending_integration_installs: usize,
+     pub(super) pending_notifications: Vec<ClientPendingNotification>,
+-    pub(super) visible_notification: Option<ClientVisibleNotification>,
+-    pub(super) queued_notifications: VecDeque<ClientVisibleNotification>,
++    /// Toasts on screen, oldest first.
++    pub(super) visible_notifications: Vec<ClientVisibleNotification>,
+     pub(super) endpoint_notice_seen: HashSet<ClientEndpointNoticeKey>,
+     pub(super) visible_endpoint_notice: Option<ClientVisibleEndpointNotice>,
+     pub(super) outer_focused: Option<bool>,
+@@ -1081,8 +1083,7 @@ impl ClientShellState {
+             pending_requests: HashMap::new(),
+             pending_integration_installs: 0,
+             pending_notifications: Vec::new(),
+-            visible_notification: None,
+-            queued_notifications: VecDeque::new(),
++            visible_notifications: Vec::new(),
+             endpoint_notice_seen: HashSet::new(),
+             visible_endpoint_notice: None,
+             outer_focused: None,
+diff --git a/src/client/shell/surface_patch.rs b/src/client/shell/surface_patch.rs
+index 6c829ac..ff1ce80 100644
+--- a/src/client/shell/surface_patch.rs
++++ b/src/client/shell/surface_patch.rs
+@@ -68,7 +68,7 @@ fn fast_path_blocker(
+         Some("client_surface_patch.fallback.config_diagnostic")
+     } else if state.visible_endpoint_notice.is_some() {
+         Some("client_surface_patch.fallback.endpoint_notice")
+-    } else if state.visible_notification.is_some() {
++    } else if !state.visible_notifications.is_empty() {
+         Some("client_surface_patch.fallback.notification")
+     } else if state.copy_feedback.is_some() {
+         Some("client_surface_patch.fallback.copy_feedback")
+diff --git a/src/client/shell/tests/agents_worktrees_notifications.rs b/src/client/shell/tests/agents_worktrees_notifications.rs
+index 90ff1eb..f3f98e0 100644
+--- a/src/client/shell/tests/agents_worktrees_notifications.rs
++++ b/src/client/shell/tests/agents_worktrees_notifications.rs
+@@ -1426,7 +1426,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+     state.mode = ClientShellMode::Navigate;
+     let ignored = state.handle_raw_events(vec![click()]);
+     assert!(ignored.actions.is_empty());
+-    assert!(state.visible_notification.is_some());
++    assert!(!state.visible_notifications.is_empty());
+ 
+     state.mode = ClientShellMode::Terminal;
+     let outcome = state.handle_raw_events(vec![click()]);
+@@ -1439,7 +1439,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+                     if params.pane_id == "pane_2"
+             )
+     )));
+-    assert!(state.visible_notification.is_none());
++    assert!(state.visible_notifications.is_empty());
+ 
+     state.receive_notification(
+         &ClientEndpointId::Local,
+@@ -1470,7 +1470,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+                     if params.pane_id == "pane_2"
+             )
+     )));
+-    assert!(state.visible_notification.is_none());
++    assert!(state.visible_notifications.is_empty());
+ 
+     state.receive_notification(
+         &ClientEndpointId::Local,
+@@ -1487,7 +1487,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+         },
+         now,
+     );
+-    assert!(state.visible_notification.is_some());
++    assert!(!state.visible_notifications.is_empty());
+     state.config.toast_delay_seconds = 1;
+     let (_, repaint) = state.receive_notification(
+         &ClientEndpointId::Local,
+@@ -1505,6 +1505,71 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+         now,
+     );
+     assert!(repaint);
+-    assert!(state.visible_notification.is_none());
++    assert!(state.visible_notifications.is_empty());
+     assert_eq!(state.pending_notifications.len(), 1);
+ }
++
++#[test]
++fn clicking_one_stacked_notification_closes_only_that_one() {
++    let mut config = ClientShellConfig::from_config(&Config::default());
++    config.toast_delivery = crate::config::ToastDelivery::Herdr;
++    config.toast_duration_seconds = Some(0);
++    let mut state = ClientShellState::new(config);
++    state.set_snapshot(Box::new(snapshot()));
++    state.set_pane_surface(surface());
++    let now = std::time::Instant::now();
++    for title in ["first", "second", "third"] {
++        state.receive_notification(
++            &ClientEndpointId::Local,
++            SemanticNotification {
++                kind: SemanticNotificationKind::Custom,
++                title: title.into(),
++                body: None,
++                sound: None,
++                agent: None,
++                workspace_id: None,
++                tab_id: None,
++                pane_id: None,
++                position: None,
++            },
++            now,
++        );
++    }
++    state.compose(106, 20).expect("stacked frame");
++    assert_eq!(state.hits.notification_toasts.len(), 3);
++    let (middle, _) = state
++        .hits
++        .notification_toasts
++        .iter()
++        .find(|(_, index)| *index == 1)
++        .copied()
++        .expect("middle toast drawn");
++    let (newest, _) = state.hits.notification_toasts[0];
++
++    state.handle_raw_events(vec![RawInputEvent::Mouse(crossterm::event::MouseEvent {
++        kind: MouseEventKind::Down(MouseButton::Left),
++        column: middle.x,
++        row: middle.y,
++        modifiers: KeyModifiers::empty(),
++    })]);
++
++    assert_eq!(
++        state
++            .visible_notifications
++            .iter()
++            .map(|notification| notification.event.title.as_str())
++            .collect::<Vec<_>>(),
++        vec!["first", "third"]
++    );
++    state.tick_notifications(now + std::time::Duration::from_secs(24 * 60 * 60));
++    assert_eq!(state.visible_notifications.len(), 2);
++    state.compose(106, 20).expect("restacked frame");
++    let rects = state
++        .hits
++        .notification_toasts
++        .iter()
++        .map(|(rect, _)| *rect)
++        .collect::<Vec<_>>();
++    assert_eq!(rects[0], newest);
++    assert_eq!(rects[1].y, middle.y);
++}
+diff --git a/src/client/shell/tests/graphics.rs b/src/client/shell/tests/graphics.rs
+index 6bfd613..1205bf5 100644
+--- a/src/client/shell/tests/graphics.rs
++++ b/src/client/shell/tests/graphics.rs
+@@ -109,7 +109,7 @@ fn notifications_and_clipboard_feedback_only_cover_their_drawn_corners() {
+             state.sidebar_collapsed = true;
+             state.set_snapshot(Box::new(snapshot()));
+             state.set_pane_surface(surface());
+-            state.visible_notification = Some(ClientVisibleNotification {
++            state.visible_notifications = vec![ClientVisibleNotification {
+                 endpoint_id: ClientEndpointId::Local,
+                 event: SemanticNotification {
+                     kind: SemanticNotificationKind::Custom,
+@@ -123,7 +123,7 @@ fn notifications_and_clipboard_feedback_only_cover_their_drawn_corners() {
+                     position: Some(position),
+                 },
+                 deadline: None,
+-            });
++            }];
+             state.compose(cols, rows).unwrap();
+             let rect = state.hits.notification_toast;
+             assert_graphics_cover(&mut state, rect, cols, rows);
+diff --git a/src/client/shell/tests/mobile.rs b/src/client/shell/tests/mobile.rs
+index 1b51c1a..284e876 100644
+--- a/src/client/shell/tests/mobile.rs
++++ b/src/client/shell/tests/mobile.rs
+@@ -29,7 +29,7 @@ fn navigate_update_status_uses_released_desktop_and_mobile_placement() {
+     assert!(state.hits.tab_scroll_right.is_empty());
+ 
+     state.config.tab_bar_position = crate::config::TabBarPositionConfig::Top;
+-    state.visible_notification = Some(ClientVisibleNotification {
++    state.visible_notifications = vec![ClientVisibleNotification {
+         endpoint_id: ClientEndpointId::Local,
+         event: SemanticNotification {
+             kind: SemanticNotificationKind::Custom,
+@@ -43,7 +43,7 @@ fn navigate_update_status_uses_released_desktop_and_mobile_placement() {
+             position: Some(crate::config::ToastHerdrPosition::BottomRight),
+         },
+         deadline: None,
+-    });
++    }];
+     let top = state.compose(106, 30).expect("top-tab update shell");
+     assert!(row_text(&top, 29).contains("update ready"));
+ 
+diff --git a/src/client/shell/tests/startup_overlays.rs b/src/client/shell/tests/startup_overlays.rs
+index 0f3887a..47537b4 100644
+--- a/src/client/shell/tests/startup_overlays.rs
++++ b/src/client/shell/tests/startup_overlays.rs
+@@ -540,7 +540,7 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
+     endpoint_snapshot.config_diagnostic = Some("one-line warning".into());
+     state.set_snapshot(Box::new(endpoint_snapshot));
+     state.set_pane_surface(surface());
+-    state.visible_notification = Some(ClientVisibleNotification {
++    state.visible_notifications = vec![ClientVisibleNotification {
+         endpoint_id: ClientEndpointId::Local,
+         event: SemanticNotification {
+             kind: SemanticNotificationKind::Custom,
+@@ -554,7 +554,7 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
+             position: Some(crate::config::ToastHerdrPosition::TopRight),
+         },
+         deadline: None,
+-    });
++    }];
+ 
+     state.compose(106, 20).expect("one-line frame");
+     let pane_area = state.layout(106, 20).pane_surface;
+@@ -567,8 +567,8 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
+     assert_eq!(state.hits.notification_toast.y, pane_area.y);
+ 
+     state
+-        .visible_notification
+-        .as_mut()
++        .visible_notifications
++        .last_mut()
+         .expect("visible notification")
+         .event
+         .position = Some(crate::config::ToastHerdrPosition::BottomRight);
+@@ -584,7 +584,7 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
+         row: targetless_hit.y,
+         modifiers: KeyModifiers::empty(),
+     })]);
+-    assert!(state.visible_notification.is_none());
++    assert!(state.visible_notifications.is_empty());
+ }
+ 
+ #[test]

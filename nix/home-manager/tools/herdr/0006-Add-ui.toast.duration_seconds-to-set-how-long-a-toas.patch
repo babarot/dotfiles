@@ -1,0 +1,466 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Wed, 7 Oct 2026 17:27:16 +0900
+Subject: [PATCH] Add ui.toast.duration_seconds to set how long a toast stays
+
+An in-app toast stays for a duration fixed per kind (8 seconds for
+needs-attention, 5 for finished and custom, 3 for update-installed), and
+no setting changes it.
+
+ui.toast.duration_seconds sets one duration for every kind. Left unset,
+each kind keeps its own duration, so nothing changes for existing
+configs. 0 keeps a toast until it is clicked, and a toast without a
+target pane now closes on click too, since with 0 a click is the only
+way to close it. Like delay_seconds, values above 3600 are a config
+error.
+---
+ .../website/src/data/config-reference.json    |  6 ++
+ src/client/shell/config.rs                    |  2 +
+ src/client/shell/mouse.rs                     |  5 +-
+ src/client/shell/notification_policy.rs       | 29 +++++--
+ src/client/shell/notifications.rs             | 75 ++++++++++++++++++-
+ src/client/shell/state.rs                     |  4 +-
+ src/client/shell/tests/graphics.rs            |  2 +-
+ src/client/shell/tests/mobile.rs              |  2 +-
+ src/client/shell/tests/startup_overlays.rs    | 21 +++---
+ src/config/model.rs                           | 33 ++++++++
+ src/main.rs                                   |  2 +
+ 11 files changed, 156 insertions(+), 25 deletions(-)
+
+diff --git a/docs/next/website/src/data/config-reference.json b/docs/next/website/src/data/config-reference.json
+index 36afe33..afaa1f4 100644
+--- a/docs/next/website/src/data/config-reference.json
++++ b/docs/next/website/src/data/config-reference.json
+@@ -1108,6 +1108,12 @@
+           "default": "1",
+           "description": "Seconds to wait before sending finished or needs-input agent notifications. Herdr notifies only if the pane is still in the same state when the delay expires. 0 is instant; valid values are 0 through 3600."
+         },
++        {
++          "key": "ui.toast.duration_seconds",
++          "type": "integer",
++          "default": "unset",
++          "description": "Seconds an in-app toast stays visible. Unset keeps the built-in duration for each kind of notification. 0 keeps the toast until it is clicked; valid values are 0 through 3600."
++        },
+         {
+           "key": "ui.toast.herdr.position",
+           "type": "enum",
+diff --git a/src/client/shell/config.rs b/src/client/shell/config.rs
+index 2d16b00..1242452 100644
+--- a/src/client/shell/config.rs
++++ b/src/client/shell/config.rs
+@@ -128,6 +128,7 @@ impl ClientShellConfig {
+             sound_enabled: config.ui.sound.enabled,
+             toast_delivery: config.ui.toast.delivery,
+             toast_delay_seconds: config.ui.toast.delay_seconds,
++            toast_duration_seconds: config.ui.toast.duration_seconds,
+             toast_position: config.ui.toast.herdr.position,
+             copy_on_select: config.ui.copy_on_select,
+             clipboard_toast_enabled: config.ui.toast.clipboard.enabled,
+@@ -330,6 +331,7 @@ impl ClientShellConfig {
+                 self.sound_enabled = ui.sound.enabled;
+                 self.toast_delivery = ui.toast.delivery;
+                 self.toast_delay_seconds = ui.toast.delay_seconds;
++                self.toast_duration_seconds = ui.toast.duration_seconds;
+                 self.toast_position = ui.toast.herdr.position;
+                 self.copy_on_select = ui.copy_on_select;
+                 self.clipboard_toast_enabled = ui.toast.clipboard.enabled;
+diff --git a/src/client/shell/mouse.rs b/src/client/shell/mouse.rs
+index 0b9326d..dec0ed4 100644
+--- a/src/client/shell/mouse.rs
++++ b/src/client/shell/mouse.rs
+@@ -977,10 +977,7 @@ impl ClientShellState {
+         }
+         if self.overlay.is_none()
+             && self.mode == ClientShellMode::Terminal
+-            && self
+-                .visible_notification
+-                .as_ref()
+-                .is_some_and(|notification| notification.event.pane_id.is_some())
++            && self.visible_notification.is_some()
+             && mouse.kind == MouseEventKind::Down(MouseButton::Left)
+             && super::contains(self.hits.notification_toast, point)
+         {
+diff --git a/src/client/shell/notification_policy.rs b/src/client/shell/notification_policy.rs
+index f3eeeb3..b9397d7 100644
+--- a/src/client/shell/notification_policy.rs
++++ b/src/client/shell/notification_policy.rs
+@@ -12,13 +12,18 @@ enum NotificationValidation {
+     Stale,
+ }
+ 
+-fn notification_duration(kind: SemanticNotificationKind) -> std::time::Duration {
+-    std::time::Duration::from_secs(match kind {
++/// None keeps the toast until it is clicked.
++fn notification_duration(
++    kind: SemanticNotificationKind,
++    configured_seconds: Option<u64>,
++) -> Option<std::time::Duration> {
++    let seconds = configured_seconds.unwrap_or(match kind {
+         SemanticNotificationKind::NeedsAttention => 8,
+         SemanticNotificationKind::Finished => 5,
+         SemanticNotificationKind::UpdateInstalled => 3,
+         SemanticNotificationKind::Custom => 5,
+-    })
++    });
++    (seconds > 0).then(|| std::time::Duration::from_secs(seconds))
+ }
+ 
+ impl ClientShellState {
+@@ -43,7 +48,7 @@ impl ClientShellState {
+         now: std::time::Instant,
+     ) {
+         if self.visible_notification.is_none() {
+-            notification.deadline = now + notification_duration(notification.event.kind);
++            notification.deadline = self.notification_deadline(notification.event.kind, now);
+             self.visible_notification = Some(notification);
+             return;
+         }
+@@ -57,11 +62,20 @@ impl ClientShellState {
+         let Some(mut notification) = self.queued_notifications.pop_front() else {
+             return false;
+         };
+-        notification.deadline = now + notification_duration(notification.event.kind);
++        notification.deadline = self.notification_deadline(notification.event.kind, now);
+         self.visible_notification = Some(notification);
+         true
+     }
+ 
++    fn notification_deadline(
++        &self,
++        kind: SemanticNotificationKind,
++        now: std::time::Instant,
++    ) -> Option<std::time::Instant> {
++        notification_duration(kind, self.config.toast_duration_seconds)
++            .and_then(|duration| now.checked_add(duration))
++    }
++
+     pub(super) fn focus_visible_notification(&mut self, outcome: &mut ClientShellInput) {
+         let Some(notification) = self.visible_notification.as_ref() else {
+             return;
+@@ -152,7 +166,8 @@ impl ClientShellState {
+         if self
+             .visible_notification
+             .as_ref()
+-            .is_some_and(|visible| now >= visible.deadline)
++            .and_then(|visible| visible.deadline)
++            .is_some_and(|deadline| now >= deadline)
+         {
+             self.visible_notification = None;
+             self.promote_queued_notification(now);
+@@ -215,7 +230,7 @@ impl ClientShellState {
+                         ClientVisibleNotification {
+                             endpoint_id: pending.endpoint_id,
+                             event: pending.event,
+-                            deadline: now,
++                            deadline: None,
+                         },
+                         now,
+                     );
+diff --git a/src/client/shell/notifications.rs b/src/client/shell/notifications.rs
+index b8437ea..f73b139 100644
+--- a/src/client/shell/notifications.rs
++++ b/src/client/shell/notifications.rs
+@@ -223,7 +223,7 @@ mod tests {
+                 pane_id: None,
+                 position: None,
+             },
+-            deadline: std::time::Instant::now(),
++            deadline: None,
+         }
+     }
+ 
+@@ -270,7 +270,7 @@ mod tests {
+                 pane_id: Some("pane".into()),
+                 position: None,
+             },
+-            deadline: std::time::Instant::now() + std::time::Duration::from_secs(5),
++            deadline: Some(std::time::Instant::now() + std::time::Duration::from_secs(5)),
+         });
+         let mut outcome = ClientShellInput::default();
+ 
+@@ -453,6 +453,77 @@ mod tests {
+         assert!(state.queued_notifications.is_empty());
+     }
+ 
++    fn custom_notification(title: &str, pane_id: Option<&str>) -> SemanticNotification {
++        SemanticNotification {
++            kind: SemanticNotificationKind::Custom,
++            title: title.into(),
++            body: None,
++            sound: None,
++            agent: None,
++            workspace_id: None,
++            tab_id: None,
++            pane_id: pane_id.map(Into::into),
++            position: None,
++        }
++    }
++
++    fn herdr_toast_state(duration_seconds: Option<u64>) -> ClientShellState {
++        let mut config = Config::default();
++        config.ui.toast.delivery = crate::config::ToastDelivery::Herdr;
++        config.ui.toast.duration_seconds = duration_seconds;
++        ClientShellState::new(ClientShellConfig::from_config(&config))
++    }
++
++    #[test]
++    fn unset_toast_duration_keeps_each_kind_its_own_duration() {
++        let mut state = herdr_toast_state(None);
++        let now = std::time::Instant::now();
++        state.receive_notification(
++            &ClientEndpointId::Local,
++            custom_notification("custom", None),
++            now,
++        );
++
++        state.tick_notifications(now + std::time::Duration::from_millis(4999));
++        assert!(state.visible_notification.is_some());
++        state.tick_notifications(now + std::time::Duration::from_secs(5));
++        assert!(state.visible_notification.is_none());
++    }
++
++    #[test]
++    fn configured_toast_duration_applies_to_every_kind() {
++        let mut state = herdr_toast_state(Some(2));
++        let now = std::time::Instant::now();
++        state.receive_notification(
++            &ClientEndpointId::Local,
++            custom_notification("custom", None),
++            now,
++        );
++
++        state.tick_notifications(now + std::time::Duration::from_millis(1999));
++        assert!(state.visible_notification.is_some());
++        state.tick_notifications(now + std::time::Duration::from_secs(2));
++        assert!(state.visible_notification.is_none());
++    }
++
++    #[test]
++    fn zero_toast_duration_keeps_the_toast_until_it_is_closed() {
++        let mut state = herdr_toast_state(Some(0));
++        let now = std::time::Instant::now();
++        state.receive_notification(
++            &ClientEndpointId::Local,
++            custom_notification("custom", None),
++            now,
++        );
++
++        state.tick_notifications(now + std::time::Duration::from_secs(24 * 60 * 60));
++        assert!(state.visible_notification.is_some());
++
++        let mut outcome = ClientShellInput::default();
++        state.focus_visible_notification(&mut outcome);
++        assert!(state.visible_notification.is_none());
++    }
++
+     #[test]
+     fn notification_rect_stays_inside_short_nonzero_area() {
+         let palette = crate::app::client_palette_from_config(&Config::default());
+diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
+index e903e43..7bb42da 100644
+--- a/src/client/shell/state.rs
++++ b/src/client/shell/state.rs
+@@ -28,6 +28,7 @@ pub(crate) struct ClientShellConfig {
+     pub(super) sound_enabled: bool,
+     pub(super) toast_delivery: crate::config::ToastDelivery,
+     pub(super) toast_delay_seconds: u64,
++    pub(super) toast_duration_seconds: Option<u64>,
+     pub(super) toast_position: crate::config::ToastHerdrPosition,
+     pub(super) copy_on_select: bool,
+     pub(super) clipboard_toast_enabled: bool,
+@@ -731,7 +732,8 @@ pub(super) struct ClientPendingNotification {
+ pub(super) struct ClientVisibleNotification {
+     pub(super) endpoint_id: ClientEndpointId,
+     pub(super) event: SemanticNotification,
+-    pub(super) deadline: std::time::Instant,
++    /// None keeps the toast until it is clicked.
++    pub(super) deadline: Option<std::time::Instant>,
+ }
+ 
+ #[derive(Clone, Debug, PartialEq, Eq)]
+diff --git a/src/client/shell/tests/graphics.rs b/src/client/shell/tests/graphics.rs
+index 4140788..6bfd613 100644
+--- a/src/client/shell/tests/graphics.rs
++++ b/src/client/shell/tests/graphics.rs
+@@ -122,7 +122,7 @@ fn notifications_and_clipboard_feedback_only_cover_their_drawn_corners() {
+                     pane_id: None,
+                     position: Some(position),
+                 },
+-                deadline: std::time::Instant::now(),
++                deadline: None,
+             });
+             state.compose(cols, rows).unwrap();
+             let rect = state.hits.notification_toast;
+diff --git a/src/client/shell/tests/mobile.rs b/src/client/shell/tests/mobile.rs
+index 4dac549..1b51c1a 100644
+--- a/src/client/shell/tests/mobile.rs
++++ b/src/client/shell/tests/mobile.rs
+@@ -42,7 +42,7 @@ fn navigate_update_status_uses_released_desktop_and_mobile_placement() {
+             pane_id: None,
+             position: Some(crate::config::ToastHerdrPosition::BottomRight),
+         },
+-        deadline: std::time::Instant::now(),
++        deadline: None,
+     });
+     let top = state.compose(106, 30).expect("top-tab update shell");
+     assert!(row_text(&top, 29).contains("update ready"));
+diff --git a/src/client/shell/tests/startup_overlays.rs b/src/client/shell/tests/startup_overlays.rs
+index 7107aa7..0f3887a 100644
+--- a/src/client/shell/tests/startup_overlays.rs
++++ b/src/client/shell/tests/startup_overlays.rs
+@@ -553,20 +553,12 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
+             pane_id: None,
+             position: Some(crate::config::ToastHerdrPosition::TopRight),
+         },
+-        deadline: std::time::Instant::now(),
++        deadline: None,
+     });
+ 
+     state.compose(106, 20).expect("one-line frame");
+     let pane_area = state.layout(106, 20).pane_surface;
+     assert_eq!(state.hits.notification_toast.y, pane_area.y);
+-    let targetless_hit = state.hits.notification_toast;
+-    state.handle_raw_events(vec![RawInputEvent::Mouse(crossterm::event::MouseEvent {
+-        kind: MouseEventKind::Down(MouseButton::Left),
+-        column: targetless_hit.x,
+-        row: targetless_hit.y,
+-        modifiers: KeyModifiers::empty(),
+-    })]);
+-    assert!(state.visible_notification.is_some());
+ 
+     let mut endpoint_snapshot = snapshot();
+     endpoint_snapshot.config_diagnostic = Some("first warning\nsecond warning".into());
+@@ -582,6 +574,17 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
+         .position = Some(crate::config::ToastHerdrPosition::BottomRight);
+     state.compose(106, 20).expect("bottom notification frame");
+     assert_eq!(state.hits.notification_toast.bottom(), 19);
++
++    // A toast without a target pane closes on click: with
++    // ui.toast.duration_seconds = 0 that is the only way to close it.
++    let targetless_hit = state.hits.notification_toast;
++    state.handle_raw_events(vec![RawInputEvent::Mouse(crossterm::event::MouseEvent {
++        kind: MouseEventKind::Down(MouseButton::Left),
++        column: targetless_hit.x,
++        row: targetless_hit.y,
++        modifiers: KeyModifiers::empty(),
++    })]);
++    assert!(state.visible_notification.is_none());
+ }
+ 
+ #[test]
+diff --git a/src/config/model.rs b/src/config/model.rs
+index 6ef6274..eb3cc46 100644
+--- a/src/config/model.rs
++++ b/src/config/model.rs
+@@ -10,6 +10,7 @@ use super::{
+ };
+ 
+ pub const MAX_TOAST_DELAY_SECONDS: u64 = 3600;
++pub const MAX_TOAST_DURATION_SECONDS: u64 = 3600;
+ 
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize, Default)]
+ #[serde(rename_all = "lowercase")]
+@@ -199,6 +200,9 @@ fn parse_right_click_passthrough_modifier(value: &str) -> Option<Option<KeyModif
+ pub struct ToastConfig {
+     pub delivery: ToastDelivery,
+     pub delay_seconds: u64,
++    /// Seconds an in-app toast stays visible. Unset keeps each kind's own
++    /// duration; 0 keeps the toast until it is clicked.
++    pub duration_seconds: Option<u64>,
+     pub herdr: HerdrToastConfig,
+     pub clipboard: ClipboardToastConfig,
+ }
+@@ -1211,6 +1215,7 @@ impl Default for ToastConfig {
+         Self {
+             delivery: ToastDelivery::Off,
+             delay_seconds: 1,
++            duration_seconds: None,
+             herdr: HerdrToastConfig::default(),
+             clipboard: ClipboardToastConfig::default(),
+         }
+@@ -1245,6 +1250,7 @@ impl<'de> Deserialize<'de> for ToastConfig {
+             delivery: Option<ToastDelivery>,
+             enabled: Option<bool>,
+             delay_seconds: Option<u64>,
++            duration_seconds: Option<u64>,
+             herdr: HerdrToastConfig,
+             clipboard: ClipboardToastConfig,
+         }
+@@ -1262,9 +1268,18 @@ impl<'de> Deserialize<'de> for ToastConfig {
+                 "ui.toast.delay_seconds must be between 0 and {MAX_TOAST_DELAY_SECONDS}"
+             )));
+         }
++        if raw
++            .duration_seconds
++            .is_some_and(|duration| duration > MAX_TOAST_DURATION_SECONDS)
++        {
++            return Err(de::Error::custom(format!(
++                "ui.toast.duration_seconds must be between 0 and {MAX_TOAST_DURATION_SECONDS}"
++            )));
++        }
+         Ok(Self {
+             delivery,
+             delay_seconds,
++            duration_seconds: raw.duration_seconds,
+             herdr: raw.herdr,
+             clipboard: raw.clipboard,
+         })
+@@ -1831,6 +1846,7 @@ mouse_scroll_lines = 0
+ [ui.toast]
+ delivery = "terminal"
+ delay_seconds = 2
++duration_seconds = 0
+ 
+ [ui.toast.herdr]
+ position = "top-left"
+@@ -1842,6 +1858,7 @@ position = "top-center"
+         let config: Config = toml::from_str(toml).unwrap();
+         assert_eq!(config.ui.toast.delivery, ToastDelivery::Terminal);
+         assert_eq!(config.ui.toast.delay_seconds, 2);
++        assert_eq!(config.ui.toast.duration_seconds, Some(0));
+         assert_eq!(config.ui.toast.herdr.position, ToastHerdrPosition::TopLeft);
+         assert!(!config.ui.toast.clipboard.enabled);
+         assert_eq!(
+@@ -1855,6 +1872,7 @@ position = "top-center"
+         let config = Config::default();
+         assert_eq!(config.ui.toast.delivery, ToastDelivery::Off);
+         assert_eq!(config.ui.toast.delay_seconds, 1);
++        assert_eq!(config.ui.toast.duration_seconds, None);
+         assert_eq!(
+             config.ui.toast.herdr.position,
+             ToastHerdrPosition::BottomRight
+@@ -1922,6 +1940,21 @@ delay_seconds = {}
+         assert!(error.contains("ui.toast.delay_seconds must be between 0 and 3600"));
+     }
+ 
++    #[test]
++    fn toast_config_rejects_unbounded_duration() {
++        let toml = format!(
++            r#"
++[ui.toast]
++duration_seconds = {}
++"#,
++            MAX_TOAST_DURATION_SECONDS + 1
++        );
++
++        let error = toml::from_str::<Config>(&toml).unwrap_err().to_string();
++
++        assert!(error.contains("ui.toast.duration_seconds must be between 0 and 3600"));
++    }
++
+     #[test]
+     fn missing_onboarding_shows_setup() {
+         let config = Config::default();
+diff --git a/src/main.rs b/src/main.rs
+index 8cfe9b0..33faad0 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -367,6 +367,8 @@ const DEFAULT_CONFIG: &str = r##"# herdr configuration
+ # system = ask the OS notification service directly
+ # delivery = "off"
+ # delay_seconds = 1
++# Seconds an in-app toast stays visible; unset keeps each kind's own, 0 keeps it until clicked
++# duration_seconds = 5
+ 
+ [ui.toast.herdr]
+ # position = "bottom-right"

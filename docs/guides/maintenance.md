@@ -90,13 +90,7 @@ crit's Claude Code skills come from the same pinned source ([crit.nix](../../nix
 
 ## Add a Mac
 
-1. Get the new Mac's hostname with `scutil --get LocalHostName`.
-2. Copy an existing host file to `nix/hosts/<hostname>.nix` and keep only what that Mac needs.
-3. Add `"<hostname>" = mkHost "<hostname>";` to `darwinConfigurations` in [flake.nix](../../flake.nix). `mkHost` reads `nix/hosts/<hostname>.nix` and, if it exists, every `*.nix` in `nix/hosts/<hostname>/`.
-4. `git add` the new host file (and the directory, if any).
-5. Add the Mac to the host table in [AGENTS.md](../../AGENTS.md) and to the hosts named in [setup-mac.md](./setup-mac.md#nixzsh).
-
-CI and the pre-push hook read the hosts from `darwinConfigurations`, so neither needs a change. Setting up the machine itself is in [setup-mac.md](./setup-mac.md#nixzsh).
+A new Mac is added as a host while it is set up: [setup-mac.md](./setup-mac.md#add-this-mac-as-a-host). `mkHost` in [flake.nix](../../flake.nix) reads `nix/hosts/<hostname>.nix` and, if it exists, every `*.nix` in `nix/hosts/<hostname>/`. CI and the pre-push hook read the hosts from `darwinConfigurations`, so neither needs a change.
 
 ## Add a tool
 

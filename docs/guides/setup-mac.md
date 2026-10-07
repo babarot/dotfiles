@@ -1,300 +1,177 @@
-Setup Mac
-=========
+# Set up a Mac
 
-This page guides you to set up the new machine to usual state.
+The first `darwin-rebuild switch` installs everything this repo declares: CLI tools, apps (casks, App Store apps, Nix apps), Homebrew itself, the dotfiles links in `$HOME`, and the System Settings in [nix/macos.nix](../../nix/macos.nix). This page is what comes before it, the switch itself, and what is left by hand after it.
 
-# 1. Built-in Software / OS Preferences
+For a Mac that was already set up by hand, read [migrate-mac.md](./migrate-mac.md) before the first switch.
 
-Most of Finder and System Settings (appearance, Dock and hot corners, Finder, trackpad and mouse, menu bar, Caps Lock to Control, Touch ID for `sudo`) is declared in [nix/macos.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/macos.nix) and applied by `darwin-rebuild switch` (see [Nix/Zsh](#nixzsh)). What is left by hand:
+## 1. Before the first switch
 
-/ | Guides
----|---
-Finder sidebar | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/7309a814-3c5f-4a88-8146-ed4f91dbac95">
-Displays | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/1ff3f3a1-a052-478b-b9da-8c317a6d6030">
-Touch ID & Password | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c61af4f6-4673-48ef-afb8-2c1876e27439">
-Keyboard (input sources) | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/8f3f919e-700e-4d1a-bb8a-dea3eed53822">
+### Sign in to the App Store
 
-Dock contents are not declared either; add apps to it by hand.
+App Store apps are installed by the switch with [mas](https://github.com/mas-cli/mas), which needs a signed-in App Store. An app that fails to install only prints a warning; switching again after signing in installs it.
 
-# 2. Hardware
+### Install the Command Line Tools
 
-- Keyboards
-  - https://happyhackingkb.com/jp/download/
-  - https://origin.pfultd.com/downloads/hhkb/manual/P3PC-6641-05.pdf
-- Mouse
-  - https://www.logicool.co.jp/ja-jp/setup/ergosetup/mouse-setup/bluetooth.html
-
-# 3. Developments
-
-Let's configure a development environment through a console. At this time, the console app which is pre-installed is only `Terminal.app` by default. So you need to use it to set up these configurations.
-
-<!--
-<img width="400" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/2b7d358c-f68a-472f-ad3d-a2f9e3d5a6e2">
--->
-<img width="400" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/216d22e3-0fb5-4e62-b8f6-b56361eae810">
-
-## Prerequisites
-
-Install Git.
+They provide git, which cloning this repo needs.
 
 ```bash
 xcode-select --install
 ```
 
-Install Rosetta 2.
+### Register an SSH key with GitHub
 
-```bash
-sudo softwareupdate --install-rosetta
-```
-
-## Connections for GitHub
-
-Check your keys in `.ssh` folder.
-
-```console
-$ ls ~/.ssh
-id_ed25519 id_ed25519.pub
-```
-
-If you don't have them, create a key pair with the command. (it's OK to leave the passphrase blank)
+The key is used to clone this repo and to fetch the private `agent-skills` input.
 
 ```bash
 ssh-keygen -t ed25519 -C "babarot@gmail.com"
-```
-
-Copy a public key.
-
-```bash
 cat ~/.ssh/id_ed25519.pub | pbcopy
 ```
 
-Next,
-
-1. Go to https://github.com/settings/ssh/new
-2. Paste the public key to the text area
-3. Confirm to OK or not: `ssh -T git@github.com`
-
-<img width="400" alt="" src="https://user-images.githubusercontent.com/4442708/222950511-ec47abf9-f307-497d-83eb-7907524d9868.png">
-
-Let's check the connectivity for your GitHub account is working. It goes well if your account name is just displayed.
+Paste it at https://github.com/settings/ssh/new, then check that it works:
 
 ```console
 $ ssh -T git@github.com
 Hi babarot! You've successfully authenticated, but GitHub does not provide shell access.
 ```
 
-## Dotfiles
+### Clone this repo
 
-Clone this repo into `~/src/github.com/babarot/dotfiles`. Keep this exact path: the links into `$HOME` and the `darwin-rebuild` commands below point at it.
+Keep this exact path: the links into `$HOME` and the `darwin-rebuild` commands point at it.
 
 ```bash
 git clone git@github.com:babarot/dotfiles.git ~/src/github.com/babarot/dotfiles
 ```
 
-The first `darwin-rebuild switch` (see [Nix/Zsh](#nixzsh)) links the dotfiles (`.zshrc`, `.gitconfig`, `.config`, `bin`, ...) into `$HOME`, as listed in [nix/home-manager/dotfiles.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home-manager/dotfiles.nix). The links point at the repo, so edits apply without a switch. Until then, the shell is plain macOS zsh. The linked `.gitconfig` also turns on this repo's hooks in `.githooks`: pre-commit stops commits that leak a secret or skip `nix fmt`, and pre-push builds every Mac.
+### Add this Mac as a host
 
-## Homebrew
-
-Homebrew is only used to install vendor apps that update themselves or install system components (1Password, Google Chrome, Docker, ...), listed in [nix/homebrew.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/homebrew.nix). There is nothing to install by hand: `darwin-rebuild switch` (see [Nix/Zsh](#nixzsh)) installs Homebrew itself with [nix-homebrew](https://github.com/zhaofengli/nix-homebrew), then installs the missing apps and never upgrades or removes anything.
-
-> [!NOTE]
-> Claude Code is installed the same way when missing, with its official installer, and then updates itself. Mac App Store apps are installed by `darwin-rebuild switch` too, with [mas](https://github.com/mas-cli/mas), from [app-store.nix](https://github.com/babarot/dotfiles/tree/HEAD/nix/home-manager/tools/app-store.nix). Sign in to the App Store first; an app that fails to install only prints a warning, so switch again after signing in.
-
-## Nix/Zsh
-
-CLI tools and zsh plugins are managed by [Nix](https://nixos.org/) with [nix-darwin](https://github.com/nix-darwin/nix-darwin) and [home-manager](https://github.com/nix-community/home-manager). Once the configuration is applied and the shell is relaunched, you can enter the CLI world in the usual state of your shell.
-
-Install Nix with the [Determinate Nix installer](https://github.com/DeterminateSystems/nix-installer).
-
-```bash
-curl -fsSL https://install.determinate.systems/nix | sh -s -- install
-```
-
-The configuration is selected by hostname: `pro23` is the private Mac and `PC-M-2025-026` the work Mac. Check it, and if this machine is new, add `nix/hosts/<hostname>.nix` and an entry in `darwinConfigurations` in `flake.nix` (copy an existing host), then `git add` the new file so Nix can see it.
+The switch picks its configuration by hostname, and stops with an error for a hostname that [flake.nix](../../flake.nix) does not list. Check it before installing Nix:
 
 ```bash
 scutil --get LocalHostName
 ```
 
-Build the configuration as yourself first. The `agent-skills` input is a private repo fetched over SSH with your key, which root does not have; once it is in the Nix store, the `sudo` run below finds it there.
+If the name is in the host table in [AGENTS.md](../../AGENTS.md), go on. Otherwise add it, starting from the Mac it is most like:
+
+| This Mac is | Start from |
+|---|---|
+| private | `pro23` |
+| work | `PC-M-2025-026` |
+
+1. Copy `nix/hosts/<base>.nix` to `nix/hosts/<hostname>.nix`, and `nix/hosts/<base>/` to `nix/hosts/<hostname>/` if it exists. Drop what this Mac does not need.
+2. Add `"<hostname>" = mkHost "<hostname>";` to `darwinConfigurations` in [flake.nix](../../flake.nix).
+3. `git add` the new files. Nix only sees files tracked by git.
+4. Add the Mac to the host table in [AGENTS.md](../../AGENTS.md).
+5. Commit and push once the first switch works.
+
+Everything outside the host files applies to every host, so the new Mac gets the shared setup as it is.
+
+### Install Nix
+
+With the [Determinate Nix installer](https://github.com/DeterminateSystems/nix-installer):
+
+```bash
+curl -fsSL https://install.determinate.systems/nix | sh -s -- install
+```
+
+## 2. The first switch
+
+Build the configuration as yourself first. `agent-skills` is fetched over SSH with your key, which root does not have; once it is in the Nix store, the `sudo` run finds it there.
 
 ```bash
 nix build "$HOME/src/github.com/babarot/dotfiles#darwinConfigurations.$(scutil --get LocalHostName).system" --no-link
 ```
 
-Apply the configuration for the first time. `darwin-rebuild` is not installed yet, so run it through `nix run`. Quote the flake reference, since zsh treats `#` as a glob.
+Then apply it. `darwin-rebuild` is not installed yet, so it runs through `nix run`. Quote the flake reference, since zsh treats `#` as a glob.
 
 ```bash
 sudo /nix/var/nix/profiles/default/bin/nix run 'nix-darwin/master#darwin-rebuild' -- switch --flake ~/src/github.com/babarot/dotfiles
 ```
 
-From the next time, open a new shell and run (after updating `agent-skills`, build as yourself first; see [maintenance.md](./maintenance.md#update-flake-inputs)):
+> [!NOTE]
+> nix-darwin moves the existing `/etc/zshrc`, `/etc/zshenv` and `/etc/bashrc` aside as `*.before-nix-darwin`. home-manager does not move existing symlinks: remove any it reports as "would be clobbered" and run it again.
+
+Restart the Mac when it finishes. Some of what was installed, such as Google Japanese Input, only works after a restart. Open a new terminal afterwards; until the switch, the shell was plain macOS zsh.
+
+## 3. After the switch
+
+### Bring history from the old Mac
+
+Copy these files from the old Mac with AirDrop, or with `scp` when Remote Login is on there. Shell history can hold tokens, so do not pass it through a gist or any other service.
+
+| File | What it is |
+|---|---|
+| `~/.zsh_history` | zsh history |
+| `~/.enhancd/enhancd.log` | directory history for [enhancd](https://github.com/babarot/enhancd) |
+| `~/.claude/vault.db` | the [claude-recall](https://github.com/babarot/claude-recall) archive of Claude Code sessions, including those whose transcripts Claude Code has deleted |
+
+```bash
+scp <old-mac>.local:.zsh_history ~/.zsh_history
+scp <old-mac>.local:.enhancd/enhancd.log ~/.enhancd/enhancd.log
+```
+
+The archive is a SQLite database written while Claude Code runs, so copy a snapshot of it rather than the file itself. On the old Mac:
+
+```bash
+sqlite3 ~/.claude/vault.db ".backup '$HOME/vault.db'"
+```
+
+On the new Mac, quit Claude Code and `recall ui` first, put the snapshot in place, then import the sessions the new Mac already has:
+
+```bash
+rm -f ~/.claude/vault.db-wal ~/.claude/vault.db-shm
+mv ~/vault.db ~/.claude/vault.db
+recall import
+```
+
+The old Mac's sessions can then be read and searched, and recalled into a new claude with `c`, but not resumed with `claude -r`: Claude Code resumes only from the transcripts in `~/.claude/projects`, which are not copied.
+
+### macOS settings left by hand
+
+These are not declared in [nix/macos.nix](../../nix/macos.nix).
+
+| Setting | How |
+|---|---|
+| Finder sidebar | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/7309a814-3c5f-4a88-8146-ed4f91dbac95"> |
+| Displays | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/1ff3f3a1-a052-478b-b9da-8c317a6d6030"> |
+| Touch ID fingerprints | <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c61af4f6-4673-48ef-afb8-2c1876e27439"> |
+| Input sources | Add Google Japanese Input under System Settings > Keyboard > Input Sources and allow it when asked. <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/8f3f919e-700e-4d1a-bb8a-dea3eed53822"> |
+| Dock contents | Add apps by hand. |
+
+Do not enable an input source with `defaults write` or the TIS API: macOS records the consent only when the source is added in System Settings, so a source enabled another way asks for consent again on every switch.
+
+### Sign in to apps and set them up
+
+Apps marked "work" are only on the work Mac; the rest are on both.
+
+| App | What to do |
+|---|---|
+| 1Password | Sign in with the Setup Code, then set the appearance. <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/b2ef6f71-d7a4-4add-8926-3ea838f45cab"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5472aeeb-2742-40b0-8049-3d1eee1a81bb"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/17dd37b2-2af5-47d2-a252-daecc82ff598"> |
+| Google Japanese Input | Settings: <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/e208b204-1f0b-4bfc-8020-23a9d6bb1761"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c8b7ae19-744d-462a-8acd-92cb72472e3d"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/f57a6418-8265-4e33-ade5-c68998ce40e1"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/f3fe14cf-6d5b-4d13-a7dc-933740ba49c3"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/86d09068-5b07-4a25-be97-ea912df2901e"> |
+| Obsidian | Sign in, open the vault, enter the encryption password and run sync. Enable the [Vimrc Support](https://github.com/esm7/obsidian-vimrc-support) plugin and copy the vimrc: `cp ~/src/github.com/babarot/dotfiles/home/.obsidian.vimrc ~/Documents/<vault>/` <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/bd26762b-ccde-49d6-8b54-ec29f9af39b4"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/d5b95ea7-dee9-4995-8704-96c02e6fb77f"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/bd5b1ed9-500c-421a-8669-88f9f0dcb9ff"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/e6972e20-8701-41a6-bb95-fb04bdbb5cc4"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/38c94f78-668d-4c6c-b226-fece9583f3ab"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/9172929a-46ee-4d12-b2eb-7a0a6f421b95"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5f22ab4c-d7cf-4705-82ae-3cabd32764fb"> |
+| Things 3 | Turn on Things Cloud. <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/51c58f87-d332-4185-ba4e-1a7db0c61901"> |
+| CleanShot X | Settings: <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5e9b6abd-8a35-43af-9fba-9e9275acc2a8"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/4ce287ea-c36b-4510-9cd7-f9e76be0613a"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/a09beb6d-c6f5-41ae-8c28-ba8b4d0f3ec9"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/e4b55262-ae18-4957-8072-b0ca2894644d"> |
+| PopClip | Install the [Base64](https://www.popclip.app/extensions/x/19SiD) and [Translate Tab](https://www.popclip.app/extensions/x/14UeG) extensions. <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/9fca0072-9fee-439c-9185-52aff8d77653"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/b5f685fc-188e-4de9-a06a-1ccc20ab1393"> |
+| Spark | Sign in. |
+| Spotify | Sign in. |
+| Hidden Bar | Settings: <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/16f7a3db-7dbc-45c3-a335-805b59363cc0"> |
+| Magnet | Settings: <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/2d5c6c14-a429-4ee5-8b4e-8948a4ca3bab"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/605e0be0-6c2a-4876-aa38-9c21209cb6d4"> |
+| MeetingBar (work) | Settings: <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c85a5528-70ce-4df1-8193-129102ab0f32"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/85daebaa-d77c-43bc-b2d1-b956f2f2ecf2"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5a349124-dbff-40ff-9b8e-7396c0d37ebf"> |
+| Paste | Settings: <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/8e3bb2fe-697d-4e59-a88e-a495ff016355"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/95eead1f-6ff9-415d-a1b1-384791df78ca"> |
+| Yoink | Settings: <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/b8a6512f-87b3-421b-9d46-20bdbf3305f2"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/54620cec-6b87-41d6-a684-e58428318a2f"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/ddeeabdb-5fe6-4b73-b06a-8227c50d04e9"> |
+
+## 4. From then on
+
+Apply changes with:
 
 ```bash
 sudo darwin-rebuild switch --flake ~/src/github.com/babarot/dotfiles
 ```
 
-> [!NOTE]
-> nix-darwin moves the existing `/etc/zshrc`, `/etc/zshenv` and `/etc/bashrc` aside as `*.before-nix-darwin`. home-manager does not move existing symlinks, so remove any symlink it reports as "would be clobbered" and run it again.
+Each switch also uninstalls Homebrew casks and brews that no file declares, so an app installed with `brew install` by hand goes away; declare it instead ([where-things-go.md](../reference/where-things-go.md)).
 
-### Migrating a Mac that already has these apps and tools
+Updating inputs (after an `agent-skills` update, build as yourself first) is in [maintenance.md](./maintenance.md#update-flake-inputs).
 
-On a Mac set up by hand (or with the old afx/Brewfile setup), a few things get in the way of the first switch:
+## Appendix: hardware
 
-- Homebrew installed with the official script: nix-homebrew takes it over on the first switch (`autoMigrate`). It replaces the Homebrew repository in `/opt/homebrew` and keeps the installed formulae, casks and taps.
-- Vendor apps installed without Homebrew: `brew bundle` refuses to overwrite them. Put them under Homebrew first with `brew install --cask --adopt <cask>`; when the installed version differs, use `brew install --cask --force <cask>` (settings stay in `~/Library`). If it fails with "Operation not permitted", give the terminal the App Management permission in System Settings > Privacy & Security.
-- Symlinks left by afx (e.g. `~/.tmux/plugins/tpm`) and extensions installed with `gh extension install`: home-manager does not move them, so remove them before switching.
-- An app that moves from `/Applications` to Nix: quit the old one before moving it to the Trash. A copy still running from the Trash keeps its profile locked (Spotify showed only a black window).
-- Old Homebrew formulae: uninstall with `HOMEBREW_NO_AUTOREMOVE=1` and check `brew autoremove --dry-run` before removing dependencies. Formulae from untrusted taps do not show up in `brew leaves`, and `brew untap` fails for those taps; remove `$(brew --repository)/Library/Taps/<owner>/homebrew-<repo>` instead.
-- mise installed by Homebrew: after mise comes from Nix, run `mise reshim --force` so the shims stop pointing at the removed binary.
-- Restart Claude Code (and other agents) from a new terminal tab; they keep the PATH of the tab they were started from.
-
-References:
-
-- My tools list: [nix/home-manager/tools](https://github.com/babarot/dotfiles/tree/HEAD/nix/home-manager/tools)
-- How the shell switches between humans and AI agents: [README](https://github.com/babarot/dotfiles#shell-for-humans-and-ai-agents)
-
-## Some migrations
-
-### History (Z shell)
-
-```
-cat ~/.zsh_history | pbcopy
-```
-
-Open https://gist.github.com/ to paste.
-
-Then,
-
-```
-pbpaste >| ~/.zsh_history
-```
-
-### History (directory changes)
-
-I use [enhancd](https://github.com/babarot/enhancd) to jump a directory. A history of directory changes is `enhancd.log` file.
-
-```
-cat ~/.enhancd/enhancd.log | pbcopy
-```
-Open https://gist.github.com/ to paste.
-
-Then,
-```
-pbpaste >| ~/.enhancd/enhancd.log
-```
-
-# 4. Configure Apps
-
-`darwin-rebuild switch` installs these apps (where each kind comes from is in [where-things-go.md](../reference/where-things-go.md)); what is left is signing in and settings. Apps listed in `nix/hosts/<hostname>.nix` are only on that Mac.
-
-## 1Password
-
-https://1password.com/
-
-Log in with Setup Code (this is most easier among these methods).
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/b2ef6f71-d7a4-4add-8926-3ea838f45cab"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5472aeeb-2742-40b0-8049-3d1eee1a81bb">
-
-Configure the appearance.
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/17dd37b2-2af5-47d2-a252-daecc82ff598">
-
-## Google Japanese IME
-
-https://www.google.co.jp/ime/
-
-Installed by `darwin-rebuild` (cask in `nix/homebrew.nix`), but it only works after a restart. After the first switch, restart the Mac, then add it under System Settings > Keyboard > Input Sources and allow it when asked. Do not enable it with `defaults write` or the TIS API: macOS records the consent only when the source is added in System Settings, so a source enabled another way asks for consent again on every switch.
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/e208b204-1f0b-4bfc-8020-23a9d6bb1761"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c8b7ae19-744d-462a-8acd-92cb72472e3d"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/f57a6418-8265-4e33-ade5-c68998ce40e1"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/f3fe14cf-6d5b-4d13-a7dc-933740ba49c3"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/86d09068-5b07-4a25-be97-ea912df2901e">
-
-## Obsidian
-
-https://obsidian.md/
-
-Setup Obsidian account and Vault.
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/bd26762b-ccde-49d6-8b54-ec29f9af39b4"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/d5b95ea7-dee9-4995-8704-96c02e6fb77f"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/bd5b1ed9-500c-421a-8669-88f9f0dcb9ff"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/e6972e20-8701-41a6-bb95-fb04bdbb5cc4">
-
-Enter encryption password.
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/38c94f78-668d-4c6c-b226-fece9583f3ab"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/9172929a-46ee-4d12-b2eb-7a0a6f421b95">
-
-Run sync.
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5f22ab4c-d7cf-4705-82ae-3cabd32764fb">
-
-Enable [Vimrc Support](https://github.com/esm7/obsidian-vimrc-support) plugin
-
-```
-cp ~/src/github.com/babarot/dotfiles/home/.obsidian.vimrc ~/Documents/(Obsidian Vault)
-```
-
-## Things 3
-
-https://culturedcode.com/things/
-
-Turn on Things Cloud.
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/51c58f87-d332-4185-ba4e-1a7db0c61901">
-
-## CleanShot X
-
-https://cleanshot.com/
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5e9b6abd-8a35-43af-9fba-9e9275acc2a8"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/4ce287ea-c36b-4510-9cd7-f9e76be0613a"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/a09beb6d-c6f5-41ae-8c28-ba8b4d0f3ec9"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/e4b55262-ae18-4957-8072-b0ca2894644d">
-
-## PopClip
-
-https://www.popclip.app/
-
-Install extensions from https://www.popclip.app/extensions/
-
-- [Base64](https://www.popclip.app/extensions/x/19SiD)
-- [Translate Tab](https://www.popclip.app/extensions/x/14UeG)
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/9fca0072-9fee-439c-9185-52aff8d77653"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/b5f685fc-188e-4de9-a06a-1ccc20ab1393">
-
-## Spark
-
-https://sparkmailapp.com/
-
-Log in.
-
-## Spotify
-
-https://open.spotify.com/
-
-Log in.
-
-## Hidden Bar
-
-https://github.com/dwarvesf/hidden
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/16f7a3db-7dbc-45c3-a335-805b59363cc0">
-
-## Magnet
-
-https://magnet.crowdcafe.com/
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/2d5c6c14-a429-4ee5-8b4e-8948a4ca3bab"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/605e0be0-6c2a-4876-aa38-9c21209cb6d4">
-
-## MeetingBar
-
-https://meetingbar.app/
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/c85a5528-70ce-4df1-8193-129102ab0f32"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/85daebaa-d77c-43bc-b2d1-b956f2f2ecf2"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/5a349124-dbff-40ff-9b8e-7396c0d37ebf">
-
-## Paste
-
-https://pasteapp.io/
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/8e3bb2fe-697d-4e59-a88e-a495ff016355"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/95eead1f-6ff9-415d-a1b1-384791df78ca">
-
-## Yoink
-
-https://eternalstorms.at/yoink/mac/
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/b8a6512f-87b3-421b-9d46-20bdbf3305f2">
-
-<img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/54620cec-6b87-41d6-a684-e58428318a2f"> <img width="200" alt="" src="https://github.com/babarot/dotfiles/assets/4442708/ddeeabdb-5fe6-4b73-b06a-8227c50d04e9">
+- HHKB: https://happyhackingkb.com/jp/download/, [manual](https://origin.pfultd.com/downloads/hhkb/manual/P3PC-6641-05.pdf)
+- Logicool mouse: https://www.logicool.co.jp/ja-jp/setup/ergosetup/mouse-setup/bluetooth.html

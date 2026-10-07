@@ -17,7 +17,8 @@ Rules for adding a page:
 
 ## Guides
 
-- [setup-mac.md](./guides/setup-mac.md): set up a new Mac, or move an existing one to this flake
+- [setup-mac.md](./guides/setup-mac.md): set up a new Mac
+- [migrate-mac.md](./guides/migrate-mac.md): move a Mac set up by hand to this flake
 - [install-from-git.md](./guides/install-from-git.md): install a zsh plugin or a script from a git repository or gist
 - [gist-cli.md](./guides/gist-cli.md): decide whether a command of your own may live in a gist, and write, test and change one
 - [maintenance.md](./guides/maintenance.md): update inputs, patch a package, add a Mac, retire a skill

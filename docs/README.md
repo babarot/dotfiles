@@ -33,3 +33,4 @@ Rules for adding a page:
 
 - [where-things-go.md](./reference/where-things-go.md): where each kind of thing is declared (tools, sets, apps, settings, skills, patches)
 - [decisions.md](./reference/decisions.md): what was tried or used and dropped, and why, so it is not brought back
+- [herdr.md](./reference/herdr.md): what is set up for herdr: its keys for panes, tabs, spaces and copy mode, the commands that switch spaces, the patches on it and its companions

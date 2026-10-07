@@ -20,7 +20,7 @@ A worktree workspace can also carry marks after its name, each put by a conditio
 
 ## Keys
 
-The bindings, including the ones for the review plugins, are in [config.toml](../../home/.config/herdr/config.toml) with a comment on each. Two habits matter more than any one key: marking the panes in use with a leading `*` or `!` in their name, so they stand out among agents left idle, and jumping to the pane of the latest notification instead of hunting for it.
+The bindings, including the ones for the review plugins, are in [config.toml](../../home/.config/herdr/config.toml) with a comment on each; [herdr.md](../reference/herdr.md) lists them together with herdr's defaults, by what they act on, along with the patches on herdr. Two habits matter more than any one key: marking the panes in use with a leading `*` or `!` in their name, so they stand out among agents left idle, and jumping to the pane of the latest notification instead of hunting for it.
 
 ## Review
 

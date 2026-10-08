@@ -15,6 +15,7 @@
       zstyle ':prompt:mini:git' show-untracked true
       zstyle ':prompt:mini:git' show-stash true
       zstyle ':prompt:mini:git' show-upstream true
+      zstyle ':prompt:mini:git' show-behind-base true
     '';
   };
 }

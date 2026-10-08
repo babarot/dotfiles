@@ -322,11 +322,11 @@
     "zsh-mini-prompt": {
       "flake": false,
       "locked": {
-        "lastModified": 1791435921,
-        "narHash": "sha256-SwIoIJBXng92XfY87t1hBn7Z5dbEjfPtB55RJuzf7Io=",
+        "lastModified": 1791436165,
+        "narHash": "sha256-9CoXaE5S/QRvpK6VLfEP7QtR69zix+p3NqqkTzgKsSo=",
         "owner": "babarot",
         "repo": "zsh-mini-prompt",
-        "rev": "e62fc42f3924e9cdb8898188d982ae4c10703573",
+        "rev": "cb63d72480d8f8f329eccd7ecaaae9b441bdf5bf",
         "type": "github"
       },
       "original": {

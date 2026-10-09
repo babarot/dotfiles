@@ -1,16 +1,17 @@
 { pkgs, ... }:
 let
-  # Not in nixpkgs or nur-packages; built from the release tag
-  gh-mini = pkgs.buildGoModule rec {
+  # Not in nixpkgs or nur-packages; built from the release tag.
+  # Go 1.27 because go.mod requires go >= 1.26.9 and nixpkgs' go is 1.26.8
+  gh-mini = pkgs.buildGo127Module rec {
     pname = "gh-mini";
-    version = "0.2.0";
+    version = "0.2.1";
     src = pkgs.fetchFromGitHub {
       owner = "babarot";
       repo = "gh-mini";
       rev = "v${version}";
-      hash = "sha256-Mu0p7INtK372icrVdhNDs6sXY7k8Ps7owsduH9KwTws=";
+      hash = "sha256-aLJlNw5K7jjjsNDRs0219VJI+/HhFatqd7LrSe7n5/A=";
     };
-    vendorHash = "sha256-hvYLa50fpM2RzoBaHHZnXxq96k08NV8fnTrcI2lr4B8=";
+    vendorHash = "sha256-WDN4xl/oJaPrE1wyz3aer6nBqeipnuQBAESIRu2gBec=";
     # Only the command; internal/lexers tests read chroma's lexer files, which
     # the vendored modules do not carry
     subPackages = [ "." ];

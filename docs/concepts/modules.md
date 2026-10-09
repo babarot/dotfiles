@@ -62,6 +62,10 @@ The same module adds every directory in [home/skills/](../../home/skills/), my o
 
 [tools/agent-skills.nix](../../nix/home-manager/tools/agent-skills.nix). Which plugins of the private babarot/agent-skills input are linked into `~/.agents/skills`, for Codex and other agents. Work skills are picked only in the work Mac's host file. Each skill directory is linked on its own, so `~/.agents/skills` stays open to skills from elsewhere, including `my.skills`. Claude Code gets these skills from the plugin marketplace instead.
 
+## my.ghFleet
+
+[tools/gh-fleet.nix](../../nix/home-manager/tools/gh-fleet.nix), so the option exists only while gh fleet does. gh fleet's `config.toml` as Nix, generated into `~/.config/gh-fleet/config.toml`, so another tool's file can add a command to it by store path: [tools/herdr/gh-fleet.nix](../../nix/home-manager/tools/herdr/gh-fleet.nix) sets `cleanup.worktree_remove`, guarded so the Macs still build without gh fleet. The settings are in gh fleet's README.
+
 ## my.herdrPlugins
 
 [tools/herdr/plugins.nix](../../nix/home-manager/tools/herdr/plugins.nix), imported by herdr.nix, so the option exists only while herdr does. herdr plugins built by Nix, by plugin id.

@@ -65,6 +65,7 @@ let
 in
 {
   imports = [
+    ./herdr/gh-fleet.nix
     ./herdr/plugins.nix
     ./herdr/hunk-diff.nix
     ./herdr/reviewr.nix

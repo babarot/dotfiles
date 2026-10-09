@@ -11,7 +11,6 @@
     d2
     deno
     duckdb
-    exiftool
     ffmpeg
     ghalint
     ghq

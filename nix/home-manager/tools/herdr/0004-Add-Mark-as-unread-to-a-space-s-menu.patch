@@ -10,15 +10,15 @@ show Done again until they are viewed. In the focused space, whose
 agents are acknowledged on every frame, the marked panes stay unread
 until they leave the screen or their agent moves on.
 ---
- src/client/shell/context_menu.rs         | 19 +++++-
- src/client/shell/endpoint_agent_state.rs | 66 ++++++++++++++++++
- src/client/shell/endpoints.rs            | 23 +++++++
- src/client/shell/state.rs                |  4 ++
- src/client/shell/tests/chrome_context.rs | 87 ++++++++++++++++++++++++
- 5 files changed, 198 insertions(+), 1 deletion(-)
+ src/client/shell/context_menu.rs         |  19 +++-
+ src/client/shell/endpoint_agent_state.rs | 108 ++++++++++++++++++++++-
+ src/client/shell/endpoints.rs            |  23 +++++
+ src/client/shell/state.rs                |   4 +
+ src/client/shell/tests/chrome_context.rs |  87 ++++++++++++++++++
+ 5 files changed, 239 insertions(+), 2 deletions(-)
 
 diff --git a/src/client/shell/context_menu.rs b/src/client/shell/context_menu.rs
-index 96f5717..7db176e 100644
+index b57bc84..075b4aa 100644
 --- a/src/client/shell/context_menu.rs
 +++ b/src/client/shell/context_menu.rs
 @@ -5,7 +5,7 @@ impl ClientContextMenuOverlay {
@@ -77,29 +77,56 @@ index 96f5717..7db176e 100644
          }
      }
 diff --git a/src/client/shell/endpoint_agent_state.rs b/src/client/shell/endpoint_agent_state.rs
-index f8ba7a9..a492489 100644
+index 1ebcd35..0e071cb 100644
 --- a/src/client/shell/endpoint_agent_state.rs
 +++ b/src/client/shell/endpoint_agent_state.rs
-@@ -7,6 +7,10 @@ use crate::protocol::{ClientShellAgent, ClientShellSnapshot, PaneSurfaceFrame};
- pub(super) struct EndpointAgentPresentation {
-     boot_id: Option<String>,
-     acknowledged: HashMap<String, u64>,
-+    // Panes marked unread, with the state they were marked in: while on screen
-+    // they stay unread until a surface without them (another workspace or tab)
-+    // is presented, or the agent moves on
+@@ -13,6 +13,12 @@ pub(super) struct EndpointAgentPresentation {
+         Option<u64>,
+         crate::protocol::endpoint::EndpointAgentCompletions,
+     )>,
++    // Panes marked unread, with the state they were marked in: they count as
++    // completed work until they are viewed or the agent moves on
++    marked_unread: HashMap<String, u64>,
++    // Marked panes on screen: they stay unread until a surface without them
++    // (another workspace or tab) is presented
 +    held_unread: HashMap<String, u64>,
  }
  
  impl EndpointAgentPresentation {
-@@ -14,6 +18,7 @@ impl EndpointAgentPresentation {
-         if self.boot_id.as_deref() != Some(snapshot.boot_id.as_str()) {
-             self.boot_id = Some(snapshot.boot_id.clone());
+@@ -50,6 +56,8 @@ impl EndpointAgentPresentation {
              self.acknowledged.clear();
+             self.completed.clear();
+             self.working.clear();
++            self.marked_unread.clear();
 +            self.held_unread.clear();
              self.acknowledged.extend(
                  snapshot
                      .agents
-@@ -47,6 +52,8 @@ impl EndpointAgentPresentation {
+@@ -68,6 +76,13 @@ impl EndpointAgentPresentation {
+             .retain(|pane_id, _| pane_ids.contains(pane_id.as_str()));
+         self.working
+             .retain(|pane_id| pane_ids.contains(pane_id.as_str()));
++        self.marked_unread.retain(|pane_id, sequence| {
++            snapshot.agents.iter().any(|agent| {
++                &agent.pane_id == pane_id && agent.state_change_seq == *sequence
++            })
++        });
++        self.held_unread
++            .retain(|pane_id, _| self.marked_unread.contains_key(pane_id));
+         let completions = self
+             .pending_completions
+             .take()
+@@ -98,7 +113,8 @@ impl EndpointAgentPresentation {
+                             completions.get(&agent.pane_id) == Some(&agent.state_change_seq)
+                         },
+                     );
+-                    if completed {
++                    let marked = self.marked_unread.contains_key(&agent.pane_id);
++                    if completed || marked {
+                         self.completed
+                             .insert(agent.pane_id.clone(), agent.state_change_seq);
+                     } else {
+@@ -129,6 +145,8 @@ impl EndpointAgentPresentation {
              return false;
          }
  
@@ -108,17 +135,18 @@ index f8ba7a9..a492489 100644
          let mut changed = false;
          for pane in &surface.panes {
              let Some(agent) = snapshot
-@@ -56,6 +63,9 @@ impl EndpointAgentPresentation {
+@@ -138,6 +156,10 @@ impl EndpointAgentPresentation {
              else {
                  continue;
              };
-+            if self.held_unread.get(&agent.pane_id) == Some(&agent.state_change_seq) {
++            if self.held_unread.contains_key(&agent.pane_id) {
 +                continue;
 +            }
++            self.marked_unread.remove(&agent.pane_id);
              let acknowledged = self.acknowledged.entry(agent.pane_id.clone()).or_default();
              if *acknowledged < agent.state_change_seq {
                  *acknowledged = agent.state_change_seq;
-@@ -71,6 +81,31 @@ impl EndpointAgentPresentation {
+@@ -153,6 +175,36 @@ impl EndpointAgentPresentation {
          changed
      }
  
@@ -133,9 +161,14 @@ index f8ba7a9..a492489 100644
 +        let mut changed = false;
 +        for agent in &snapshot.agents {
 +            if agent.workspace_id == workspace_id && agent.agent_status == AgentStatus::Idle {
-+                changed |= self.acknowledged.remove(&agent.pane_id).is_some();
++                self.acknowledged.remove(&agent.pane_id);
++                self.completed
++                    .insert(agent.pane_id.clone(), agent.state_change_seq);
++                self.marked_unread
++                    .insert(agent.pane_id.clone(), agent.state_change_seq);
 +                self.held_unread
 +                    .insert(agent.pane_id.clone(), agent.state_change_seq);
++                changed = true;
 +            }
 +        }
 +        if changed {
@@ -148,9 +181,9 @@ index f8ba7a9..a492489 100644
 +    }
 +
      pub(super) fn seen(&self, agent: &ClientShellAgent) -> bool {
-         self.acknowledged
-             .get(&agent.pane_id)
-@@ -250,6 +285,37 @@ mod tests {
+         self.completed.get(&agent.pane_id).is_none_or(|completion| {
+             self.acknowledged
+@@ -463,6 +515,60 @@ mod tests {
          );
      }
  
@@ -173,6 +206,29 @@ index f8ba7a9..a492489 100644
 +    }
 +
 +    #[test]
++    fn workspace_marked_unread_survives_server_completions_until_viewed() {
++        let mut presentation = EndpointAgentPresentation::default();
++        let mut idle = snapshot(AgentStatus::Idle, 4, 1);
++        presentation.project_snapshot(&mut idle);
++        presentation.mark_workspace_unread(&mut idle, "workspace");
++
++        let mut next = snapshot(AgentStatus::Idle, 4, 2);
++        presentation.receive_completions(None, completions("endpoint-boot", 2, None));
++        presentation.project_snapshot(&mut next);
++        assert_eq!(next.agents[0].agent_status, AgentStatus::Done);
++
++        let mut elsewhere = surface(2);
++        elsewhere.panes.clear();
++        presentation.acknowledge_surface(&mut next, &elsewhere, Some(true));
++        assert!(presentation.acknowledge_surface(&mut next, &surface(2), Some(true)));
++        assert_eq!(next.agents[0].agent_status, AgentStatus::Idle);
++
++        let mut later = snapshot(AgentStatus::Idle, 4, 3);
++        presentation.project_snapshot(&mut later);
++        assert_eq!(later.agents[0].agent_status, AgentStatus::Idle);
++    }
++
++    #[test]
 +    fn agent_marked_unread_on_screen_is_seen_once_it_moves_on() {
 +        let mut presentation = EndpointAgentPresentation::default();
 +        let mut idle = snapshot(AgentStatus::Idle, 4, 1);
@@ -189,10 +245,10 @@ index f8ba7a9..a492489 100644
      fn stale_or_unfocused_surface_does_not_acknowledge_completion() {
          let mut presentation = EndpointAgentPresentation::default();
 diff --git a/src/client/shell/endpoints.rs b/src/client/shell/endpoints.rs
-index c27358e..01b34c3 100644
+index fff28b7..1ea0d40 100644
 --- a/src/client/shell/endpoints.rs
 +++ b/src/client/shell/endpoints.rs
-@@ -610,6 +610,29 @@ impl ClientShellState {
+@@ -648,6 +648,29 @@ impl ClientShellState {
          }
      }
  
@@ -223,10 +279,10 @@ index c27358e..01b34c3 100644
          let Some(index) = self
              .endpoints
 diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
-index b7f1118..e903e43 100644
+index 4272d6d..f9d620d 100644
 --- a/src/client/shell/state.rs
 +++ b/src/client/shell/state.rs
-@@ -517,6 +517,7 @@ pub(super) enum ClientContextMenuAction {
+@@ -519,6 +519,7 @@ pub(super) enum ClientContextMenuAction {
      OpenWorktree,
      RemoveWorktree,
      ToggleGroup,
@@ -234,7 +290,7 @@ index b7f1118..e903e43 100644
      NewTab,
      RenamePane,
      ClearPaneName,
-@@ -536,6 +537,9 @@ pub(super) enum ClientContextMenuTarget {
+@@ -538,6 +539,9 @@ pub(super) enum ClientContextMenuTarget {
          is_linked_worktree: bool,
          has_worktree_children: bool,
          collapsed: bool,

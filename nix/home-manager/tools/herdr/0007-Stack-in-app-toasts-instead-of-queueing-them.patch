@@ -34,10 +34,10 @@ room for one row, so it shows the newest only.
  10 files changed, 366 insertions(+), 151 deletions(-)
 
 diff --git a/src/client/shell/composition.rs b/src/client/shell/composition.rs
-index e0888d0..1c33ddb 100644
+index b7ab4a9..7113425 100644
 --- a/src/client/shell/composition.rs
 +++ b/src/client/shell/composition.rs
-@@ -423,6 +423,7 @@ impl ClientShellState {
+@@ -452,6 +452,7 @@ impl ClientShellState {
          }
          restore_mode_bar(&mut frame, mode_bar, mode_bar_cells.as_deref());
          self.hits.notification_toast = Rect::default();
@@ -45,7 +45,7 @@ index e0888d0..1c33ddb 100644
          let has_config_diagnostic = self.config_diagnostic.is_some();
          let active_lifecycle = self
              .endpoints
-@@ -433,7 +434,7 @@ impl ClientShellState {
+@@ -462,7 +463,7 @@ impl ClientShellState {
          if has_config_diagnostic
              || active_lifecycle.is_some()
              || self.visible_endpoint_notice.is_some()
@@ -54,7 +54,7 @@ index e0888d0..1c33ddb 100644
          {
              let cursor = frame.cursor.clone();
              let mut composed = frame.to_ratatui_buffer()?;
-@@ -480,27 +481,39 @@ impl ClientShellState {
+@@ -509,27 +510,39 @@ impl ClientShellState {
                          &self.config.palette,
                      )
                  };
@@ -105,7 +105,7 @@ index e0888d0..1c33ddb 100644
              frame.replace_from_ratatui_buffer_preserving_effects(&composed, cursor);
          }
          if let Some(feedback) = self.copy_feedback.as_ref() {
-@@ -512,13 +525,26 @@ impl ClientShellState {
+@@ -541,13 +554,26 @@ impl ClientShellState {
              } else {
                  Rect::new(0, 0, cols, rows)
              };
@@ -140,7 +140,7 @@ index e0888d0..1c33ddb 100644
                  &mut composed,
                  feedback_area,
 diff --git a/src/client/shell/mouse.rs b/src/client/shell/mouse.rs
-index dec0ed4..21ff827 100644
+index 4636bd9..e97d2c0 100644
 --- a/src/client/shell/mouse.rs
 +++ b/src/client/shell/mouse.rs
 @@ -977,12 +977,18 @@ impl ClientShellState {
@@ -676,7 +676,7 @@ index f73b139..22fc586 100644
  
      #[test]
 diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
-index 7bb42da..a46842f 100644
+index 5b19d84..6ed8552 100644
 --- a/src/client/shell/state.rs
 +++ b/src/client/shell/state.rs
 @@ -114,6 +114,8 @@ pub(super) struct ShellHitMap {
@@ -688,7 +688,7 @@ index 7bb42da..a46842f 100644
      pub(super) global_menu_rows: Vec<(Rect, usize)>,
      pub(super) context_menu_rows: Vec<(Rect, usize)>,
      pub(super) overlay_primary: Rect,
-@@ -919,8 +921,8 @@ pub(crate) struct ClientShellState {
+@@ -931,8 +933,8 @@ pub(crate) struct ClientShellState {
      pub(super) pending_requests: HashMap<String, PendingEndpointRequest>,
      pub(super) pending_integration_installs: usize,
      pub(super) pending_notifications: Vec<ClientPendingNotification>,
@@ -699,7 +699,7 @@ index 7bb42da..a46842f 100644
      pub(super) endpoint_notice_seen: HashSet<ClientEndpointNoticeKey>,
      pub(super) visible_endpoint_notice: Option<ClientVisibleEndpointNotice>,
      pub(super) outer_focused: Option<bool>,
-@@ -1081,8 +1083,7 @@ impl ClientShellState {
+@@ -1096,8 +1098,7 @@ impl ClientShellState {
              pending_requests: HashMap::new(),
              pending_integration_installs: 0,
              pending_notifications: Vec::new(),
@@ -836,10 +836,10 @@ index e0b86ba..235be22 100644
 +    assert_eq!(rects[1].y, middle.y);
 +}
 diff --git a/src/client/shell/tests/graphics.rs b/src/client/shell/tests/graphics.rs
-index 6bfd613..1205bf5 100644
+index 41f6e50..26f3267 100644
 --- a/src/client/shell/tests/graphics.rs
 +++ b/src/client/shell/tests/graphics.rs
-@@ -109,7 +109,7 @@ fn notifications_and_clipboard_feedback_only_cover_their_drawn_corners() {
+@@ -151,7 +151,7 @@ fn notifications_and_clipboard_feedback_only_cover_their_drawn_corners() {
              state.sidebar_collapsed = true;
              state.set_snapshot(Box::new(snapshot()));
              state.set_pane_surface(surface());
@@ -848,7 +848,7 @@ index 6bfd613..1205bf5 100644
                  endpoint_id: ClientEndpointId::Local,
                  event: SemanticNotification {
                      kind: SemanticNotificationKind::Custom,
-@@ -123,7 +123,7 @@ fn notifications_and_clipboard_feedback_only_cover_their_drawn_corners() {
+@@ -165,7 +165,7 @@ fn notifications_and_clipboard_feedback_only_cover_their_drawn_corners() {
                      position: Some(position),
                  },
                  deadline: None,

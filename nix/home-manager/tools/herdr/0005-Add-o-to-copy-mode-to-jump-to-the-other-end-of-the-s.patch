@@ -17,7 +17,7 @@ a selection it does nothing.
  2 files changed, 89 insertions(+)
 
 diff --git a/src/client/shell/copy_mode.rs b/src/client/shell/copy_mode.rs
-index 07dc8d1..8b9329f 100644
+index be5b63e..d5e9cd4 100644
 --- a/src/client/shell/copy_mode.rs
 +++ b/src/client/shell/copy_mode.rs
 @@ -211,6 +211,7 @@ impl ClientShellState {
@@ -28,7 +28,7 @@ index 07dc8d1..8b9329f 100644
              'h' => self.move_copy_cursor(0, -1, outcome),
              'j' => self.move_copy_cursor(1, 0, outcome),
              'k' => self.move_copy_cursor(-1, 0, outcome),
-@@ -674,6 +675,23 @@ impl ClientShellState {
+@@ -667,6 +668,23 @@ impl ClientShellState {
          }
      }
  
@@ -53,7 +53,7 @@ index 07dc8d1..8b9329f 100644
          let Some(copy_mode) = self.copy_mode.as_ref() else {
              return;
 diff --git a/src/client/shell/tests/copy.rs b/src/client/shell/tests/copy.rs
-index eda4da8..12cbe64 100644
+index 317950c..3ab16de 100644
 --- a/src/client/shell/tests/copy.rs
 +++ b/src/client/shell/tests/copy.rs
 @@ -521,6 +521,77 @@ fn keyboard_copy_mode_owns_cursor_selection_copy_and_scroll_restore() {

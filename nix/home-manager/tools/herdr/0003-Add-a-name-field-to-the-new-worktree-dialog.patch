@@ -16,10 +16,10 @@ like renaming the space afterwards does.
  7 files changed, 110 insertions(+), 25 deletions(-)
 
 diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
-index 901c5a2..b7f1118 100644
+index c170c9b..4272d6d 100644
 --- a/src/client/shell/state.rs
 +++ b/src/client/shell/state.rs
-@@ -424,6 +424,9 @@ pub(super) struct ClientSettingsOverlay {
+@@ -426,6 +426,9 @@ pub(super) struct ClientSettingsOverlay {
  pub(super) struct ClientWorktreeCreateOverlay {
      pub(super) source_workspace_id: String,
      pub(super) repo_name: String,
@@ -100,10 +100,10 @@ index 5e30fa4..e0b86ba 100644
  
      let submit = state.handle_input_bytes(b"\r");
 diff --git a/src/client/shell/tests/graphics.rs b/src/client/shell/tests/graphics.rs
-index c5fa1f4..4140788 100644
+index e54301a..7ae8a45 100644
 --- a/src/client/shell/tests/graphics.rs
 +++ b/src/client/shell/tests/graphics.rs
-@@ -235,6 +235,8 @@ fn every_dialog_and_menu_occludes_its_panel_not_the_whole_screen() {
+@@ -277,6 +277,8 @@ fn every_dialog_and_menu_occludes_its_panel_not_the_whole_screen() {
          ClientShellOverlay::WorktreeCreate(ClientWorktreeCreateOverlay {
              source_workspace_id: "ws_1".into(),
              repo_name: "repo".into(),
@@ -113,7 +113,7 @@ index c5fa1f4..4140788 100644
              checkout_path: "path".into(),
              error: None,
 diff --git a/src/client/shell/tests/popup_focus_projection.rs b/src/client/shell/tests/popup_focus_projection.rs
-index 25d3b33..0ef9e4d 100644
+index c9f0227..af2586c 100644
 --- a/src/client/shell/tests/popup_focus_projection.rs
 +++ b/src/client/shell/tests/popup_focus_projection.rs
 @@ -48,6 +48,8 @@ fn modal_paste_target_requires_a_focused_editable_client_field() {
@@ -126,7 +126,7 @@ index 25d3b33..0ef9e4d 100644
              checkout_path: String::new(),
              error: None,
 diff --git a/src/client/shell/tests/text_editing.rs b/src/client/shell/tests/text_editing.rs
-index b63ce9f..b2fecd8 100644
+index 118a606..e9872d7 100644
 --- a/src/client/shell/tests/text_editing.rs
 +++ b/src/client/shell/tests/text_editing.rs
 @@ -26,6 +26,8 @@ fn shell(field: usize) -> ClientShellState {

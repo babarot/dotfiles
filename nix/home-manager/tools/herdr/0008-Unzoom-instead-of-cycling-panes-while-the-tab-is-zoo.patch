@@ -15,10 +15,10 @@ on screen, the same key cycles them as before.
  3 files changed, 48 insertions(+)
 
 diff --git a/src/client/shell/actions.rs b/src/client/shell/actions.rs
-index 12d8cc1..4270324 100644
+index 9d0a3bd..b02a714 100644
 --- a/src/client/shell/actions.rs
 +++ b/src/client/shell/actions.rs
-@@ -1025,6 +1025,14 @@ impl ClientShellState {
+@@ -1053,6 +1053,14 @@ impl ClientShellState {
              KeybindAction::ClosePane => Some(Method::PaneClose(PaneTarget {
                  pane_id: focused_pane.clone()?,
              })),
@@ -34,10 +34,10 @@ index 12d8cc1..4270324 100644
                  let focused_tab = focused_tab?;
                  let panes = snapshot
 diff --git a/src/client/shell/endpoints.rs b/src/client/shell/endpoints.rs
-index 01b34c3..3bac45c 100644
+index 1ea0d40..b13206a 100644
 --- a/src/client/shell/endpoints.rs
 +++ b/src/client/shell/endpoints.rs
-@@ -455,6 +455,17 @@ impl ClientShellState {
+@@ -493,6 +493,17 @@ impl ClientShellState {
              .is_none_or(|methods| methods.contains(crate::api::api_method_name(method)))
      }
  

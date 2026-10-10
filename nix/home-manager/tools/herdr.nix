@@ -24,7 +24,7 @@ let
   # (doCheck = false) because they change between releases and depend on the
   # host; to run the ones the patches touch, add these below and nix build:
   #   doCheck = true;
-  #   checkFlags = [ "client::shell::tests" "client::shell::endpoint_agent_state" "ui::sidebar" ];
+  #   checkFlags = [ "client::shell::tests" "client::shell::endpoint_agent_state" "ui::sidebar" "app::actions" ];
   herdr = pkgs.herdr.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ config.my.forkPatches.herdr.patches;
   });

@@ -1,0 +1,70 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: babarot <b4b4r07@gmail.com>
+Date: Sat, 10 Oct 2026 11:07:38 +0900
+Subject: [PATCH] Name the repo of a worktree space in notifications
+
+A notification names the space it came from, and a worktree space goes by
+the name given to it, not its repo's. Spaces of different repos can share
+a name (ui-improve in two repos), so the notification could not tell which
+one finished. A linked worktree space is now named as repo/space, the way
+the sidebar groups it under the repo. The repo's own space and a space
+named after the repo are left as they were.
+---
+ src/app/actions.rs | 37 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 36 insertions(+), 1 deletion(-)
+
+diff --git a/src/app/actions.rs b/src/app/actions.rs
+index e1ae2ff..e909b65 100644
+--- a/src/app/actions.rs
++++ b/src/app/actions.rs
+@@ -152,7 +152,14 @@ pub fn notification_context(
+     ws_idx: usize,
+     pane_id: PaneId,
+ ) -> String {
+-    let mut context = format!("{} · {}", workspace_label, ws_idx + 1);
++    // A worktree space is named apart from its repo, so name the repo too:
++    // spaces of different repos can share a name.
++    let mut context = match ws.worktree_space() {
++        Some(space) if space.is_linked_worktree && space.label != workspace_label => {
++            format!("{}/{} · {}", space.label, workspace_label, ws_idx + 1)
++        }
++        _ => format!("{} · {}", workspace_label, ws_idx + 1),
++    };
+     if ws.tabs.len() > 1 {
+         if let Some(tab_idx) = ws.find_tab_index_for_pane(pane_id) {
+             if let Some(label) = ws.tab_display_name(tab_idx) {
+@@ -2144,6 +2151,34 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn notification_context_names_the_repo_of_a_linked_worktree_space() {
++        let mut state = app_with_workspaces(&["parent", "child"]);
++        mark_parent_worktree(&mut state, 0);
++        state.workspaces[1].worktree_space = Some(crate::workspace::WorktreeSpaceMembership {
++            key: "repo-key".into(),
++            label: "herdr".into(),
++            repo_root: "/repo/herdr".into(),
++            checkout_path: "/repo/herdr-child".into(),
++            is_linked_worktree: true,
++        });
++        let parent_root = state.workspaces[0].tabs[0].root_pane;
++        let child_root = state.workspaces[1].tabs[0].root_pane;
++
++        assert_eq!(
++            notification_context(&state.workspaces[0], "herdr", 0, parent_root),
++            "herdr · 1"
++        );
++        assert_eq!(
++            notification_context(&state.workspaces[1], "ui-improve", 1, child_root),
++            "herdr/ui-improve · 2"
++        );
++        assert_eq!(
++            notification_context(&state.workspaces[1], "herdr", 1, child_root),
++            "herdr · 2"
++        );
++    }
++
+     fn selected_word(row: &str, col: u16) -> Option<String> {
+         let (start, end) = word_bounds_at_column(row, col)?;
+         Some(text_in_cell_range(row, start, end))

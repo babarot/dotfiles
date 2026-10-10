@@ -136,6 +136,7 @@ herdr is nixpkgs' build with these patches, one per change, applied in name orde
 | [0007](../../nix/home-manager/tools/herdr/0007-Stack-in-app-toasts-instead-of-queueing-them.patch) | In-app toasts stack, up to 5, instead of waiting for the one shown to close |
 | [0008](../../nix/home-manager/tools/herdr/0008-Unzoom-instead-of-cycling-panes-while-the-tab-is-zoo.patch) | Cycling panes (`ctrl+o`, `prefix+o`) while the tab is zoomed only unzooms, instead of moving the zoom to the next pane |
 | [0009](../../nix/home-manager/tools/herdr/0009-Add-ui.toast.dismiss_on_read-to-close-a-space-s-toas.patch) | `ui.toast.dismiss_on_read` closes a space's in-app toasts once that space is opened, whatever their duration; a worktree's only its own |
+| [0010](../../nix/home-manager/tools/herdr/0010-Name-the-repo-of-a-worktree-space-in-notifications.patch) | A notification from a linked worktree space names it as `repo/space`, so spaces of different repos with the same name can be told apart |
 
 ## Companions
 

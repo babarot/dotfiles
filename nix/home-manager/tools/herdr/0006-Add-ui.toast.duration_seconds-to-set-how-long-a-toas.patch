@@ -28,10 +28,10 @@ error.
  11 files changed, 156 insertions(+), 25 deletions(-)
 
 diff --git a/docs/next/website/src/data/config-reference.json b/docs/next/website/src/data/config-reference.json
-index 36afe33..afaa1f4 100644
+index eb7e08d..f21befa 100644
 --- a/docs/next/website/src/data/config-reference.json
 +++ b/docs/next/website/src/data/config-reference.json
-@@ -1108,6 +1108,12 @@
+@@ -1114,6 +1114,12 @@
            "default": "1",
            "description": "Seconds to wait before sending finished or needs-input agent notifications. Herdr notifies only if the pane is still in the same state when the delay expires. 0 is instant; valid values are 0 through 3600."
          },
@@ -45,7 +45,7 @@ index 36afe33..afaa1f4 100644
            "key": "ui.toast.herdr.position",
            "type": "enum",
 diff --git a/src/client/shell/config.rs b/src/client/shell/config.rs
-index 2d16b00..1242452 100644
+index bfa1fb2..0db5423 100644
 --- a/src/client/shell/config.rs
 +++ b/src/client/shell/config.rs
 @@ -128,6 +128,7 @@ impl ClientShellConfig {
@@ -65,7 +65,7 @@ index 2d16b00..1242452 100644
                  self.copy_on_select = ui.copy_on_select;
                  self.clipboard_toast_enabled = ui.toast.clipboard.enabled;
 diff --git a/src/client/shell/mouse.rs b/src/client/shell/mouse.rs
-index 0b9326d..dec0ed4 100644
+index f2df294..4636bd9 100644
 --- a/src/client/shell/mouse.rs
 +++ b/src/client/shell/mouse.rs
 @@ -977,10 +977,7 @@ impl ClientShellState {
@@ -257,7 +257,7 @@ index b8437ea..f73b139 100644
      fn notification_rect_stays_inside_short_nonzero_area() {
          let palette = crate::app::client_palette_from_config(&Config::default());
 diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
-index e903e43..7bb42da 100644
+index f9d620d..5b19d84 100644
 --- a/src/client/shell/state.rs
 +++ b/src/client/shell/state.rs
 @@ -28,6 +28,7 @@ pub(crate) struct ClientShellConfig {
@@ -268,7 +268,7 @@ index e903e43..7bb42da 100644
      pub(super) toast_position: crate::config::ToastHerdrPosition,
      pub(super) copy_on_select: bool,
      pub(super) clipboard_toast_enabled: bool,
-@@ -731,7 +732,8 @@ pub(super) struct ClientPendingNotification {
+@@ -740,7 +741,8 @@ pub(super) struct ClientPendingNotification {
  pub(super) struct ClientVisibleNotification {
      pub(super) endpoint_id: ClientEndpointId,
      pub(super) event: SemanticNotification,
@@ -279,10 +279,10 @@ index e903e43..7bb42da 100644
  
  #[derive(Clone, Debug, PartialEq, Eq)]
 diff --git a/src/client/shell/tests/graphics.rs b/src/client/shell/tests/graphics.rs
-index 4140788..6bfd613 100644
+index 7ae8a45..41f6e50 100644
 --- a/src/client/shell/tests/graphics.rs
 +++ b/src/client/shell/tests/graphics.rs
-@@ -122,7 +122,7 @@ fn notifications_and_clipboard_feedback_only_cover_their_drawn_corners() {
+@@ -164,7 +164,7 @@ fn notifications_and_clipboard_feedback_only_cover_their_drawn_corners() {
                      pane_id: None,
                      position: Some(position),
                  },
@@ -349,7 +349,7 @@ index 7107aa7..0f3887a 100644
  
  #[test]
 diff --git a/src/config/model.rs b/src/config/model.rs
-index 6ef6274..eb3cc46 100644
+index 0e2e57c..4bad2ea 100644
 --- a/src/config/model.rs
 +++ b/src/config/model.rs
 @@ -10,6 +10,7 @@ use super::{
@@ -370,7 +370,7 @@ index 6ef6274..eb3cc46 100644
      pub herdr: HerdrToastConfig,
      pub clipboard: ClipboardToastConfig,
  }
-@@ -1211,6 +1215,7 @@ impl Default for ToastConfig {
+@@ -1248,6 +1252,7 @@ impl Default for ToastConfig {
          Self {
              delivery: ToastDelivery::Off,
              delay_seconds: 1,
@@ -378,7 +378,7 @@ index 6ef6274..eb3cc46 100644
              herdr: HerdrToastConfig::default(),
              clipboard: ClipboardToastConfig::default(),
          }
-@@ -1245,6 +1250,7 @@ impl<'de> Deserialize<'de> for ToastConfig {
+@@ -1282,6 +1287,7 @@ impl<'de> Deserialize<'de> for ToastConfig {
              delivery: Option<ToastDelivery>,
              enabled: Option<bool>,
              delay_seconds: Option<u64>,
@@ -386,7 +386,7 @@ index 6ef6274..eb3cc46 100644
              herdr: HerdrToastConfig,
              clipboard: ClipboardToastConfig,
          }
-@@ -1262,9 +1268,18 @@ impl<'de> Deserialize<'de> for ToastConfig {
+@@ -1299,9 +1305,18 @@ impl<'de> Deserialize<'de> for ToastConfig {
                  "ui.toast.delay_seconds must be between 0 and {MAX_TOAST_DELAY_SECONDS}"
              )));
          }
@@ -405,7 +405,7 @@ index 6ef6274..eb3cc46 100644
              herdr: raw.herdr,
              clipboard: raw.clipboard,
          })
-@@ -1831,6 +1846,7 @@ mouse_scroll_lines = 0
+@@ -1871,6 +1886,7 @@ mouse_scroll_lines = 0
  [ui.toast]
  delivery = "terminal"
  delay_seconds = 2
@@ -413,7 +413,7 @@ index 6ef6274..eb3cc46 100644
  
  [ui.toast.herdr]
  position = "top-left"
-@@ -1842,6 +1858,7 @@ position = "top-center"
+@@ -1882,6 +1898,7 @@ position = "top-center"
          let config: Config = toml::from_str(toml).unwrap();
          assert_eq!(config.ui.toast.delivery, ToastDelivery::Terminal);
          assert_eq!(config.ui.toast.delay_seconds, 2);
@@ -421,7 +421,7 @@ index 6ef6274..eb3cc46 100644
          assert_eq!(config.ui.toast.herdr.position, ToastHerdrPosition::TopLeft);
          assert!(!config.ui.toast.clipboard.enabled);
          assert_eq!(
-@@ -1855,6 +1872,7 @@ position = "top-center"
+@@ -1895,6 +1912,7 @@ position = "top-center"
          let config = Config::default();
          assert_eq!(config.ui.toast.delivery, ToastDelivery::Off);
          assert_eq!(config.ui.toast.delay_seconds, 1);
@@ -429,7 +429,7 @@ index 6ef6274..eb3cc46 100644
          assert_eq!(
              config.ui.toast.herdr.position,
              ToastHerdrPosition::BottomRight
-@@ -1922,6 +1940,21 @@ delay_seconds = {}
+@@ -1962,6 +1980,21 @@ delay_seconds = {}
          assert!(error.contains("ui.toast.delay_seconds must be between 0 and 3600"));
      }
  
@@ -452,10 +452,10 @@ index 6ef6274..eb3cc46 100644
      fn missing_onboarding_shows_setup() {
          let config = Config::default();
 diff --git a/src/main.rs b/src/main.rs
-index 8cfe9b0..33faad0 100644
+index 45a6409..cb31e27 100644
 --- a/src/main.rs
 +++ b/src/main.rs
-@@ -367,6 +367,8 @@ const DEFAULT_CONFIG: &str = r##"# herdr configuration
+@@ -368,6 +368,8 @@ const DEFAULT_CONFIG: &str = r##"# herdr configuration
  # system = ask the OS notification service directly
  # delivery = "off"
  # delay_seconds = 1

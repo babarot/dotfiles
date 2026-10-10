@@ -5,6 +5,7 @@
   my.masApps = {
     "1Password for Safari" = 1569813296;
     "Amphetamine" = 937984704;
+    # Alternatives to consider (not installed): https://diskzy.app/, https://opendisk.app/
     "DaisyDisk" = 411643860;
     "Day One" = 1055511498;
     "Magnet" = 441258766;

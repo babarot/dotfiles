@@ -10,5 +10,6 @@
     Host nas
       HostName citadel.local
       User babarot
+      IdentityFile ~/.ssh/nas
   '';
 }

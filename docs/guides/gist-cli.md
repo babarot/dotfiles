@@ -20,7 +20,7 @@ What it costs: an edit is not live until it is pushed, taken in with `nix flake 
 
 ### Where its Nix goes
 
-The gist holds the script; a `.nix` file in this repo builds it. Which file follows [One file, one lifecycle](../../AGENTS.md#cohesion-one-file-one-lifecycle) as for any tool:
+The gist holds the script; a `.nix` file in this repo builds it. Which file follows [One file, one lifecycle](../reference/where-things-go.md#one-file-one-lifecycle) as for any tool:
 
 - It belongs to no tool: its own `nix/home-manager/tools/<name>.nix` ([deadlink.nix](../../nix/home-manager/tools/deadlink.nix), [gist-ctl.nix](../../nix/home-manager/tools/gist-ctl.nix), [repo-cleanup.nix](../../nix/home-manager/tools/repo-cleanup.nix)).
 - It exists only for one tool (a companion: "if the tool were removed, would I keep this?" no): built in that tool's file, so deleting the tool's file removes it ([herdr.nix](../../nix/home-manager/tools/herdr.nix) builds herdr-worktree-ctl).
@@ -129,7 +129,7 @@ nix flake update <name>
 - `deno run` on the file in the store, never `deno compile`: Nix strips binaries, which breaks compiled Deno ones.
 - `--no-lock`: there are no imports to lock, so Deno is told not to look for or write a `deno.lock`.
 - `--allow-run` lists the commands by name and nothing else; add `--allow-read`, `--allow-write`, `--allow-env` only if the script needs them.
-- `--prefix PATH` puts the commands it runs first, so the versions pinned here win over any other on PATH. Each command in `--allow-run` is either here or macOS's own (git, lsof, trash). A tool from another tool file is passed by its package here, never assumed on PATH ([Loose coupling](../../AGENTS.md#loose-coupling-dependencies-between-tools)); a companion takes its main tool from its own file (`herdr` in herdr.nix).
+- `--prefix PATH` puts the commands it runs first, so the versions pinned here win over any other on PATH. Each command in `--allow-run` is either here or macOS's own (git, lsof, trash). A tool from another tool file is passed by its package here, never assumed on PATH ([Dependencies between tools](../reference/where-things-go.md#dependencies-between-tools)); a companion takes its main tool from its own file (`herdr` in herdr.nix).
 - The header comment of the `.nix` says what the command does, that the script lives in a gist, which input, and that `nix flake update <name>` takes an edit.
 
 Then build both Macs, run the built command, and land:

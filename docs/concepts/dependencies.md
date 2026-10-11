@@ -6,7 +6,7 @@ This repo is built so that what deleting a tool's file does can be told from tha
 - Loose coupling: deleting a tool's file breaks nothing else.
 - Reproducibility: a new Mac gets the same thing.
 
-The rules that keep them are in [AGENTS.md](../../AGENTS.md#principles). This page explains why they work: what Nix gives that a PATH lookup could not, and why the rules take the shape they do.
+They are the principles in [AGENTS.md](../../AGENTS.md#principles), and the rules that keep them are in [where-things-go.md](../reference/where-things-go.md). This page explains why they work: what Nix gives that a PATH lookup could not, and why the rules take the shape they do.
 
 ## What came before
 

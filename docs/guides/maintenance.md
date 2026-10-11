@@ -20,9 +20,19 @@ nix build ".#darwinConfigurations.$(scutil --get LocalHostName).system" --no-lin
 
 [.githooks/pre-push](../../.githooks/pre-push) builds every Mac before a push that changes Nix files. It is usually quick because the local store already holds nearly everything. After nixpkgs moves, it rebuilds what cache.nixos.org does not have, such as the patched herdr and the packages built here from source, so expect the push to take a while. If a Mac does not build, fix it and push again; do not skip the hook.
 
-## Patch a package from a fork branch
+## Before proposing a patch
 
-A patch is the last resort; what to try before one is in [AGENTS.md](../../AGENTS.md#patches-are-the-last-resort).
+A patch has to be carried onto every upstream release, and it costs the binary cache. Before proposing one, go through these in order, and stop at the first that does what is wanted:
+
+1. The latest version: does the latest upstream release, or the version in nixpkgs, already do it?
+2. The documentation: can a setting, option, environment variable or plugin do it?
+3. Precedent: do upstream's issues, pull requests or discussions have the same request, a workaround or a plan for it?
+4. Other combinations: can it be done by wrapping the program, generating its config, combining it with another tool, or accepting the behavior and declaring it (`my.knownBins` for reviewr's link)?
+5. Only then, propose a patch to the user, saying what 1-4 found and why each fell short, and offer an upstream issue or pull request as the alternative. Do not start a patch before the user agrees.
+
+Once agreed, the patch is made in the fork and imported here, as below.
+
+## Patch a package from a fork branch
 
 Some packages carry local patches, applied from a directory in name order. Each declares its entry in `my.forkPatches` ([fork-patches.nix](../../nix/home-manager/fork-patches.nix)) next to the package, which names the fork, the upstream source and the patch directory; `git grep my.forkPatches` lists them.
 
@@ -87,6 +97,11 @@ nix flake update crit
 ```
 
 crit's Claude Code skills come from the same pinned source ([crit.nix](../../nix/home-manager/tools/crit.nix)), so they follow the binary.
+
+## When a switch fails
+
+- "would be clobbered": home-manager moves existing regular files aside as `*.before-hm`, but not symlinks. Remove the old symlinks it reports and switch again.
+- A command not found in an activation script: activation scripts run with a minimal PATH (no awk, grep). Use bash builtins or store paths.
 
 ## Add a Mac
 

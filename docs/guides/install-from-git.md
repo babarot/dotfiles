@@ -75,7 +75,7 @@ Do not download it into a directory on PATH and `chmod 755` it; have Nix build t
 }
 ```
 
-`runtimeInputs` puts those commands on PATH inside `foo` only, so deleting `fzf.nix` or `jq.nix` does not break it ([loose coupling](../../AGENTS.md#loose-coupling-dependencies-between-tools)). The script's own shebang line becomes a comment; `writeShellApplication` writes its own.
+`runtimeInputs` puts those commands on PATH inside `foo` only, so deleting `fzf.nix` or `jq.nix` does not break it ([dependencies between tools](../reference/where-things-go.md#dependencies-between-tools)). The script's own shebang line becomes a comment; `writeShellApplication` writes its own.
 
 `writeShellApplication` checks the script with shellcheck at build time and runs it with `errexit`, `nounset` and `pipefail`. For a script you do not want to change:
 

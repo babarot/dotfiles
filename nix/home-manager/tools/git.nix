@@ -1,7 +1,7 @@
 # git: macOS's /usr/bin/git (Xcode Command Line Tools); Nix does not
 # install it. This file holds the git subcommands written here, run as
 # `git <name>`. They take git from PATH, as everything else that runs git
-# does (AGENTS.md), and any other command from runtimeInputs.
+# does (where-things-go.md, "Dependencies between tools"), and any other command from runtimeInputs.
 { pkgs, ... }:
 {
   home.packages = [

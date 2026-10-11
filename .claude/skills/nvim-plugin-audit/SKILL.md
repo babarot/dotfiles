@@ -78,6 +78,6 @@ Say plainly what could not be checked headless (rendering, popups) and ask the u
 ## Step 6: Commit and report
 
 - Other sessions work in this repo at the same time: check `git status` and `git diff --cached`, and stage only the files this audit changed
-- Commit in the worktree, in English: an imperative summary, then a short body with the reasons (see AGENTS.md; no session links or attribution trailers)
+- Commit in the worktree, in English: an imperative summary, then a short body with the reasons (no session links or attribution trailers)
 - Land in main only when the user asks, with the land skill (`git land`); push only when asked
 - Report: a table of decisions, keymaps that changed, what was verified and what the user should check by eye, and the steps once it lands, on this Mac (run `nvim --headless '+Lazy! restore' +qa` so the shared plugins match main's lockfile) and on the work Mac (pull, `nvim --headless '+Lazy! restore' '+Lazy! clean' +qa`, and darwin-rebuild when Nix changed)

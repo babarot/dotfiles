@@ -1,6 +1,7 @@
 # Set: tools for working with Kubernetes clusters, on the work Mac only.
 # A new Kubernetes tool goes in this file, not in a file of its own; see
-# "Cohesion: one file, one lifecycle" in AGENTS.md for what makes a set.
+# "One file, one lifecycle" in docs/reference/where-things-go.md for what
+# makes a set.
 {
   config,
   lib,

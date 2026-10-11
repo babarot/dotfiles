@@ -5,7 +5,10 @@
 #
 # Claude Code itself updates itself, so it comes from the official
 # installer (~/.local/bin/claude), not nixpkgs; activation only installs it
-# when missing, e.g. on a new Mac.
+# when missing, e.g. on a new Mac. `claude` must resolve to that one: a copy
+# from `npm install -g @anthropic-ai/claude-code` into a mise-managed node
+# gets a mise shim, which comes first on PATH and hides it; remove that copy
+# and run `mise reshim --force`.
 {
   config,
   inputs,

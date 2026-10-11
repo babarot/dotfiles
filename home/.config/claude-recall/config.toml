@@ -1,0 +1,86 @@
+# claude-recall settings. Uncomment a line to change it.
+
+[core]
+# The archive database, for every command, the MCP server and the web UI,
+# unless --db says otherwise: an absolute path or one starting with ~/.
+# db = "~/.claude/vault.db"
+
+[ui]
+# Where the web UI (recall ui) listens, and where recall ui stop and
+# recall ui status look for it, unless --port says otherwise.
+# port = 6276
+
+[tui]
+# Where the detail pane goes: "bottom" (default), "right", or "auto" to put it
+# on the right when the terminal is at least detail_auto_width columns wide.
+# detail_position = "bottom"
+# detail_auto_width = 160
+# Initial height of the detail pane below the list, in lines (at least 10).
+# detail_height = 16
+# Color scheme: "auto" (default) picks catppuccin-mocha on a dark terminal and
+# catppuccin-latte on a light one. Also: tokyo-night, dracula, nord,
+# gruvbox-dark, and ansi (the terminal's own 16 colors).
+# theme = "auto"
+# Which sessions to start with: "folder" (default) for the repository recall is
+# started in, when it has sessions, or "all".
+# scope = "folder"
+# a asks Claude Code (claude -p, on your Claude plan) to find sessions.
+# The model: a family and version such as "sonnet-5.5", "opus-5.5" or
+# "haiku-4.5", or a full model ID. Whether to show what an answer cost (the
+# price claude reports; on a Claude plan it counts toward your usage rather
+# than being billed), and why Claude picked each session.
+# ask_model = "sonnet-5.5"
+# ask_show_cost = true
+# ask_reasons = true
+# The scrollbar on the right edge of a detail frame whose content scrolls. The
+# thumb: "thin" (│), "heavy" (┃, default) or "block" (█). Its color: a hex
+# color such as "#f5a3b5" or an ANSI color number (0-255); empty (default) is
+# the frame's border color, so "thin" needs a color to stand out.
+# scrollbar_thumb = "heavy"
+# scrollbar_color = ""
+
+[keys]
+# Which keys do what in the TUI, by operation: a key or a list of keys,
+# replacing the operation's own, or [] to turn it off. Every operation is
+# below with its keys; docs/tui.md says how keys are written. ctrl+c and
+# esc are fixed. For example, to resume with space and read with enter,
+# uncomment those two lines and swap their keys.
+#
+# Anywhere:
+# quit = "q"
+# help = "?"
+# focus_next = ["tab", "]"]
+# focus_prev = ["shift+tab", "["]
+# ask = "a"
+# sort = "s"
+# scope = "."
+#
+# The selected session, from the list, a frame or the spread conversation:
+# continue = "enter"
+# resume = "c"
+# read = "space"
+# copy_id = "y"
+# copy_command = "Y"
+# grow = ["+", "="]
+# shrink = "-"
+#
+# Moving and searching, in every pane:
+# up = ["up", "k", "ctrl+p"]
+# down = ["down", "j", "ctrl+n"]
+# page_up = ["pgup", "ctrl+b", "ctrl+u"]
+# page_down = ["pgdown", "ctrl+f", "ctrl+d"]
+# top = ["home", "g"]
+# bottom = ["end", "G"]
+# search = "/"
+# next_match = "n"
+# prev_match = "N"
+#
+# Keys that work in one pane go in its table, after the lines above.
+# The session list:
+# [keys.list]
+# folders_open = ["left", "h"]
+# folders_close = ["right", "l"]
+#
+# The folder list:
+# [keys.folders]
+# back = ["right", "l", "enter"]

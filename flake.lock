@@ -23,11 +23,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791756972,
-        "narHash": "sha256-1B+tyuifA/MpU9+oKjJFKF3qcDXNCtSx8G/5c2SvJJw=",
+        "lastModified": 1791759913,
+        "narHash": "sha256-PRRyNyf18CMwYXJxF/rkYF4vqiQ9oh8FL8681+Puil8=",
         "owner": "babarot",
         "repo": "nur-packages",
-        "rev": "3a2bd8b281609f7b3cf140306490c3150a682799",
+        "rev": "f06646402e0d0b911cf64aae220ab77e41ecc44a",
         "type": "github"
       },
       "original": {

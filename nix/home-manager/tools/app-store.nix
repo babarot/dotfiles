@@ -5,11 +5,12 @@
   my.masApps = {
     "1Password for Safari" = 1569813296;
     "Amphetamine" = 937984704;
-    # Alternatives to consider (not installed): https://diskzy.app/, https://opendisk.app/, https://lunomac.com/
+    # Alternatives to consider (not installed): https://diskzy.app/, https://opendisk.app/, https://lunomac.com/, https://github.com/tobi/disktree
     "DaisyDisk" = 411643860;
     "Day One" = 1055511498;
     "Magnet" = 441258766;
     "MenubarX" = 1575588022;
+    # Alternatives to consider (not installed): https://www.getcopy.cat/
     "Paste" = 967805235;
     "Spark Desktop" = 6445813049;
     "Tailscale" = 1475387142;

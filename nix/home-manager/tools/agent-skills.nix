@@ -8,10 +8,17 @@
 # core and work share some skill names (create-issue, create-pr). Skills
 # of scopes other than core are linked as <scope>-<name> so they do not
 # clash.
+#
+# Some of those skills run tools that agent-skills defines itself, in
+# nix/writing-tools of that repo; they are installed here for Claude Code
+# and Codex alike. What they are and how the skills use them stays in the
+# private repo. A skill checks for its tool before using it, so removing
+# this file only stops those skills, and nothing else here names the tools.
 {
   config,
   inputs,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -33,5 +40,8 @@ in
     description = "Plugins of babarot/agent-skills whose skills are linked into ~/.agents/skills.";
   };
 
-  config.home.file = lib.mkMerge (map skillsOf cfg.scopes);
+  config = {
+    home.file = lib.mkMerge (map skillsOf cfg.scopes);
+    home.packages = [ (pkgs.callPackage "${inputs.agent-skills}/nix/writing-tools" { }) ];
+  };
 }

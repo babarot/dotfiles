@@ -40,10 +40,12 @@ jobs:
           persist-credentials: false
       - uses: DeterminateSystems/determinate-nix-action@8d87e8d5e5b8a8309d4281094560f127d9a265f1 # v3.22.5
       # nix/home-manager/tools/agent-skills.nix only lists the directories under
-      # plugins/<scope>/skills, so empty ones evaluate
+      # plugins/<scope>/skills, so empty ones evaluate; it also installs
+      # nix/writing-tools, which an empty derivation stands in for
       - run: |
           stub=$RUNNER_TEMP/agent-skills-stub
-          mkdir -p "$stub"/plugins/{core,work}/skills
+          mkdir -p "$stub"/plugins/{core,work}/skills "$stub"/nix/writing-tools
+          echo '{ runCommand }: runCommand "writing-tools-stub" { } "mkdir $out"' >"$stub"/nix/writing-tools/default.nix
           echo "STUB=path:$stub" >>"$GITHUB_ENV"
       - run: nix flake check --override-input agent-skills "$STUB"
       # flake check does not know darwinConfigurations; evaluating each

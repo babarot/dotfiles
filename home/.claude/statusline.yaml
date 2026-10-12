@@ -8,6 +8,7 @@ lines:
     - vim
     - update
   - - usage
+    - session
 items:
   context:
     format: '{used}/{total} (maybe {compact}% left)'

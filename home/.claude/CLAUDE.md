@@ -24,3 +24,7 @@ codex exec -m gpt-5.6-luna "Review this plan. Don't nitpick trivial points; only
 # Without `resume --last`, the context of the first review is lost
 codex exec resume --last -m gpt-5.6-luna "I updated the plan; review it again. Don't nitpick trivial points; only point out fatal issues: {plan_full_path} (ref: {CLAUDE.md full_path})"
 ```
+
+# Messages to other Claude sessions
+
+- If SendMessage fails, tell the user right away, before moving on to other work.

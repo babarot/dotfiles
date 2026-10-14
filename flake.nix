@@ -26,6 +26,13 @@
       flake = false;
     };
 
+    # recap, built from source over SSH like agent-skills while the
+    # repository is private; nixpkgs is shared
+    claude-recap = {
+      url = "git+ssh://git@github.com/babarot/claude-recap";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Tools not in nixpkgs that ship their own flake. Pinned to a release
     # tag; bump the tag to update.
     crit = {

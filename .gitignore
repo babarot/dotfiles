@@ -3,3 +3,6 @@ docs/tmp/*.md
 
 # Japanese copies of the docs, for reviewing them; the English is the source
 *.ja.md
+
+# recap: its config names the org, Slack IDs and repositories of work
+home/.config/claude-recap/

@@ -86,6 +86,26 @@
         "type": "github"
       }
     },
+    "claude-recap": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791952826,
+        "narHash": "sha256-1PgLi4lEHW8Ctr3T43uR2jDqyNEhvwWKZiHRmMd4nw4=",
+        "ref": "refs/heads/main",
+        "rev": "2501f8551a86cf94607ba5c74949e8f36f9f6feb",
+        "revCount": 36,
+        "type": "git",
+        "url": "ssh://git@github.com/babarot/claude-recap"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/babarot/claude-recap"
+      }
+    },
     "crit": {
       "inputs": {
         "nixpkgs": [
@@ -284,6 +304,7 @@
         "babarot": "babarot",
         "claude-image-view": "claude-image-view",
         "claude-linkify": "claude-linkify",
+        "claude-recap": "claude-recap",
         "crit": "crit",
         "deadlink": "deadlink",
         "enhancd": "enhancd",

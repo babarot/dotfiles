@@ -12,6 +12,9 @@ notion
 zsh-abbr
 # syno writes its profiles (the NAS's URL, the account, the TLS pin) here
 syno/profiles.yaml
+# herdr-remote's relay token and tunnel ID, written by hand
+# (nix/home-manager/tools/herdr/remote.nix)
+herdr-remote
 # herdr runtime state; only config.toml and reviewr's config are settings
 herdr/*
 !herdr/config.toml

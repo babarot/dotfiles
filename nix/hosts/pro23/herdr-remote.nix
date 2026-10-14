@@ -7,7 +7,7 @@
   config = lib.optionalAttrs (options.my ? herdrRemote) {
     my.herdrRemote = {
       enable = true;
-      tunnel = false;
+      tunnel = true;
       relayHost = "relay.babarot.dev";
       webHost = "herdr.babarot.dev";
     };

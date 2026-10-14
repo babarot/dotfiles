@@ -141,8 +141,10 @@ let
     text = ''
       dir=$(mktemp -d)
       trap 'rm -rf "$dir"' EXIT
-      cp -r ${web} "$dir/web"
+      cp -R ${web} "$dir/web"
       cp ${wranglerConfig} "$dir/wrangler.json"
+      # Copies of store paths are read-only, which the trap's rm cannot delete
+      chmod -R u+w "$dir"
       cd "$dir"
       WRANGLER_SEND_METRICS=false wrangler deploy "$@"
     '';

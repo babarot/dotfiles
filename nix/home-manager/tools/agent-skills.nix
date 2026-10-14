@@ -14,6 +14,11 @@
 # and Codex alike. What they are and how the skills use them stays in the
 # private repo. A skill checks for its tool before using it, so removing
 # this file only stops those skills, and nothing else here names the tools.
+#
+# The writing skills also proofread Japanese prose with the
+# japanese-tech-writing skill, so it is imported here: agent-skills brings
+# it along wherever it is installed. A skill skips that step when the skill
+# is missing, so the import states the dependency rather than guards it.
 {
   config,
   inputs,
@@ -34,6 +39,10 @@ let
     ) (lib.filterAttrs (_: type: type == "directory") (builtins.readDir dir));
 in
 {
+  # also loaded from tools/ like every module there; the module system
+  # reads a path once, so naming it here only records the dependency
+  imports = [ ./japanese-tech-writing.nix ];
+
   options.my.agentSkills.scopes = lib.mkOption {
     type = lib.types.listOf lib.types.str;
     default = [ "core" ];

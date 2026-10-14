@@ -1,6 +1,10 @@
 # japanese-tech-writing: an Agent Skill with rules for writing Japanese
 # technical prose, published as a gist (Unlicense). Fetched at a fixed gist
 # revision rather than copied into home/skills, which is for my own skills.
+#
+# The writing skills of babarot/agent-skills use it to proofread Japanese
+# prose, so agent-skills.nix imports this file. Read the new SKILL.md
+# before bumping the revision: it reaches those skills as instructions.
 { pkgs, ... }:
 let
   skill = pkgs.fetchurl {

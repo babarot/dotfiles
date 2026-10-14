@@ -26,6 +26,11 @@
 - A request to discuss that names no other agent is a request to talk it through with you; do not call another agent.
 - Do not paste the reply as is. Give the user its main points and what you think of each.
 
+# Repositories
+
+- In a public repository, write in English everything that goes into it or onto GitHub: code, comments, docs, commit messages, issues and PRs. In a private repository, follow its conventions instead.
+- The settings of babarot's GitHub repositories (branch protection, labels, collaborators and the like) are managed as code with gh-infra in babarot/github-config. Change them there, never directly with `gh api` or `gh repo edit`; a direct change drifts from the code and is undone on the next apply.
+
 # Messages to other Claude sessions
 
 - If SendMessage fails, tell the user right away, before moving on to other work.

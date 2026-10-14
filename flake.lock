@@ -93,11 +93,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791952826,
-        "narHash": "sha256-1PgLi4lEHW8Ctr3T43uR2jDqyNEhvwWKZiHRmMd4nw4=",
+        "lastModified": 1791963601,
+        "narHash": "sha256-2qQ163tbhwiuPXniO4sYU1KvZIHALqQniimM6+HhKAo=",
         "ref": "refs/heads/main",
-        "rev": "2501f8551a86cf94607ba5c74949e8f36f9f6feb",
-        "revCount": 36,
+        "rev": "cb7c15e126859c98df982ec4149582f98e49d65c",
+        "revCount": 41,
         "type": "git",
         "url": "ssh://git@github.com/babarot/claude-recap"
       },

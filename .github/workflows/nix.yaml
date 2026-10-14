@@ -2,9 +2,9 @@
 # for one Mac is known to evaluate before anyone switches. Building them
 # is left to .githooks/pre-push: a fresh runner downloads and builds
 # everything again (~15 min), while a local store already has almost all
-# of it, and the local build sees the real agent-skills. agent-skills is a
-# private input CI cannot fetch; an empty stub made in the job stands in
-# for it.
+# of it, and the local build sees the real private inputs. agent-skills and
+# claude-recap are private inputs CI cannot fetch; stubs made in the job
+# stand in for them.
 name: nix
 
 on:
@@ -47,12 +47,28 @@ jobs:
           mkdir -p "$stub"/plugins/{core,work}/skills "$stub"/nix/writing-tools
           echo '{ runCommand }: runCommand "writing-tools-stub" { } "mkdir $out"' >"$stub"/nix/writing-tools/default.nix
           echo "STUB=path:$stub" >>"$GITHUB_ENV"
-      - run: nix flake check --override-input agent-skills "$STUB"
+      # nix/home-manager/tools/claude-recap.nix only takes packages.<system>.default;
+      # the stub declares nixpkgs so the flake's `follows` has an input to set
+      - run: |
+          stub=$RUNNER_TEMP/claude-recap-stub
+          mkdir -p "$stub"
+          cat >"$stub"/flake.nix <<'NIX'
+          {
+            inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+            outputs = { nixpkgs, ... }: {
+              packages = nixpkgs.lib.genAttrs [ "aarch64-darwin" "x86_64-darwin" ] (system: {
+                default = nixpkgs.legacyPackages.${system}.runCommand "claude-recap-stub" { } "mkdir $out";
+              });
+            };
+          }
+          NIX
+          echo "RECAP_STUB=path:$stub" >>"$GITHUB_ENV"
+      - run: nix flake check --override-input agent-skills "$STUB" --override-input claude-recap "$RECAP_STUB"
       # flake check does not know darwinConfigurations; evaluating each
       # system's derivation catches wrong options and host-only breakage.
       # Hosts come from the flake, so a new Mac needs no change here.
       - run: |
-          stub=(--override-input agent-skills "$STUB")
+          stub=(--override-input agent-skills "$STUB" --override-input claude-recap "$RECAP_STUB")
           hosts=$(nix eval --raw .#darwinConfigurations "${stub[@]}" \
             --apply 'c: builtins.concatStringsSep " " (builtins.attrNames c)')
           for host in $hosts; do

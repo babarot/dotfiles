@@ -34,6 +34,12 @@
       # (gitignored). gh-dash fails to start if the file is missing
       my.env.GH_DASH_CONFIG = "${config.home.homeDirectory}/.config/gh-dash/work.yml";
 
+      # Claude Code instructions only for this Mac, read alongside the shared
+      # ~/.claude/CLAUDE.md. Linked to the repo, like CLAUDE.md, so edits
+      # apply without a switch
+      home.file.".claude/rules/PC-M-2025-026.md".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.my.repo}/home/.claude/rules/PC-M-2025-026.md";
+
       my.agentSkills.scopes = [
         "core"
         "work"

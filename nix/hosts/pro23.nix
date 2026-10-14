@@ -17,6 +17,12 @@
   home-manager.users.${user} =
     { config, pkgs, ... }:
     {
+      # Claude Code instructions only for this Mac, read alongside the shared
+      # ~/.claude/CLAUDE.md. Linked to the repo, like CLAUDE.md, so edits
+      # apply without a switch
+      home.file.".claude/rules/pro23.md".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.my.repo}/home/.claude/rules/pro23.md";
+
       home.packages = [ pkgs.agent-browser ];
 
       # OrbStack's CLIs (orb, orbctl; docker is also linked into

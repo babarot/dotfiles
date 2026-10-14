@@ -22,7 +22,12 @@
   ];
 
   home-manager.users.${user} =
-    { config, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     {
       # gh-dash reads ~/.config/gh-dash/config.yml, then this file on top:
       # issuesSections with work projects, kept out of this public repo
@@ -34,12 +39,25 @@
         "work"
       ];
 
+      # GitHub Copilot CLI comes from the official installer
+      # (~/.local/bin/copilot), not nixpkgs: it downloads its own updates,
+      # which the read-only Nix store would hold back. Activation only installs
+      # it when missing. Activation has a minimal PATH; with ~/.local/bin on
+      # it the installer does not offer to add a PATH line to a shell rc.
+      my.knownBins.".local/bin" = [ "copilot" ];
+      home.activation.copilotCli = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [[ ! -e "$HOME/.local/bin/copilot" ]]; then
+          run /usr/bin/env PATH="$HOME/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin" \
+            /bin/bash -c 'curl -fsSL https://gh.io/copilot-install | bash' \
+            || warnEcho "Copilot CLI: install failed; run: curl -fsSL https://gh.io/copilot-install | bash"
+        fi
+      '';
+
       home.packages = with pkgs; [
         ctop
         dart
         diff-so-fancy
         gcalcli
-        github-copilot-cli
         golangci-lint
         google-cloud-sql-proxy
         goreleaser

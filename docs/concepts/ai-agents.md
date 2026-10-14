@@ -7,7 +7,7 @@ How Claude Code, Codex and other coding agents are wired into this machine: wher
 | Agent | Installed by | Settings | Skills |
 |---|---|---|---|
 | Claude Code | official installer, `~/.local/bin/claude` | `~/.claude/` (files linked from `home/.claude/`) | `~/.claude/skills`, plugin marketplace |
-| Codex | nixpkgs (`pkgs.codex`) | `~/.codex/`, not managed here | `~/.agents/skills` |
+| Codex | official installer, `~/.local/bin/codex` | `~/.codex/`, not managed here | `~/.agents/skills` |
 | Others reading `~/.agents/skills` | per tool | not managed here | `~/.agents/skills` |
 
 ## Claude Code
@@ -24,7 +24,9 @@ Claude Code gets my skills through babarot/agent-skills added as a plugin market
 
 ## Codex
 
-[codex.nix](../../nix/home-manager/tools/codex.nix) installs Codex from nixpkgs and wraps it in a shell function. Codex runs commands inside the Seatbelt sandbox, which cannot read the Keychain, so `gh` fails to get its token there. The wrapper passes `GH_TOKEN` from `gh auth token` when Codex is launched. It is set in `my.human`, so it exists only in a human's shell.
+[codex.nix](../../nix/home-manager/tools/codex.nix) installs Codex with the official installer, like Claude Code, so it follows the latest release instead of the pinned nixpkgs; activation runs it only when `~/.local/bin/codex` is missing. Codex does not update itself, so a launchd agent runs `codex update` at login and daily, logging to `~/.local/state/codex-update.log`.
+
+The same file wraps Codex in a shell function. Codex runs commands inside the Seatbelt sandbox, which cannot read the Keychain, so `gh` fails to get its token there. The wrapper passes `GH_TOKEN` from `gh auth token` when Codex is launched. It is set in `my.human`, so it exists only in a human's shell.
 
 `~/.codex/config.toml` is not managed by this repo, apart from what the Herdr integration adds.
 

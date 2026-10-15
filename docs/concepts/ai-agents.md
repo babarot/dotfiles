@@ -7,7 +7,7 @@ How Claude Code, Codex and other coding agents are wired into this machine: wher
 | Agent | Installed by | Settings | Skills |
 |---|---|---|---|
 | Claude Code | official installer, `~/.local/bin/claude` | `~/.claude/` (files linked from `home/.claude/`) | `~/.claude/skills`, plugin marketplace |
-| Codex | official installer, `~/.local/bin/codex` | `~/.codex/`, not managed here | `~/.agents/skills` |
+| Codex | official installer, `~/.local/bin/codex` | `~/.codex/`; only `AGENTS.md` is linked from `home/.codex/` | `~/.agents/skills` |
 | Others reading `~/.agents/skills` | per tool | not managed here | `~/.agents/skills` |
 
 ## Claude Code
@@ -28,7 +28,13 @@ Claude Code gets my skills through babarot/agent-skills added as a plugin market
 
 The same file wraps Codex in a shell function. Codex runs commands inside the Seatbelt sandbox, which cannot read the Keychain, so `gh` fails to get its token there. The wrapper passes `GH_TOKEN` from `gh auth token` when Codex is launched. It is set in `my.human`, so it exists only in a human's shell.
 
-`~/.codex/config.toml` is not managed by this repo, apart from what the Herdr integration adds.
+Its global instructions, `~/.codex/AGENTS.md`, link to [home/.codex/AGENTS.md](../../home/.codex/AGENTS.md). `~/.codex/config.toml` is not managed by this repo, apart from what the Herdr integration adds: Codex rewrites it, and its list of trusted projects names work repositories.
+
+Codex adds a `Co-authored-by: Codex` trailer to commits when the ChatGPT account's Codex settings say so. That setting is on the account, not in a local file, and the instruction Codex receives tells it to ignore other instructions that turn attribution off, so `AGENTS.md` cannot disable it.
+
+## GitHub Copilot CLI
+
+Only the work Mac has it. Its host file installs it with the official installer and links `~/.copilot/copilot-instructions.md` and `~/.copilot/settings.json` to [home/.copilot/](../../home/.copilot). Copilot writes `settings.json` itself (`/config`, `/settings`), so those edits show up as git diffs, as with Claude Code; `includeCoAuthoredBy: false` there stops the `Co-authored-by` trailer. Login and trusted folders stay in `~/.copilot/config.json`, which is not managed.
 
 ## Skills
 

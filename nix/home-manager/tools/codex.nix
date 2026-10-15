@@ -13,6 +13,13 @@ let
   env = "CODEX_NON_INTERACTIVE=1 PATH=${bin}:/usr/bin:/bin:/usr/sbin:/sbin";
 in
 {
+  # Global instructions, like ~/.claude/CLAUDE.md. Linked to the repo, not
+  # the Nix store, so an edit shows up without a switch. config.toml is not
+  # linked: Codex rewrites it (trusted projects, notices), and its project
+  # list names work repositories, which this public repo must not hold.
+  home.file.".codex/AGENTS.md".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.my.repo}/home/.codex/AGENTS.md";
+
   # The installer's link and the helper it installs next to it
   my.knownBins.".local/bin" = [
     "codex"

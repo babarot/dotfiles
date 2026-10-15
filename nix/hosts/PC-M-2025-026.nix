@@ -59,6 +59,21 @@
         fi
       '';
 
+      # Copilot CLI's global instructions and settings, linked to the repo
+      # like ~/.claude, since Copilot writes settings.json itself (/config,
+      # /settings). Login and trusted folders are in config.json, left out.
+      # includeCoAuthoredBy = false keeps it from adding a Co-authored-by
+      # trailer to commits. force replaces the settings.json Copilot made
+      # before this link existed; the repo copy started from it.
+      home.file = {
+        ".copilot/copilot-instructions.md".source =
+          config.lib.file.mkOutOfStoreSymlink "${config.my.repo}/home/.copilot/copilot-instructions.md";
+        ".copilot/settings.json" = {
+          source = config.lib.file.mkOutOfStoreSymlink "${config.my.repo}/home/.copilot/settings.json";
+          force = true;
+        };
+      };
+
       home.packages = with pkgs; [
         ctop
         dart

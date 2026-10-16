@@ -57,13 +57,17 @@
   ;                                         "Rebase and merge" on a PR)
   ;   4. git push origin main              (with --push only)
   ;
-  ; sync: in a repo that takes PRs, bring what others merged into this
-  ; branch. It never pushes. It is the same as:
+  ; sync: bring what others merged or landed into this branch. It never
+  ; pushes. It is the same as:
   ;   1. git fetch origin main
   ;   2. git merge --ff-only origin/main   (in the main worktree)
-  ;   3. git rebase origin/main            (in this worktree)
+  ;   3. git rebase main                   (in this worktree; origin/main
+  ;                                         if local main is behind it)
   ;   4. git push --force-with-lease       (by hand, if the branch was
   ;                                         pushed; sync says when)
+  ; Step 3 takes local main because land without --push leaves commits
+  ; there that origin does not have yet. If the two have diverged, sync
+  ; stops instead of picking one.
   ;
   ; Shell aliases get this worktree's GIT_DIR, which would win over -C, so
   ; both drop it first
@@ -96,7 +100,14 @@
       git -C \"$root\" merge -q --ff-only \"origin/$m\" || echo \"sync: could not fast-forward $m in $root\" >&2; \
     fi; \
     [ -n \"$b\" ] && [ \"$b\" != \"$m\" ] || return 0; \
-    git rebase \"origin/$m\" || return 1; \
+    if ! git rev-parse -q --verify \"refs/heads/$m\" >/dev/null || git merge-base --is-ancestor \"$m\" \"origin/$m\"; then \
+      base=\"origin/$m\"; \
+    elif git merge-base --is-ancestor \"origin/$m\" \"$m\"; then \
+      base=\"$m\"; \
+    else \
+      echo \"sync: $m and origin/$m have diverged; reconcile them in $root first\" >&2; return 1; \
+    fi; \
+    git rebase \"$base\" || return 1; \
     if git rev-parse -q --verify '@{push}' >/dev/null && ! git merge-base --is-ancestor '@{push}' HEAD; then \
       echo \"sync: $b was rebased; push with: git push --force-with-lease\" >&2; \
     fi; \

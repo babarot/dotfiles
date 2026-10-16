@@ -16,4 +16,7 @@ let
 in
 {
   home.packages = [ diffnav ];
+
+  # `git -P diff` (or `git -c pager.diff=less diff`) for the plain diff
+  my.gitConfig.pager.diff = lib.getExe diffnav;
 }

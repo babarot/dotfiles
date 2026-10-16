@@ -8,7 +8,10 @@
 # Codex gets the same version; the plugin's /answer-me-with-html:config is
 # `/answer-me-with-html config` here. The skill's own `update` runs npx
 # skills or git pull, which does not apply: bump the tag, reading the diff.
-{ pkgs, ... }:
+#
+# Disabled with mkIf false: it did not fit in use (home/skills/explain-me is
+# tried instead). Kept so it can come back by dropping the mkIf.
+{ pkgs, lib, ... }:
 let
   version = "0.5.0";
   src = pkgs.fetchFromGitHub {
@@ -18,7 +21,7 @@ let
     hash = "sha256-vo2YMSe2u2adIelBPzOfJNEO1VF9nBCFkMR3AzpS6/Q=";
   };
 in
-{
+lib.mkIf false {
   my.skills.answer-me-with-html = "${src}/skills/answer-me-with-html";
 
   # The CLI checks GitHub for a new version once a week; the version is

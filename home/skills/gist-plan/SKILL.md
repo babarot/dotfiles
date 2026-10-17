@@ -30,9 +30,8 @@ The progress table has one row per item or stage: what it does, its done conditi
 
 ## 2. Leave the Gist where the next session will look
 
-- Save the Gist URL and the clone's path in memory.
-- If the repository is private, ask whether to also put them in a short file under `.claude/rules/`, which every session reads at start, including after compaction. Never put the URL in a public repository.
-- Do not link the Gist from documents that outlive it (ADRs, READMEs, code comments): the link breaks when the Gist is deleted.
+- Save the Gist URL and the clone's path in memory, and nowhere else.
+- The Gist is a temporary plan and leaves no trace in the repository, public or private: no file (`.claude/rules/`, docs, ADRs, READMEs), code comment, commit message or PR body names the Gist, its URL or the clone's path.
 
 ## 3. Settle the design before any code
 
@@ -55,7 +54,7 @@ The progress table has one row per item or stage: what it does, its done conditi
 
 ## 5. Resume from a Gist
 
-When the user hands over a Gist URL, or memory or a rule points to one:
+When the user hands over a Gist URL, or memory points to one:
 
 - Pull the clone (clone it first if it is missing) and read `00-index.md`, then the files it points to.
 - For history the Gist does not hold, read the transcripts of the sessions listed in it with claude-recall.
@@ -66,7 +65,7 @@ When the user hands over a Gist URL, or memory or a rule points to one:
 
 When every row of the table is done or deferred:
 
-- Ask the user, with AskUserQuestion, whether to delete the Gist or keep it, and whether any decision should move into the repository (an ADR, the docs) first.
-- Write those repository documents so that they stand without the Gist.
-- Delete the Gist only after the user confirms. Then remove its memory entry and rule file, and the local clone.
+- Ask the user, with AskUserQuestion, whether to delete the Gist or keep it.
+- If the repository has an ADR directory, you may propose ADRs for settled decisions that set an important direction or design principle for the code. Write one only after the user agrees, so that it stands without the Gist and does not mention it.
+- Delete the Gist only after the user confirms. Then remove its memory entry and the local clone.
 - If it is kept, leave it closed: every row done or deferred, and the deferred list saying where to start again.

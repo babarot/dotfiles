@@ -68,6 +68,7 @@
   "editorMode": "normal",
   "preferredNotifChannel": "ghostty",
   "autoCompactEnabled": true,
+  "idleCompaction": false,
   "remoteControlAtStartup": false,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true

@@ -10,13 +10,10 @@ let
     final: prev:
     lib.optionalAttrs (lib.versionOlder prev.version "1.4.4") {
       version = "1.4.4";
-      passthru = prev.passthru // {
-        sources = prev.passthru.sources // {
-          aarch64-darwin = pkgs.fetchurl {
-            url = "https://github.com/oven-sh/bun/releases/download/bun-v${final.version}/bun-darwin-aarch64.zip";
-            hash = "sha256-wkDX8My5DCY6hJ/NsJt+5iYw2SE0jtaq/ahrnVd7xRA=";
-          };
-        };
+      # Both Macs are aarch64-darwin, the only zip this needs
+      src = pkgs.fetchurl {
+        url = "https://github.com/oven-sh/bun/releases/download/bun-v${final.version}/bun-darwin-aarch64.zip";
+        hash = "sha256-wkDX8My5DCY6hJ/NsJt+5iYw2SE0jtaq/ahrnVd7xRA=";
       };
     }
   );

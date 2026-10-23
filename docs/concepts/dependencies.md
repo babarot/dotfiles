@@ -44,14 +44,14 @@ Two simpler ways to let bat-theme use fzf each break one property:
 
 A store path keeps both: putting fzf on PATH stays `fzf.nix`'s job, and bat does not care whether it is there. However many files reference `pkgs.fzf`, it is one store path and one fzf; what matters is which file is responsible for putting it on PATH.
 
-Deleting `fzf.nix` and building shows the result. The profile's `bin/fzf` link and everything in `fzf.nix` (its options, the `pskill` function) are gone. bat-theme, enhancd's filter, fzf-tab and `gchange` still run the fzf in the store, which stays because their generated files reference it.
+Deleting `fzf.nix` and building shows the result. The profile's `bin/fzf` link and everything in `fzf.nix` (its options, the `pskill` function) are gone. bat-theme, enhancd's filter, fzf-tab and `gcloud-change` still run the fzf in the store, which stays because their generated files reference it.
 
 ## Three ways to hold a dependency
 
 The way depends on where the other tool is run.
 
 - Embed the path, for settings Nix renders: a function or variable in `human.zsh`, a plugin's `zstyle` (fzf-tab's `fzf-command`), a generated config ([enhancd.nix](../../nix/home-manager/tools/enhancd.nix) writes its filter and `config.ltsv` with fzf, eza, fd and ghq by path), a git setting ([ov.nix](../../nix/home-manager/tools/ov.nix)).
-- Make a command, for a function that does not change the shell. `pkgs.writeShellApplication` builds a script whose first lines put the store paths of its `runtimeInputs` on PATH, as nixpkgs' bat does for less, so the script writes `fzf` by name and still gets the one it declared. It also runs shellcheck at build time. A function that runs `cd` or `export` cannot be one, since a command runs in its own process. `gchange` in [gcloud.nix](../../nix/home-manager/tools/gcloud.nix) is one.
+- Make a command, for a function that does not change the shell. `pkgs.writeShellApplication` builds a script whose first lines put the store paths of its `runtimeInputs` on PATH, as nixpkgs' bat does for less, so the script writes `fzf` by name and still gets the one it declared. It also runs shellcheck at build time. A function that runs `cd` or `export` cannot be one, since a command runs in its own process. `gcloud-change` in [gcloud.nix](../../nix/home-manager/tools/gcloud.nix) is one.
 - Wrap the program, for a program that runs many commands by name. Neovim's LSP setup, conform and snacks.nvim's pickers look up gopls, jq, fd and rg on PATH from hand-written Lua. [neovim.nix](../../nix/home-manager/tools/neovim.nix) wraps nvim with `wrapProgram --suffix PATH`, the mechanism nixpkgs' bat uses, so those commands are on nvim's PATH only. Deleting `jq.nix` or the ripgrep line leaves nvim working, LSP servers stay off the user's PATH, and a version a project pins with mise comes first.
 
 ## What stays a name

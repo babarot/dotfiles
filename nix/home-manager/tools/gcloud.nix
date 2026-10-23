@@ -11,26 +11,26 @@ let
   sessionHours = 16;
 in
 {
-  # gchange and gcloud-login are commands, not shell functions: they change
-  # gcloud's own config and credentials, not the shell, so they can run as
-  # scripts. Each lists what it runs in runtimeInputs, by store path; nothing
-  # comes from fzf.nix or another file putting it on PATH.
+  # gcloud-change and gcloud-login are commands, not shell functions: they
+  # change gcloud's own config and credentials, not the shell, so they can run
+  # as scripts. Each lists what it runs in runtimeInputs, by store path;
+  # nothing comes from fzf.nix or another file putting it on PATH.
   #
   # gcloud keeps one ADC file for all configurations, so activating a
   # configuration alone leaves ADC on the account and quota project of
   # whichever was logged in last. gcloud-login saves each configuration's ADC
-  # under adc/<configuration>.json, and gchange copies it back into place.
-  # cp -p keeps the mtime, which gcloud-login counts the time left from.
+  # under adc/<configuration>.json, and gcloud-change copies it back into
+  # place. cp -p keeps the mtime, which gcloud-login counts the time left from.
   home.packages = [
     gcloud
 
-    # gchange: switch gcloud configurations with fzf, ADC included. With no
-    # ADC saved for the configuration it only warns when the ADC in place is
-    # another account's, since that file may be a login gcloud-login never
+    # gcloud-change: switch gcloud configurations with fzf, ADC included. With
+    # no ADC saved for the configuration it only warns when the ADC in place
+    # is another account's, since that file may be a login gcloud-login never
     # saw. Cancelling fzf ends it (errexit on the assignment) instead of
     # activating an empty name.
     (pkgs.writeShellApplication {
-      name = "gchange";
+      name = "gcloud-change";
       runtimeInputs = [
         gcloud
         pkgs.fzf
@@ -129,4 +129,5 @@ in
   ];
 
   my.human.aliases.ohayo = "gcloud-login";
+  my.human.aliases.gchan = "gcloud-change";
 }

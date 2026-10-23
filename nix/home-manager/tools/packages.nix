@@ -6,7 +6,6 @@
     actionlint
     ast-grep
     btop
-    bun
     ccusage
     conftest
     d2

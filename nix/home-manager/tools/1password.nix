@@ -1,9 +1,9 @@
 # 1Password (the app is a cask in nix/homebrew.nix): its SSH agent holds
 # the key that signs commits and authenticates to GitHub, so the private
 # key never sits in ~/.ssh. Each Mac has a key of its own, set in its host
-# directory as my.gitSigningKey; a Mac without one keeps the settings in
-# home/.gitconfig. The agent itself is turned on in the app (Settings >
-# Developer > Use the SSH agent), which Nix cannot reach.
+# directory as my.gitSigningKey; a Mac without one does not sign commits.
+# The agent itself is turned on in the app (Settings > Developer > Use the
+# SSH agent), which Nix cannot reach.
 { config, lib, ... }:
 let
   key = config.my.gitSigningKey;

@@ -121,9 +121,6 @@
 [user]
   name = babarot
   email = b4b4r07@gmail.com
-	# Signing with a key file, for a Mac whose key is not in 1Password yet;
-	# 1password.nix overrides this and goes away with it once every Mac moved
-	signingkey = ~/.ssh/id_rsa.pub
 
 [pager]
   branch = less -X
@@ -139,7 +136,6 @@
   tool = nvimdiff
 
 [commit]
-	gpgsign = true
   template = ~/.gitmessage
 
 [push]
@@ -148,9 +144,6 @@
 
 [tag]
   gpgsign = false
-
-[gpg]
-	format = ssh
 
 [url "https://"]
   insteadOf = git://

@@ -23,6 +23,26 @@ let
     '';
   };
 
+  # helm with the plugins helmfile needs (helm-diff for `helmfile diff`)
+  helm = pkgs.wrapHelm pkgs.kubernetes-helm {
+    plugins = [ pkgs.kubernetes-helmPlugins.helm-diff ];
+  };
+
+  # helmfile runs helm from PATH and reads its plugins from HELM_PLUGINS.
+  # Wrapped so it finds this helm and its plugins; suffix, so a helm earlier
+  # on PATH still wins. nixpkgs' helmfile-wrapped only sets HELM_PLUGINS, to
+  # an empty plugin set.
+  helmfile = pkgs.symlinkJoin {
+    name = "helmfile-with-helm";
+    paths = [ pkgs.helmfile ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/helmfile \
+        --set-default HELM_PLUGINS ${helm.pluginsDir} \
+        --suffix PATH : ${lib.makeBinPath [ helm ]}
+    '';
+  };
+
   # Radar: a Kubernetes UI in the browser (skyhook-io/radar). Not in
   # nixpkgs, so it is built from the release tag. The binary is
   # kubectl-radar (a kubectl plugin); `radar` is linked to it, as the
@@ -170,6 +190,7 @@ let
 in
 {
   home.packages = with pkgs; [
+    helm
     helmfile
     kail
     krew

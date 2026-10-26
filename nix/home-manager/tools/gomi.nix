@@ -3,21 +3,16 @@
 # `rm -rf` can be restored with `gomi -b`. See my.ai in nix/home-manager/ai.nix.
 # It is an alias, not an rm on PATH, so xargs, find -exec and scripts keep
 # /bin/rm.
-{ lib, pkgs, ... }:
+{
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 let
-  # v1.6.5 lets files in $TMPDIR (/var/folders/.../T on macOS) be removed,
-  # which mktemp cleanups rely on, and makes -f report files it could not
-  # move instead of exiting 0. Drop this once nixpkgs has 1.6.5.
-  gomi = pkgs.gomi.overrideAttrs (
-    final: prev:
-    lib.optionalAttrs (lib.versionOlder prev.version "1.6.5") {
-      version = "1.6.5";
-      src = prev.src.override {
-        tag = "v${final.version}";
-        hash = "sha256-SlPd4ahtJYwQpe4qtCuVPt/lJ1kFTlh9SX0ZVPjxURM=";
-      };
-    }
-  );
+  # From babarot/nur-packages, which GoReleaser updates on each gomi release;
+  # nixpkgs lags behind the releases
+  gomi = inputs.babarot.packages.${pkgs.stdenv.hostPlatform.system}.gomi;
   # The preview of a directory, by store path: gomi does not depend on
   # eza.nix putting eza on PATH
   eza = lib.getExe pkgs.eza;

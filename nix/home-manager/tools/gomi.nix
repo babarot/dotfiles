@@ -58,7 +58,7 @@ in
       preview:
         syntax_highlight: true
         colorscheme: nord  # https://xyproto.github.io/splash/docs/index.html
-        directory_command: ${eza} -T -L 2 --color=always --icons=always
+        directory_command: ${eza} -T -L 2 --color=always --icons=always .
       style:
         deletion_dialog: "#FF007F" # "#F93769", "#FE7E39"
         list_view:

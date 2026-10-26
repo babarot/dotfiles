@@ -34,11 +34,21 @@ in
       b4b4r07@gmail.com namespaces="git" ${key}
     '';
 
+    # The agent holds every Mac's key, since they share a vault, and offers
+    # them in its own order. GitHub takes the first key that is registered,
+    # even one not authorized for an org's SAML SSO, so pin this Mac's key:
+    # IdentityFile names the public half, which the agent signs for.
+    home.file.".ssh/1password.pub".text = ''
+      ${key}
+    '';
+
     # GitHub only: other hosts (the NAS) keep their own keys. Pulled in by
     # `Include config.d/*` at the top of the hand-written ~/.ssh/config.
     home.file.".ssh/config.d/1password".text = ''
       Host github.com ssh.github.com
         IdentityAgent "${agentSock}"
+        IdentityFile ~/.ssh/1password.pub
+        IdentitiesOnly yes
     '';
   };
 }

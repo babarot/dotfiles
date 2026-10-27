@@ -67,7 +67,10 @@ in
     # configuration. ADC records the account only when it is named, which is
     # what the check compares. The expired ADC is removed before logging in
     # because, given an account, gcloud skips the login whenever the file is
-    # for that account, expired or not.
+    # for that account, expired or not. gcloud auth login takes --force for
+    # the same reason: given an account it has credentials for, it reuses them
+    # instead of opening the browser, and refreshing them under Google's
+    # session control asks for the password in the terminal.
     #
     # The time left is counted from the file each login writes:
     # credentials.db for gcloud and application_default_credentials.json for
@@ -109,7 +112,7 @@ in
           echo "gcloud: ok"
         else
           echo "gcloud: expired, logging in (browser)..."
-          gcloud auth login "$account"
+          gcloud auth login "$account" --force
         fi
         echo "  $(left "$dir/credentials.db")"
 

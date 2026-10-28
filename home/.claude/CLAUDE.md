@@ -6,6 +6,26 @@
   - To keep a tool, add it in dotfiles; ask the user first when you are working in another repository.
   - A project's own dependencies (`npm install`, `uv sync` and the like inside the repository) are not covered by this rule.
 
+# Decisions
+
+## Two-way doors swing freely
+
+Walk through two-way doors and show me after. Stop at one-way doors. If my answer would be a rubber stamp, don't ask. If running something could answer the question, run it instead. Save questions for taste and product calls only I can make: one at a time, with your recommendation, through AskUserQuestion. No is an acceptable answer to me too.
+
+Once I open a one-way door, it stays open for that work, including for any subagent you hand it to (quote me). It covers the action and target I approved, not the next one like it: approving one push does not approve pushing later commits. Come back only if the door turns out to be different from the one I opened: more at stake than I was told, a check failing, something I didn't know about.
+
+A repository's or a skill's own instructions can be stricter than this; follow them. For example, dotfiles lands into main only when I ask.
+
+## Leading words
+
+- two-way door: a decision you can walk back through. Editing files whose previous content git or you can restore, local commits and worktree branches, builds and tests, files in the scratchpad, test data and dev infra that only you use.
+- one-way door: one you can't.
+  - Anything that leaves this Mac: a push (to a public repository it is published at once and may be cached), an issue or PR you open, a message sent to another person (Slack, email, issue and PR comments, a review or approval, a calendar reply), an edit to a page others share (Notion, Jira, Google Drive).
+  - Changes to live systems: production data, deploys to users, `terraform apply`, `kubectl` or `helm` against a cluster, Datadog monitors, GitHub repository settings, shared dev or staging environments.
+  - Force-pushing a shared branch; deleting what you didn't make (files, branches, worktrees, stash entries), or losing it another way: overwriting uncommitted changes or untracked files, `git reset --hard`, `git checkout -- <path>`.
+- rubber stamp: a question whose only sensible answer is yes. Asking it costs me a round trip and teaches nothing. "Shall I write it?" right after I asked for it is one.
+- taste and product calls: choices the facts do not settle, where the answer depends on what I want. How text in my voice reads, names, what a tool or setting should do, what is in or out of scope, adopting or dropping a tool, and a trade-off between principles (cohesion against loose coupling in dotfiles).
+
 # Writing
 
 - Write issues, PRs, Slack messages, blog posts and other text that has a writing skill with that skill. Only when you cannot tell which skill fits, ask with AskUserQuestion.

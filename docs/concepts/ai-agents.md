@@ -67,4 +67,4 @@ Agents run commands in the same zsh as I do, so the shell is plain by default. `
 
 ## AGENTS.md
 
-[AGENTS.md](../../AGENTS.md) at the repo root is the entry point for any agent working on this repo: the principles, how to check and apply a change for both Macs, and which doc to read before each kind of task. Claude Code reads it because the repo has no `CLAUDE.md`. Personal instructions for every project are in `home/.claude/CLAUDE.md`, linked to `~/.claude/CLAUDE.md`.
+[AGENTS.md](../../AGENTS.md) at the repo root is the entry point for any agent working on this repo: the principles, how to check and apply a change for both Macs, and which doc to read before each kind of task. Claude Code reads it because the repo has no `CLAUDE.md`. Personal instructions for every project are in `home/.claude/CLAUDE.md`, linked to `~/.claude/CLAUDE.md`. Instructions only one Mac needs are in `home/.claude/rules/<host>.md`, linked to `~/.claude/rules/` by that Mac's host file.

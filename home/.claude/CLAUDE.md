@@ -66,9 +66,9 @@ A repository's or a skill's own instructions can be stricter than this; follow t
 # Subagents
 
 - Pick a subagent's model by the kind of task, through the Agent tool's `model`:
-  - `haiku`: a lookup whose target you know: where something is defined, which files match, one value in a log.
-  - `sonnet`: the default for research. Searching and summarizing across many files, reading docs or logs, edits spelled out in the prompt.
+  - `sonnet`: everything else, including small lookups. Pass it explicitly, since a built-in agent may otherwise run on a smaller model.
   - Leave it unset, so it runs on this session's model, only when the result rests on judgment: a design choice, a subtle bug, a review-like reading.
+  - Never use `haiku`. What it saves on a lookup is less than what a wrong answer costs to notice and redo.
 - Read what a subagent returns as a lead and check what your answer depends on.
 
 # Repositories

@@ -87,8 +87,11 @@ in
       text = ''
         dir=''${CLOUDSDK_CONFIG:-$HOME/.config/gcloud}
         adc=$dir/application_default_credentials.json
-        name=$(gcloud config configurations list --filter=is_active=true --format='value(name)')
-        account=$(gcloud config get account 2>/dev/null)
+        # One gcloud call for both: each takes seconds to start, and nothing
+        # is printed until they return.
+        active=$(gum spin --show-output --title "gcloud: reading configuration..." -- \
+          gcloud config configurations list --filter=is_active=true --format='value(name,properties.core.account)' </dev/null)
+        read -r name account <<<"$active"
 
         left() {
           local start end rest

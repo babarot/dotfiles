@@ -63,6 +63,14 @@ A repository's or a skill's own instructions can be stricter than this; follow t
 - A request to discuss that names no other agent is a request to talk it through with you; do not call another agent.
 - Do not paste the reply as is. Give the user its main points and what you think of each.
 
+# Subagents
+
+- Pick a subagent's model by the kind of task, through the Agent tool's `model`:
+  - `haiku`: a lookup whose target you know: where something is defined, which files match, one value in a log.
+  - `sonnet`: the default for research. Searching and summarizing across many files, reading docs or logs, edits spelled out in the prompt.
+  - Leave it unset, so it runs on this session's model, only when the result rests on judgment: a design choice, a subtle bug, a review-like reading.
+- Read what a subagent returns as a lead and check what your answer depends on.
+
 # Repositories
 
 - In a public repository, write in English everything that goes into it or onto GitHub: code, comments, docs, commit messages, issues and PRs. In a private repository, follow its conventions instead.

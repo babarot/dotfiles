@@ -39,7 +39,7 @@ Changes here usually go to main without a PR. A worktree branch lands in main wi
 
 The [/land](../../home/skills/land/SKILL.md) skill has the agent commit its session's work and run `git land`, pushing only when a push is asked for in that request. The repo's pre-commit and pre-push hooks run as usual; the skill never skips them with `--no-verify`.
 
-To continue the work in another session, [/handoff](../../home/skills/handoff/SKILL.md) writes a prompt for the next agent. It runs only when invoked.
+To continue the work in another session, [/handoff](../../home/skills/handoff/SKILL.md) writes a prompt for the next agent. It runs only when invoked. Before closing a session, [anything-else](../../home/skills/anything-else/SKILL.md) reads the whole transcript, compacted parts included, for proposals left unanswered and work left behind.
 
 ## The other Mac
 

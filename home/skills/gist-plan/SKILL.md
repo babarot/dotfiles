@@ -36,7 +36,7 @@ The progress table has one row per item or stage: what it does, its done conditi
 ## 3. Settle the design before any code
 
 - Answer the user's questions about the plan before doing anything else. A "yes" to how the work will proceed is not permission to start implementing; if it is unclear what a yes covers, ask.
-- When a decision is fundamental (how data is stored, combined or shown), explain it first in a local HTML page with diagrams, current design against the proposal. Write it into the Gist only after the user says they understand it.
+- When a decision is fundamental (how data is stored, combined or shown), explain it first in a local HTML page with diagrams, current design against the proposal, written with the teach-me skill. Write it into the Gist only after the user says they understand it.
 - Ask the user once per Gist, with AskUserQuestion, which reviewers to use: Fable, Codex, or both. Record the answer in the session rules of `00-index.md`.
 - Review loop:
   - Codex: call it as CLAUDE.md says (the model, "only fatal issues", `resume --last` from the second round). Give it the paths in the local clone, not the Gist URL; it may have no network.

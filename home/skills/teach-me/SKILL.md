@@ -1,6 +1,6 @@
 ---
 name: teach-me
-description: Write a local HTML document that teaches the user, in depth and without metaphors, a problem, plan, investigation or design they have not fully followed, so they can decide, review or merge from it. Use when the user asks for an HTML page to understand something themselves ("ちゃんと理解したいので解説用のHTMLを作って", "学習用のドキュメントをローカルに", "詳しくない人でも分かるように", "コンテキストを追いきれていない人間が読んでも理解できるように"), or when gist-plan needs a fundamental decision explained before it goes into the Gist. Not for one mechanism shown interactively through a worked example (explain-me), a quick diagram (show-me), or a dead-simple picture (eli5).
+description: Write a local HTML document that teaches the user, in depth and without metaphors, a problem, plan, investigation or design they have not fully followed, so they can decide, review or merge from it. Use when the user asks for an HTML page to understand something themselves ("ちゃんと理解したいので解説用のHTMLを作って", even when it says "詳しくない人でも分かるように"), or when gist-plan needs a fundamental decision explained before it goes into the Gist. Not for one mechanism shown interactively through a worked example (explain-me), a quick diagram (show-me), or a dead-simple picture (eli5).
 ---
 
 # teach-me

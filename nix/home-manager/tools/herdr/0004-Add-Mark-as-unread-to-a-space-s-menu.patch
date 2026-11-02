@@ -18,7 +18,7 @@ until they leave the screen or their agent moves on.
  5 files changed, 239 insertions(+), 2 deletions(-)
 
 diff --git a/src/client/shell/context_menu.rs b/src/client/shell/context_menu.rs
-index b57bc84..075b4aa 100644
+index a7d6322..fc3983d 100644
 --- a/src/client/shell/context_menu.rs
 +++ b/src/client/shell/context_menu.rs
 @@ -5,7 +5,7 @@ impl ClientContextMenuOverlay {
@@ -30,7 +30,7 @@ index b57bc84..075b4aa 100644
              ClientContextMenuTarget::Workspace { is_git: false, .. } => {
                  vec![item("Rename", Action::Rename), item("Close", Action::Close)]
              }
-@@ -75,7 +75,16 @@ impl ClientContextMenuOverlay {
+@@ -79,7 +79,16 @@ impl ClientContextMenuOverlay {
                  ]);
                  items
              }
@@ -47,7 +47,7 @@ index b57bc84..075b4aa 100644
      }
  }
  
-@@ -109,6 +118,10 @@ impl ClientShellState {
+@@ -108,6 +117,10 @@ impl ClientShellState {
          let collapsed = worktree.is_some_and(|worktree| {
              self.group_is_collapsed(&self.active_endpoint_id, &worktree.key)
          });
@@ -59,14 +59,14 @@ index b57bc84..075b4aa 100644
              target: ClientContextMenuTarget::Workspace {
                  workspace_id,
 @@ -116,6 +129,7 @@ impl ClientShellState {
-                 is_linked_worktree: worktree.is_some_and(|worktree| worktree.is_linked_worktree),
                  has_worktree_children,
+                 close_group,
                  collapsed,
 +                can_mark_unread,
              },
              x,
              y,
-@@ -284,6 +298,9 @@ impl ClientShellState {
+@@ -275,6 +289,9 @@ impl ClientShellState {
                      self.persist_chrome_preferences(outcome);
                  }
              }
@@ -245,10 +245,10 @@ index 1ebcd35..0e071cb 100644
      fn stale_or_unfocused_surface_does_not_acknowledge_completion() {
          let mut presentation = EndpointAgentPresentation::default();
 diff --git a/src/client/shell/endpoints.rs b/src/client/shell/endpoints.rs
-index fff28b7..1ea0d40 100644
+index 9e71d00..beb8bad 100644
 --- a/src/client/shell/endpoints.rs
 +++ b/src/client/shell/endpoints.rs
-@@ -648,6 +648,29 @@ impl ClientShellState {
+@@ -653,6 +653,29 @@ impl ClientShellState {
          }
      }
  
@@ -279,7 +279,7 @@ index fff28b7..1ea0d40 100644
          let Some(index) = self
              .endpoints
 diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
-index 4272d6d..f9d620d 100644
+index 83c0922..eb4dee2 100644
 --- a/src/client/shell/state.rs
 +++ b/src/client/shell/state.rs
 @@ -519,6 +519,7 @@ pub(super) enum ClientContextMenuAction {
@@ -290,9 +290,9 @@ index 4272d6d..f9d620d 100644
      NewTab,
      RenamePane,
      ClearPaneName,
-@@ -538,6 +539,9 @@ pub(super) enum ClientContextMenuTarget {
-         is_linked_worktree: bool,
+@@ -539,6 +540,9 @@ pub(super) enum ClientContextMenuTarget {
          has_worktree_children: bool,
+         close_group: bool,
          collapsed: bool,
 +        // Idle agents the user has seen: marking them unread sticks until they
 +        // are viewed, or in the focused workspace until the user comes back
@@ -301,7 +301,7 @@ index 4272d6d..f9d620d 100644
      Tab {
          tab_id: String,
 diff --git a/src/client/shell/tests/chrome_context.rs b/src/client/shell/tests/chrome_context.rs
-index ed21bc8..4b4202c 100644
+index 1ef9879..8168d13 100644
 --- a/src/client/shell/tests/chrome_context.rs
 +++ b/src/client/shell/tests/chrome_context.rs
 @@ -377,6 +377,93 @@ fn context_menus_capture_stable_targets_and_route_actions() {

@@ -140,10 +140,10 @@ index b7ab4a9..7113425 100644
                  &mut composed,
                  feedback_area,
 diff --git a/src/client/shell/mouse.rs b/src/client/shell/mouse.rs
-index 4636bd9..e97d2c0 100644
+index fd2f7d5..998a8ed 100644
 --- a/src/client/shell/mouse.rs
 +++ b/src/client/shell/mouse.rs
-@@ -977,12 +977,18 @@ impl ClientShellState {
+@@ -1007,12 +1007,18 @@ impl ClientShellState {
          }
          if self.overlay.is_none()
              && self.mode == ClientShellMode::Terminal
@@ -167,7 +167,7 @@ index 4636bd9..e97d2c0 100644
          if self.handle_mobile_mouse(mouse, outcome) {
              return;
 diff --git a/src/client/shell/notification_policy.rs b/src/client/shell/notification_policy.rs
-index b9397d7..8d70ebb 100644
+index 824a163..7a049bc 100644
 --- a/src/client/shell/notification_policy.rs
 +++ b/src/client/shell/notification_policy.rs
 @@ -1,6 +1,7 @@
@@ -676,7 +676,7 @@ index f73b139..22fc586 100644
  
      #[test]
 diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
-index 5b19d84..6ed8552 100644
+index eeca639..7367a1f 100644
 --- a/src/client/shell/state.rs
 +++ b/src/client/shell/state.rs
 @@ -114,6 +114,8 @@ pub(super) struct ShellHitMap {
@@ -688,7 +688,7 @@ index 5b19d84..6ed8552 100644
      pub(super) global_menu_rows: Vec<(Rect, usize)>,
      pub(super) context_menu_rows: Vec<(Rect, usize)>,
      pub(super) overlay_primary: Rect,
-@@ -931,8 +933,8 @@ pub(crate) struct ClientShellState {
+@@ -953,8 +955,8 @@ pub(crate) struct ClientShellState {
      pub(super) pending_requests: HashMap<String, PendingEndpointRequest>,
      pub(super) pending_integration_installs: usize,
      pub(super) pending_notifications: Vec<ClientPendingNotification>,
@@ -699,7 +699,7 @@ index 5b19d84..6ed8552 100644
      pub(super) endpoint_notice_seen: HashSet<ClientEndpointNoticeKey>,
      pub(super) visible_endpoint_notice: Option<ClientVisibleEndpointNotice>,
      pub(super) outer_focused: Option<bool>,
-@@ -1096,8 +1098,7 @@ impl ClientShellState {
+@@ -1121,8 +1123,7 @@ impl ClientShellState {
              pending_requests: HashMap::new(),
              pending_integration_installs: 0,
              pending_notifications: Vec::new(),
@@ -723,10 +723,10 @@ index 6c829ac..ff1ce80 100644
      } else if state.copy_feedback.is_some() {
          Some("client_surface_patch.fallback.copy_feedback")
 diff --git a/src/client/shell/tests/agents_worktrees_notifications.rs b/src/client/shell/tests/agents_worktrees_notifications.rs
-index e0b86ba..235be22 100644
+index 35d8caf..8893cd3 100644
 --- a/src/client/shell/tests/agents_worktrees_notifications.rs
 +++ b/src/client/shell/tests/agents_worktrees_notifications.rs
-@@ -1460,7 +1460,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+@@ -1682,7 +1682,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
      state.mode = ClientShellMode::Navigate;
      let ignored = state.handle_raw_events(vec![click()]);
      assert!(ignored.actions.is_empty());
@@ -735,7 +735,7 @@ index e0b86ba..235be22 100644
  
      state.mode = ClientShellMode::Terminal;
      let outcome = state.handle_raw_events(vec![click()]);
-@@ -1473,7 +1473,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+@@ -1695,7 +1695,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
                      if params.pane_id == "pane_2"
              )
      )));
@@ -744,7 +744,7 @@ index e0b86ba..235be22 100644
  
      state.receive_notification(
          &ClientEndpointId::Local,
-@@ -1504,7 +1504,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+@@ -1726,7 +1726,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
                      if params.pane_id == "pane_2"
              )
      )));
@@ -753,7 +753,7 @@ index e0b86ba..235be22 100644
  
      state.receive_notification(
          &ClientEndpointId::Local,
-@@ -1521,7 +1521,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+@@ -1743,7 +1743,7 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
          },
          now,
      );
@@ -762,7 +762,7 @@ index e0b86ba..235be22 100644
      state.config.toast_delay_seconds = 1;
      let (_, repaint) = state.receive_notification(
          &ClientEndpointId::Local,
-@@ -1539,6 +1539,71 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
+@@ -1761,6 +1761,71 @@ fn semantic_notifications_use_client_policy_and_stable_navigation_targets() {
          now,
      );
      assert!(repaint);
@@ -836,7 +836,7 @@ index e0b86ba..235be22 100644
 +    assert_eq!(rects[1].y, middle.y);
 +}
 diff --git a/src/client/shell/tests/graphics.rs b/src/client/shell/tests/graphics.rs
-index 41f6e50..26f3267 100644
+index 44688a2..022efba 100644
 --- a/src/client/shell/tests/graphics.rs
 +++ b/src/client/shell/tests/graphics.rs
 @@ -151,7 +151,7 @@ fn notifications_and_clipboard_feedback_only_cover_their_drawn_corners() {
@@ -880,10 +880,10 @@ index 1b51c1a..284e876 100644
      assert!(row_text(&top, 29).contains("update ready"));
  
 diff --git a/src/client/shell/tests/startup_overlays.rs b/src/client/shell/tests/startup_overlays.rs
-index 0f3887a..47537b4 100644
+index 8e0b585..0d01f61 100644
 --- a/src/client/shell/tests/startup_overlays.rs
 +++ b/src/client/shell/tests/startup_overlays.rs
-@@ -540,7 +540,7 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
+@@ -560,7 +560,7 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
      endpoint_snapshot.config_diagnostic = Some("one-line warning".into());
      state.set_snapshot(Box::new(endpoint_snapshot));
      state.set_pane_surface(surface());
@@ -892,7 +892,7 @@ index 0f3887a..47537b4 100644
          endpoint_id: ClientEndpointId::Local,
          event: SemanticNotification {
              kind: SemanticNotificationKind::Custom,
-@@ -554,7 +554,7 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
+@@ -574,7 +574,7 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
              position: Some(crate::config::ToastHerdrPosition::TopRight),
          },
          deadline: None,
@@ -901,7 +901,7 @@ index 0f3887a..47537b4 100644
  
      state.compose(106, 20).expect("one-line frame");
      let pane_area = state.layout(106, 20).pane_surface;
-@@ -567,8 +567,8 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
+@@ -587,8 +587,8 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
      assert_eq!(state.hits.notification_toast.y, pane_area.y);
  
      state
@@ -912,7 +912,7 @@ index 0f3887a..47537b4 100644
          .expect("visible notification")
          .event
          .position = Some(crate::config::ToastHerdrPosition::BottomRight);
-@@ -584,7 +584,7 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
+@@ -604,7 +604,7 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
          row: targetless_hit.y,
          modifiers: KeyModifiers::empty(),
      })]);

@@ -17,10 +17,12 @@
   # The private keys of eight eMudhra intermediate CAs leaked in October 2026
   # (https://emudhra.we-have-a-problem.com/). Tools that read the Nix CA bundle
   # (NIX_SSL_CERT_FILE) do not check revocation, so drop the roots they chain to.
-  # Remove once nixpkgs' cacert is NSS 3.131.1 or later.
+  # NSS 3.131.1 removed emSign ECC Root CA - G3 (a blacklisted name the bundle
+  # no longer has fails the build) and stopped trusting Comodo AAA Services
+  # root for servers, but still trusts it for other uses; the blacklist
+  # rejects it for all. Remove once nixpkgs' cacert no longer has it.
   security.pki.caCertificateBlacklist = [
     "Comodo AAA Services root"
-    "emSign ECC Root CA - G3"
   ];
 
   system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;

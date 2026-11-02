@@ -93,11 +93,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791963601,
-        "narHash": "sha256-2qQ163tbhwiuPXniO4sYU1KvZIHALqQniimM6+HhKAo=",
+        "lastModified": 1793503092,
+        "narHash": "sha256-bc9/iopmGbOpGCxzhNl26SFKAMvlmvJFXspb9Y7Lneo=",
         "ref": "refs/heads/main",
-        "rev": "cb7c15e126859c98df982ec4149582f98e49d65c",
-        "revCount": 41,
+        "rev": "be1b33aefda87d4762b8532d961f9bad45babf3c",
+        "revCount": 327,
         "type": "git",
         "url": "ssh://git@github.com/babarot/claude-recap"
       },
@@ -268,11 +268,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1791366222,
-        "narHash": "sha256-o0N4g6uSOIppU7CGToNvGlMf5vC+B6O6ukFHKY/TKOY=",
+        "lastModified": 1793494649,
+        "narHash": "sha256-Thn0OE71NF80ZfOMGCgJvKtbCcnnz0fToT/qsvb/Gtc=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "39ad350a0602fa0a58a544344e3e9187526ea45c",
+        "rev": "d357a2b54f0b6dc4aeb4e993190a52cf151b6f24",
         "type": "github"
       },
       "original": {

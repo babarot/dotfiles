@@ -15,13 +15,13 @@ on screen, the same key cycles them as before.
  3 files changed, 48 insertions(+)
 
 diff --git a/src/client/shell/actions.rs b/src/client/shell/actions.rs
-index 9d0a3bd..b02a714 100644
+index 83819b0..e2e40f1 100644
 --- a/src/client/shell/actions.rs
 +++ b/src/client/shell/actions.rs
-@@ -1053,6 +1053,14 @@ impl ClientShellState {
-             KeybindAction::ClosePane => Some(Method::PaneClose(PaneTarget {
-                 pane_id: focused_pane.clone()?,
-             })),
+@@ -1061,6 +1061,14 @@ impl ClientShellState {
+                     env: Default::default(),
+                 }))
+             }
 +            KeybindAction::CyclePaneNext | KeybindAction::CyclePanePrevious
 +                if self.focused_tab_zoomed() =>
 +            {
@@ -34,10 +34,10 @@ index 9d0a3bd..b02a714 100644
                  let focused_tab = focused_tab?;
                  let panes = snapshot
 diff --git a/src/client/shell/endpoints.rs b/src/client/shell/endpoints.rs
-index 1ea0d40..b13206a 100644
+index beb8bad..7d5fde6 100644
 --- a/src/client/shell/endpoints.rs
 +++ b/src/client/shell/endpoints.rs
-@@ -493,6 +493,17 @@ impl ClientShellState {
+@@ -498,6 +498,17 @@ impl ClientShellState {
              .is_none_or(|methods| methods.contains(crate::api::api_method_name(method)))
      }
  
@@ -56,10 +56,10 @@ index 1ea0d40..b13206a 100644
          let Some(snapshot) = self.snapshot.as_deref() else {
              return 0;
 diff --git a/src/client/shell/tests/agents_worktrees_notifications.rs b/src/client/shell/tests/agents_worktrees_notifications.rs
-index 235be22..36bbee9 100644
+index 8893cd3..c1d8011 100644
 --- a/src/client/shell/tests/agents_worktrees_notifications.rs
 +++ b/src/client/shell/tests/agents_worktrees_notifications.rs
-@@ -467,6 +467,35 @@ fn pane_cycle_last_and_agent_actions_resolve_to_stable_pane_ids() {
+@@ -689,6 +689,35 @@ fn pane_cycle_last_and_agent_actions_resolve_to_stable_pane_ids() {
      ));
  }
  

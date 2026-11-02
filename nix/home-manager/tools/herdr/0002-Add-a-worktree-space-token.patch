@@ -7,8 +7,9 @@ The token is the checkout's directory name, which other sessions go by.
 It is left out when the checkout is named after the space's branch,
 where it would only repeat the branch.
 ---
- src/client/shell/sidebar.rs                   | 11 ++++++
- .../tests/agents_worktrees_notifications.rs   | 39 +++++++++++++++++++
+ src/client/shell/sidebar.rs                   | 11 +++++
+ .../tests/agents_worktrees_notifications.rs   | 41 +++++++++++++++++++
+ src/client/shell/tests/close_pane.rs          |  1 +
  src/client/shell/tests/close_tab.rs           |  1 +
  src/client/shell/tests/endpoints.rs           |  4 ++
  .../shell/tests/workspace_navigation.rs       |  1 +
@@ -16,13 +17,13 @@ where it would only repeat the branch.
  src/protocol/wire.rs                          |  3 ++
  src/server/client_shell.rs                    |  8 ++++
  src/ui/sidebar/tokens.rs                      |  8 ++++
- 9 files changed, 78 insertions(+)
+ 10 files changed, 81 insertions(+)
 
 diff --git a/src/client/shell/sidebar.rs b/src/client/shell/sidebar.rs
-index b874e4c..d0c35b4 100644
+index 38c673c..458c08c 100644
 --- a/src/client/shell/sidebar.rs
 +++ b/src/client/shell/sidebar.rs
-@@ -646,6 +646,17 @@ pub(in crate::client::shell) fn workspace_rows(
+@@ -683,6 +683,17 @@ pub(in crate::client::shell) fn workspace_rows(
              branch: workspace.branch.as_deref(),
              state_text: status_text(status),
              ahead_behind: workspace.git_ahead_behind,
@@ -41,7 +42,7 @@ index b874e4c..d0c35b4 100644
              // A renamed worktree child keeps its branch and ahead/behind; an
              // unrenamed one already shows its branch as its name.
 diff --git a/src/client/shell/tests/agents_worktrees_notifications.rs b/src/client/shell/tests/agents_worktrees_notifications.rs
-index 5b8b122..5e30fa4 100644
+index df09f46..a2cbf6e 100644
 --- a/src/client/shell/tests/agents_worktrees_notifications.rs
 +++ b/src/client/shell/tests/agents_worktrees_notifications.rs
 @@ -89,6 +89,40 @@ fn collapsed_workspace_jitter_remains_a_click() {
@@ -101,7 +102,23 @@ index 5b8b122..5e30fa4 100644
          }),
          focused: false,
          agent_status: AgentStatus::Idle,
-@@ -264,6 +300,7 @@ fn workspace_drag_moves_parent_worktree_as_one_block_and_rejects_child() {
+@@ -179,6 +215,7 @@ fn duplicate_repo_parents_remain_visible_and_focusable_when_collapsed() {
+             key: "repo".into(),
+             label: "repo".into(),
+             is_linked_worktree: false,
++            checkout_name: None,
+         });
+         let mut duplicate = projected.workspaces[0].clone();
+         duplicate.workspace_id = "ws_duplicate".into();
+@@ -383,6 +420,7 @@ fn duplicate_repo_parent_drag_does_not_target_its_own_move_block() {
+         key: "repo".into(),
+         label: "repo".into(),
+         is_linked_worktree: false,
++        checkout_name: None,
+     });
+     let mut other = projected.workspaces[0].clone();
+     other.workspace_id = "ws_other".into();
+@@ -436,6 +474,7 @@ fn workspace_drag_moves_parent_worktree_as_one_block_and_rejects_child() {
          key: "repo".into(),
          label: "repo".into(),
          is_linked_worktree: false,
@@ -109,7 +126,7 @@ index 5b8b122..5e30fa4 100644
      });
      let mut child = projected.workspaces[0].clone();
      child.workspace_id = "ws_child".into();
-@@ -274,6 +311,7 @@ fn workspace_drag_moves_parent_worktree_as_one_block_and_rejects_child() {
+@@ -446,6 +485,7 @@ fn workspace_drag_moves_parent_worktree_as_one_block_and_rejects_child() {
          key: "repo".into(),
          label: "repo".into(),
          is_linked_worktree: true,
@@ -117,7 +134,7 @@ index 5b8b122..5e30fa4 100644
      });
      let mut other = projected.workspaces[0].clone();
      other.workspace_id = "ws_other".into();
-@@ -1215,6 +1253,7 @@ fn worktree_remove_escalates_recoverable_failure_to_force_confirmation() {
+@@ -1435,6 +1475,7 @@ fn worktree_remove_escalates_recoverable_failure_to_force_confirmation() {
              key: "repo-key".into(),
              label: "repo".into(),
              is_linked_worktree: true,
@@ -125,6 +142,18 @@ index 5b8b122..5e30fa4 100644
          });
          let mut state = ClientShellState::new(ClientShellConfig::from_config(&Config::default()));
          state.set_snapshot(Box::new(snapshot));
+diff --git a/src/client/shell/tests/close_pane.rs b/src/client/shell/tests/close_pane.rs
+index 970afe2..4ffa490 100644
+--- a/src/client/shell/tests/close_pane.rs
++++ b/src/client/shell/tests/close_pane.rs
+@@ -229,6 +229,7 @@ fn last_pane_close_preserves_parent_group_and_linked_workspace_scope() {
+             key: "repo".into(),
+             label: "repo".into(),
+             is_linked_worktree: linked,
++            checkout_name: None,
+         });
+         let mut sibling = projected.workspaces[0].clone();
+         sibling.workspace_id = "ws_2".into();
 diff --git a/src/client/shell/tests/close_tab.rs b/src/client/shell/tests/close_tab.rs
 index d5e897a..2c3ffa4 100644
 --- a/src/client/shell/tests/close_tab.rs
@@ -138,10 +167,10 @@ index d5e897a..2c3ffa4 100644
          let mut sibling = projected.workspaces[0].clone();
          sibling.workspace_id = "ws_2".into();
 diff --git a/src/client/shell/tests/endpoints.rs b/src/client/shell/tests/endpoints.rs
-index f327f8c..8335110 100644
+index c0a7e52..6894161 100644
 --- a/src/client/shell/tests/endpoints.rs
 +++ b/src/client/shell/tests/endpoints.rs
-@@ -611,6 +611,7 @@ fn saved_machine_preserves_endpoint_scoped_worktree_collapses() {
+@@ -859,6 +859,7 @@ fn saved_machine_preserves_endpoint_scoped_worktree_collapses() {
              key: "repo".into(),
              label: "repo".into(),
              is_linked_worktree: false,
@@ -149,7 +178,7 @@ index f327f8c..8335110 100644
          });
          let mut child = snapshot.workspaces[0].clone();
          child.workspace_id = child_id.into();
-@@ -623,6 +624,7 @@ fn saved_machine_preserves_endpoint_scoped_worktree_collapses() {
+@@ -871,6 +872,7 @@ fn saved_machine_preserves_endpoint_scoped_worktree_collapses() {
              key: "repo".into(),
              label: "repo".into(),
              is_linked_worktree: true,
@@ -157,7 +186,7 @@ index f327f8c..8335110 100644
          });
          snapshot.workspaces.push(child);
      }
-@@ -874,12 +876,14 @@ fn expanded_machine_sidebar_applies_space_row_gap_within_each_machine() {
+@@ -1122,12 +1124,14 @@ fn expanded_machine_sidebar_applies_space_row_gap_within_each_machine() {
          key: "repo".into(),
          label: "repo".into(),
          is_linked_worktree: false,
@@ -173,7 +202,7 @@ index f327f8c..8335110 100644
      let mut third = remote.workspaces[1].clone();
      third.workspace_id = "ws_3".into();
 diff --git a/src/client/shell/tests/workspace_navigation.rs b/src/client/shell/tests/workspace_navigation.rs
-index c117a31..da63ad1 100644
+index dff7f7d..e94c07d 100644
 --- a/src/client/shell/tests/workspace_navigation.rs
 +++ b/src/client/shell/tests/workspace_navigation.rs
 @@ -21,6 +21,7 @@ fn grouped_workspaces() -> ClientShellSnapshot {
@@ -213,10 +242,10 @@ index 9a4cb5e..3768a1c 100644
          )
          .map_err(serde::de::Error::custom)?;
 diff --git a/src/protocol/wire.rs b/src/protocol/wire.rs
-index 6d49592..a13761e 100644
+index ead2ddd..1ef3e3a 100644
 --- a/src/protocol/wire.rs
 +++ b/src/protocol/wire.rs
-@@ -1062,6 +1062,9 @@ pub struct ClientShellWorktree {
+@@ -1039,6 +1039,9 @@ pub struct ClientShellWorktree {
      pub key: String,
      pub label: String,
      pub is_linked_worktree: bool,
@@ -227,7 +256,7 @@ index 6d49592..a13761e 100644
  
  #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 diff --git a/src/server/client_shell.rs b/src/server/client_shell.rs
-index d79c89c..59b0bbb 100644
+index 0a98da0..b76f76a 100644
 --- a/src/server/client_shell.rs
 +++ b/src/server/client_shell.rs
 @@ -91,6 +91,14 @@ pub(super) fn snapshot_with_completions(

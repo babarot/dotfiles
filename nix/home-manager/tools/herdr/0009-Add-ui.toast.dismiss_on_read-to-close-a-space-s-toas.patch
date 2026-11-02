@@ -29,10 +29,10 @@ default, so nothing changes for existing configs.
  8 files changed, 135 insertions(+)
 
 diff --git a/docs/next/website/src/data/config-reference.json b/docs/next/website/src/data/config-reference.json
-index f21befa..50ea3d0 100644
+index 2a607b1..4ad5223 100644
 --- a/docs/next/website/src/data/config-reference.json
 +++ b/docs/next/website/src/data/config-reference.json
-@@ -1120,6 +1120,12 @@
+@@ -1126,6 +1126,12 @@
            "default": "unset",
            "description": "Seconds an in-app toast stays visible. Unset keeps the built-in duration for each kind of notification. 0 keeps the toast until it is clicked; valid values are 0 through 3600."
          },
@@ -46,7 +46,7 @@ index f21befa..50ea3d0 100644
            "key": "ui.toast.herdr.position",
            "type": "enum",
 diff --git a/src/client/shell/config.rs b/src/client/shell/config.rs
-index 0db5423..9c36b06 100644
+index 45a9999..a9ea7bd 100644
 --- a/src/client/shell/config.rs
 +++ b/src/client/shell/config.rs
 @@ -129,6 +129,7 @@ impl ClientShellConfig {
@@ -57,7 +57,7 @@ index 0db5423..9c36b06 100644
              toast_position: config.ui.toast.herdr.position,
              copy_on_select: config.ui.copy_on_select,
              clipboard_toast_enabled: config.ui.toast.clipboard.enabled,
-@@ -332,6 +333,7 @@ impl ClientShellConfig {
+@@ -357,6 +358,7 @@ impl ClientShellConfig {
                  self.toast_delivery = ui.toast.delivery;
                  self.toast_delay_seconds = ui.toast.delay_seconds;
                  self.toast_duration_seconds = ui.toast.duration_seconds;
@@ -66,10 +66,10 @@ index 0db5423..9c36b06 100644
                  self.copy_on_select = ui.copy_on_select;
                  self.clipboard_toast_enabled = ui.toast.clipboard.enabled;
 diff --git a/src/client/shell/input.rs b/src/client/shell/input.rs
-index 413e29f..9d93919 100644
+index ee92d59..3333da3 100644
 --- a/src/client/shell/input.rs
 +++ b/src/client/shell/input.rs
-@@ -246,6 +246,7 @@ impl ClientShellState {
+@@ -320,6 +320,7 @@ impl ClientShellState {
                      if let Some(surface) = self.pane_surface.clone() {
                          outcome.repaint |= self.acknowledge_active_surface_agents(&surface);
                      }
@@ -78,7 +78,7 @@ index 413e29f..9d93919 100644
                          .requests
                          .push(ClientMessage::ClientShellFocus { focused: true });
 diff --git a/src/client/shell/notification_policy.rs b/src/client/shell/notification_policy.rs
-index 8d70ebb..0fc8713 100644
+index 7a049bc..ccc09cc 100644
 --- a/src/client/shell/notification_policy.rs
 +++ b/src/client/shell/notification_policy.rs
 @@ -35,6 +35,35 @@ impl ClientShellState {
@@ -118,7 +118,7 @@ index 8d70ebb..0fc8713 100644
      /// counting its own duration from when it appears.
      fn show_notification(
 diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
-index 6ed8552..ca19c68 100644
+index 7367a1f..baa594a 100644
 --- a/src/client/shell/state.rs
 +++ b/src/client/shell/state.rs
 @@ -29,6 +29,7 @@ pub(crate) struct ClientShellConfig {
@@ -129,7 +129,7 @@ index 6ed8552..ca19c68 100644
      pub(super) toast_position: crate::config::ToastHerdrPosition,
      pub(super) copy_on_select: bool,
      pub(super) clipboard_toast_enabled: bool,
-@@ -935,6 +936,9 @@ pub(crate) struct ClientShellState {
+@@ -957,6 +958,9 @@ pub(crate) struct ClientShellState {
      pub(super) pending_notifications: Vec<ClientPendingNotification>,
      /// Toasts on screen, oldest first.
      pub(super) visible_notifications: Vec<ClientVisibleNotification>,
@@ -139,7 +139,7 @@ index 6ed8552..ca19c68 100644
      pub(super) endpoint_notice_seen: HashSet<ClientEndpointNoticeKey>,
      pub(super) visible_endpoint_notice: Option<ClientVisibleEndpointNotice>,
      pub(super) outer_focused: Option<bool>,
-@@ -1099,6 +1103,7 @@ impl ClientShellState {
+@@ -1124,6 +1128,7 @@ impl ClientShellState {
              pending_integration_installs: 0,
              pending_notifications: Vec::new(),
              visible_notifications: Vec::new(),
@@ -147,7 +147,7 @@ index 6ed8552..ca19c68 100644
              endpoint_notice_seen: HashSet::new(),
              visible_endpoint_notice: None,
              outer_focused: None,
-@@ -1572,6 +1577,7 @@ impl ClientShellState {
+@@ -1597,6 +1602,7 @@ impl ClientShellState {
          }
          self.snapshot = Some(snapshot);
          self.reconcile_pending_workspace_highlight();
@@ -156,10 +156,10 @@ index 6ed8552..ca19c68 100644
          if let Some(surface) = pending_surface {
              let matching = self.snapshot.as_ref().is_some_and(|snapshot| {
 diff --git a/src/client/shell/tests/agents_worktrees_notifications.rs b/src/client/shell/tests/agents_worktrees_notifications.rs
-index 36bbee9..8db75c6 100644
+index c1d8011..7ea1036 100644
 --- a/src/client/shell/tests/agents_worktrees_notifications.rs
 +++ b/src/client/shell/tests/agents_worktrees_notifications.rs
-@@ -1636,3 +1636,83 @@ fn clicking_one_stacked_notification_closes_only_that_one() {
+@@ -1858,3 +1858,83 @@ fn clicking_one_stacked_notification_closes_only_that_one() {
      assert_eq!(rects[0], newest);
      assert_eq!(rects[1].y, middle.y);
  }
@@ -244,7 +244,7 @@ index 36bbee9..8db75c6 100644
 +    }
 +}
 diff --git a/src/config/model.rs b/src/config/model.rs
-index 4bad2ea..98e413f 100644
+index 153412d..34af2f5 100644
 --- a/src/config/model.rs
 +++ b/src/config/model.rs
 @@ -203,6 +203,9 @@ pub struct ToastConfig {
@@ -257,7 +257,7 @@ index 4bad2ea..98e413f 100644
      pub herdr: HerdrToastConfig,
      pub clipboard: ClipboardToastConfig,
  }
-@@ -1253,6 +1256,7 @@ impl Default for ToastConfig {
+@@ -1256,6 +1259,7 @@ impl Default for ToastConfig {
              delivery: ToastDelivery::Off,
              delay_seconds: 1,
              duration_seconds: None,
@@ -265,7 +265,7 @@ index 4bad2ea..98e413f 100644
              herdr: HerdrToastConfig::default(),
              clipboard: ClipboardToastConfig::default(),
          }
-@@ -1288,6 +1292,7 @@ impl<'de> Deserialize<'de> for ToastConfig {
+@@ -1291,6 +1295,7 @@ impl<'de> Deserialize<'de> for ToastConfig {
              enabled: Option<bool>,
              delay_seconds: Option<u64>,
              duration_seconds: Option<u64>,
@@ -273,7 +273,7 @@ index 4bad2ea..98e413f 100644
              herdr: HerdrToastConfig,
              clipboard: ClipboardToastConfig,
          }
-@@ -1317,6 +1322,7 @@ impl<'de> Deserialize<'de> for ToastConfig {
+@@ -1320,6 +1325,7 @@ impl<'de> Deserialize<'de> for ToastConfig {
              delivery,
              delay_seconds,
              duration_seconds: raw.duration_seconds,
@@ -281,7 +281,7 @@ index 4bad2ea..98e413f 100644
              herdr: raw.herdr,
              clipboard: raw.clipboard,
          })
-@@ -1887,6 +1893,7 @@ mouse_scroll_lines = 0
+@@ -1892,6 +1898,7 @@ mouse_scroll_lines = 0
  delivery = "terminal"
  delay_seconds = 2
  duration_seconds = 0
@@ -289,7 +289,7 @@ index 4bad2ea..98e413f 100644
  
  [ui.toast.herdr]
  position = "top-left"
-@@ -1899,6 +1906,7 @@ position = "top-center"
+@@ -1904,6 +1911,7 @@ position = "top-center"
          assert_eq!(config.ui.toast.delivery, ToastDelivery::Terminal);
          assert_eq!(config.ui.toast.delay_seconds, 2);
          assert_eq!(config.ui.toast.duration_seconds, Some(0));
@@ -297,7 +297,7 @@ index 4bad2ea..98e413f 100644
          assert_eq!(config.ui.toast.herdr.position, ToastHerdrPosition::TopLeft);
          assert!(!config.ui.toast.clipboard.enabled);
          assert_eq!(
-@@ -1913,6 +1921,7 @@ position = "top-center"
+@@ -1918,6 +1926,7 @@ position = "top-center"
          assert_eq!(config.ui.toast.delivery, ToastDelivery::Off);
          assert_eq!(config.ui.toast.delay_seconds, 1);
          assert_eq!(config.ui.toast.duration_seconds, None);
@@ -306,10 +306,10 @@ index 4bad2ea..98e413f 100644
              config.ui.toast.herdr.position,
              ToastHerdrPosition::BottomRight
 diff --git a/src/main.rs b/src/main.rs
-index cb31e27..01fbf99 100644
+index dfdbb99..771955d 100644
 --- a/src/main.rs
 +++ b/src/main.rs
-@@ -370,6 +370,8 @@ const DEFAULT_CONFIG: &str = r##"# herdr configuration
+@@ -375,6 +375,8 @@ const DEFAULT_CONFIG: &str = r##"# herdr configuration
  # delay_seconds = 1
  # Seconds an in-app toast stays visible; unset keeps each kind's own, 0 keeps it until clicked
  # duration_seconds = 5

@@ -28,10 +28,10 @@ error.
  11 files changed, 156 insertions(+), 25 deletions(-)
 
 diff --git a/docs/next/website/src/data/config-reference.json b/docs/next/website/src/data/config-reference.json
-index eb7e08d..f21befa 100644
+index f06507c..2a607b1 100644
 --- a/docs/next/website/src/data/config-reference.json
 +++ b/docs/next/website/src/data/config-reference.json
-@@ -1114,6 +1114,12 @@
+@@ -1120,6 +1120,12 @@
            "default": "1",
            "description": "Seconds to wait before sending finished or needs-input agent notifications. Herdr notifies only if the pane is still in the same state when the delay expires. 0 is instant; valid values are 0 through 3600."
          },
@@ -45,7 +45,7 @@ index eb7e08d..f21befa 100644
            "key": "ui.toast.herdr.position",
            "type": "enum",
 diff --git a/src/client/shell/config.rs b/src/client/shell/config.rs
-index bfa1fb2..0db5423 100644
+index 04a3ddb..45a9999 100644
 --- a/src/client/shell/config.rs
 +++ b/src/client/shell/config.rs
 @@ -128,6 +128,7 @@ impl ClientShellConfig {
@@ -56,7 +56,7 @@ index bfa1fb2..0db5423 100644
              toast_position: config.ui.toast.herdr.position,
              copy_on_select: config.ui.copy_on_select,
              clipboard_toast_enabled: config.ui.toast.clipboard.enabled,
-@@ -330,6 +331,7 @@ impl ClientShellConfig {
+@@ -355,6 +356,7 @@ impl ClientShellConfig {
                  self.sound_enabled = ui.sound.enabled;
                  self.toast_delivery = ui.toast.delivery;
                  self.toast_delay_seconds = ui.toast.delay_seconds;
@@ -65,10 +65,10 @@ index bfa1fb2..0db5423 100644
                  self.copy_on_select = ui.copy_on_select;
                  self.clipboard_toast_enabled = ui.toast.clipboard.enabled;
 diff --git a/src/client/shell/mouse.rs b/src/client/shell/mouse.rs
-index f2df294..4636bd9 100644
+index 8e873d6..fd2f7d5 100644
 --- a/src/client/shell/mouse.rs
 +++ b/src/client/shell/mouse.rs
-@@ -977,10 +977,7 @@ impl ClientShellState {
+@@ -1007,10 +1007,7 @@ impl ClientShellState {
          }
          if self.overlay.is_none()
              && self.mode == ClientShellMode::Terminal
@@ -81,7 +81,7 @@ index f2df294..4636bd9 100644
              && super::contains(self.hits.notification_toast, point)
          {
 diff --git a/src/client/shell/notification_policy.rs b/src/client/shell/notification_policy.rs
-index f3eeeb3..b9397d7 100644
+index 10ab3d4..824a163 100644
 --- a/src/client/shell/notification_policy.rs
 +++ b/src/client/shell/notification_policy.rs
 @@ -12,13 +12,18 @@ enum NotificationValidation {
@@ -257,7 +257,7 @@ index b8437ea..f73b139 100644
      fn notification_rect_stays_inside_short_nonzero_area() {
          let palette = crate::app::client_palette_from_config(&Config::default());
 diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
-index f9d620d..5b19d84 100644
+index eb4dee2..eeca639 100644
 --- a/src/client/shell/state.rs
 +++ b/src/client/shell/state.rs
 @@ -28,6 +28,7 @@ pub(crate) struct ClientShellConfig {
@@ -268,7 +268,7 @@ index f9d620d..5b19d84 100644
      pub(super) toast_position: crate::config::ToastHerdrPosition,
      pub(super) copy_on_select: bool,
      pub(super) clipboard_toast_enabled: bool,
-@@ -740,7 +741,8 @@ pub(super) struct ClientPendingNotification {
+@@ -753,7 +754,8 @@ pub(super) struct ClientPendingNotification {
  pub(super) struct ClientVisibleNotification {
      pub(super) endpoint_id: ClientEndpointId,
      pub(super) event: SemanticNotification,
@@ -279,7 +279,7 @@ index f9d620d..5b19d84 100644
  
  #[derive(Clone, Debug, PartialEq, Eq)]
 diff --git a/src/client/shell/tests/graphics.rs b/src/client/shell/tests/graphics.rs
-index 7ae8a45..41f6e50 100644
+index 41ad4cc..44688a2 100644
 --- a/src/client/shell/tests/graphics.rs
 +++ b/src/client/shell/tests/graphics.rs
 @@ -164,7 +164,7 @@ fn notifications_and_clipboard_feedback_only_cover_their_drawn_corners() {
@@ -305,10 +305,10 @@ index 4dac549..1b51c1a 100644
      let top = state.compose(106, 30).expect("top-tab update shell");
      assert!(row_text(&top, 29).contains("update ready"));
 diff --git a/src/client/shell/tests/startup_overlays.rs b/src/client/shell/tests/startup_overlays.rs
-index 7107aa7..0f3887a 100644
+index bddcde1..8e0b585 100644
 --- a/src/client/shell/tests/startup_overlays.rs
 +++ b/src/client/shell/tests/startup_overlays.rs
-@@ -553,20 +553,12 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
+@@ -573,20 +573,12 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
              pane_id: None,
              position: Some(crate::config::ToastHerdrPosition::TopRight),
          },
@@ -330,7 +330,7 @@ index 7107aa7..0f3887a 100644
  
      let mut endpoint_snapshot = snapshot();
      endpoint_snapshot.config_diagnostic = Some("first warning\nsecond warning".into());
-@@ -582,6 +574,17 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
+@@ -602,6 +594,17 @@ fn config_diagnostic_offsets_only_the_pane_rows_it_overlaps() {
          .position = Some(crate::config::ToastHerdrPosition::BottomRight);
      state.compose(106, 20).expect("bottom notification frame");
      assert_eq!(state.hits.notification_toast.bottom(), 19);
@@ -349,7 +349,7 @@ index 7107aa7..0f3887a 100644
  
  #[test]
 diff --git a/src/config/model.rs b/src/config/model.rs
-index 0e2e57c..4bad2ea 100644
+index 29802fd..153412d 100644
 --- a/src/config/model.rs
 +++ b/src/config/model.rs
 @@ -10,6 +10,7 @@ use super::{
@@ -370,7 +370,7 @@ index 0e2e57c..4bad2ea 100644
      pub herdr: HerdrToastConfig,
      pub clipboard: ClipboardToastConfig,
  }
-@@ -1248,6 +1252,7 @@ impl Default for ToastConfig {
+@@ -1251,6 +1255,7 @@ impl Default for ToastConfig {
          Self {
              delivery: ToastDelivery::Off,
              delay_seconds: 1,
@@ -378,7 +378,7 @@ index 0e2e57c..4bad2ea 100644
              herdr: HerdrToastConfig::default(),
              clipboard: ClipboardToastConfig::default(),
          }
-@@ -1282,6 +1287,7 @@ impl<'de> Deserialize<'de> for ToastConfig {
+@@ -1285,6 +1290,7 @@ impl<'de> Deserialize<'de> for ToastConfig {
              delivery: Option<ToastDelivery>,
              enabled: Option<bool>,
              delay_seconds: Option<u64>,
@@ -386,7 +386,7 @@ index 0e2e57c..4bad2ea 100644
              herdr: HerdrToastConfig,
              clipboard: ClipboardToastConfig,
          }
-@@ -1299,9 +1305,18 @@ impl<'de> Deserialize<'de> for ToastConfig {
+@@ -1302,9 +1308,18 @@ impl<'de> Deserialize<'de> for ToastConfig {
                  "ui.toast.delay_seconds must be between 0 and {MAX_TOAST_DELAY_SECONDS}"
              )));
          }
@@ -405,7 +405,7 @@ index 0e2e57c..4bad2ea 100644
              herdr: raw.herdr,
              clipboard: raw.clipboard,
          })
-@@ -1871,6 +1886,7 @@ mouse_scroll_lines = 0
+@@ -1876,6 +1891,7 @@ mouse_scroll_lines = 0
  [ui.toast]
  delivery = "terminal"
  delay_seconds = 2
@@ -413,7 +413,7 @@ index 0e2e57c..4bad2ea 100644
  
  [ui.toast.herdr]
  position = "top-left"
-@@ -1882,6 +1898,7 @@ position = "top-center"
+@@ -1887,6 +1903,7 @@ position = "top-center"
          let config: Config = toml::from_str(toml).unwrap();
          assert_eq!(config.ui.toast.delivery, ToastDelivery::Terminal);
          assert_eq!(config.ui.toast.delay_seconds, 2);
@@ -421,7 +421,7 @@ index 0e2e57c..4bad2ea 100644
          assert_eq!(config.ui.toast.herdr.position, ToastHerdrPosition::TopLeft);
          assert!(!config.ui.toast.clipboard.enabled);
          assert_eq!(
-@@ -1895,6 +1912,7 @@ position = "top-center"
+@@ -1900,6 +1917,7 @@ position = "top-center"
          let config = Config::default();
          assert_eq!(config.ui.toast.delivery, ToastDelivery::Off);
          assert_eq!(config.ui.toast.delay_seconds, 1);
@@ -429,7 +429,7 @@ index 0e2e57c..4bad2ea 100644
          assert_eq!(
              config.ui.toast.herdr.position,
              ToastHerdrPosition::BottomRight
-@@ -1962,6 +1980,21 @@ delay_seconds = {}
+@@ -1967,6 +1985,21 @@ delay_seconds = {}
          assert!(error.contains("ui.toast.delay_seconds must be between 0 and 3600"));
      }
  
@@ -452,10 +452,10 @@ index 0e2e57c..4bad2ea 100644
      fn missing_onboarding_shows_setup() {
          let config = Config::default();
 diff --git a/src/main.rs b/src/main.rs
-index 45a6409..cb31e27 100644
+index f97e7e2..dfdbb99 100644
 --- a/src/main.rs
 +++ b/src/main.rs
-@@ -368,6 +368,8 @@ const DEFAULT_CONFIG: &str = r##"# herdr configuration
+@@ -373,6 +373,8 @@ const DEFAULT_CONFIG: &str = r##"# herdr configuration
  # system = ask the OS notification service directly
  # delivery = "off"
  # delay_seconds = 1

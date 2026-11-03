@@ -12,7 +12,8 @@
     "MenubarX" = 1575588022;
     # Alternatives to consider (not installed): https://www.getcopy.cat/
     "Paste" = 967805235;
-    "Spark Desktop" = 6445813049;
+    # Spark Classic, the app in use; Spark Desktop (6445813049) is a different, newer app
+    "Spark Classic" = 1176895641;
     "Tailscale" = 1475387142;
     "Things" = 904280696;
     "Yoink" = 457622435;

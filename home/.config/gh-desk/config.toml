@@ -1,0 +1,335 @@
+#:schema https://raw.githubusercontent.com/babarot/gh-desk/main/docs/config.schema.json
+# gh-desk settings. Uncomment a line to change it.
+
+# The tabs, in the order shown; the keys 1 to 9 go to them. Tabs given here
+# replace all four below, and one of them must be the inbox. A tab is a
+# GitHub search, or with kind = "inbox", the pull requests in your
+# notifications. groups splits a search tab by whom a review is requested
+# from: "you", a "team", or neither ("other"), with pull requests opened by
+# "bots" apart; the groups are shown in the order given, a group left out is
+# not shown, and one with no rows is not shown either. folded are the groups
+# folded at start. sort is "updated" (default) or "drafts_last". limit is
+# how many pull requests, or notifications, to read (at most 1000; 100 by
+# default). The inbox hides notifications whose pull request is merged or
+# closed until they are shown with a key; show_settled = true shows them
+# from the start.
+#
+# [[tabs]]
+# name = "review"
+# query = "is:open is:pr review-requested:@me archived:false"
+# groups = ["you", "team", "other", "bots"]
+# folded = ["team", "bots"]
+#
+# [[tabs]]
+# name = "mine"
+# query = "is:open is:pr author:@me archived:false"
+# sort = "drafts_last"
+#
+# [[tabs]]
+# name = "involved"
+# query = "is:open is:pr involves:@me -author:@me -review-requested:@me archived:false"
+#
+# [[tabs]]
+# kind = "inbox"
+# name = "inbox"
+# show_settled = false
+
+[list]
+# Refresh the shown tab this often, as a Go duration such as "3m" or "90s";
+# "off" refreshes only when r is pressed.
+# refresh = "3m"
+# Mark AGE when a pull request has not been updated for this many days, or
+# "off".
+# stale_days = 30
+# Owners whose name is left out of the PR column, such as your company.
+# home_owners = []
+# The columns shown, in the order given; "pr" and "title" are needed. WHY
+# shows on grouped tabs and the inbox only, and AUTHOR not on a tab of your
+# own pull requests. On a narrow terminal SIZE goes first, then AUTHOR.
+# columns = ["pr", "title", "author", "ci", "review", "why", "size", "age"]
+
+[menu]
+# The actions the menu of enter offers, in the order given. One left out is
+# not in the menu; its key still runs it from the list.
+# actions = ["ask_claude", "browse", "review", "comment", "approve", "merge", "ready_for_review", "hide"]
+
+[preview]
+# Lines of the preview pane under the list; 0 hides it until it is shown
+# with a key. Dragging the pane's top edge, or + and -, changes them, and
+# the lines set that way are kept over this one.
+# height = 14
+# The tab the pane opens on: "overview" (default), the description beside a
+# column of facts, or "diff".
+# tab = "overview"
+
+[description]
+# How a description and its comments are drawn in the pane: "rendered"
+# (default) draws headings, lists, code, quotes and tables; "plain" shows
+# the Markdown as written.
+# style = "rendered"
+
+[diff]
+# Files shown folded, as their name and line counts, until unfolded: glob
+# patterns, matched against the base name unless they have a slash.
+# collapse = ["*.lock", "go.sum", "pnpm-lock.yaml", "package-lock.json", "yarn.lock"]
+
+[checks]
+# Checks that pass only after an approval, such as a policy bot's: glob
+# patterns of check names. While only they are pending, CI shows ◌, and
+# the checks count as passing when deciding a merge.
+# approval = []
+
+[review]
+# Mark a pull request's notification done after you review it here, from any
+# tab.
+# mark_done = true
+# The editor ctrl+e opens to write a review, with its arguments, such as
+# "code --wait". Left out, $VISUAL, then $EDITOR.
+# editor = "code --wait"
+
+[merge]
+# The order of preference among the methods a repository allows: "merge",
+# "squash", "rebase". The first one the repository allows is used.
+# methods = ["merge", "squash", "rebase"]
+# Use GitHub's auto-merge where the repository allows it; elsewhere gh-desk
+# waits for the checks and merges when they pass. Commits pushed after
+# auto-merge is turned on are merged too, as GitHub does.
+# auto_merge = true
+# Where gh-desk waits, how long to wait for required checks still running.
+# Only the time gh-desk is running counts.
+# checks_timeout = "6h"
+# Where gh-desk waits, how long a pull request may stay blocked by another
+# rule (a second approval, code owners) after its required checks finished.
+# Only the time gh-desk is running counts.
+# blocked_timeout = "30m"
+# Whose branch is updated when it is behind its base: "humans" (default),
+# "all" or "never". Bots rebase their own branches, and some (renovate) stop
+# updating a branch someone else committed to.
+# update_branch = "humans"
+
+# Rules S offers to select pull requests, besides "approved by me" (bot pull
+# requests you approved that are still open). A pull request matches when it
+# meets every key given: authors (the logins it may be by; bots without
+# app/), packages (the dependencies a renovate or dependabot pull request
+# updates, read from its body; every one it updates must be listed), title
+# (a regular expression), max_files (1 or more), max_lines (1 or more; the
+# lines added and deleted together, the sum of the two numbers SIZE shows),
+# updated_within_days and created_within_days (the most days, of 24 hours,
+# since it was last updated or created; a label or a bot's comment updates
+# it too, and the inbox's AGE is its notification's time, not this), a bot as
+# the author with bot = true, checks = "passing" (passed, or only
+# checks.approval pending), and approved_by_me = true (your latest review
+# approves it; a person's pull request matches too).
+#
+# The rules below are written to start with, not commented out: S offers
+# only the rules in this file, so delete or comment out one you do not want.
+
+[[select]]
+name = "small"
+max_lines = 300
+
+[[select]]
+name = "dependency bots"
+authors = ["renovate", "dependabot"]
+checks = "passing"
+
+[[select]]
+name = "approved"
+approved_by_me = true
+
+[[select]]
+name = "recent"
+updated_within_days = 90
+
+[[select]]
+name = "lock files"
+authors = ["renovate"]
+title = "(?i)lock file maintenance"
+
+# A rule on the packages a bot's pull request updates:
+#
+# [[select]]
+# name = "safe renovate"
+# authors = ["renovate"]
+# packages = ["actions/checkout", "songmu/tagpr"]
+# checks = "passing"
+
+[bulk]
+# Pull requests changing files that match these glob patterns get a mark in
+# the confirm popup.
+# attention_paths = [".github/workflows/*", "CODEOWNERS", ".github/CODEOWNERS", "docs/CODEOWNERS"]
+
+[claude]
+# C and i ask Claude Code (claude -p, with the account you are signed in
+# with). i, or ask claude about it in the menu of enter, reviews the pull
+# request under the cursor in a worktree of its head. C plans what to show
+# and select in the tab shown, with no tools, and answers in the language
+# you ask in; enter applies the plan, and an approve or a merge in it opens
+# the confirm popup. Claude's own tools only read: no settings files are
+# loaded, its file tools see only the worktree and the skills of plugins,
+# and it has none that run commands. The conversation also takes the MCP
+# servers of mcp_servers and the skills of plugins, which can do whatever
+# they are made to.
+# The claude command: a name looked up on PATH, or a path to it (~ is your
+# home), without arguments.
+# command = "claude"
+# The model Claude Code runs, as claude --model takes it.
+# model = "opus"
+# The tools Claude may use, among "Read", "Grep", "Glob" and "WebFetch".
+# allowed_tools = ["Read", "Grep", "Glob"]
+# The language Claude answers in about a pull request, such as "Japanese". A
+# review drafted with D is written in the language of the pull request
+# instead.
+# language = "English"
+language = "Japanese"
+# Appended to the instructions of every review and triage, such as "Point
+# out changes that have no tests."
+# instructions = ""
+# Let Claude read the release notes of the bot pull requests in the merge
+# popup, and mark those that need care.
+# release_notes_check = true
+# MCP servers for the conversation about a pull request, by name, written as
+# Claude Code configures a server (command, args, env; or type, url,
+# headers), with tools: the server's tools that may run without a prompt. A
+# server started with a command runs in the cache, not in the worktree.
+# ${GH_DESK_OWNER}, ${GH_DESK_REPO}, ${GH_DESK_NUMBER} and ${GH_DESK_URL}
+# (the repository's URL) are the pull request; pass secrets as ${VAR} from
+# your environment. What the pull request says may call these tools: a
+# server that reads private data, together with WebFetch, lets it send the
+# data out.
+# mcp_servers = { recall = { command = "recall", args = ["mcp", "--repo", "${GH_DESK_URL}"], tools = ["recall_search", "recall_list", "recall_export"] } }
+mcp_servers = { recall = { command = "recall", args = ["mcp", "--repo", "${GH_DESK_URL}"], tools = ["recall_search", "recall_list", "recall_export"] } }
+# Plugins whose skills the conversation about a pull request takes, as their
+# directories (~ is your home). Only the skills are taken, copied when
+# gh-desk starts, as gh-desk:<name>; the rest of a plugin (hooks, MCP
+# servers, language servers, commands) is not. A skill whose allowed-tools
+# grants a tool outside allowed_tools, Skill and the tools of mcp_servers is
+# a mistake.
+# plugins = ["~/.claude/plugins/cache/<marketplace>/<plugin>/<version>"]
+
+[theme]
+# The color scheme on a dark terminal, and on one that does not tell its
+# background.
+# dark = "default"
+# The color scheme on a light terminal. Write the same theme as theme.dark
+# to use it on any terminal.
+# light = "latte"
+# The spinner shown while something is read: "dots" (default) ⠋⠙⠹,
+# "dense" ⣾⣽⣻, "bounce" ⠁⠂⠄, "snake" ⠉⠙⠚, "jump"
+# ⢄⢂⢁, "fill" ⣀⣤⣶, "sand" ⡀⣀⣤, "line" |/-\, "arc"
+# ◜◠◝, "quarter" ◴◷◶, "block" ▖▘▝, "star" ✶✸✹, or
+# "off", a ⋯ that does not move and is left out before a line that says
+# what is going on.
+# spinner = "dots"
+# Run a light over the text that says what is going on, such as
+# refreshing… or thinking…; the screen is drawn more often while
+# something is read.
+# shimmer = true
+# Put each line of a table a frame of the spinner ahead of the one above it,
+# so that a wave runs down a column being read.
+# wave = true
+
+[log]
+# How much goes to the log file: "debug", "info" (default), "warn" or
+# "error". --debug and GH_DESK_LOG_LEVEL take precedence. gh desk log prints
+# where the file is.
+# level = "info"
+
+[cache]
+# Where gh-desk keeps its clones and the worktrees Claude reads, and the
+# lists last read (lists.json, shown at once at the next launch) (~ is your
+# home); by default $XDG_CACHE_HOME/gh-desk, or ~/.cache/gh-desk.
+# dir = "~/.cache/gh-desk"
+
+[keys]
+# Which keys do what, by action: a key or a list of keys, replacing the
+# action's own, or [] to turn it off. A key given to an action is taken from
+# an action that has it by default where they meet. ctrl+c and esc are fixed.
+# Keys are written as key presses are read: "a", "A", "enter", "space",
+# "ctrl+s", "shift+tab".
+#
+# Anywhere:
+# quit = "q"
+# help = "?"
+# refresh = "r"
+# events = "n"
+#
+# Moving, in every list and pane:
+# up = ["up", "k"]
+# down = ["down", "j"]
+# top = ["home", "g"]
+# bottom = ["end", "G"]
+# page_up = ["pgup", "ctrl+u"]
+# page_down = ["pgdown", "ctrl+d"]
+#
+# The list and its preview pane:
+# next_tab = "tab"
+# prev_tab = "shift+tab"
+# tab_1 = "1"
+# tab_2 = "2"
+# tab_3 = "3"
+# tab_4 = "4"
+# tab_5 = "5"
+# tab_6 = "6"
+# tab_7 = "7"
+# tab_8 = "8"
+# tab_9 = "9"
+# menu = "enter"
+# expand = ["l", "right"]
+# collapse = ["h", "left"]
+# select = "space"
+# select_shown = "V"
+# select_rule = "S"
+# clear_selection = "u"
+# approve = "A"
+# merge = "M"
+# ready_for_review = "D"
+# comment = "c"
+# review = "R"
+# triage = "C"
+# ask_claude = "i"
+# browse = "o"
+# hide = "d"
+# fold_bots = "b"
+# show_settled = "a"
+# filter = "/"
+# preview_down = "J"
+# preview_up = "K"
+# next_file = "]"
+# prev_file = "["
+# preview_tab = "v"
+# fold = "z"
+# preview = "p"
+# preview_grow = "+"
+# preview_shrink = "-"
+#
+# The menu of enter, and the popups that pick from a list:
+# choose = "enter"
+# toggle_rule = "space"
+# add_to_selection = "a"
+# filter_by_rule = "f"
+#
+# A confirm popup:
+# confirm = ["y", "enter"]
+# include_failing = "f"
+#
+# The list, while Claude's plan is shown:
+# triage_apply = "enter"
+# triage_more = "i"
+#
+# The Claude screen:
+# fill_suggestion = "tab"
+# draft_review = "ctrl+r"
+# open_claude = "ctrl+o"
+# chat_restart = "ctrl+l"
+# chat_close = "backspace"
+#
+# Writing a review:
+# next_kind = "tab"
+# post = "ctrl+s"
+# editor = "ctrl+e"
+#
+# Typing in the filter:
+# accept = "enter"
+# erase = "backspace"
+# erase_word = "ctrl+w"

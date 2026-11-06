@@ -33,6 +33,9 @@ font-feature = -dlig
 # shell-integration-features = title,sudo
 unfocused-split-opacity = 0.5
 
+# Play the system sound on a bell (BEL) too, besides the defaults
+bell-features = system,attention,title
+
 # Needs shell integration to know the working directory
 window-inherit-working-directory = false
 tab-inherit-working-directory = true

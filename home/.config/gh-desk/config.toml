@@ -47,6 +47,8 @@
 # shows on grouped tabs and the inbox only, and AUTHOR not on a tab of your
 # own pull requests. On a narrow terminal SIZE goes first, then AUTHOR.
 # columns = ["pr", "title", "author", "ci", "review", "why", "size", "age"]
+# Ring the terminal's bell when the inbox finds a notification newly unread.
+bell = true
 
 [menu]
 # The actions the menu of enter offers, in the order given. One left out is
@@ -131,7 +133,7 @@ max_lines = 300
 [[select]]
 name = "dependency bots"
 authors = ["renovate", "dependabot"]
-checks = "passing"
+checks = ["passing"]
 
 [[select]]
 name = "approved"
@@ -168,7 +170,7 @@ title = "(?i)lock file maintenance"
 # the confirm popup. Claude's own tools only read: no settings files are
 # loaded, its file tools see only the worktree and the skills of plugins,
 # and it has none that run commands. The conversation also takes the MCP
-# servers of mcp_servers and the skills of plugins, which can do whatever
+# servers of [claude.mcp] and the skills of plugins, which can do whatever
 # they are made to.
 # The claude command: a name looked up on PATH, or a path to it (~ is your
 # home), without arguments.
@@ -188,24 +190,35 @@ language = "Japanese"
 # Let Claude read the release notes of the bot pull requests in the merge
 # popup, and mark those that need care.
 # release_notes_check = true
-# MCP servers for the conversation about a pull request, by name, written as
-# Claude Code configures a server (command, args, env; or type, url,
-# headers), with tools: the server's tools that may run without a prompt. A
-# server started with a command runs in the cache, not in the worktree.
-# ${GH_DESK_OWNER}, ${GH_DESK_REPO}, ${GH_DESK_NUMBER} and ${GH_DESK_URL}
-# (the repository's URL) are the pull request; pass secrets as ${VAR} from
-# your environment. What the pull request says may call these tools: a
-# server that reads private data, together with WebFetch, lets it send the
-# data out.
-# mcp_servers = { recall = { command = "recall", args = ["mcp", "--repo", "${GH_DESK_URL}"], tools = ["recall_search", "recall_list", "recall_export"] } }
-mcp_servers = { recall = { command = "recall", args = ["mcp", "--repo", "${GH_DESK_URL}"], tools = ["recall_search", "recall_list", "recall_export"] } }
 # Plugins whose skills the conversation about a pull request takes, as their
 # directories (~ is your home). Only the skills are taken, copied when
 # gh-desk starts, as gh-desk:<name>; the rest of a plugin (hooks, MCP
 # servers, language servers, commands) is not. A skill whose allowed-tools
-# grants a tool outside allowed_tools, Skill and the tools of mcp_servers is
-# a mistake.
+# grants a tool outside allowed_tools, Skill and the tools of the MCP servers
+# is a mistake.
 # plugins = ["~/.claude/plugins/cache/<marketplace>/<plugin>/<version>"]
+
+[claude.mcp]
+# The MCP servers of the conversation about a pull request: gh-desk's own,
+# and yours.
+# Give the conversation gh-desk's own MCP server, whose tools read the pull
+# request's repository and nothing else: its checks and CI logs, its issues
+# and pull requests. They only read, without a prompt, what anyone who sees
+# the pull request can see. Left out, it is on, unless allowed_tools has
+# WebFetch or servers has one: either could send what the tools read out of
+# the conversation, so then write true or false.
+builtin = true
+# Your MCP servers for the conversation about a pull request, by name,
+# written as Claude Code configures a server (command, args, env; or type,
+# url, headers), with tools: the server's tools that may run without a
+# prompt. A server started with a command runs in the cache, not in the
+# worktree. ${GH_DESK_OWNER}, ${GH_DESK_REPO}, ${GH_DESK_NUMBER} and
+# ${GH_DESK_URL} (the repository's URL) are the pull request; pass secrets
+# as ${VAR} from your environment. What the pull request says may call these
+# tools: a server that reads private data, together with WebFetch, lets it
+# send the data out.
+# servers = { recall = { command = "recall", args = ["mcp", "--repo", "${GH_DESK_URL}"], tools = ["recall_search", "recall_list", "recall_export"] } }
+servers = { recall = { command = "recall", args = ["mcp", "--repo", "${GH_DESK_URL}"], tools = ["recall_search", "recall_list", "recall_export"] } }
 
 [theme]
 # The color scheme on a dark terminal, and on one that does not tell its
@@ -333,3 +346,31 @@ mcp_servers = { recall = { command = "recall", args = ["mcp", "--repo", "${GH_DE
 # accept = "enter"
 # erase = "backspace"
 # erase_word = "ctrl+w"
+
+[[exclude]]
+repos = ["mercari/*", "zplug/*", "goccy/*", "vimeejs/*"]
+[[exclude]]
+state    = ["merged", "closed"]
+decision = ["approved"]
+checks   = ["passing"]
+[[exclude]]
+title = "^Update Helm release"
+[[exclude]]
+title = "^Lock file maintenance"
+[[exclude]]
+title = "update helm release datadog"
+[[exclude]]
+title = "update terraform"
+authors = ["renovate"]
+[[exclude]]
+title = "pin dependencies"
+authors = ["renovate"]
+[[exclude]]
+title = "lock file maintenance"
+authors = ["renovate"]
+[[exclude]]
+title = "Pin dependencies"
+authors = ["renovate"]
+[[exclude]]
+created_before_days = 365
+updated_before_days = 60

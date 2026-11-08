@@ -2,6 +2,7 @@
 
 - Both Macs are managed by Nix (nix-darwin and home-manager) from babarot/dotfiles, cloned at `~/src/github.com/babarot/dotfiles`.
 - Never install a tool into the system or the user environment by hand: no `brew install`, `curl ... | sh`, `npm install -g`, `pipx install`, `cargo install`, `go install` or `mise use -g`. It would exist on one Mac only, and nothing would remove it.
+  - Before deciding a tool is missing, check with `command -v <tool>`; many are already installed, and saying one is missing without checking is wrong.
   - To run a tool you do not have, borrow it for the moment: `nix run nixpkgs#<pkg> -- <args>` or `nix shell nixpkgs#<pkg> -c <command>`.
   - To keep a tool, add it in dotfiles; ask the user first when you are working in another repository.
   - A project's own dependencies (`npm install`, `uv sync` and the like inside the repository) are not covered by this rule.

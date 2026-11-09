@@ -62,10 +62,6 @@
       url = "git+https://gist.github.com/babarot/5a253e61a992d99a5a5834d092dd25cd.git";
       flake = false;
     };
-    gist-ctl = {
-      url = "git+https://gist.github.com/babarot/0bf79c7778a99d6ac5298ae61ab4b953.git";
-      flake = false;
-    };
     herdr-space-switch = {
       url = "git+https://gist.github.com/babarot/ce7ad05036abd1fcf3a56595757b62e0.git";
       flake = false;

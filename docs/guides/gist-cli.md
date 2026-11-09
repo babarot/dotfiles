@@ -1,6 +1,6 @@
 # Write a command of your own in a gist
 
-How to decide whether a command of your own may live in a gist, and how to write, test, install and change one so it works like the ones already there: [deadlink](https://gist.github.com/babarot/5a253e61a992d99a5a5834d092dd25cd), [gist-ctl](https://gist.github.com/babarot/0bf79c7778a99d6ac5298ae61ab4b953), [repo-cleanup](https://gist.github.com/babarot/c2c3436e248b21ee3c542dc3b8ead46a) and [herdr-worktree-ctl](https://gist.github.com/babarot/d7b198c8e7f26189e46f80e46053ff29). Fetching a file from any git host in general is [install-from-git.md](./install-from-git.md); this page is about commands you write yourself.
+How to decide whether a command of your own may live in a gist, and how to write, test, install and change one so it works like the ones already there: [deadlink](https://gist.github.com/babarot/5a253e61a992d99a5a5834d092dd25cd), [repo-cleanup](https://gist.github.com/babarot/c2c3436e248b21ee3c542dc3b8ead46a) and [herdr-worktree-ctl](https://gist.github.com/babarot/d7b198c8e7f26189e46f80e46053ff29). Fetching a file from any git host in general is [install-from-git.md](./install-from-git.md); this page is about commands you write yourself.
 
 ## Should it be a gist
 
@@ -16,13 +16,13 @@ A gist is one way to keep a script of your own. It is allowed when all of these 
 
 What a gist gives over the repo: the script has its own history, out of this repo's; it can be fetched with `curl` on a machine without Nix; and one gist is one flake input and one line in `flake.lock`, so updating one moves no other. A repository collecting many small scripts would be one input, and updating it would move them all.
 
-What it costs: an edit is not live until it is pushed, taken in with `nix flake update <name>` and switched; and deleting the gist (gist-ctl can) breaks the build on a Mac that has not fetched it yet. `flake.lock` pins a commit, so nothing changes here until you update.
+What it costs: an edit is not live until it is pushed, taken in with `nix flake update <name>` and switched; and deleting the gist breaks the build on a Mac that has not fetched it yet. `flake.lock` pins a commit, so nothing changes here until you update.
 
 ### Where its Nix goes
 
 The gist holds the script; a `.nix` file in this repo builds it. Which file follows [One file, one lifecycle](../reference/where-things-go.md#one-file-one-lifecycle) as for any tool:
 
-- It belongs to no tool: its own `nix/home-manager/tools/<name>.nix` ([deadlink.nix](../../nix/home-manager/tools/deadlink.nix), [gist-ctl.nix](../../nix/home-manager/tools/gist-ctl.nix), [repo-cleanup.nix](../../nix/home-manager/tools/repo-cleanup.nix)).
+- It belongs to no tool: its own `nix/home-manager/tools/<name>.nix` ([deadlink.nix](../../nix/home-manager/tools/deadlink.nix), [repo-cleanup.nix](../../nix/home-manager/tools/repo-cleanup.nix)).
 - It exists only for one tool (a companion: "if the tool were removed, would I keep this?" no): built in that tool's file, so deleting the tool's file removes it ([herdr.nix](../../nix/home-manager/tools/herdr.nix) builds herdr-worktree-ctl).
 - It is for a subject that has a set: in the set.
 - For one Mac only: `nix/hosts/<host>/<name>.nix`.
@@ -34,7 +34,7 @@ The gist holds the script; a `.nix` file in this repo builds it. Which file foll
 | Use for | a short script with no UI and no tests | anything with JSON, tables, fzf pickers, or tests |
 | Gist holds | `<name>`, with `#!/usr/bin/env bash` | `<name>.ts` and `<name>_test.ts` |
 | Nix builds it with | `pkgs.writeShellApplication` and `builtins.readFile`; shellcheck runs at build time | `pkgs.runCommand`: `deno test`, then `makeWrapper` around `deno run` |
-| Example | deadlink | gist-ctl, repo-cleanup, herdr-worktree-ctl |
+| Example | deadlink | repo-cleanup, herdr-worktree-ctl |
 
 The rest of this page is about Deno, which is what a new command should normally use. Name the files with `.ts`, so editors and `deno` know what they are without a filetype rule.
 
@@ -51,13 +51,13 @@ Write the tests only once the shape has settled; until then they would be rewrit
 
 ## 2. Write it to the conventions
 
-Read [gist-ctl.ts](https://gist.github.com/babarot/0bf79c7778a99d6ac5298ae61ab4b953) once before writing; the others are built the same way, and copying its helpers is the intended start: `run` and `ghCommand` (outside commands), `table` and `width` (aligned output), `pick`, `previewCommand` and `preview` (the fzf picker), `confirm`, `parse` and `main`. Its test file gives `assert`, `assertEquals` and the fake commands. What they share:
+Read [herdr-worktree-ctl.ts](https://gist.github.com/babarot/d7b198c8e7f26189e46f80e46053ff29) once before writing; the others are built the same way, and copying its helpers is the intended start: `run` (outside commands), `table` and `width` (aligned output), `pick`, `previewCommand` and `preview` (the fzf picker), `confirm`, `parse` and `main`, with `ghCommand` from [repo-cleanup.ts](https://gist.github.com/babarot/c2c3436e248b21ee3c542dc3b8ead46a) when it calls gh. Its test file gives `assert`, `assertEquals` and the fake commands. What they share:
 
 - A header comment: what it does, and anything a reader needs to trust it (what it never touches, what it asks before doing). Then `USAGE` as an exported constant.
 - No imports, not even `jsr:@std`. Nothing is fetched when it runs, so nothing escapes `flake.lock`, and the tests run offline in the Nix sandbox. Small helpers (`assertEquals`, a table printer) are written in the file.
 - Every outside command goes through one `run(cmd, args, input?)` helper built on `Deno.Command`, which throws on a non-zero exit (fzf's 1 and 130, nothing picked or cancelled, are not failures). Commands are run by name; the wrapper's PATH decides which one ([step 5](#5-build-it-in-nix)).
 - UI plumbing goes to tools made for it, not into the script: a spinner is `gum spin --show-stdout --show-error -- gh ...`, run only when stderr is a terminal (gum writes its control codes into a pipe too); a picker is fzf.
-- An fzf picker puts a hidden key first on each line (`<id>\t<row>`, `--delimiter=\t --with-nth=2`) and reads it back from what fzf prints. Its preview calls the script itself through a hidden subcommand, `__preview <id>`, with `Deno.execPath()` and `import.meta.filename`, so it runs the same deno and the same file, with only the permissions the preview needs (`previewCommand` in gist-ctl.ts).
+- An fzf picker puts a hidden key first on each line (`<id>\t<row>`, `--delimiter=\t --with-nth=2`) and reads it back from what fzf prints. Its preview calls the script itself through a hidden subcommand, `__preview <id>`, with `Deno.execPath()` and `import.meta.filename`, so it runs the same deno and the same file, with only the permissions the preview needs (`previewCommand` in herdr-worktree-ctl.ts).
 - Anything that changes or deletes asks first: it shows what will happen, with warnings in red, and asks for a word to be typed (`delete`), read from stdin, since `prompt()` returns null when stdin is not a terminal. `-n`/`--dry-run` prints the commands instead and asks nothing.
 - Colors only when stdout is a terminal and `NO_COLOR` is unset (`Deno.stdout.isTerminal() && !Deno.noColor`). fzf's preview shows colors although its stdout is a pipe, so the preview writes them unconditionally.
 - `parse(args)` throws on an unknown argument; `main(args)` returns the exit code: 0, 1 for a failure (a batch carries on past one failed item and exits 1 at the end), 2 for a usage error. The file ends with `if (import.meta.main) Deno.exit(await main(Deno.args));`, so the tests can import it.
@@ -69,7 +69,7 @@ Read [gist-ctl.ts](https://gist.github.com/babarot/0bf79c7778a99d6ac5298ae61ab4b
 The tests pin down behavior, so a later edit that breaks it fails to build. `<name>_test.ts` sits next to the script in the gist and imports it with a relative path.
 
 - Pure functions are called directly.
-- Commands are run as they are, as a child process (`Deno.execPath()` `run --allow-all <script>`), against fake versions of the outside commands written into a temporary directory put first on PATH. A fake answers from fixtures (an env var or a JSON file), records its arguments to a file the test reads back, and for fzf picks the rows whose key is in an env var. gist-ctl's fake gh is a small Deno script that answers REST and GraphQL with two items a page, so paging is tested too.
+- Commands are run as they are, as a child process (`Deno.execPath()` `run --allow-all <script>`), against fake versions of the outside commands written into a temporary directory put first on PATH. A fake answers from fixtures (an env var or a JSON file), records its arguments to a file the test reads back, and for fzf picks the rows whose key is in an env var. repo-cleanup's fake gh answers the GraphQL query with two repositories a page, so paging is tested too.
 - When the real thing is cheap and deterministic, use it instead of a fake: herdr-worktree-ctl's tests create real git repositories and worktrees in a temporary `HOME`, with `GIT_CONFIG_GLOBAL=/dev/null` and the author and committer set in the environment.
 - Not tested: what only a terminal shows (the spinner, fzf's own UI). Check those by hand.
 
@@ -79,7 +79,7 @@ Run them:
 deno test --allow-all ~/bin/<name>_test.ts
 ```
 
-Then check that the tests can fail: break the script on purpose in a few ways that matter (skip the confirmation, act during a dry run, drop a filter, pick the wrong row) and see each one fail a test, then undo. gist-ctl was checked with eight such breaks, repo-cleanup with six. A test that never fails pins nothing.
+Then check that the tests can fail: break the script on purpose in a few ways that matter (skip the confirmation, act during a dry run, drop a filter, pick the wrong row) and see each one fail a test, then undo. repo-cleanup was checked with six such breaks. A test that never fails pins nothing.
 
 ## 4. Create the gist
 

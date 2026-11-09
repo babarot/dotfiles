@@ -15,6 +15,7 @@
     ghalint
     ghq
     git-open
+    glow # Markdown viewer in the terminal; leaf.nix (TUI) and mo.nix (browser) are the others
     gum
     hcl2json
     hyperfine

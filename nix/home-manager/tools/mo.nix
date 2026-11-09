@@ -1,5 +1,7 @@
 # mo: Markdown viewer in the browser (k1LoW/mo). nixpkgs' mo is a
-# different tool (a mustache renderer), so it is built from the release tag
+# different tool (a mustache renderer), so it is built from the release tag.
+# The Markdown viewers in the terminal are glow (packages.nix) and leaf
+# (leaf.nix)
 {
   config,
   lib,

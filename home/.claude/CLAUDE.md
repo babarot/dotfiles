@@ -43,12 +43,14 @@ A repository's or a skill's own instructions can be stricter than this; follow t
   - Tier 2: the default. Codex CLI on GPT-6.1 Sol, medium effort, read-only:
 
     ```bash
-    codex exec -m gpt-6.1-sol -c model_reasoning_effort=medium -s read-only "Review this plan. Don't nitpick trivial points; only point out fatal issues: {full_path}"
+    timeout 20m codex exec -m gpt-6.1-sol -c model_reasoning_effort=medium -s read-only "Review this plan. Don't nitpick trivial points; only point out fatal issues: {full_path}" </dev/null
 
     # re-review: the header of the first run prints "session id: ...";
     # resume takes no -s, so the sandbox is set with -c
-    codex exec resume {session_id} -m gpt-6.1-sol -c model_reasoning_effort=medium -c sandbox_mode=read-only "I updated it; review it again. Don't nitpick trivial points; only point out fatal issues: {full_path}"
+    timeout 20m codex exec resume {session_id} -m gpt-6.1-sol -c model_reasoning_effort=medium -c sandbox_mode=read-only "I updated it; review it again. Don't nitpick trivial points; only point out fatal issues: {full_path}" </dev/null
     ```
+
+    Keep `</dev/null` and `timeout`. Without a terminal on stdin, `codex exec` prints "Reading additional input from stdin..." and waits forever, since the Bash tool's stdin never closes. A run can also stall before it reaches the model (no output, almost no CPU time); `timeout` ends it, and one retry usually goes through. Run it in the background, since 20 minutes is past the Bash tool's foreground limit.
 
   - Tier 3: a subagent on the same model as this session. Only when tier 2 fails or the check is tiny; it shares this session's blind spots.
 - Always include "Don't nitpick trivial points. Only point out fatal issues." in the request, and pass the full paths of the plan or changed files.

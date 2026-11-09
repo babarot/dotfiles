@@ -34,7 +34,7 @@ Codex adds a `Co-authored-by: Codex` trailer to commits when the ChatGPT account
 
 ## GitHub Copilot CLI
 
-Only the work Mac has it. Its host file installs it with the official installer and links `~/.copilot/copilot-instructions.md` and `~/.copilot/settings.json` to [home/.copilot/](../../home/.copilot). Copilot writes `settings.json` itself (`/config`, `/settings`), so those edits show up as git diffs, as with Claude Code; `includeCoAuthoredBy: false` there stops the `Co-authored-by` trailer. Login and trusted folders stay in `~/.copilot/config.json`, which is not managed.
+Both Macs have it. [copilot.nix](../../nix/home-manager/tools/copilot.nix) installs it with the official installer and links `~/.copilot/copilot-instructions.md` and `~/.copilot/settings.json` to [home/.copilot/](../../home/.copilot). Copilot writes `settings.json` itself (`/config`, `/settings`), so those edits show up as git diffs, as with Claude Code; `includeCoAuthoredBy: false` there stops the `Co-authored-by` trailer. Login and trusted folders stay in `~/.copilot/config.json`, which is not managed.
 
 ## Skills
 

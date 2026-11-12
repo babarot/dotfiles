@@ -11,7 +11,7 @@
 {
   home.packages = with pkgs; [
     appcleaner
-    hidden-bar
+    ice-bar # menu bar manager
     qlmarkdown # Quick Look for Markdown
   ];
 }

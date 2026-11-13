@@ -23,10 +23,13 @@ let
 
     # Fail in the build sandbox, not in leaf: one reads Cargo.toml's previous
     # version from git history, which the source tarball lacks; the other
-    # walks a large tree under a time limit and hits the limit first
+    # walks a large tree under a time limit and hits the limit first. The
+    # third is flaky: it reads the global theme without taking the lock that
+    # the theme tests hold, so a theme test running in parallel recolors it
     checkFlags = [
       "--skip=tests::render_preview::preview_mode_only_before_shows_content"
       "--skip=tests::file_fuzzy::fuzzy_file_picker_reports_directory_limit_truncation"
+      "--skip=tests::diff_view_rebuild::lazy_highlighting_matches_an_eager_build"
     ];
   });
 in

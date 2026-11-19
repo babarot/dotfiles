@@ -16,7 +16,7 @@
 {
   my.skills.japanese-tech-writing = pkgs.fetchgit {
     url = "https://gist.github.com/57294a12591a40c761c23771acd26ed1.git";
-    rev = "7c2da474243a47c7693d6e0b7192914b64098445";
-    hash = "sha256-p/qVyJUXCIFFXjqjZmb8bmhXOe3br7Ye1aPSHpF37t0=";
+    rev = "84c561118a31ad2756538fd1389e76f00cd7c454";
+    hash = "sha256-G984B5giQM9NiqVtLJkl2E9IXdb8QERERi1YQsFYVtg=";
   };
 }

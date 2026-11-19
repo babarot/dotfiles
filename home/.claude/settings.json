@@ -48,7 +48,8 @@
     "gopls-lsp@claude-plugins-official": true,
     "lua-lsp@claude-plugins-official": true,
     "slack@claude-plugins-official": true,
-    "work@babarot-skills": true
+    "work@babarot-skills": true,
+    "writing@babarot-skills": true
   },
   "extraKnownMarketplaces": {
     "babarot-skills": {

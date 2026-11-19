@@ -1,6 +1,6 @@
 ---
 name: blog-seed
-description: Turn what this session built or learned into a base text for a blog post the user may write later, saved as a local HTML file with this session's ID so the transcript can be read again with claude-recall. Use when the user says they might blog about it someday and asks to write it up ("いずれブログにしたい", "ブログのベースを書いておいて"). Not for drafting the post itself, which is the blog-writing skill.
+description: Turn what this session built or learned into a base text for a blog post the user may write later, saved as a local HTML file with this session's ID so the transcript can be read again with claude-recall. Use when the user says they might blog about it someday and asks to write it up ("いずれブログにしたい", "ブログのベースを書いておいて"). Not for drafting the post itself, which is the writing:blog skill.
 ---
 
 # blog-seed

@@ -39,10 +39,7 @@
       home.file.".claude/rules/PC-M-2025-026.md".source =
         config.lib.file.mkOutOfStoreSymlink "${config.my.repo}/home/.claude/rules/PC-M-2025-026.md";
 
-      my.agentSkills.scopes = [
-        "core"
-        "work"
-      ];
+      my.agentSkills.scopes = [ "work" ];
 
       home.packages = with pkgs; [
         ctop

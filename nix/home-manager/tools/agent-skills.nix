@@ -45,11 +45,18 @@ in
 
   options.my.agentSkills.scopes = lib.mkOption {
     type = lib.types.listOf lib.types.str;
-    default = [ "core" ];
     description = "Plugins of babarot/agent-skills whose skills are linked into ~/.agents/skills.";
   };
 
   config = {
+    # Defined, not a default, so that a host adds a plugin (work) to these
+    # instead of replacing them. writing holds the writing skills, used on
+    # both Macs.
+    my.agentSkills.scopes = [
+      "core"
+      "writing"
+    ];
+
     home.file = lib.mkMerge (map skillsOf cfg.scopes);
     home.packages = [ (pkgs.callPackage "${inputs.agent-skills}/nix/writing-tools" { }) ];
   };

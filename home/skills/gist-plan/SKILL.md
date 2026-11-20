@@ -23,6 +23,7 @@ Files (a Gist has no directories, so the number prefix sets the order):
 | File | Content |
 |---|---|
 | `00-index.md` | Why the work is done (the goal and the problems it solves); the progress table; where the work is now and what is next; open questions with IDs (Q1, Q2, ...) for the user to answer; the session rules (which reviews run when); the IDs of the sessions that worked on it, so claude-recall can find their transcripts |
+| `80-diagrams.html` | Optional. The plan drawn as figures, made with the teach-me skill (figures first) only when the user asks |
 | `90-decisions.md` | Decisions with their reasons, appended and never rewritten |
 | `NN-<topic>.md` | The design itself. One file while it is small; split by topic (data, states, components, migration, stages) when it grows |
 
@@ -42,14 +43,14 @@ The progress table has one row per item or stage: what it does, its done conditi
   - Codex: call it as CLAUDE.md says (the model, "only fatal issues", `resume --last` from the second round). Give it the paths in the local clone, not the Gist URL; it may have no network.
   - Fable: an Agent with `model: fable`, given the same local paths.
   - Fix what they raise, push, and review again until neither finds a fatal issue. When they disagree, decide, and tell the user which side was taken and why.
-- Show the user the reviewed design. Write no code outside the Gist until the user approves the design and says to start implementing.
+- Show the user the reviewed design, and say in one line that the plan can also be drawn as figures (`80-diagrams.html`). Draw it only when asked. Write no code outside the Gist until the user approves the design and says to start implementing.
 
 ## 4. Implement stage by stage
 
 - Work on one stage at a time, in the order of the table.
 - Before each PR, have the diff reviewed by the reviewers in the session rules: does it match the Gist's design and the stage's done condition, and is the code sound. Skipping a review is the user's decision, never the agent's.
 - After a stage finishes or its PR merges, update the table (state, PR, what is next) and push before starting the next stage.
-- When a review or the code changes the design, update the Gist and record the decision in `90-decisions.md`.
+- When a review or the code changes the design, update the Gist and record the decision in `90-decisions.md`. Then say in one line that the figures can be drawn or, if `80-diagrams.html` exists, that it is now out of date and can be redrawn. Redraw only when asked.
 - After rewriting a file, check that no section was lost, the progress table in particular.
 
 ## 5. Resume from a Gist

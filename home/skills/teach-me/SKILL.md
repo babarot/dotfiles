@@ -1,6 +1,6 @@
 ---
 name: teach-me
-description: Write a local HTML document that teaches the user, in depth and without metaphors, a problem, plan, investigation or design they have not fully followed, so they can decide, review or merge from it. Use when the user asks for an HTML page to understand something themselves ("解説用のHTMLを作って", "ドキュメントで解説して"), or when gist-plan needs a fundamental decision explained before it goes into the Gist. Not for one mechanism shown interactively through a worked example (explain-me), an interactive mock of a feature under design that looks like the real UI (mock-me), or a quick diagram (show-me).
+description: Write a local HTML document that teaches the user, in depth and without metaphors, a problem, plan, investigation or design they have not fully followed, so they can decide, review or merge from it. Use when the user asks for an HTML page to understand something themselves ("解説用のHTMLを作って", "ドキュメントで解説して", "文章は少なくして図で解説して"), including a figures-first page of a gist-plan Gist, or when gist-plan needs a fundamental decision explained before it goes into the Gist. Not for one mechanism shown interactively through a worked example (explain-me), an interactive mock of a feature under design that looks like the real UI (mock-me), or a quick diagram (show-me).
 ---
 
 # teach-me
@@ -39,10 +39,33 @@ Build it up so each chapter rests on the ones before. Drop a chapter that has no
 - Tag inferred claims ("推測") and unchecked ones ("未確認") where they appear, not only in the last chapter.
 - Write in the user's language. In Japanese, follow the japanese-tech-writing skill when it is available.
 
+### Figures first
+
+When the user asks for fewer words and more figures ("文章は少なく図で", "図多めで"), or the page explains a gist-plan Gist, the prose already lives somewhere else and the page is for seeing it.
+
+- Keep the chapters above, but make each one a figure, a table or a row of cards. Prose is only the conclusion box (a few lines, ending with the decision asked of the user) and a line or two of caption under a figure.
+- How to draw the usual chapters:
+  - Today and after the change: the same diagram twice with the same layout, what is new drawn dashed.
+  - The problem: the concrete ways it goes wrong, each pointing at the part of the diagram it hits.
+  - Who can do what, today against after: a table, marked good or bad per cell.
+  - Numbers and periods (retention, deadlines, sizes): bars on one time axis, with the constraint between them in a box.
+  - Options not taken: cards, each with the one reason it was not taken.
+  - Stages: a strip of boxes with each stage's state; what a stage has to find out goes under it as cards.
+  - Open questions: a table of ID, question and recommendation.
+- Link each chapter to the file and section it is drawn from, so the reader goes there for the reasoning.
+- The rules above do not loosen: a figure shows only what a source says, and "推測" and "未確認" sit in the figure or its caption.
+
+For a gist-plan Gist:
+
+- `00-index.md` gives the conclusion, the stage strip (from the progress table) and the open questions; the design files give today, the problem and after; `90-decisions.md` gives what was decided and the options not taken.
+- Save the page in the Gist's clone as `80-diagrams.html` and push it with the rest of the Gist; gist-plan's rules on what may go into the Gist apply to it. On a follow-up, revise and push that file.
+- Put the Gist revision it was drawn from (short SHA and date) under the title, so a stale page shows.
+- Link to the Gist files by their anchors (`https://gist.github.com/<owner>/<id>#file-10-design-md`).
+
 ## 3. Build and hand over
 
 - One self-contained `.html`: inline CSS, no external scripts, a web font from a CDN at most with a system fallback. A light and a dark scheme (`prefers-color-scheme`), readable at a narrow width, a table of contents for a long page. If the user names a page as the style to follow, follow its layout and tone.
-- Save it in the session's scratchpad (otherwise a new `mktemp -d` directory), named after the topic. Do not put it in the repository or publish it unless asked.
+- Save it in the session's scratchpad (otherwise a new `mktemp -d` directory), named after the topic. Do not put it in the repository or publish it unless asked. A page of a gist-plan Gist goes into the Gist instead (see Figures first).
 - In chat, give the full absolute path, then only what the page cannot say for itself: which chapter holds the decision, what you found while writing that was not known before, what is tagged unconfirmed. Do not repeat the page in prose. You have not seen it render; ask the user to point at what is unclear or broken.
 
 ## 4. Keep it current

@@ -87,7 +87,7 @@ A file's `home.packages` holds its own tool and its companions, nothing else. An
 
 | Where it runs | How | Examples |
 |---|---|---|
-| Settings Nix renders: `my.human.init`, `my.env`, `my.gitConfig`, a generated config | embed `lib.getExe pkgs.<tool>` | `bat.nix` (fzf in bat-theme), `enhancd.nix`, `fzf-tab.nix`, `ov.nix` |
+| Settings Nix renders: `my.human.init`, `my.env`, `my.gitConfig`, a generated config | embed `lib.getExe pkgs.<tool>` | `bat.nix` (fzf in bat-theme), `enhancd.nix`, `ov.nix` |
 | A shell function that does not change the shell (no `cd`, `export`, zle) | make it a command: `pkgs.writeShellApplication` with the tool in `runtimeInputs` | `gcloud-change` in `gcloud.nix` |
 | A program that runs other tools by name (an editor, a plugin host) | wrap it: `symlinkJoin` + `wrapProgram --suffix PATH : ${lib.makeBinPath [ ... ]}`, suffix so a version a project pins with mise still wins | `neovim.nix` |
 | A hand-written config naming a tool that is not a companion | generate the config in the tool's file with store paths when it is rarely edited; wrap the program when it is edited often | `gomi.nix`, `enter.nix` |

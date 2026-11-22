@@ -1,7 +1,9 @@
+# Important
+zstyle ':completion:*:default' menu select=2
+
 # Completing Groping
 zstyle ':completion:*:options' description 'yes'
-# fzf-tab shows this as the group header verbatim, so no prompt escapes
-zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'
 zstyle ':completion:*' group-name ''
 
 # Completing misc
@@ -18,3 +20,10 @@ zstyle ':completion:*:cd:*' ignore-parents parent pwd
 # default: --
 zstyle ':completion:*' list-separator '-->'
 zstyle ':completion:*:manuals' separate-sections true
+
+# Menu select
+zmodload -i zsh/complist
+bindkey -M menuselect '^h' vi-backward-char
+bindkey -M menuselect '^j' vi-down-line-or-history
+bindkey -M menuselect '^k' vi-up-line-or-history
+bindkey -M menuselect '^l' vi-forward-char

@@ -10,7 +10,7 @@ They are the principles in [AGENTS.md](../../AGENTS.md#principles), and the rule
 
 ## What came before
 
-Tools have always depended on each other here. fzf is used by bat-theme, gcloud's configuration switcher, enhancd's `cd` and fzf-tab; fd is used by fzf, enhancd and Neovim's file picker.
+Tools have always depended on each other here. fzf is used by bat-theme, gcloud's configuration switcher, and enhancd's `cd`; fd is used by fzf, enhancd and Neovim's file picker.
 
 Every earlier setup held those dependencies as a name on PATH. The `.zshrc` checked `(( $+commands[fzf] ))` before using fzf; zplug's `if:` and afx's `if:` did the same, and their `on:` and `depends-on` only ordered what was sourced. A name on PATH says nothing about who installed the command or which version it is. Delete it and whatever used it breaks silently, found only when it is next used; forget it on a new Mac and the same happens. Deleting kubectl left the `k` alias behind.
 
@@ -44,13 +44,13 @@ Two simpler ways to let bat-theme use fzf each break one property:
 
 A store path keeps both: putting fzf on PATH stays `fzf.nix`'s job, and bat does not care whether it is there. However many files reference `pkgs.fzf`, it is one store path and one fzf; what matters is which file is responsible for putting it on PATH.
 
-Deleting `fzf.nix` and building shows the result. The profile's `bin/fzf` link and everything in `fzf.nix` (its options, the `pskill` function) are gone. bat-theme, enhancd's filter, fzf-tab and `gcloud-change` still run the fzf in the store, which stays because their generated files reference it.
+Deleting `fzf.nix` and building shows the result. The profile's `bin/fzf` link and everything in `fzf.nix` (its options, the `pskill` function) are gone. bat-theme, enhancd's filter and `gcloud-change` still run the fzf in the store, which stays because their generated files reference it.
 
 ## Three ways to hold a dependency
 
 The way depends on where the other tool is run.
 
-- Embed the path, for settings Nix renders: a function or variable in `human.zsh`, a plugin's `zstyle` (fzf-tab's `fzf-command`), a generated config ([enhancd.nix](../../nix/home-manager/tools/enhancd.nix) writes its filter and `config.ltsv` with fzf, eza, fd and ghq by path), a git setting ([ov.nix](../../nix/home-manager/tools/ov.nix)).
+- Embed the path, for settings Nix renders: a function or variable in `human.zsh`, a plugin's `zstyle`, a generated config ([enhancd.nix](../../nix/home-manager/tools/enhancd.nix) writes its filter and `config.ltsv` with fzf, eza, fd and ghq by path), a git setting ([ov.nix](../../nix/home-manager/tools/ov.nix)).
 - Make a command, for a function that does not change the shell. `pkgs.writeShellApplication` builds a script whose first lines put the store paths of its `runtimeInputs` on PATH, as nixpkgs' bat does for less, so the script writes `fzf` by name and still gets the one it declared. It also runs shellcheck at build time. A function that runs `cd` or `export` cannot be one, since a command runs in its own process. `gcloud-change` in [gcloud.nix](../../nix/home-manager/tools/gcloud.nix) is one.
 - Wrap the program, for a program that runs many commands by name. Neovim's LSP setup, conform and snacks.nvim's pickers look up gopls, jq, fd and rg on PATH from hand-written Lua. [neovim.nix](../../nix/home-manager/tools/neovim.nix) wraps nvim with `wrapProgram --suffix PATH`, the mechanism nixpkgs' bat uses, so those commands are on nvim's PATH only. Deleting `jq.nix` or the ripgrep line leaves nvim working, LSP servers stay off the user's PATH, and a version a project pins with mise comes first.
 
@@ -74,4 +74,4 @@ What is installed without a declaration is caught. Each switch uninstalls Homebr
 
 ## Load order
 
-One kind of dependency Nix does not resolve: the order zsh plugins are sourced in. fzf-tab must load after compinit and before plugins that wrap widgets; zsh-abbr after the `bindkey -v` in `~/.zsh`. Each plugin names the plugins it loads after or before, and home-manager sorts them as a graph. Writing the order is what zplug's `on:` and afx's `depends-on` did; what changed is that each source line is a store path, so the plugin loaded is the one Nix built, and a name that is no longer a plugin is ignored, so deleting a plugin's file breaks no one.
+One kind of dependency Nix does not resolve: the order zsh plugins are sourced in. history-search-multi-word must load before fast-syntax-highlighting, which wraps widgets; zsh-abbr after the `bindkey -v` in `~/.zsh`. Each plugin names the plugins it loads after or before, and home-manager sorts them as a graph. Writing the order is what zplug's `on:` and afx's `depends-on` did; what changed is that each source line is a store path, so the plugin loaded is the one Nix built, and a name that is no longer a plugin is ignored, so deleting a plugin's file breaks no one.

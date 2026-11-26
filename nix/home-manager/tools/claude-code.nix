@@ -85,6 +85,17 @@ in
   # The official installer's link, which Claude Code repoints as it updates
   my.knownBins.".local/bin" = [ "claude" ];
 
+  # Claude Code emits OSC 8 hyperlinks only for the TERM_PROGRAMs it knows,
+  # and herdr sets TERM_PROGRAM=herdr in its panes, so links fall back to
+  # text plus a dim URL there although herdr passes OSC 8 through to
+  # Ghostty. FORCE_HYPERLINK is the only override. It is limited to herdr's
+  # panes because a terminal without OSC 8 would show the raw escapes.
+  # my.human, since Claude Code is started from a human shell; the agents'
+  # shells under it inherit the variable.
+  my.human.init = ''
+    if [[ $TERM_PROGRAM == herdr ]]; then export FORCE_HYPERLINK=1; fi
+  '';
+
   home.activation.claudeCode = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [[ ! -e "$HOME/.local/bin/claude" ]]; then
       # Activation has a minimal PATH; the installer needs curl, shasum, sed

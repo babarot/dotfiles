@@ -48,6 +48,7 @@
     "gopls-lsp@claude-plugins-official": true,
     "lua-lsp@claude-plugins-official": true,
     "slack@claude-plugins-official": true,
+    "trail@claude-trail": true,
     "work@babarot-skills": true,
     "writing@babarot-skills": true
   },
@@ -56,6 +57,13 @@
       "source": {
         "source": "github",
         "repo": "babarot/agent-skills"
+      },
+      "autoUpdate": true
+    },
+    "claude-trail": {
+      "source": {
+        "source": "github",
+        "repo": "babarot/claude-trail"
       },
       "autoUpdate": true
     }
